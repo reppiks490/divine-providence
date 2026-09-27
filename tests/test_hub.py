@@ -87,6 +87,16 @@ def test_every_system_is_connected_or_explicitly_standalone():
     assert {n for n, v in cov.items() if v["status"] == "standalone"} == {"aegis", "janus", "infrastructure"}
 
 
+def test_tour_follows_one_instant_through_every_connected_system():
+    from divine_providence import tour
+    t = tour.run(include_engine=False)
+    assert t["ok"] is True and t["same_instant_everywhere"] is True, {k: v.get("ok") for k, v in t["connections"].items()}
+    assert set(t["connections"]) == set(connections.CONNECTIONS)
+    text = tour.narrate(t)
+    assert "RESULT: ALL CONNECTED SYSTEMS RAN TOGETHER" in text
+    assert "Same instant at every hop: YES" in text
+
+
 def test_engine_client_reports_unreachable_engine(monkeypatch):
     monkeypatch.setattr(engine, "BASE", "http://127.0.0.1:9")
     r = engine.health()

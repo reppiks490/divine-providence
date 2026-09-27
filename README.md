@@ -26,7 +26,7 @@ scripts/bootstrap.sh --validate --register-mcp   # Linux/macOS
 Then in Claude Code: `/mcp` shows **icarus-engine**; ask e.g. "list the ICARUS systems",
 "check all connections", "show connection coverage", "run the DAEDALUS tests", "what is the engine status?".
 
-The server exposes 17 read/verify-only tools. There are 6 verified cross-system connections, and
+The server exposes 18 read/verify-only tools (including `run_tour`). There are 6 verified cross-system connections, and
 coverage accounts for all 12 systems: 9 connected, and 3 standalone by design (AEGIS, JANUS,
 Infrastructure have no sibling contract in their code). The live-engine tools read the paper
 runtime on :8791 and cannot change it.
@@ -69,6 +69,7 @@ Each subsystem runs in its own interpreter process with only its own import root
 dp systems                 # list subsystems
 dp test <name>             # run one suite
 dp connect [<name>]        # run cross-system connection checks
+dp tour                    # end-to-end: one NEXUS instant through every connected system + live engine
 dp validate                # full build validation -> provenance/validation_report.json
 dp mcp                     # serve icarus-engine over stdio
 ```
