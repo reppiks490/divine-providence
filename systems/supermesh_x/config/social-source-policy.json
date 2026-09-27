@@ -1,0 +1,23 @@
+{
+  "version": "0.4.0",
+  "public_only": true,
+  "private_account_access": false,
+  "private_messages": false,
+  "private_location_tracking": false,
+  "fallback_order": [
+    "direct_public_source",
+    "official_mirror_or_release",
+    "reputable_search",
+    "public_web_crawl",
+    "public_video_or_transcript",
+    "reputable_news_confirmation"
+  ],
+  "timestamp_policy": {
+    "prefer_original_post_time": true,
+    "retain_retrieval_time": true,
+    "retain_republication_time": true,
+    "reject_future_known_data_in_backtests": true
+  },
+  "deduplication": "content_hash+original_publish_time+canonical_source",
+  "note": "Direct platform access is optional. When unavailable, use public search/crawl and official mirrors without bypassing access controls."
+}

@@ -1,0 +1,15 @@
+{
+  "cycle_id": "ascension-cycle-020",
+  "observation": "v0.8 closed inclusion index-binding ambiguity, but Adapter v0.3 still routed inclusion through v0.6 and backend labels did not prove exact backend source identity.",
+  "prior_belief": "Versioned backend names plus policy digests were sufficient local substitution controls.",
+  "intervention": "Built v0.4 to pin v0.8 strict inclusion, separate inclusion/transition identities, bind manifest leaf hash, and verify build-time dependency source SHA-256 at runtime.",
+  "measured_outcome": "28/28 focused tests; 105/105 regression; 3,226/3,226 adapter attacks; 4/4 real backend-file tamper checks; v0.7/v0.8 property matrices remain green before final packaging.",
+  "evidence_quality": "strong local/synthetic; external Transfer absent",
+  "confidence_delta": "increased for local downgrade/integrity resistance; unchanged for real ecosystem transfer",
+  "failure_or_surprise": "No new implementation bug after dependency-pin addition; real sibling manifest still absent.",
+  "reusable_lesson": "Pin both semantic version identity and exact verifier bytes; a label alone is not an artifact identity.",
+  "invalidated_assumption": "Backend version names alone adequately detect verifier substitution.",
+  "retry_condition": "Re-run when a real signed sibling manifest or changed backend source becomes available.",
+  "expiration_revalidation_condition": "Any dependency/policy/schema change.",
+  "next_experiment": "Real sibling Transfer first; otherwise a non-authoritative conformance kit to make the required manifest contract explicit."
+}

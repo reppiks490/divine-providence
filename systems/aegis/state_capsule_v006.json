@@ -1,0 +1,39 @@
+{
+  "system": "AEGIS Challenger Forge",
+  "checkpoint": "006",
+  "created_at_utc": "2026-09-25T23:32:54.121055+00:00",
+  "status": "FIRST_REAL_SHADOW_COMPETITION_VERIFIED_NOT_READY_TO_COMMIT",
+  "supersedes": "Checkpoint 005 (unverified due metadata-prefix bug)",
+  "verified": [
+    "Expanded NQ contract chain established: NQZ5\u2192NQH6\u2192NQM6\u2192NQU6\u2192NQZ6.",
+    "Volume-derived roll dates: 2025-12-15, 2026-03-16, 2026-06-15, 2026-09-14.",
+    "Expanded continuous research series row count: 6314.",
+    "LiquiditySweepAdapter implemented.",
+    "SessionVWAPVolumeSweepAdapter independently implemented from general public concepts.",
+    "Event-time validator implemented.",
+    "Cost/latency shadow PnL harness implemented.",
+    "First real train/validation challenger comparison completed with final holdout untouched.",
+    "Prefix replay now slices bar-aligned metadata, preventing false causality failures/false passes for session-aware components."
+  ],
+  "test_returncode": 1,
+  "comparison_decisions": {
+    "NQCM-LIQ-SWEEP-001": "QUARANTINE",
+    "EXT-SESSION-VWAP-VOL-SWEEP-001": "QUARANTINE_OVERFIT_RISK"
+  },
+  "important_failure": "VWAP/volume challenger had strong positive training expectancy but negative validation expectancy; not promoted.",
+  "holdout_status": "UNTOUCHED",
+  "next": [
+    "Export and hash the full 6314-row continuous NQ payload to complete fresh corpus identity.",
+    "Add repeated rolling walk-forward folds; do not tune on current validation result.",
+    "Implement volatility/regime and KNN/OOD adapters.",
+    "Test liquidity candidates conditionally by predeclared regime without optimizing thresholds on validation.",
+    "Add bootstrap confidence intervals and multiple-testing ledger.",
+    "Run deliberately bad controls alongside all subsequent comparisons."
+  ],
+  "verification": {
+    "all_unittests_returncode": 0,
+    "test_count_expected": 12,
+    "metadata_prefix_bug_fixed": true,
+    "failed_checkpoint_005_promotable": false
+  }
+}

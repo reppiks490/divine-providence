@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"JANUS Proof-Carrying Change Bundle",
+  "type":"object",
+  "required":["change_id","claim","precondition_snapshot","evidence","verification","rollback","status"],
+  "properties":{
+    "change_id":{"type":"string"},
+    "claim":{"type":"string"},
+    "scope":{"type":"array","items":{"type":"string"}},
+    "precondition_snapshot":{"type":"string"},
+    "postcondition_snapshot":{"type":["string","null"]},
+    "candidate_hash":{"type":["string","null"]},
+    "evidence":{"type":"array","items":{"type":"object"}},
+    "verification":{"type":"array","items":{"type":"object"}},
+    "contract_deltas":{"type":"array","items":{"type":"object"}},
+    "causal_time_audit":{"type":"object"},
+    "authority_audit":{"type":"object"},
+    "limitations":{"type":"array","items":{"type":"string"}},
+    "rollback":{"type":"object"},
+    "status":{"enum":["draft","falsified","proved","rejected","integrated","rolled_back"]}
+  }
+}

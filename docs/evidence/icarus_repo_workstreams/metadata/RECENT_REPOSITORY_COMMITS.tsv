@@ -1,0 +1,299 @@
+72c4ebac4864df91db19355f5e3f6aa5b7a32356	2026-09-24T20:27:50-05:00	 (HEAD -> chatgpt/icarus-control-plane-handoff-20260924, origin/chatgpt/icarus-control-plane-handoff-20260924)	ChatGPT: repair ICARUS export workflow YAML
+82cf5c1f953ee4c48f219f08b2573f3a6ae2d382	2026-09-24T20:27:31-05:00		ChatGPT: simplify ICARUS export workflow
+dbb4098722fbf691088aa52f0ce17a39edd40996	2026-09-24T20:27:28-05:00	 (origin/icarus/masterbuild-handoff-2026-09-24)	test: reproduce cp1252 setup output failure
+08e1923dd77affd25f5fc3f42d66dc120bb894b3	2026-09-24T20:26:44-05:00		ChatGPT: add reconstructable ICARUS full-work export
+2f50a6bbc6b35eb13b2a8c458459c4ceee4944c2	2026-09-24T20:15:04-05:00	 (origin/icarus-loop-integration-2026-09-24)	docs: index loop inbox and convergence workflow
+11c62e819e77997a2e36dd8b072eca0d02e36ce5	2026-09-24T20:14:48-05:00		docs: add cross-loop convergence template
+4943b2b80c5d1bcf046582b8c696895923507e70	2026-09-24T20:14:46-05:00		docs: add loop handoff inbox guide
+67ebb00a51596553ef5d0652b42e6fa756e50d42	2026-09-24T18:46:21-05:00	 (origin/codex/exotic-research-loop)	Codex: extend OMNIVISION CI through Stage 1
+455a2f4fdf15f30f49b04fab2a505a6f64b25c7e	2026-09-24T18:46:03-05:00		Codex: integrate OMNIVISION Stage 1 trust substrate
+d7567905b46d59220abcb7004c9e8cdf37c34497	2026-09-24T18:45:52-05:00		Codex: add RED Stage 1 trust-substrate integration tests
+0e1ceac853807f67fcdec5830de316bd41c6b9f6	2026-09-24T18:45:20-05:00		Codex: preserve OMNIVISION hidden research search history
+f5e0c3afe40cbdb2ec23728cbe65e1a5cebe827a	2026-09-24T18:44:54-05:00		Codex: add RED tests for search-aware trial ledger
+0a434918eb99abb645ff447fdfffb894f2840226	2026-09-24T18:44:29-05:00		Codex: add immutable OMNIVISION trial contract
+737ac8ef7c2439b04d2e9e0dbc1f019bfb876f0d	2026-09-24T18:44:01-05:00		Codex: add RED tests for immutable trial contract
+e7ec4e1d657fbc0335d5fcc90a9350e72d0278fd	2026-09-24T18:43:38-05:00		Codex: add explicit OMNIVISION provenance DAG
+bc078047761eb9e630eecb1d03f927eab44e17d8	2026-09-24T18:42:57-05:00		Codex: add RED tests for explicit provenance DAG
+2da1c25b32e9d9d236bb1f041f5468d73c1fb973	2026-09-24T18:42:28-05:00		Codex: add OMNIVISION semantic admission firewall
+def264cfb55baf376193d010b09339e76301fdee	2026-09-24T18:42:08-05:00		Codex: add RED tests for semantic admission firewall
+81f26d8b89c6ea697c0c428f7bea587b34a4c243	2026-09-24T18:41:47-05:00		Codex: add historical OMNIVISION capability registry
+6c70d06c05a962a65b86a05a7e01dc4446b66978	2026-09-24T18:41:09-05:00		Codex: add RED tests for historical capability registry
+6f999dfae391382be6e9cb52d568b2dc3410ac1e	2026-09-24T18:40:49-05:00	 (origin/icarus/assurance-archive-20260924)	docs(assurance): link source manifest
+849c2885efb389978e1246765470f5415c683c4e	2026-09-24T18:40:47-05:00		Codex: add immutable OMNIVISION source capability contract
+8b1d810487c7ee6fa28deca9027c3d17a27fe2ed	2026-09-24T18:40:47-05:00		docs(assurance): add source transfer manifest
+fe19f3d4c472f7bbcdddc1d3b558dbfb00641b95	2026-09-24T18:40:25-05:00	 (origin/icarus-empirical-qualification-handoff-20260924)	docs(empirical): add qualification_gates.json
+11e515c79cadc9a5074fa10913226fe727f219bd	2026-09-24T18:40:23-05:00		docs(empirical): add AGENT_HANDOFF.md
+74d2f8cff01c70abacb71eaf40c616b20a2306e6	2026-09-24T18:40:21-05:00		docs(empirical): add IMPLEMENTATION_SEQUENCE.md
+018ac538660117dfd1786a5a6f2be0dd6ce32e9d	2026-09-24T18:40:19-05:00		docs(empirical): add TEST_PLAN.md
+29b6e671537edc7decadfa2729c062a4869d7665	2026-09-24T18:40:17-05:00		docs(empirical): add MODEL_ECONOMICS_ROBUSTNESS.md
+18267a3a3f2ec21a4adcd87804b150cb4186f138	2026-09-24T18:40:15-05:00	 (origin/integration/icarus-capability-fabric-20260924)	docs: add ICARUS baton-pass packet
+ef47aac3a05237c9005e7fdc44762af4b2b046fb	2026-09-24T18:40:15-05:00		docs(empirical): add SOURCE_DATA_TIME.md
+182d0441e698e1334ce7861f415382bcdd993f2c	2026-09-24T18:40:12-05:00		docs(empirical): add BLOCKER_MATRIX.md
+acd93f21e86c2e65b5642f3c86a202edf10d1f9b	2026-09-24T18:40:10-05:00		docs(empirical): add ARCHITECTURE.md
+1ff7c95f8e453164b8dcf57389970bf68798931e	2026-09-24T18:40:08-05:00		docs(empirical): add MASTER_WORKLOG.md
+6dfa58c4c04775ab02b78c1e40fe8d3928858498	2026-09-24T18:40:06-05:00		docs(empirical): add CURRENT_STATE.md
+28d010cdc0f38ac9c4057705a6946204262ae946	2026-09-24T18:40:04-05:00		docs: link ICARUS assurance archive
+0ea8351fb4ea63def44c8eb8f428218239f0b839	2026-09-24T18:40:04-05:00		docs(empirical): add README.md
+2cf73cbcfb7c6e9793e7518d26b161a9f26ee35b	2026-09-24T18:40:02-05:00		docs(empirical): add ICARUS_EMPIRICAL_QUALIFICATION.md
+4eee6ab6f8692dab7d58dc272a2ad0238000dd82	2026-09-24T18:39:56-05:00		docs(assurance): add root archive pointer
+7e627a3ecb7d6e5b2206b93a85d61f90d3dcbbdf	2026-09-24T18:39:54-05:00		docs(assurance): add archive index
+82f127d62071c738eeaca29b406cda52db745eb0	2026-09-24T18:39:52-05:00		docs(assurance): register related ICARUS builds
+ec18a0ec3b1d04c3a29481c06d6439a7c1983852	2026-09-24T18:39:49-05:00	 (origin/icarus/integration-handoff-20260924-1829)	Add ICARUS integration handoff, verified findings, and connection contracts
+2c77f1681d196c875c73ca3ab7b9c701da8790a1	2026-09-24T18:39:44-05:00		Codex: add RED tests for source capability contract
+0d2f07bcbb93f12593785f76b868c5b5e026ead2	2026-09-24T18:39:33-05:00		manifest: add external provider authority registry
+8753db5c4cddae175581ba418b6db33a6e57ead0	2026-09-24T18:39:23-05:00		docs(assurance): record archive transfer
+4b86a8abd4089eade22a28e1b5ee1787316e7cc5	2026-09-24T18:39:21-05:00		schema: add safe control-state index proposal
+002dcb10a4d51ee918bb45a41c04c411fa58bf78	2026-09-24T18:39:21-05:00		docs(assurance): add control-plane implementation map
+b0bfe7f899142d6d4a27a4c29693f16d3dde8f56	2026-09-24T18:39:19-05:00		docs(assurance): freeze AEGIS findings 001-030
+c59b1f950d2ddcb4b1c008f7c6489cef3d80866f	2026-09-24T18:39:18-05:00		schema: add pipeline handoff contract
+172e2399e77ec048e4666b8bff260993f0c8b60b	2026-09-24T18:39:17-05:00		docs: add agent onboarding and connection guide
+08a6ad484db2d583fedb3ac7a05e921c191a9303	2026-09-24T18:39:15-05:00		docs: add research validation and falsification plan
+8d822d39cb25eb368ce2d8bfa243dc9152485c5e	2026-09-24T18:39:13-05:00		docs: codify ICARUS control-plane contract
+fd1ab084922a1339578ce35b154c017e7431caf2	2026-09-24T18:39:11-05:00		docs: add layered capability fabric architecture
+fb5d8514c5fdc5c790f60d9fe7e0fff7ffd4f19a	2026-09-24T18:39:09-05:00	 (origin/icarus-handoff-2026-09-24)	docs: refresh ICARUS handoff manifest
+202cf4b4051d8808b4a0d56a8f477ca8eb9fff79	2026-09-24T18:39:09-05:00		docs: record verified repository findings
+da051d1378e6477f33a28fdcd418cba86c1d0214	2026-09-24T18:39:07-05:00		docs: add ICARUS coordination entrypoint
+74ac3c788cf8eb8f233dd5ced119eed675e37eac	2026-09-24T18:39:01-05:00		docs: link ICARUS master handoff from README
+a49bafa8e2d4d16e82c3db8b22e368e81119842a	2026-09-24T18:38:51-05:00		docs: snapshot unified control cycle prompt
+8eabad1036159bf7cf059bed85a551358743bfcb	2026-09-24T18:38:49-05:00		docs(assurance): archive Stage-5 receipt
+984e401cc9861d42671cac1de33cd79173255a7a	2026-09-24T18:38:49-05:00		docs: add ICARUS research methodology references
+d93f6e48c9c2cfe0a218179fb603ad7002965067	2026-09-24T18:38:35-05:00		docs(assurance): archive ICARUS_AEGIS_WORKLOG.md
+5990f4fa98c4de3933b60429b73c8810fca24d98	2026-09-24T18:38:33-05:00		docs(assurance): archive ICARUS_Unified_Control_Cycle_Master_Handoff_20260924-07.txt
+d41a7ab16358291606cca757ee0063758e2a6f53	2026-09-24T18:38:29-05:00		docs(assurance): archive ICARUS_S3_COMPLETE_HANDOFF.txt
+be340ba9903e1b6a41dd8060339eceb74048f778	2026-09-24T18:38:27-05:00		docs(assurance): archive ICARUS_AEGIS_MASTERBUILD_FULL_HANDOFF.md
+eb7a9e685d0460492794202fc5a9971ee5601324	2026-09-24T18:38:22-05:00		ci: place global icarus_plant root option before subcommand
+7da49f60ff4bd5cf7bb2b204416a42320977ce93	2026-09-24T18:38:12-05:00		docs(assurance): archive ICARUS_AEGIS_FULL_DOSSIER.txt
+6a9c8dbb0c70d04cbb55dc1190bf1df3aa1c1b4a	2026-09-24T18:38:12-05:00		docs: add machine-readable ICARUS integration manifest
+9a3c964e384d920efd92f305d4d611cb1c5b8f7f	2026-09-24T18:38:10-05:00		docs: add prioritized masterbuild roadmap
+d2669f391d47357e2b4d246ffdb045ffbee4732b	2026-09-24T18:38:08-05:00		docs: add incoming agent integration protocol
+926e27445fb113b65e7a9dc3a5ce21fa7116eebe	2026-09-24T18:37:59-05:00		docs: add machine-readable ICARUS handoff manifest
+747744fb01dac0f0a83af0aab4d65ea1f5f45ab8	2026-09-24T18:37:56-05:00		docs: add research governance requirements
+ad3b2f889e3d868042046a260190f8576e829ac2	2026-09-24T18:37:56-05:00		docs: record ICARUS automation status
+1d60838ecdea147171818a6092529fec27dbac5b	2026-09-24T18:37:54-05:00		docs: add provider capability matrix
+bcdea2f9709cb8fc30e942ec47c0720ed7f90128	2026-09-24T18:37:54-05:00		docs: add ICARUS multi-agent onboarding map
+c4b9ffe4b63abee18b4ac1409db8b8f0003d4c3c	2026-09-24T18:37:52-05:00		docs: record ICARUS findings defects and provider facts
+bdb2b79c1d3a8c2a9ab3df18c315467f6837a309	2026-09-24T18:37:51-05:00		docs: add horizon expansion architecture
+0e0d4d5327ac0a9b9f6b3986414fc790b4edaee7	2026-09-24T18:37:50-05:00		docs: add XGB Slot 1 empirical-integrity implementation plan
+8abaa6ad0062308333bf57b2b7d69701824689c3	2026-09-24T18:37:48-05:00		docs: add verified findings and blocked paths ledger
+e0ee21714f5414b597aa906a8f573f54c17ddb1f	2026-09-24T18:37:48-05:00		docs: document unified ICARUS control plane
+c64dcdd48174b664e52f393edae049d1d1ad7613	2026-09-24T18:37:47-05:00		docs: record ICARUS system maturity assessment
+1bc83e824f12381e0f5800967d53cd381708fbad	2026-09-24T18:37:45-05:00		docs: capture ICARUS architecture and invariants
+9511a5de5874f0bdee47f39dc30da1366d117a63	2026-09-24T18:37:44-05:00		docs: add ICARUS masterbuild handoff index
+587719242c0de42a100fc2fa6845a3d98798e803	2026-09-24T18:37:44-05:00		docs: add ICARUS master handoff index
+09b3681f551bc47f7a57494906733e8f9fd7df31	2026-09-24T18:37:18-05:00		Codex: checkpoint OMNIVISION v2 Stage 1 plan gate
+889835af15a3ba2811ca1b8ff32c0e34f5a44696	2026-09-24T18:36:53-05:00		Codex: clean Stage 1 plan self-review markers
+758306f2d491edaa76cddb84117b444ba184d301	2026-09-24T18:36:44-05:00		Codex: plan OMNIVISION v2 Stage 1 trust substrate
+eab72065f7d388532330034725df4e14c397840c	2026-09-24T18:36:10-05:00		ChatGPT: consolidate ICARUS master integration handoff
+fa75a72e50ec16c8f0ac310c1d8973828d321c0d	2026-09-24T18:34:49-05:00	 (origin/integration/chatgpt-icarus-fabric-2026-09-24)	integration: add integration/templates/HANDOFF_TEMPLATE.json
+bbd5ac0217b3965c48b376506037bc9a2f8b6c09	2026-09-24T18:34:47-05:00		integration: add integration/schemas/control-manifest.schema.json
+59929c670f82994329f7a7925ff57184dc0a517d	2026-09-24T18:34:42-05:00		integration: add integration/schemas/handoff.schema.json
+ca57827a9db8ea5a7905859849fdfa0d45121653	2026-09-24T18:34:40-05:00		integration: add integration/schemas/evidence-record.schema.json
+5be75ef6c3c0f3968cc9d15a8c3b51b5f8e5ebb9	2026-09-24T18:34:38-05:00		integration: add integration/ICARUS_MESH.json
+bf755a5f83be9c30c318d9c3ecf14ed937d30e73	2026-09-24T18:34:36-05:00		integration: add integration/README.md
+1397a6075cdae10ca12e2ee694e752bb0590b161	2026-09-24T18:34:34-05:00		integration: add docs/icarus/AGENT_INTEGRATION.md
+6e5eb51e10d9379bb3f81573e23b551bb04c3c20	2026-09-24T18:34:32-05:00		integration: add docs/icarus/CONTROL_PLANE_AND_ASSURANCE.md
+cc55a19f824078efd9de9d833562859ec50c7d7b	2026-09-24T18:34:30-05:00		integration: add docs/icarus/ARCHITECTURE_AND_FINDINGS.md
+b9a1152f26457d4a61339f6c80fe1e7f533cfb23	2026-09-24T18:34:28-05:00		integration: add ICARUS_INTEGRATION_INDEX.md
+8e2292b372978ae2fb25abc99802f3f7456961ce	2026-09-24T18:33:52-05:00		docs: preserve existing README while linking loop corpus
+7577ebb9c025d15e6cd6493cae24a1e434f96ca5	2026-09-24T18:33:13-05:00		docs: stage ICARUS research loop integration corpus
+9f3c792d44fd9142e0b98676224dfe50d740db3b	2026-09-24T18:19:56-05:00		Codex: plan OMNIVISION v2 Stage 1 control plane
+6ac6c119d4774578c078a5f4c24aadeac11101d6	2026-09-24T18:11:05-05:00		Codex: checkpoint OMNIVISION v2 Stage 0 GO
+211d34e2a91c02ac4ad43e2ea91f0a73ab6881b1	2026-09-24T18:10:36-05:00		Codex: finalize OMNIVISION v2 Stage 0 audit
+511814e1d4f4a2527abaa3b6e3472a66df666281	2026-09-24T18:07:12-05:00		Codex: prevent subsecond OMNIVISION availability leakage
+ffde283884e662a01c14acf505379d705a9313bc	2026-09-24T18:06:25-05:00		Codex: add subsecond OMNIVISION availability regression
+16ee5f772d172815d495cea11010e6d29d8f4cc7	2026-09-24T18:04:48-05:00		Codex: harden Stage 0 boundary and performance CI
+e80c6f8df3ca686c20db54a95dfa6ff6b95efdf6	2026-09-24T18:04:19-05:00		Codex: make plant setup output Windows-console safe
+4e3d69d9c6fd7bd0fd109d683d977d1c97098681	2026-09-24T18:03:11-05:00		Codex: add Windows console encoding regression
+002abe4eb7ceddbbe823c958e2bb1ffc13be0b48	2026-09-24T18:01:38-05:00		Codex: strengthen OMNIVISION contradiction provenance proof
+97a5b8dc874092786c571712b30af739b8e21209	2026-09-24T18:01:05-05:00		Codex: lock OMNIVISION research execution boundaries
+9ab347a489997541f7a1e476dc10e826e818e1ab	2026-09-24T18:00:40-05:00		Codex: fix icarus-plant CI root argument ordering
+aa68dda8d134b7a1b634600647f508cb3cc4a472	2026-09-24T17:58:13-05:00		Codex: make OMNIVISION forward folds independent
+84fedabb7e06bd67b9cd74801866387e95d3c4bb	2026-09-24T17:57:25-05:00		Codex: add forward-fold independence regressions
+542bd0c7aeb0173e4de03dfe4055c9b1deac187c	2026-09-24T17:56:20-05:00		Codex: align OMNIVISION availability contract test
+5f568f04f8d847fcdb923428cd6479d67a6cdf85	2026-09-24T17:55:32-05:00		Codex: enforce receipt-aware OMNIVISION availability
+522ab213a00bf281f5b5b95a800daf615381cbe9	2026-09-24T17:54:20-05:00		Codex: add Stage 0 temporal leakage regressions
+1a3812799c97aae97ca4dd057385aeb71b1cde99	2026-09-24T17:53:34-05:00		Codex: add read-only OMNIVISION Stage 0 CI matrix
+d18b6a360ae55cfc30b44cafc2412d3e92647b0b	2026-09-24T17:46:40-05:00		Codex: checkpoint OMNIVISION v2 Stage 0 plan gate
+8d0df07c92f6dc77af91fada5e712827ad42de55	2026-09-24T17:46:17-05:00		Codex: remove Stage 0 plan placeholders
+c923eb5b8aa01268495dad77fc2d120ed00a52ff	2026-09-24T17:45:54-05:00		Codex: plan OMNIVISION v2 Stage 0 verification gate
+8babcb642ce14722a24862f77f20fe8f67269d54	2026-09-24T17:17:17-05:00		Codex: checkpoint OMNIVISION epistemic-control-plane v2 spec
+d863e277a1010821de30934d7eb4e950a6050b41	2026-09-24T17:16:15-05:00		Codex: specify OMNIVISION epistemic control plane v2
+e05c122f7a8e5501d98251c7449cbe7ce3ec6dda	2026-09-24T17:10:57-05:00	 (origin/chatgpt/icarus-data-vintage-20260924)	ChatGPT: fail closed on provenance before canonical history merge
+df6fe08123d48a37c77d4a3b2d21bd115448f62e	2026-09-24T17:10:55-05:00		ChatGPT: record append-only market-data source observations
+4b90538ba868c049397c154215bfc181b7afbf4c	2026-09-24T17:09:04-05:00		ChatGPT: RED preserve as-observed market-data provenance
+76569e1962e721b0f4dc973df21358f40c31ce81	2026-09-24T17:05:18-05:00	 (origin/chatgpt/icarus-control-plane-runtime-20260924)	ChatGPT: log authority graph hardening
+4c28b44766e5d8e41ee660fcef0eee96b7f4d581	2026-09-24T17:05:16-05:00		ChatGPT: extend control verifier test plan
+042835f11843bf1673970fe2e81ffbd7539c3731	2026-09-24T17:05:14-05:00		ChatGPT: harden control verifier design contract
+8de405ffdb4790e5cb8b6f73fa8817613e93a80b	2026-09-24T17:05:12-05:00		ChatGPT: document dependency conflict and lineage gates
+5d0619617eb5b2820e6001872805644c2e1bfa79	2026-09-24T17:04:17-05:00		ChatGPT: test lineage collapse and DAG failures
+0e198d071d8eeafed9d8081c2ba913b3b1ad52f5	2026-09-24T17:04:01-05:00		ChatGPT: validate evidence lineage DAG and collapse duplicate IDs
+1f520da58f18cbac8a1c2429b15dc69218c10c54	2026-09-24T17:03:37-05:00		ChatGPT: test dependency and conflict authority gates
+9f70eabb702df0d2aecd3395c6c4e406a6e142ce	2026-09-24T17:03:13-05:00		ChatGPT: enforce claim dependencies and material conflict closure
+5e0496bf0e5bf8a94d48389911cc502191307318	2026-09-24T17:02:09-05:00		ChatGPT: add claim and conflict closure contracts
+e9a1f975e4da6688bacbd3d24703b46b06318f94	2026-09-24T17:01:04-05:00		ChatGPT: update Task 8 verification evidence
+d30a97711b9a860e47bc4792fa4a087a3189c06f	2026-09-24T17:01:02-05:00		ChatGPT: record control verifier CI evidence
+380a5bee4266354cceedd9a31ad61ba0067c1e50	2026-09-24T17:01:00-05:00		ChatGPT: record green control verifier CI evidence
+7ddc90fd0aaa4589fb9d4fef1ad466581638876e	2026-09-24T17:00:58-05:00		ChatGPT: link AEGIS implementation matrix
+cb846a03cf93a17e845aa4f94d5b45bc15aa412b	2026-09-24T17:00:31-05:00		ChatGPT: map AEGIS findings 019-030 to repo controls
+c2bf18abcf3c58350ec1b6203e0d262641adf8b1	2026-09-24T16:58:25-05:00		ChatGPT: test fail-closed S5 promotion semantics
+83e3505fed1ed1501e3c1d84d65efd123f2557c6	2026-09-24T16:58:14-05:00		ChatGPT: make plant CLI output UTF-8 safe on Windows
+de658daa72acf9c7586d2b98647a46e6eeadc1bc	2026-09-24T16:58:12-05:00		ChatGPT: harden S4 oracle and S5 promotion semantics
+219739e36247f817fd46e25b252e623b102fa609	2026-09-24T16:56:28-05:00		ChatGPT: record Task 8 implementation status
+0a94534ca67b9aa7ad11ee685ac48486c53d470e	2026-09-24T16:56:27-05:00		ChatGPT: log control-plane runtime implementation
+fa484f5044a77a7b8535fde6e11c7f613dc45448	2026-09-24T16:56:25-05:00		ChatGPT: hand off control verifier runtime
+816fbf430a20511e351577a54afc0554414ce13c	2026-09-24T16:56:23-05:00		ChatGPT: document icarus-control assurance CLI
+d244eda10558a26f04219aa70782f90dd70a9a7f	2026-09-24T16:55:59-05:00		ChatGPT: record control verifier handoff state
+a62f8df18a85f376fab9eaea06ebc9d595b01373	2026-09-24T16:55:57-05:00		ChatGPT: define durable receipt transport in cycle runbook
+48f147037a22e59d696754f62c2b7626fda8adf9	2026-09-24T16:55:55-05:00		ChatGPT: document repo-native control receipt verifier
+c44a9ff15114ebfcd1a7d0b18a8d6df76e8a0200	2026-09-24T16:55:18-05:00		ChatGPT: cover deterministic snapshots and unknown lineage
+7554207b84e860ca7ec3ecdf9a76dc9326efd42e	2026-09-24T16:55:08-05:00		ChatGPT: tighten snapshot and evidence-lineage validation
+a18cbf1096c017227a7812d4af61fc7da440dfdb	2026-09-24T16:54:41-05:00		ChatGPT: repair plant CI root argument order
+4aa639d263d3b08c8d6aa085d1cf83dc785ea9f9	2026-09-24T16:54:39-05:00		ChatGPT: expose read-only icarus-control CLI
+853d77987dd26ff7646b83a08e0d6c2ab2c2d5b0	2026-09-24T16:54:38-05:00		ChatGPT: add ICARUS control module entry point
+a033efb2e842ecfeca0bd04c9957091defa2b237	2026-09-24T16:54:12-05:00		ChatGPT: add adversarial ICARUS control-plane tests
+b8d1417f092c4b09f6b900d95d96caec6fd23d04	2026-09-24T16:53:21-05:00		ChatGPT: add read-only ICARUS control verifier CLI
+d46ab75868c354c0922ac0e4834c37cace183f2f	2026-09-24T16:53:08-05:00		ChatGPT: implement fail-closed ICARUS receipt chain validation
+a562e1a9468b55e0ea0c195ac78cf7b1a2478792	2026-09-24T16:51:57-05:00		ChatGPT: add deterministic ICARUS receipt canonicalization
+fba31a8d0e8d93656b1196aa4a8d6cf92b8981e7	2026-09-24T16:51:55-05:00		ChatGPT: add ICARUS control package
+1216dda001055c9aa8c924ab479b384573359852	2026-09-24T16:51:17-05:00		ChatGPT: add ICARUS pipeline receipt v1 contract
+824bafcee92efe673a7dc8c7eb4b563134bf5a38	2026-09-24T16:51:05-05:00		ChatGPT: add ICARUS control policy v1 contract
+58981367142e79b84e81726d2f63c01bbb61d7d9	2026-09-24T16:50:25-05:00		ChatGPT: plan ICARUS control-plane verifier
+4ef2b6632e8e5da3a95f11d088033c561907c830	2026-09-24T16:50:23-05:00		ChatGPT: design repo-native ICARUS control-plane verifier
+c1c331a7a743bcad3dc1e7128eb5cb6f61ac8225	2026-09-24T06:26:39-05:00		ChatGPT: log control-plane and subsystem handoff
+19e05cee160c00ab91ae564ca72bb8dca97c5883	2026-09-24T06:26:37-05:00		ChatGPT: link control-plane handoff from model instructions
+4b8d0206a21b9b40ae696f4be9ef7ead31e3fe18	2026-09-24T06:26:19-05:00		ChatGPT: add implementation plan for control-plane findings
+7001bc2463599625525955e73cb3e4ce3f318230	2026-09-24T06:26:17-05:00		ChatGPT: add machine-readable ICARUS control-plane state
+7e81a2845d1c32a98a3bdb91ddff0291ff9e20f4	2026-09-24T06:26:15-05:00		ChatGPT: document repaired unified ICARUS cycle
+da65d48b7164d14d2916ae12d155bc450ac564a6	2026-09-24T06:26:13-05:00		ChatGPT: record subsystem rotation evidence and proof obligations
+0011a04581778ebf071bf335371a3cae1cd5fd92	2026-09-24T06:26:10-05:00		ChatGPT: add ICARUS control-plane handoff overview
+f01424e3a72cd580c8985448fba5c675382dd440	2026-09-23T23:27:29-05:00		Codex: checkpoint OMNIVISION foundation implementation
+f8d8ce641b71e5f564b53c91e02ed50ca2a58b4e	2026-09-23T23:26:35-05:00		Codex: construct evidence-bound observations directly in tests
+0bed6e43a9a2ab2e45b13739b583fcd5c89e7aa6	2026-09-23T23:26:23-05:00		Codex: test multi-source latent inference
+5deaeadc1692d4f3f1ecfcd51286a6b1dc501676	2026-09-23T23:26:14-05:00		Codex: preserve per-source state during latent inference
+0d1af9b79eb0cbad03b4a46129d5ce75e9b04f6c	2026-09-23T23:24:57-05:00		Codex: add OMNIVISION end-to-end integration proof
+f2cd7500dba5551deafa13429b2b067fab6a58af	2026-09-23T23:24:16-05:00		Codex: assert ledger evidence identity survives projection
+03f56c9a4fab18fc91dee07cf8be458f993a02fd	2026-09-23T23:24:09-05:00		Codex: fix contract encoding and preserve ledger evidence IDs
+f20e88c7f757d895ab88ad385b35e2264be050ca	2026-09-23T23:23:35-05:00		Codex: preserve immutable evidence IDs in world-state inference
+e1369e0d1a73efaf4cb2bd938f6a54bb8f7a8101	2026-09-23T23:23:09-05:00		Codex: implement OMNIVISION research candidate artifact
+8d62481b99f323146c5a26785b5b2909893637c2	2026-09-23T23:22:59-05:00		Codex: add failing OMNIVISION candidate tests
+298cf8966004747e41caf7365733e2ab93d1bc31	2026-09-23T23:22:41-05:00		Codex: implement point-in-time OMNIVISION falsification
+6c0f73d8bf08d2136d8a186c54d57ff0391c87bf	2026-09-23T23:22:19-05:00		Codex: add failing OMNIVISION falsification tests
+2344c00ebb73738f485706d38e677e5e92ebb84c	2026-09-23T23:21:56-05:00		Codex: implement bounded OMNIVISION novelty screening
+dcf16776dd38e9176979fa3e905284ffbf1c7e96	2026-09-23T23:21:41-05:00		Codex: add failing OMNIVISION novelty tests
+ddf48bd3595448c72be3376e9fc9060157ac72cc	2026-09-23T23:21:21-05:00		Codex: implement OMNIVISION hypothesis forge
+bb583b0be5423db1487214179085f804f1e4f148	2026-09-23T23:21:04-05:00		Codex: add failing OMNIVISION hypothesis tests
+efbdb5034002c6537f743faa25929c698da9bf3a	2026-09-23T23:20:34-05:00		Codex: bridge immutable advisory evidence into OMNIVISION
+bebc37cca7bea806d9a3b102e4cc6549c865c2a0	2026-09-23T23:20:27-05:00		Codex: accept strict immutable world-state evidence
+7af362756dbaf22b0d0ffa72a0e150b2d5d9d503	2026-09-23T23:20:06-05:00		Codex: add failing OMNIVISION ledger bridge tests
+e5eb66e771384456d201a2b8ab2b96c15c1c3f71	2026-09-23T23:19:52-05:00		Codex: add failing advisory world-state tests
+643d5a1c07b59eeea1cbd9a2172d6f69785e21c3	2026-09-23T23:18:48-05:00		Codex: implement OMNIVISION world-event contract
+54c220c0d5c1bf0cfa0295682e071c3de57f13f3	2026-09-23T23:17:29-05:00		Codex: initialize OMNIVISION package
+f51dc797d722354259d4240e6e40f99c747110ce	2026-09-23T23:17:08-05:00		Codex: add failing OMNIVISION contract tests
+80d8e96096c234af6a75ccd80a3467aaaf36abe5	2026-09-23T23:16:04-05:00		Codex: prefer highest-scrutiny subagent execution
+e29f7c2af5fb331a5bf39004f27b33d3ff78ddb2	2026-09-23T23:09:52-05:00		Codex: checkpoint OMNIVISION implementation plan gate
+c15abf14baa1ea3808d93be5462c08e7d7209e55	2026-09-23T23:09:35-05:00		Codex: remove implementation-plan placeholders
+2dc81e7b46974a7b1b7aed158a3a117672b228da	2026-09-23T23:08:59-05:00		Codex: add OMNIVISION foundation implementation plan
+0e69483b50d603c8ea904a91173da3ca76abf858	2026-09-23T23:05:48-05:00		Codex: checkpoint OMNIVISION design review gate
+82e327582b44660049de527c220cf6f871840365	2026-09-23T23:05:32-05:00		Codex: document OMNIVISION federated research mesh design
+b93dccbaf758cfdf8ce5dea04ca7a64a1ecbc91d	2026-09-23T23:04:16-05:00		Codex: require plugin activation at every loop cycle
+864fe293dc534013043bbc392134b66f37da4004	2026-09-23T23:02:49-05:00		Codex: checkpoint OMNIVISION world-state kernel
+1a3f6dad3c42e3c8615f91ce4034bb89d88536d1	2026-09-23T23:02:34-05:00		Codex: test world-state temporal and uncertainty invariants
+98fefe2c0599cd3a552225d689f5697a8720726f	2026-09-23T23:02:32-05:00		Codex: add research-only world-state inference kernel
+617f9f6e503ed94f152b3071ab9b23e677e21627	2026-09-23T23:01:47-05:00		Codex: initialize durable adaptive research loop state
+55b88422b36a52821b4990060468f069359e4ea2	2026-09-23T13:44:06-05:00	 (origin/codex/ml-d9d4db8)	CA: pin AION Parallax research checkpoint and corpus boundary
+20c1f153a21f48fce628a139f5485eff794c76de	2026-09-23T11:27:47-05:00	 (origin/codex/aion-parallax-handoff)	Add AION research handoff and PARALLAX proposal
+e89acba65160be9a1422086db4ea6c902ed1519a	2026-09-23T08:34:21-05:00		CA: record DAEDALUS sibling checkpoint and corpus boundaries
+2d08864d6c732176bf42ab06c22078b2e7ccf5ac	2026-09-23T07:37:44-05:00		CA: add fail-closed native replay evidence screen and stack intake
+90e2c0bb75153735f06205b8b552a57d02c1caaf	2026-09-23T01:19:37-05:00		Audit candidate CSV lineage without qualifying trades
+d0051e972868618ea0697172db523a2971db27ed	2026-09-23T01:13:06-05:00		Harden ML scope and next-bar regime; pin operator checks
+79474e55561a9e41efac2dd8b6c98be2315b5d88	2026-09-22T19:48:42-05:00		Add full artifact replay verification
+f7256df399c70a3d7b958eef37f9824f3d3aba0d	2026-09-22T19:44:56-05:00		Add provenance-checked per-family ML research checkpoint
+007e70189945b8e112904cf92b2b1a12e43792d6	2026-09-22T18:26:55-05:00	 (origin/main)	Create instruction.txt
+f9b9447d9957cccf3c033c2fc72b7cb53f962c4c	2026-09-22T18:13:40-05:00		Create state.json
+227c389f97973485a8b75f129ed2a91ebb92475a	2026-09-22T14:55:51-05:00		Grok (xAI): skip _errors key when writing Schwab quote CSVs
+f488afc16b5e1430ec782b654e895d8536229910	2026-09-22T14:55:24-05:00		Grok (xAI): fact-check — per-symbol quote fetch so one bad /BTCF cannot abort --once
+3b852ec1f5a6ec8e25b20db41df151a103378d1c	2026-09-22T14:53:52-05:00		Grok (xAI): Astra+Opus authorized to pull Schwab Market Data only — not a trading broker
+969545cc15ad7f2b85d82d1eb4222457475c9134	2026-09-22T14:53:16-05:00		Grok (xAI): Schwab poller must not spam HANDOFF_LOG; orders locked unless owner env
+2e86d79f9ffbc9a9c9018377f2ad97b7ec70b6ac	2026-09-22T14:49:24-05:00		Grok (xAI): week-end Astra/Opus instructions — Schwab tokens owner-hard, jobs split
+8c40f98b06c36b6fb9fdf933332ece7c57ad4efe	2026-09-22T14:48:30-05:00		Grok (xAI): Schwab docs, tests, secrets gitignore, plant folders
+130c15b0e2d4587982dff2d15f1361706b3970ab	2026-09-22T14:48:13-05:00		Grok (xAI): read-only Schwab plant feed — quotes to CSV, POST /orders forbidden
+8b5fbed8556d05512bbeb7f50a4a4a9dfb7ade1a	2026-09-22T14:14:45-05:00		Grok (xAI): fix CI — ignore-trade assertion text + tzdata on Windows
+5f9866115c6f65eb795bf349dbf8d905c176bfaf	2026-09-22T14:11:32-05:00		Grok (xAI): audit writer appends HANDOFF_LOG
+6a7a39029de5fd701fd019b1e98cd8ef887f5876	2026-09-22T14:11:03-05:00		Grok (xAI): trainer reports append HANDOFF_LOG
+5f0a9e81f7f34a494cb52ad53e311b623d697ae1	2026-09-22T14:10:42-05:00		Grok (xAI): model_log to HANDOFF_LOG — every Astra/Opus/Grok action appends the repo
+c2b6dfb44e67e3fbd006a7be818bf1e41577ea39	2026-09-22T14:08:39-05:00		Grok (xAI): owner override — Astra/Opus may exceed Grok spec when they judge it necessary
+a2321d486d17119c6c8c68b93a47adca2c22aeaa	2026-09-22T14:08:06-05:00		Grok (xAI): unzip/docs/GOAL/xgb stub all read spec.py
+364ac24d1990d24a9da00dbe13ee6c38d69d240b	2026-09-22T14:07:28-05:00		Grok (xAI): wire spec.py through trainers, audit, unzip, ignore, docs
+a4c64ef8e71b6c2903224536a39d1a875f43a852	2026-09-22T14:06:03-05:00		Grok (xAI): ORDER reads SPEC first
+2b01afe1e36ff42c110d8952e55f6e05fff2b9e0	2026-09-22T14:05:51-05:00		Grok (xAI): SPEC is the source of truth; test feature keys; point ORDER at SPEC
+f0830e7b3d164d23a9fe35ed406452e0f0053a53	2026-09-22T14:05:36-05:00		Grok (xAI): freeze SPEC — features, XGB params, walk-forward, swap JSON, artifacts
+6649d2d56c2763916df40e2a0e32504647b49c90	2026-09-22T13:57:52-05:00		Grok (xAI): Astra/Opus must push every change; Grok reads repo as the handoff
+d9d4db84babab5b5da1f988635ed784365af8486	2026-09-22T13:43:09-05:00		Grok (xAI): Astra unzips six batches before fitting XGB
+9b6ca64d845835b68f18a70be0055715f6dc485e	2026-09-22T13:42:42-05:00		Grok (xAI): Astra unzip of the six newest multi-level-csv batches
+20869ef3f81268915f70b02072f35c3aece6b683	2026-09-22T13:39:55-05:00		Grok (xAI): csv_access test + Astra pointer to unzipped roots
+ea335230bf66c8d9a25a36ede3e3b9677bd87662	2026-09-22T13:39:45-05:00		Grok (xAI): plant folders for unzipped execution + candidate CSVs
+5aa626ccfd65e4525e4c8b6989fba68c535b8cb6	2026-09-22T13:39:32-05:00		Grok (xAI): CSV access roots so Astra can use unzipped files without HistoryHub ingest
+1308a5cd3787a2dc7f2ad88a408d31d7b46766ab	2026-09-22T13:38:40-05:00		Grok (xAI): --require-xgb CLI, ignore-trade audit tests, tighten ASTRA_DO_NOT
+4772508086d6ed12e9b4648146f5a2baca36415e	2026-09-22T13:38:14-05:00		Grok (xAI): last-scan fixes — audit guards, Opus inspect-only, xgboost extra
+6d2995001c2ce7b3506cda6618838e3ca1a784c1	2026-09-22T13:37:18-05:00		Grok (xAI): handoff points at ASTRA_ORDER / MODELS_GROK first
+3257ed8f1611bcf37cbeda65e937df299b6d6d2c	2026-09-22T13:37:04-05:00		Grok (xAI): GOAL filenames match MODELS_GROK xgb outputs
+a20d97daef378722793e537eb356cac828d87076	2026-09-22T13:35:36-05:00		Grok (xAI): order step 2 is MODELS_GROK — XGBoost primary
+f132b845e7e7a018416aba6f142ea68719f4acdc	2026-09-22T13:35:29-05:00		Grok (xAI): Astra model stack — XGBoost first, not the logit stub
+0e9811e2dd1a466923011f43225069473b83844a	2026-09-22T13:34:43-05:00		Grok (xAI): trainers doc — Astra fits these before candidate audit
+513c1fd393358dc8551577109721a6d7d349fd75	2026-09-22T13:34:34-05:00		Grok (xAI): GOAL points Astra at ML-before-candidates order
+74494023914b6cbe2655f2cdc7168fa197f69c92	2026-09-22T13:34:24-05:00		Grok (xAI): Astra builds ML first — candidates only after trainers exist
+b7e63c7e1b28bf6113c36afc749480e0b5495044	2026-09-22T13:32:46-05:00		Grok (xAI): never trade or start MBT, SOL, ETHUSD
+345dbbf86f1c1f6507dead8f27d633d27323f4c7	2026-09-22T13:32:32-05:00		Grok (xAI): drop ETH execution complex — owner ignore ETHUSD
+681c66494680f42f0c50d88089524bedcc3f6b0f	2026-09-22T13:32:23-05:00		Grok (xAI): trainers skip MBT/SOL/ETH — owner do-not-trade
+756ad7b7c8b757ae7032bd9fcc39e9d2f10f3fd1	2026-09-22T13:31:58-05:00		Grok (xAI): owner ignore — MBT, SOL, ETH/ETHUSD are not traded and must not appear in the engine
+6aacb2b08b0cef2c1c571e7cc1fa8c3a97c9583c	2026-09-22T13:29:36-05:00		Grok (xAI): tests for aliases/sort/journal-csv + expanded GROK map
+94e7d0912d86567f6e91e0bdf2f5af69b73ca115	2026-09-22T13:28:59-05:00		Grok (xAI): fix family aliases, sort OHLC, scan any journal table, restore GROK map
+bd7652b689605ee79a349941da3cd5b72ad0f2f9	2026-09-22T13:26:08-05:00		Grok (xAI): assert event FOMC seed includes engine 2026-10-28
+4da1678ee43dddcb3e0597297d6a9fde3a60b707	2026-09-22T13:25:54-05:00		Grok (xAI): keep event example calendars trackable under history/events
+570db757bf99bfb9b19d64ed82b44bffda86194d	2026-09-22T13:25:44-05:00		Grok (xAI): FOMC seed is Inputs().fomc_dates — stop drifting from the engine list
+1ae02ebbee67d1e597ae33289e658d7bca777391	2026-09-22T13:23:07-05:00		Grok (xAI): audit/failure tests + GOAL finished-software list
+77b925775e777b0a2e808b35dbafa63d3b3fcf80	2026-09-22T13:22:50-05:00		Grok (xAI): finish candidate audit, failure brain, FOMC flags on trainers
+e041f8f005f2ae2559d662a6ea039987ebbd068e	2026-09-22T13:21:01-05:00		Grok (xAI): fix FOMC unix time in event tests
+d1321d5ddc102af20488d18e08e29f4693784dcf	2026-09-22T13:20:36-05:00		Grok (xAI): event socket for candidate testing — FOMC seed + owner calendar drop, no news scrape
+63a21df0f99399450803223d90f498643e3c0f78	2026-09-22T13:17:19-05:00		Grok (xAI): durable GOAL spec so the live Ultraglobal can be deleted
+75b1b0e84fe7ec8a19dac13d9238e9decfd27e91	2026-09-22T13:15:11-05:00		Grok (xAI): note trainer tests, icarus-train, BATS drop quarantine
+2997b32380310efd220cbfbc311019763afae08e	2026-09-22T13:14:55-05:00		Grok (xAI): quarantine BATS candidate drops, scale trainer logit, add icarus-train script
+3edf5e2937fa6e73d4528726aa932668a41cf2d0	2026-09-22T13:12:05-05:00		Grok (xAI): ASTRA_DO_NOT + trainer pytest — close gaps, do not hook Pulse
+7dfb7c0cb2675b0f93223a1e59c8f2985d8d57b3	2026-09-22T13:06:16-05:00		Grok (xAI): restore full ownership map and append 2026-09-22 trainer/universe files
+2a2d5cc5d964915b3305b4193e7dfc1a1e8a2e91	2026-09-22T13:06:03-05:00		Grok (xAI): map 2026-09-22 candidate/universe/trainer files so Astra does not treat them as unknown
+e27aa76cda3e173c9d6429e357181271ded0a4b3	2026-09-22T13:02:43-05:00		Grok (xAI): trainer dataset, logit, run — labels stay on each family's own index
+9c831be6231beb2b871d8cf1b15fa5352c5b24cb	2026-09-22T13:01:46-05:00		Grok (xAI): separate trainer families for clock/renko/range/tick/session — do not mix indexes
+9494097bd6f5e5075a99d6b2ea86b38271488334	2026-09-22T12:57:48-05:00		Grok (xAI): engine-wide universe cog for every REGISTRY asset (NQ ES YM GC SI PL PA BTCF MBT BTC ETH SOL)
+eb64c3ad5ffcfbf3a45032afd184e1eb62a99371	2026-09-22T12:53:08-05:00		Grok (xAI): candidate cog — six equity batches feed Opus audit / Astra ML, not HistoryHub
+90ea0e7c2fb336ac15d6282809765aaf8109f4c6	2026-09-21T11:18:22-05:00		Fix /status/public empty reply — dashboard ENGINE UNREACHABLE
+3e66d01b7c06dc6bbc33230cf2cbf5e058c7787f	2026-09-21T16:17:01Z	 (origin/fix/status-public)	Fix /status/public empty reply (dashboard ENGINE UNREACHABLE).
+a8f2f6bf2887e6d0f402a2521a7dd7493d87d141	2026-09-21T10:35:31-05:00		Field Agent dashboard tab — copy only, never arms a broker
+157cdb36f8441f056f6096c4525a517c9c40a995	2026-09-21T08:30:08Z	 (origin/field-agent)	Field Manual briefing API + RTH clock
+1489466c8244bf4c8abfc54f36023df3b3d3bbc9	2026-09-21T08:25:22Z		Field Agent dashboard tab (paper ≠ broker)
+d522a9f9d282209a1e9d94e68909e68b03687824	2026-09-21T03:05:29-05:00		Go-live integrity panel (paper ≠ broker) (#13)
+4dd85198408ea9bdbd8138ee58399e825958671d	2026-09-21T07:00:18Z	 (origin/golive-panel)	Go-live integrity panel (paper ≠ broker)
+68c0e483687d0258378d009335b7293717e5d34a	2026-09-20T21:57:43-05:00		COMMANDS.md — dummy list of every PC command given tonight (#12)
+68122779ee31470835cea321632e61f55551aaf6	2026-09-21T02:57:34Z	 (origin/commands-list)	COMMANDS.md — dummy list of every PC command given tonight
+35a55ad96ef6a069e64a361f01ad18928592f3ef	2026-09-20T21:54:10-05:00		Read-only paper export; kill background orphans (#11)
+89fb309d8c2bd4fc7e05bf70873ad99238d5ff9c	2026-09-21T02:53:59Z	 (origin/paper-ro)	Read-only paper export; kill background orphans
+1b15034beb24cc5502e343b2decaff6de38a4ead	2026-09-20T21:23:12-05:00		Paper-book CSV export; already-running does not switch feeds (#10)
+7783b50f53aa8b5046724398950722c15e15ba46	2026-09-21T02:22:55Z	 (origin/paper-export)	Paper-book CSV export; already-running does not switch feeds
+ee7223ce179a39e147a604fa2c20d40a3db104a5	2026-09-20T21:19:15-05:00		Save-spot: Alpaca, TradersPost/PickMyTrade, Plus CSV; Yahoo launcher (#9)
+9474234d48c5f456545feb20a02bfe266bd0cc81	2026-09-21T02:18:58Z	 (origin/paid-next)	Save-spot: Alpaca, TradersPost/PickMyTrade, Plus CSV; Yahoo launcher
+4eac56f14d41dc8f3e37c52cdef056fa3c297bd0	2026-09-20T20:56:44-05:00		Fix start-plant.ps1 for Windows PowerShell 5.1 (#8)
+5adc1bf3659913788b1c7d746a37e78e44777753	2026-09-21T01:56:30Z	 (origin/plant-ps1-hotfix)	Fix start-plant.ps1 for Windows PowerShell 5.1
+19d96fa0741fd4bf903051db018b6a8c8f0cb994	2026-09-20T20:46:40-05:00		Fix Windows plant: no Ctrl+C liveness, real TV filenames, python.exe -3 (#7)
+f5944b87ff0b338e33a2597f30925bf014b21118	2026-09-21T01:46:27Z	 (origin/plant-p0)	Fix Windows plant: no Ctrl+C liveness, real TV filenames, python.exe -3
+6c61c012b27447217138a7845d39804ef3322b82	2026-09-20T20:36:23-05:00		Fix Windows plant launch, pull Downloads CSVs, UTF-16 ingest (#6)
+144e35bde43adab0b27fa6453ca1f8820860d06f	2026-09-21T01:36:10Z	 (origin/plant-finish)	Fix Windows plant launch, pull Downloads CSVs, UTF-16 ingest
+2d0c3741e3027cac5963d20d1e5af07efe6dad15	2026-09-20T20:21:27-05:00		Windows one-shot plant + merge-on-ingest (#5)
+5a2836b42dd653df67cc1b5d92315aa0c12b9acc	2026-09-21T01:20:43Z	 (origin/plant-windows)	Windows one-shot plant + merge-on-ingest
+44c82d59ac23f5eabdc3570e0d395424f7ded6ef	2026-09-20T17:58:40-05:00		Local paper-trading plant: FileFeed-offline, drop ingest, supervisor (#4)
+12fc21df6191297f4a83ade80b2b4bc0b9c5dc89	2026-09-20T22:58:22Z	 (origin/plant)	Local paper-trading plant: FileFeed-offline, drop ingest, supervisor
+f0c007b7a3cd0d38ae03606eae0e02e0acd454bb	2026-09-20T17:39:20-05:00		Fill remaining free gaps: FOMC 2027, bridge tests, Unix launcher
+4a7a916bece8bfb1193ab9f086bc2798fed6a07f	2026-09-20T22:39:03Z	 (origin/free-gaps-2)	Fill remaining free gaps: FOMC 2027, bridge tests, Unix launcher
+9b3c5f162876685c7506b5a65f51265a2641df8a	2026-09-20T17:33:04-05:00		Sign Grok (xAI) on every free-gap surface
+b78d21a53996422db8dc8831478ff5bfd5417df2	2026-09-20T22:32:48Z	 (origin/grok-sign)	Sign Grok (xAI) on every free-gap surface
+df89e8bac412f21f12943fb3166348ca3e83d2ff	2026-09-20T17:29:41-05:00		Fill free gaps: TV chart ingest, doctor, CI, hygiene
+26c757febd89d290a157ac8d48bb140173649436	2026-09-20T22:27:56Z	 (origin/free-gaps)	Fill free gaps: TV chart ingest, doctor, CI, hygiene
+312ff25855b6f301fd6c526fdf916d26db09216d	2026-09-20T02:54:55-05:00		Astra: Icarus engine, tests, bridge

@@ -1,0 +1,13 @@
+{
+  "version":"2026-09-24",
+  "must_reverify_at_runtime":true,
+  "retail_web_api":{"primary":"client_portal_gateway","requires_authenticated_brokerage_session":true},
+  "tws_api":{"transport":"tcp_socket","requires_tws_or_ib_gateway":true},
+  "known_constraints":[
+    {"key":"single_brokerage_session_per_username","value":true,"source_date":"2026-09-24"},
+    {"key":"marketdata_history_requests_per_second","value":10,"source_date":"2026-09-09"},
+    {"key":"marketdata_history_requests_per_minute","value":50,"source_date":"2026-09-09"},
+    {"key":"websocket_smd_refresh_minutes","value":10,"source_date":"2026-04-14"}
+  ],
+  "policy":{"credentials_in_package":false,"read_access_implies_trade_authority":false,"explicit_confirmation_for_orders":true}
+}

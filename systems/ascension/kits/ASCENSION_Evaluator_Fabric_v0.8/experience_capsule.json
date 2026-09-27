@@ -1,0 +1,15 @@
+{
+  "cycle_id": "ascension-cycle-019",
+  "observation": "Legacy v0.6 inclusion verification did not bind the declared leaf index to proof orientation; valid proofs could be relabeled to any in-range index.",
+  "prior_belief": "v0.6 inclusion was a useful baseline but its proof geometry was less strict than v0.7 consistency semantics.",
+  "intervention": "Added RFC 9162 index/size-derived proof orientation and exact geometry verification as an isolated v0.8 layer.",
+  "measured_outcome": "8,256 valid inclusion proofs passed; 3,500 property attacks and 1,500 hostile attacks rejected; 42/42 legacy false-index relabels rejected by v0.8.",
+  "evidence_quality": "Strong local/RFC-aligned, synthetic; external sibling transfer absent.",
+  "confidence_delta": "Increased confidence in inclusion index/geometry binding only; no change to external trust or semantic truth confidence.",
+  "failure_or_surprise": "v0.6 accepted every false in-range index relabel in the seven-leaf probe.",
+  "reusable_lesson": "A verifier must derive path orientation from authenticated structural coordinates; range-checking an index is not the same as binding the proof to that index.",
+  "invalidated_assumption": "A valid root reconstruction plus an in-range declared index is sufficient proof of position.",
+  "retry_condition": "Re-run if hash algorithm, proof schema, tree shape, or adapter backend changes.",
+  "expiration_or_revalidation_condition": "Real signed sibling evidence or RFC/implementation discrepancy appears.",
+  "next_experiment": "Version-pinned adapter upgrade or real-manifest end-to-end transfer, whichever becomes available first."
+}

@@ -1,0 +1,33 @@
+# Grok (xAI) — 2026-09-20. Whole file. pytest on tests_engine. No paid-feed secrets.
+name: tests
+on:
+  push:
+  pull_request:
+jobs:
+  engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[dev]"
+      - run: python -m pytest tests_engine -q
+        env:
+          TZ: UTC
+      - run: python -m icarus_plant --root /tmp/icarus-plant-ci setup
+      - run: python -m icarus_engine.cli doctor --json
+        env:
+          TZ: UTC
+  engine-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[dev]"
+      - run: python -m pytest tests_engine/test_plant.py tests_engine/test_bars.py tests_engine/test_doctor.py -q
+        env:
+          TZ: UTC
+      - run: python -m icarus_plant --root ${{ runner.temp }}/icarus-plant-ci setup

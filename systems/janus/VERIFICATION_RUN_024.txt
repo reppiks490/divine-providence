@@ -1,0 +1,6 @@
+JANUS ∞ Run 024 verification
+Inherited Run 023 baseline: 89/89 passed before mutation.
+Run 024 final: 93/93 passed.
+python -m compileall -q src tests: PASS.
+New coverage: prepared-promotion crash abort/recovery; successful committed journal + idempotent recovery; bounded clock-skew lease semantics; content-addressed recovery certificate.
+Live repository reconciliation: NOT PERFORMED / authoritative checkout unavailable.

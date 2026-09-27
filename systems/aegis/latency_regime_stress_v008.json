@@ -1,0 +1,40 @@
+{
+  "experiment_id": "ACF-EXP-NQ-LATENCY-004",
+  "summary": {
+    "incumbent": {
+      "latency1": {
+        "LOW": -15.3036,
+        "NORMAL": 2.1408,
+        "HIGH": -16.5
+      },
+      "latency2": {
+        "LOW": -29.8654,
+        "NORMAL": -9.3902,
+        "HIGH": -65.6667
+      },
+      "latency3": {
+        "LOW": -60.0481,
+        "NORMAL": -21.8359,
+        "HIGH": -147.8333
+      }
+    },
+    "challenger": {
+      "latency1": {
+        "LOW": -68.2917,
+        "NORMAL": -0.2321,
+        "HIGH": -17.75
+      },
+      "latency2": {
+        "LOW": -75.625,
+        "NORMAL": 11.8929,
+        "HIGH": -55.5
+      },
+      "latency3": {
+        "LOW": -150.2083,
+        "NORMAL": -27.6786,
+        "HIGH": -411.5
+      }
+    }
+  },
+  "interpretation": "Neither candidate is latency-robust; isolated positive cells are not promotion evidence."
+}

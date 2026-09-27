@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Signed Storage-State Certificate v1",
+  "type": "object",
+  "required": ["format","session_id","project_state_digest","storage_state","storage_state_digest","fence_epoch","receipt_head_digest","recovery_certificate_digest","forensic_root_link_digest","forensic_dag_digest","quarantine_evidence_digests","signer_authority","created_at","certificate_digest","signature"],
+  "properties": {
+    "format": {"const": "janus-storage-state-certificate-v1"},
+    "session_id": {"type": "string", "minLength": 1},
+    "project_state_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "storage_state_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "fence_epoch": {"type": "integer", "minimum": 1},
+    "receipt_head_digest": {"type": ["string","null"], "pattern": "^[0-9a-f]{64}$"},
+    "recovery_certificate_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "forensic_root_link_digest": {"type": ["string","null"], "pattern": "^[0-9a-f]{64}$"},
+    "forensic_dag_digest": {"type": ["string","null"], "pattern": "^[0-9a-f]{64}$"},
+    "quarantine_evidence_digests": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "signer_authority": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "minLength": 1},
+    "certificate_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "storage_state": {
+      "type": "object",
+      "required": ["format","main_db","wal","shm"],
+      "properties": {
+        "format": {"const": "janus-portable-storage-state-v1"},
+        "main_db": {"type": "object", "required": ["exists","sha256","integrity"]},
+        "wal": {"type": "object", "required": ["exists","classification"]},
+        "shm": {"type": "object", "required": ["exists","classification"]}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["algorithm","statement","signature_b64"],
+      "properties": {
+        "algorithm": {"const": "Ed25519"},
+        "statement": {"type": "object"},
+        "signature_b64": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

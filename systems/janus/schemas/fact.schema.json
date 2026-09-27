@@ -1,0 +1,19 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"JANUS Project Fact",
+  "type":"object",
+  "required":["subject","predicate","value","valid_from","known_at","source"],
+  "properties":{
+    "subject":{"type":"string"},
+    "predicate":{"type":"string"},
+    "value":{},
+    "valid_from":{"type":"string","format":"date-time"},
+    "valid_to":{"type":["string","null"],"format":"date-time"},
+    "known_at":{"type":"string","format":"date-time"},
+    "source":{"type":"string"},
+    "source_hash":{"type":["string","null"]},
+    "confidence":{"type":"string"},
+    "authority":{"type":["string","null"]},
+    "supersedes":{"type":["string","null"]}
+  }
+}

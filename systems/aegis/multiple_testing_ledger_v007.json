@@ -1,0 +1,22 @@
+[
+  {
+    "candidate_id": "NQCM-LIQ-SWEEP-001",
+    "family": "liquidity_sweep",
+    "experiment_id": "ACF-EXP-NQ-LIQUIDITY-WF-002",
+    "raw_p": 0.7450509898020395,
+    "bonferroni_p": 1.0,
+    "metric": "pooled validation mean net points",
+    "corpus_id": "ACF-NQ-CONT-MASSIVE-VOLROLL-1H-20250902-20260925-v007",
+    "status": "NO_EDGE_EVIDENCE"
+  },
+  {
+    "candidate_id": "EXT-SESSION-VWAP-VOL-SWEEP-001",
+    "family": "liquidity_sweep",
+    "experiment_id": "ACF-EXP-NQ-LIQUIDITY-WF-002",
+    "raw_p": 0.4215156968606279,
+    "bonferroni_p": 0.8430313937212558,
+    "metric": "pooled validation mean net points",
+    "corpus_id": "ACF-NQ-CONT-MASSIVE-VOLROLL-1H-20250902-20260925-v007",
+    "status": "NO_EDGE_EVIDENCE"
+  }
+]

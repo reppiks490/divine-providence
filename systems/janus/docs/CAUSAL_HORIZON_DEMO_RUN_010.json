@@ -1,0 +1,114 @@
+{
+  "affected_fact_ids": [
+    "2b782c6a1f9d13c8413da03365a31b692c02c8b3f6661a630cd520ae8115b017",
+    "5e63fbe7726853c59cbaf1bb78ffa54cdc196135fa689ff19f1ecaa5bc5adb6f"
+  ],
+  "affected_subjects": [
+    "X.mode"
+  ],
+  "affected_validity_intervals": [
+    {
+      "close_fact_id": "2b782c6a1f9d13c8413da03365a31b692c02c8b3f6661a630cd520ae8115b017",
+      "decision_id": "71dfae1ec8de49618321935de0d9733a57f87bcd719bd1dd8d2617066b2c1747",
+      "end": null,
+      "predicate": "state",
+      "start": "2026-01-10T00:00:00Z",
+      "subject": "X.mode",
+      "successor_fact_id": "5e63fbe7726853c59cbaf1bb78ffa54cdc196135fa689ff19f1ecaa5bc5adb6f"
+    }
+  ],
+  "blast_radius": [
+    "Y",
+    "Z"
+  ],
+  "certificate": {
+    "deterministic": true,
+    "digest": "cc4cb8739f1c8fdeedc213091b842cd942186d309ec8db3e63e7dc6b3f5ed36f",
+    "kind": "janus-causal-horizon-certificate-v1",
+    "mutation_applied": false
+  },
+  "change_id": "p1",
+  "conflict_deltas": [
+    {
+      "after_resolution": null,
+      "before_resolution": {
+        "reason": "authority_policy_missing",
+        "status": "quarantined"
+      },
+      "change": "conflict_resolved",
+      "fact_ids": [
+        "2b782c6a1f9d13c8413da03365a31b692c02c8b3f6661a630cd520ae8115b017",
+        "5e63fbe7726853c59cbaf1bb78ffa54cdc196135fa689ff19f1ecaa5bc5adb6f"
+      ],
+      "predicate": "state",
+      "subject": "X.mode",
+      "transition": {
+        "event_status": "approved",
+        "id": "71dfae1ec8de49618321935de0d9733a57f87bcd719bd1dd8d2617066b2c1747",
+        "kind": "normalization_decision",
+        "known_at": "2026-01-20T00:00:00Z"
+      },
+      "valid_at": "2026-01-10T00:00:00Z"
+    },
+    {
+      "after_resolution": {
+        "reason": "authority_policy_missing",
+        "status": "quarantined"
+      },
+      "before_resolution": null,
+      "change": "conflict_reappeared",
+      "fact_ids": [
+        "2b782c6a1f9d13c8413da03365a31b692c02c8b3f6661a630cd520ae8115b017",
+        "5e63fbe7726853c59cbaf1bb78ffa54cdc196135fa689ff19f1ecaa5bc5adb6f"
+      ],
+      "predicate": "state",
+      "subject": "X.mode",
+      "transition": {
+        "event_status": "revoked",
+        "id": "ad0d090e187bc843eb8a9f9705e3bbe69cb08205078cd013ebaf44c68756ca5f",
+        "kind": "proof_lifecycle",
+        "known_at": "2026-01-25T00:00:00Z"
+      },
+      "valid_at": "2026-01-10T00:00:00Z"
+    }
+  ],
+  "exposure": {
+    "band": "critical",
+    "factors": {
+      "affected_subject_predicates": 1,
+      "changed_conflict_boundaries": 2,
+      "downstream_components": 2,
+      "normalization_decisions": 1
+    },
+    "formula": "min(100,25*changed_conflict_boundaries+10*affected_subject_predicates+5*downstream_components+5*normalization_decisions)",
+    "score": 75
+  },
+  "knowledge_transitions": [
+    {
+      "after_known_at": "2026-01-20T00:00:00Z",
+      "before_known_at": "2026-01-19T23:59:59.999999Z",
+      "event_status": "approved",
+      "id": "71dfae1ec8de49618321935de0d9733a57f87bcd719bd1dd8d2617066b2c1747",
+      "kind": "normalization_decision",
+      "known_at": "2026-01-20T00:00:00Z"
+    },
+    {
+      "after_known_at": "2026-01-25T00:00:00Z",
+      "before_known_at": "2026-01-24T23:59:59.999999Z",
+      "change_id": "p1",
+      "event_status": "revoked",
+      "id": "ad0d090e187bc843eb8a9f9705e3bbe69cb08205078cd013ebaf44c68756ca5f",
+      "kind": "proof_lifecycle",
+      "known_at": "2026-01-25T00:00:00Z"
+    }
+  ],
+  "normalization_decision_ids": [
+    "71dfae1ec8de49618321935de0d9733a57f87bcd719bd1dd8d2617066b2c1747"
+  ],
+  "proof_chain": [
+    "p1"
+  ],
+  "replay_valid_at": [
+    "2026-01-10T00:00:00Z"
+  ]
+}

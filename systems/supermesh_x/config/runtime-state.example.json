@@ -1,0 +1,15 @@
+{
+  "observed_at": "2026-09-24T19:30:00Z",
+  "providers": {
+    "twelve-data": {"state": "ready", "health": 0.98},
+    "tickerlayer": {"state": "ready", "health": 0.96},
+    "factorweave": {"state": "ready", "health": 0.95},
+    "datablue": {"state": "ready", "health": 0.94},
+    "coingecko": {"state": "ready", "health": 0.95},
+    "blockscout": {
+      "state": "preflight_required",
+      "health": 0.95,
+      "preflight": {"required": true, "kind": "session_unlock", "session_scoped": true}
+    }
+  }
+}

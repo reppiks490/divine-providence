@@ -1,0 +1,336 @@
+{
+  "version": "0.7.0",
+  "policy": {
+    "provider_independent": true,
+    "runtime_discovery": true,
+    "never_assume_connected": true,
+    "separate_read_write_authority": true
+  },
+  "providers": [
+    {
+      "id": "deep-research",
+      "mode": "runtime_skill",
+      "priority": 100,
+      "capabilities": [
+        "research.deep",
+        "research.synthesis"
+      ]
+    },
+    {
+      "id": "exa",
+      "mode": "plugin",
+      "priority": 94,
+      "capabilities": [
+        "research.search",
+        "research.fetch",
+        "code.docs"
+      ]
+    },
+    {
+      "id": "tavily",
+      "mode": "plugin",
+      "priority": 94,
+      "capabilities": [
+        "research.search",
+        "research.crawl",
+        "research.extract"
+      ]
+    },
+    {
+      "id": "firecrawl",
+      "mode": "plugin",
+      "priority": 94,
+      "capabilities": [
+        "research.search",
+        "research.crawl",
+        "research.extract",
+        "code.docs",
+        "research.monitor"
+      ]
+    },
+    {
+      "id": "parallel-search",
+      "mode": "plugin",
+      "priority": 90,
+      "capabilities": [
+        "research.search",
+        "research.fetch"
+      ]
+    },
+    {
+      "id": "consensus",
+      "mode": "plugin",
+      "priority": 91,
+      "capabilities": [
+        "research.academic",
+        "research.literature"
+      ]
+    },
+    {
+      "id": "scite",
+      "mode": "plugin",
+      "priority": 92,
+      "capabilities": [
+        "research.academic",
+        "research.citations",
+        "research.literature"
+      ]
+    },
+    {
+      "id": "datablue",
+      "mode": "plugin",
+      "priority": 88,
+      "capabilities": [
+        "data.web",
+        "data.structured",
+        "research.search",
+        "research.crawl",
+        "media.youtube"
+      ]
+    },
+    {
+      "id": "twelve-data",
+      "mode": "plugin",
+      "priority": 95,
+      "capabilities": [
+        "market.quote",
+        "market.history",
+        "market.technical",
+        "market.fundamentals",
+        "market.news",
+        "market.reference"
+      ]
+    },
+    {
+      "id": "tickerlayer",
+      "mode": "plugin",
+      "priority": 93,
+      "capabilities": [
+        "market.quote",
+        "market.history",
+        "market.sessions",
+        "market.rates"
+      ]
+    },
+    {
+      "id": "factorweave",
+      "mode": "plugin",
+      "priority": 95,
+      "capabilities": [
+        "market.factors",
+        "market.regime",
+        "market.similarity",
+        "market.risk"
+      ]
+    },
+    {
+      "id": "zacks",
+      "mode": "plugin",
+      "priority": 92,
+      "capabilities": [
+        "market.fundamentals",
+        "market.research",
+        "market.news",
+        "market.estimates"
+      ]
+    },
+    {
+      "id": "coingecko",
+      "mode": "plugin",
+      "priority": 92,
+      "capabilities": [
+        "crypto.market",
+        "crypto.news",
+        "crypto.history"
+      ]
+    },
+    {
+      "id": "blockscout",
+      "mode": "plugin",
+      "priority": 92,
+      "capabilities": [
+        "crypto.onchain",
+        "blockchain.contracts",
+        "blockchain.wallets"
+      ]
+    },
+    {
+      "id": "exoscope",
+      "mode": "plugin",
+      "priority": 84,
+      "capabilities": [
+        "crypto.market",
+        "crypto.chart"
+      ]
+    },
+    {
+      "id": "economist-graphs",
+      "mode": "plugin",
+      "priority": 70,
+      "capabilities": [
+        "data.graphs",
+        "research.politics_data"
+      ]
+    },
+    {
+      "id": "omgskills",
+      "mode": "plugin",
+      "priority": 80,
+      "capabilities": [
+        "skills.discover"
+      ]
+    },
+    {
+      "id": "nvidia-skills",
+      "mode": "skill",
+      "priority": 85,
+      "capabilities": [
+        "gpu.nvidia",
+        "skills.discover"
+      ]
+    },
+    {
+      "id": "superpowers",
+      "mode": "skill",
+      "priority": 96,
+      "capabilities": [
+        "code.plan",
+        "code.tdd",
+        "evidence.verify"
+      ]
+    },
+    {
+      "id": "astral-orchestrator",
+      "mode": "skill",
+      "priority": 92,
+      "capabilities": [
+        "code.orchestrate",
+        "agents.route"
+      ]
+    },
+    {
+      "id": "codex-coordinator",
+      "mode": "skill",
+      "priority": 92,
+      "capabilities": [
+        "code.orchestrate",
+        "repo.coordinate"
+      ]
+    },
+    {
+      "id": "baton-pass",
+      "mode": "skill",
+      "priority": 88,
+      "capabilities": [
+        "code.handoff",
+        "state.handoff"
+      ]
+    },
+    {
+      "id": "akinator",
+      "mode": "skill",
+      "priority": 86,
+      "capabilities": [
+        "repo.intelligence",
+        "code.repo"
+      ]
+    },
+    {
+      "id": "founder-pulse",
+      "mode": "skill",
+      "priority": 82,
+      "capabilities": [
+        "repo.requirements",
+        "product.operations"
+      ]
+    },
+    {
+      "id": "youtube-conversation",
+      "mode": "skill",
+      "priority": 84,
+      "capabilities": [
+        "media.youtube",
+        "study.learn"
+      ]
+    },
+    {
+      "id": "study",
+      "mode": "runtime_skill",
+      "priority": 80,
+      "capabilities": [
+        "study.learn",
+        "study.quiz"
+      ]
+    },
+    {
+      "id": "hey-traders-quant",
+      "mode": "skill",
+      "priority": 88,
+      "capabilities": [
+        "market.quant",
+        "market.strategy"
+      ]
+    },
+    {
+      "id": "interactive-brokers",
+      "mode": "external_authorized_connector",
+      "priority": 99,
+      "capabilities": [
+        "broker.market_data",
+        "broker.portfolio",
+        "broker.orders_read",
+        "broker.orders_write",
+        "market.quote",
+        "market.history"
+      ]
+    },
+    {
+      "id": "substack",
+      "mode": "public_or_authorized_external",
+      "priority": 82,
+      "capabilities": [
+        "research.substack",
+        "research.newsletters",
+        "research.author_graph"
+      ]
+    },
+    {
+      "id": "forex-factory",
+      "mode": "public_web_export",
+      "priority": 90,
+      "capabilities": [
+        "market.macro.forex_factory",
+        "market.calendar",
+        "market.macro"
+      ]
+    },
+    {
+      "id": "gmail",
+      "mode": "runtime_authorized_connector",
+      "priority": 91,
+      "capabilities": [
+        "communications.email.search",
+        "communications.email.thread",
+        "communications.email.attachment",
+        "research.newsletter.private",
+        "alerts.email.market_event"
+      ],
+      "privacy_class": "user_authorized_private"
+    },
+    {
+      "id": "finances",
+      "mode": "runtime_authorized_connector",
+      "priority": 96,
+      "capabilities": [
+        "finance.accounts",
+        "finance.transactions",
+        "finance.watchlist",
+        "portfolio.holdings",
+        "portfolio.allocation",
+        "portfolio.event_impact",
+        "portfolio.sync_state"
+      ],
+      "privacy_class": "user_authorized_private"
+    }
+  ]
+}

@@ -1,0 +1,465 @@
+ICARUS ECOSYSTEM
+COMPLETE OPUS MASTER HANDOFF
+Single-file recovered archive • Deep-scan revision • Snapshot 2026-09-26
+System builds • loops • artifacts • tests • hashes • architecture • blockers • current/recent work
+
+COMPLETENESS STATEMENT — This is the most exhaustive single-file reconstruction produced from the accessible prior-chat context, Library artifacts, versioned state capsules, checkpoint ZIPs, and recovered Git bundles available during this deep-scan pass. It is NOT possible to prove that inaccessible/deleted/unindexed chat turns, unavailable remote repository objects, or unexposed connector data are included. Newly recovered durable artifacts supersede older conversational status wherever they conflict. Remaining gaps are explicitly marked rather than guessed.
+
+
+1. Executive master state
+ICARUS is an evidence-oriented system-of-systems. The dominant architectural principle across the recovered work is strict ownership isolation: subsystems may exchange proof-carrying handoffs, but they must not silently absorb sibling authority, overwrite sibling state, or treat local/offline success as live adoption.
+Recovered integration direction:
+NEXUS  →  JANUS  →  AEGIS  →  VECTOR  →  ASCENSION  →  SuperMesh-X
+Infrastructure supplies persistence/recovery; MASTER LOOP GOVERNOR coordinates active work; Central Orchestration reconciles proof-carrying handoffs.
+Core proof discipline: BUILT ≠ VERIFIED ≠ READY_TO_COMMIT.
+Engineering tests do not prove trading edge, profitability, causality, or production fitness.
+Protected holdouts, temporal causality, provenance, deterministic replay, and fail-closed behavior are non-negotiable.
+Passing CI on an open/draft PR does not mean the code is merged or canonical.
+Local artifacts and Drive packages are evidence, but are not substitutes for authoritative repository adoption.
+Paused loops are preserved states, not deletions.
+2. System inventory and latest recovered status
+System | Recovered role | Latest recovered state | Evidence strength | Primary blocker / next step
+MASTER LOOP GOVERNOR | Worker allocation, evidence gates, rotation, readiness qualification | Recovered fixed/rotating topology; later worker sets changed as systems advanced | Strong design + status artifacts | Continue evidence-driven allocation; never infer completion from scheduler runs
+SuperMesh-X | Canonical provider/tool/model/capability mesh; runtime/control plane | Latest durable artifact recovered: v3.7.0 Cycle 7 FINAL2, 351/351 full regression, 60 focused trust/gossip; later v4.0 READY_TO_COMMIT remains conversational/unreverified | Very strong durable package evidence through v3.7; v4 status not reopened as artifact | Independent MASTER LOOP GOVERNOR promotion still open for v3.7; re-verify v4 artifact/repo identity before treating retirement as canonical
+AEGIS Challenger Forge | Candidate generation, causal/holdout integrity, incumbent-vs-challenger validation | Checkpoint 009 recovered: 36/36; BTC expanded to 23,976 H1 bars with untouched 4,796-bar final holdout; several directional alpha uses quarantined | Strong checkpoint artifact + test evidence; repo admission still incomplete | Continue factor/transfer/composite-exit work without spending holdouts; resolve canonical PR/repo adoption separately
+JANUS | Project-twin temporal truth, conflict/proof synchronization, acquisition/recovery lineage | Run 035 latest recovered: 132/132 tests, 64/64 schemas, Drive persisted | Strong offline artifact evidence | Live Git adoption unavailable; Run 036 next
+Infrastructure | Persistence, recovery, locking, leases, authenticated restoration, supervisory safety | V39 exact artifact recovered: 290/290, GovernanceTransactionJournal; SHA-256 8ed456...; READY_TO_COMMIT=false | Strong exact package evidence | V40: integrate journal into composite coordinator; failpoint recovery across every phase; authority-set epochs / remote transparency next
+VECTOR ∞ | Adaptive/robustness research, ambiguity/recurrence/decision labs | v32 recovered; v28.1 negative result preserved; offline/synthetic/shadow only | Strong synthetic evidence, no production authority | Real replay, root provenance, forward evidence, production-safe thresholds
+ASCENSION ∞ | Evaluator/trust/collision/distillation capability layer | v021 recovered: Sibling Manifest Conformance Kit v0.1 CANDIDATE; 32/32 focused + 6,800/6,800 adversarial; Adapter v0.4 and Evaluator v0.8 remain candidates | Strong package/adversarial evidence; Transfer gate explicitly blocked | Obtain exact PROMETHEUS runtime export/signed evidence first; conformance must not be confused with authentication or Transfer
+Advanced CSV / NEXUS | Causal market-data substrate and research corpus | v1.15.0 / iteration 32 recovered: 153/153 NEXUS tests; 238 usable streams / 1,970,753 rows; same-corpus replay reproducible | Strong current local-corpus artifact evidence, still incomplete historical coverage | Recover missing historical corpus; 92 P0 representation-evidence items still require source/export evidence; no production authorization
+DAEDALUS | Scientific validation/protected evidence/promotion authority | Latest NEXUS-integrated receiver: 58/58; static audit 34 files / 6,022 lines; 13 development hypotheses WAITING_NO_NEW_BYTES; protected holdout unspent | Strong receiver/test evidence; no confirmatory promotion | Need genuinely unseen appended/non-overlapping evidence; preserve older 45/45 foundation release tasks (resource-leak cleanup, coverage, full corpus validation)
+PROMETHEUS | Closed research/meta-evolution loop: SENTINEL→FORGE→ASCENSION | v0.5 verified recovered: 77/77, compileall PASS, deterministic research-only routing; v0.6 authoritative-verifier adapters exists as design frontier only | Strong v0.5 artifact/repo evidence; v0.6 implementation not found | Resume from v0.5; implement v0.6 only with external-verifier authority boundaries intact; never self-authorize production
+MÖBIUS | Proof-carrying project digital twin evolution engine | Master architecture/implementation handoff recovered; design-first state | Strong architecture handoff, implementation status not fully proven | Implement minimum viable bitemporal twin and proof-carrying capsules; re-verify live repo
+AION | Durable evidence memory / historical atlas | Implemented v0.1 artifact recovered; Git HEAD 8e1a0f1a837daa3da6285400fb485bf668abdabd; 11/11 tests + compile/JS checks; synthetic demo only | Strong local repo/artifact evidence; live remote continuity still unverified | Add real source/provider availability adapter; validate decision-time replay; keep exports execution_authorized=false
+ARGUS | Authenticated microstructure/order-flow/execution-physics authority | Tested starter foundation recovered: 4/4 + compile; evidence-tier firewall, book/microprice/order-block/book-walk primitives | Strong starter-package evidence, not full L2 validation | Validate against real trades/depth; candle-only proxies remain explicitly non-L2; no broker/order authority
+ATHENA | Supervisory interpretation, confidence, abstention, risk, routing | Tested Phase-0 foundation recovered: 3/3 + compile; provenance/data planes, uncertainty aggregation, expert routing, advisory risk/scenarios | Strong starter-package evidence, not trained world model | Integrate only after sibling contracts are revalidated; advisory/no broker-order authority
+ORACLE | Financial & Research Automation Fabric | Checkpoint C / 75% package recovered: exact freeze commit 6255339daf80b709357a2ea581b572ebbcef5905, tag oracle-checkpoint-c-75pct, 34/34 tests + compileall | Strong checkpoint ZIP + embedded Git bundle evidence | Reconcile remote/current repo before mutation; do not rebuild autonomous loop/outbox/journal/scheduler/thesis/action-board/tab-API layers already present
+OMNIVISION | Specialist extraction/replay/intelligence branch | Stage 1.1 / Stage 1A extraction status remains conversational; no dedicated canonical artifact surfaced in the deep scan | Weak / conversational-only in accessible evidence | Recover canonical OMNIVISION artifact/repo mapping before integration or code changes
+PARALLAX | Historical analog / multi-view market-atlas concept under AION | Explicit AION PARALLAX proposal recovered; proposal only — no PARALLAX feature code built | Strong proposal/status evidence; implementation absent | Do not treat as built; if pursued, preserve view-not-vote lineage, decision-time fingerprinting, uncertainty/abstention, and no order authority
+
+
+3. MASTER LOOP GOVERNOR and orchestration
+3.1 Fixed/rotating topology
+At the recovered governor design point, the Governor and SuperMesh-X occupied fixed slots while exactly three additional workers rotated.
+Rotation criteria: remaining executable work, cross-loop leverage, dependency criticality, stagnation/age, ownership collisions, blocked state, and READY_TO_COMMIT proximity.
+Workers marked BLOCKED, STALE, redundant, or READY_TO_COMMIT become swap candidates; replacements resume from state capsules rather than restarting.
+Recovered active snapshots included: Governor + SuperMesh-X + VECTOR + Infrastructure + JANUS; later Governor + SuperMesh-X + AEGIS + Infrastructure + JANUS. ASCENSION, PROMETHEUS, Advanced CSV/NEXUS were paused in those snapshots.
+Central Orchestration is distinct from MASTER LOOP GOVERNOR. Central Orchestration reconciles handoffs and global visibility; Governor owns worker allocation.
+3.2 Proof-carrying handoff chain
+Specialist output → Proof-Carrying Handoff → Durable Storage → Freshness Check → Central Orchestration → Consumer adoption
+Infrastructure owns durable persistence/recovery of handoff envelopes.
+ASCENSION owns evaluation/evidence semantics, not orchestration routing.
+NEXUS owns corpus authority; consumers must not independently mutate it.
+VECTOR/Icarus-style producers attach results to envelopes but do not self-authorize adoption.
+Freshness/revalidation metadata is mandatory because historical verification can become stale.
+3.3 Readiness vocabulary
+Item | Recovered detail
+BUILT | Implementation exists and local tests/compilation may pass.
+VERIFIED | BUILT plus independent or integration verification for the declared scope.
+READY_TO_COMMIT | VERIFIED plus artifact integrity, documentation, reproducible package state, and repository/release readiness.
+RUN_OBSERVED | A loop or scheduler invocation was observed, but output was not directly verified.
+PAUSED | Durable state intentionally preserved; work not currently active.
+BLOCKED | A required external dependency/evidence/authorization is missing; system must fail closed.
+
+
+4. SuperMesh-X — canonical capability/runtime mesh
+SuperMesh-X evolved from provider/tool routing into the canonical runtime/capability plane. It accumulated execution-domain controls, durable run storage, isolation contracts, provider/runtime evidence, trust/transparency, witness distribution, and advanced terminal/browser-plane design. The 50+ logical-agent swarm remained intentionally gated behind isolation and authority hardening.
+4.1 Recovered evolution
+Item | Recovered detail
+v2.3.0 — Execution-Domain Foundation | 219/219 regression; 63 critical tests; leases, fencing tokens, stale-owner rejection, hard resource budgets, least-privilege authority manifests, deterministic idempotency, secret-free checkpoint/rollback receipts, terminal-run non-reopen semantics, privacy-safe trace sanitizer; 50+ swarm and unrestricted shells explicitly deferred.
+v2.4.0 — Durable Execution Store & Isolation Admission | 234/234 regression; 87/87 critical; SQLite durable run store, WAL/FULL sync, restart-safe leases, CAS lifecycle, suspension/resume, worker-loss marking, takeover recovery, transactional shared-capacity reservations, capability allowlisting, opaque secretref:// enforcement. SHA-256 4b538b72bccb641dda22b0053cd6153ae04735113d42d5855e1145b965a44d93.
+v2.5.0 | Sandbox/workspace isolation contracts: mount/path policy, deny-by-default egress, terminal/process receipts, remote-store boundary, vault broker interface, watchdog/orphan cleanup, rollback tests; privileged runtime enforcement still pending.
+v2.6.0 | 261/261 regression + 75/75 critical reported; package/compile/smoke/fresh-extract passed. Still missing concrete OS/container isolation, resource enforcement, DNS-rebinding protection, vault materialization, runtime-provider validation. SHA-256 334601953154001b73fc0f5b47313557011ef67d7312c4206f5f36bd4ec163ec.
+v3.0.0 | Signed runtime-evidence envelopes, TrustStore, SignedEvidenceJournal, replay/fence/capability checks; concrete VM/container launch and 50+ swarm still deferred. Previous artifact SHA-256 724b76a2de7898dfb17d58d9f4e3604b5532ce460016c3d98aeb030824777c7b.
+v3.1.0 | Durable public trust roots, sequential epochs, dual-threshold root rotation, Merkle inclusion proofs, Ed25519 signed transparency checkpoints, rollback/equivocation checks. 288/288 regression, 80/80 critical. SHA-256 1a4a9e24129c88cddc54cf8f046c2051385e8414d4771f62b8989f46ac4f1e24.
+v3.2.0 | Witnessed transparency/trust-distribution layer. 301/301 regression, 100/100 failure injection. Local package passed, but snapshot remained NOT READY_TO_COMMIT because independent Governor verification and durable persistence were outstanding; hash placeholders in recovered report must not be invented.
+v3.3 | RFC9162 consistency proofs, durable atomic witness snapshots, signed consistency-digest binding, authenticated gossip, partition recovery, rollback/equivocation detection. 316/316 regression, 51/51 adversarial reported; artifact hash abbreviated in recovered conversation.
+v3.4 | Witness-policy epochs, dual-threshold key/quorum rotation, revocation/duplicate-key defenses, policy-bound RFC9162 signatures, crash-consistent gossip replay, deterministic Ed25519 vectors. 328/328 regression, 82/82 security/failure tests; independent Governor verification remained blocker.
+v3.5 planned frontier | Signed journal compaction, torn-tail quarantine/recovery, policy expiry/freeze, threshold recovery, multi-store gossip distribution, non-Python verification, stronger downgrade/freshness protections.
+v4.0 later reported status | Conversation state later described v4.0.0 Cycle 10 as independently READY_TO_COMMIT with 358/358 tests plus package/compile/smoke and retirement from protected slot. This later state was not re-opened as a durable artifact in this pass, so Opus should re-verify before treating it as canonical repository truth.
+v3.7.0 Cycle 7 FINAL2 — latest durable recovered | Trusted-time/expiry hardening: TrustedTimeSample/Guard, witness-policy expiry, durable monotonic trusted-time floor, crash-consistent atomic publication, strict integer seconds, active freshness gating while historical verification remains time-neutral. 60 focused trust/gossip tests; 351/351 full regression in frozen source and clean extraction; compile/smoke/validator/ZIP integrity PASS. Artifact SHA-256 85556a3800cd053cf832d29cc61fc39f776e3607019f73a758c712e3c5cf03cd. Independent Governor promotion remains open; READY_TO_COMMIT=NO. Existing Drive “final” names contained different bytes and were preserved; verified bytes were persisted as FINAL2.
+v3.8 next target | Independent non-Python canonicalization/conformance fixtures for witness policies, trusted-time samples/reports, signed compaction snapshots/anchors, strict rejection vectors and digest agreement before any authenticated network-time adapter.
+
+
+4.2 Advanced terminal/browser/computer capability plane
+Canonical design: governed terminal plane, browser plane, and file plane under one capability/authority model.
+Isolation tiers T0–T4; per-session leases; workspace identities; scoped capability manifests; restart/recovery receipts.
+Terminal lifecycle: admission → provision → run → checkpoint/suspend/fail → recover/terminate, with fencing/CAS and operation-specific idempotency.
+Browser broker: DOM/ARIA/visual grounding, prompt-injection containment, explicit prepare/commit for consequential actions, session handoff, and evidence receipts.
+Ephemeral identities/secrets, vault-backed short-lived materialization, secret-reference enforcement, quarantine, orphan cleanup, and unified action-evidence records.
+Planned provider-neutral runtime-driver adapters for Docker/OCI or VM backends, real cgroup/hypervisor limits, DNS/network isolation, runtime kill/reconciliation, logging, and provider evidence handshake.
+Scaling design: 5–10 workers first, then 50+ physical/logical workers, eventually hundreds of logical workers only after the first isolation/recovery/authority gates are hardened.
+The advanced terminal/browser features belong inside SuperMesh-X as capability-plane inputs, not as a separately owned sibling system.
+5. AEGIS Challenger Forge and red-team program
+AEGIS is the primary candidate-generation/adversarial-validation line. Its central purpose is to turn legacy trading systems, algorithmic ideas, and component populations into causally valid challengers while protecting fresh evidence from leakage or selection contamination.
+5.1 Core principles
+Fresh corpus identity; point-in-time correctness; causal replay; protected-holdout discipline.
+Incumbent-vs-challenger competition with adversarial tests and shadow qualification.
+No relabeling of contaminated or repeatedly inspected data as pristine holdout.
+No evidence self-attestation: independent or root-independent evidence is required for authority-bearing claims.
+No forward/pivot/fractal leakage; confirmed pivots must be causal rather than visually perfect in hindsight.
+5.2 Recovered checkpoints
+Item | Recovered detail
+Checkpoint 004 | Causal detector 8/8; deliberately cheating pivot detected at 5 points; confirmed pivot produced zero causal violations; BTC corpus 600 bars with final 96 protected; NQ continuous 408 bars with final 57 protected; 12 legacy component interfaces identified.
+Checkpoint 007 | 18/18 harness reported; NQ 1h development corpus 6,314 bars with 1,263-bar holdout.
+Checkpoint 008 | 31/31 harness reported; same 6,314-row development corpus and untouched 1,263-row final holdout preserved.
+Checkpoint 009 — latest recovered | 36/36 tests. NQ point-in-time QQQ factor exact prior-hour coverage 60.70% with weak correlation (~0.0301), retained as context only. NQ KNN OOD abstention 1.28% overall / 5.81% HIGH-volatility, retained as shadow guard. BTCUSD expanded to 23,976 clean 1h bars; final 4,796 bars untouched. Four fixed folds showed BTC MASTER directional uses negative in every fold: Ichimoku directional, Ichimoku+ADX combined alpha, and EMA pullback alpha quarantined. Added horizon-disagreement abstention, circular-evidence/double-count firewall, reversible tombstone ledger. No live trading; no rescue tuning.
+
+
+5.3 High-severity findings / open defects
+Pre-window execution/trade-state leakage: latent state before the evaluation window could influence inside-window outcomes.
+Windowed replay timestamp/look-ahead leakage and stale-order/exit-state equivalence issues.
+Conflict-resolution laundering: conflict handling could effectively cleanse or transform evidence/state in a way that broke claim provenance.
+Oracle-independence/self-attestation tautology: claimed independent verification could depend on evidence generated by the same authority path.
+Claim-to-evidence closure / evidence-to-claim binding defects: provenance fingerprints were not always bound tightly enough to engine code and evaluated state.
+Frozen replay could silently discard overlapping deep/sub-bar evidence.
+Sequential fresh-holdout cross-study multiplicity remained insufficiently bounded.
+Offline/online feature parity and numeric parity defects required hardening.
+Recovery/checkpoint equivalence remained an explicit verification surface.
+5.4 Repository state
+Canonical baseline observed: 007e70189945b8e112904cf92b2b1a12e43792d6.
+Later pinned/runtime head: 76569e1962e721b0f4dc973df21358f40c31ce81.
+PR #18 repeatedly observed open, draft, unmerged; mergeability/stack conflicts and CLI defect blocked adoption despite green CI on the pinned head.
+PR #28 CLI repair was later reported green, but this did not imply PR #18/default branch adoption.
+Actions run 36065421222 succeeded at one point, yet release cohesion remained blocked by merge incompatibility.
+Fail-closed unified cycles advanced between subsystem stages without authorizing integration when ownership/continuity evidence was absent.
+6. JANUS — project-twin temporal truth and proof synchronization
+JANUS owns project-twin temporal truth, synchronization, conflict/fork detection, fencing, receipts, proof lineage, acquisition/recovery state, and handoff compilation. It does not inherit market-data, persistence, challenger-evaluation, capability-mesh, or live-trading authority.
+Item | Recovered detail
+Run 018 | 71/71 tests; SHA-256 ab5bb91f1c1c3237991c10b7d625590a0c2693beb1b7d998a976775012ec44e2; offline only, live-repo adoption unverified.
+Runs 019–025 | Portable trust-lineage bundles, atomic joint sync, resumable chunk ledger, signed receipt chains, fencing/leases, promotion journal, recovery certificates, subprocess crash/WAL hardening. Run 019: 74/74. Run 024: 93/93. Run 025: 96/96 and durable Drive checkpoint reported.
+Run 026 | SQLite integrity barrier; corrupt/truncated staging quarantine (janus-storage-quarantine-v1); ENOSPC abort path. 99/99 tests; SHA-256 5d8db843ea7c7d1d875764a6d0795b9c9cdbc63a0f117209a8a9843474608f21.
+Run 027 | 102/102 tests; SHA-256 d11c823242597403700cfffd13163a7319e41773eee0735a00a08dd43c791977.
+Run 029 | WAL/SHM consistency, kernel EFBIG probe, unified forensic proof DAG; 108/108 tests, 46/46 schemas; SHA-256 6244dcc32e71a578ecc56fefdff6069f8aa5cf27f0e55faec7d240f6fd763c45.
+Run 031 | 115/115 + compileall reported; full hash should be recovered from source artifact rather than reconstructed from abbreviated status.
+Run 034 | Resumable proof-carrying acquisition begin→advance→finalize; receipt-chain continuity; interruption resume; rejects rollback, stale root, poisoning, substitution, retransmission. 128/128 tests, 62/62 schemas, compileall PASS; SHA-256 c6f2206007afbefc51f402bac49be06616e506ea9972f3b0f4392b50a1847c76.
+Run 035 — latest recovered | Compact acquisition-proof chain; cache rollback/deletion/poisoning/stale-root/splice rejection; randomized interruption verification. 132/132 tests, 64/64 schemas. ZIP SHA-256 9ae662ad45b0810a2d1a33b2d147442fbfb125d2db3f0ee216d7e71dc3dda563. Drive persistence verified.
+Run 036 next | Provenance cross-linking, cache snapshot/restore proofs, adversarial receipt scheduling.
+
+
+Authoritative live Git checkout remained unavailable: git_repository_unavailable; READY_TO_COMMIT=false.
+Acquisition provenance is descriptive/non-authoritative; certificate branches retain winner_selected=false.
+Later Drive persistence for Runs 033/034 was previously reported to fail due container_session_expired, while Run 035 later reported Drive persistence verified.
+Known interoperability gap: ASCENSION threshold trust and JANUS/Infrastructure recovery-authentication semantics did not fully align in one handoff path.
+7. Infrastructure supervisory/recovery line
+Infrastructure owns durable persistence, recovery, identity-safe locking, leases, rollback, startup restoration, supervisory controls, authenticated restoration, and key-rotation/recovery semantics.
+Item | Recovered detail
+V4 | Topology/blast-radius governor, sibling authority boundaries, process-local leases; 18 tests; SHA-256 7b8700382495e1e894094417be37242942b3e7f24d69c2208dac6ef1d369abfb; offline/package only.
+V23 | 130/130 tests reported.
+V26 | 163 tests reported; staged canary, causal attribution, evidence provider, proof envelopes/receipts, intervention IDs, atomic/crash-recoverable journals, startup recovery, continuity/checkpoint chains, serialized recovery locks, pluggable process identity. SHA-256 a9b6d91e5336ede1d96ce91fb97610d50aeb59dedc07eeb6dc065c91888f8eda; Drive persisted.
+V28 | 171/171 tests; SHA-256 c02bd9029e24c0447f4de6c210bd8634fd93d34ecbb5da1e49577bd6ecc779c0.
+V34 | 245/245 tests across 22 modules; SHA-256 e58bd2fe66354dc11980159d4c8b3fd6940900ab71d9cf6d54c39e1d1f24c25c.
+V37 | 276/276 tests later reported; full exact hash not recovered in this pass (reported prefix be49b5dbce9...).
+V39 — latest exact recovered | GovernanceTransactionJournal with append-only PREPARED→GOVERNANCE_WRITTEN→ADMISSION_WRITTEN→COMMITTED phases, per-record hash/predecessor/epoch binding, durable HEAD, fsync behavior, fail-closed phase/linkage/tamper rules, deterministic intermediate-state reconstruction. V38 baseline 285; focused V39 5; full/fresh extraction 290/290; compileall + ZIP integrity PASS. SHA-256 8ed4567160aaa31c7bd9fbdb2a6f053525839f33322fa4441679b9210dcb1f71. READY_TO_COMMIT remains false.
+V40 next | Integrate GovernanceTransactionJournal into V38 composite coordinator; inject failures at every governance/admission/HEAD/COMMITTED boundary; prove idempotent deterministic recovery; then authority-set epochs and remote transparency history.
+
+
+Frontiers included authenticated startup restoration, key-rotation trust, lock-owner recovery, production canary/telemetry, distributed mutation safety, and stronger host-fault recovery.
+Infrastructure is the single owner of durable handoff persistence to avoid incompatible evidence stores being created by multiple loops.
+8. VECTOR ∞ — robustness/adaptive intelligence research
+VECTOR is deliberately offline/synthetic/shadow/advisory in the recovered state. Its experiments are valuable research evidence, but they do not carry production weights, registry authority, execution authority, or live-parameter privileges.
+Item | Recovered detail
+v24 Conditioning-Set Governance & Hidden-Confounder Stress Lab | 3,500 Monte Carlo episodes per scenario; confounder/collider, mediator, hidden-confounder proxy, over-conditioning, factor-rotation, and conditioning-search multiplicity attacks. State SHA-256 22dd9f69a24ffc55905539c983a1472d5612a4df097d4ca145a22ae52e37babf.
+v28.1 Ambiguity-Set Calibration & Robustness Budget Lab | Exchangeable calibration 7,000; evaluation 12,000; shift recalibration 2,500; shifted evaluation 9,000. Joint conformal coverage 90.183%, but critical negative result: robust action abstained 100% under every tested ambiguity width, breaching the synthetic authority-floor usefulness gate. Corrected capsule SHA-256 7ae0a7187e00eac8ad782fc15832c375f1ff611941b34eca83d54b7eeb7afb13; internal state SHA 2a7ba810886bd9176bb481658079cba82662edc4fd1a77ef1349729f5c595841.
+v32 | RootIndependentEvidenceGate and SequentialStrongReuseGate; unique root evidence required for recurrence authority; aliases/transforms/descendants contribute zero incremental root count; fresh ESS, horizon-specific confirmation, no circular provenance, delayed evidence completion. State SHA-256 2689cdd5935da5c49d46108c49559f1fa7636f76d49565d094950ceb81957dbd.
+Latest recovered direction | Sequential Recurrence Evidence, Anytime-Validity & Root-Provenance Attack Lab; stress optional stopping, adaptive probe selection, hidden alias roots, delayed horizons, evidence starvation; compare fixed-N, naive sequential, anytime-valid, fresh-holdout confirmation.
+
+
+Promotion authority remains the Adversarial Router Lab.
+Similarity nominates only; STRONG_REUSE requires fresh independent evidence.
+Real Icarus/VECTOR replay, repository implementation, market-calibrated tail uncertainty, forward-shadow/live evidence, and production-safe thresholds remained blocked.
+9. ASCENSION ∞ — evaluator/trust/collision capability layer
+ASCENSION developed an external capability/evaluation stack while preserving sibling-system boundaries. The recovered lineage includes Capability Kernel, Evaluator Fabric, Collision Detector, Context Distillation Engine, Manifest Adapter, and Conformance Kit.
+Item | Recovered detail
+Lifecycle | Evaluator Fabric / Collision Detector / Adapters / Conformance Kit = CANDIDATE; Context Distillation Engine = SHADOW in recovered lineage.
+v017.1 authoritative checkpoint | Evaluator Fabric v0.7; Manifest Trust→Collision Adapter v0.2 unchanged; Collision Detector v0.3 CANDIDATE; Context Distillation Engine v0.3 SHADOW.
+Evaluator Fabric v0.7 tests | 16/16 focused; 27/27 combined v0.6+v0.7; 2,016/2,016 valid consistency transitions; 1,000/1,000 property corruptions rejected; 500/500 focused proof mutations rejected; 400/400 witness payload/signature mutations rejected; RFC transitions 3→7, 4→7, 6→7 PASS.
+Artifact identity | ASCENSION_Evaluator_Fabric_v0.7_FINAL.zip; SHA-256 f010e9986eb366d7b65179e722934acb4fa0d30768da3d575eebaa467e889ca7; 19,552 bytes.
+Rollback baseline | Collision Detector v0.2.1; SHA-256 e71d28d701b9693ce78173c8d0fa603d3ae7fd5ca1bbfdab4dc659d17b0ec9cc.
+Adapter v0.2 | SHA-256 86be5d506dbfea57504871ffcbe16542831151f0826cb4545ee27b4baaf80adf.
+Evaluator v0.6 baseline | SHA-256 ed5c6ec83d08630a903bd26f73166360c0193d7f6dcb28c36729dac6e018acd9.
+v021 — latest recovered | Sibling Manifest Conformance Kit v0.1.0 CANDIDATE. Defines NONCONFORMANT / STRUCTURALLY_CONFORMANT / ADAPTER_READY_UNVERIFIED; authenticated=false is hard-coded so conformance can never be misreported as authentication. Validates collision-manifest/system identity, artifact/raw-byte digests, PROMETHEUS-style external-attestation descriptors/verification receipts, secret-field rejection, Adapter v0.4 readiness surface, deterministic binary-aware evidence hashing. 32/32 focused + 6,800/6,800 adversarial + compile PASS from fresh extraction. Transfer remains BLOCKED.
+v021 artifact | ASCENSION_Sibling_Manifest_Conformance_Kit_v0.1.zip; SHA-256 23970729247a64465967611fac44db73ae25e013a0bf43f6b4bd65d06126dbb1; Adapter v0.4 SHA-256 0145bf2ecb3ecd606c9d70b26b671ce397bba17f35dc56da4c691997bbd8e224; Evaluator Fabric v0.8 SHA-256 d8f4a0dedf27def0f1bde05bc52faa6dd637068c95594b3c6090642b08573cae.
+
+
+Deep scan found a strong PROMETHEUS v0.5 declared external-attestation/verification-receipt contract, but still no complete authority-signed runtime export suitable for Adapter v0.4. Transfer remains blocked; declared contract ≠ authenticated runtime handoff.
+Signed witness IDs do not prove organizational/network independence.
+Compact consistency proves append-only relation, not semantic truthfulness.
+No live-repo commit ID exists for the v021 conformance package; its durable identity is the package SHA-256. The kit is read-only and does not sign, authenticate, mutate siblings, or create authority.
+10. Advanced CSV / NEXUS / DAEDALUS
+NEXUS is the causal market-data substrate. Its recovered design principle is “preserve first, infer second, adapt third, predict nowhere by default.” DAEDALUS receives research hypotheses and owns protected validation/promotion authority.
+Item | Recovered detail
+NEXUS version/state | Advanced CSV/NEXUS loop v1.15.0, iteration 32 (supersedes v1.3.1 / iteration 0007 status in this handoff).
+Accessible corpus | 476 physical CSV entries; 238 usable market streams; 1,970,753 usable rows; 231 distinct byte/logical contents; 7 exact duplicate usable entries. Historical corpus remains incomplete.
+Integrity gate | 78 research candidates in Iter32. Representation evidence: 92 P0 unresolved items across 44 clusters; 45 timeframe-string compatible but still require export-specific attestation, 47 cadence-incompatible/event-or-transformed. No P0 auto-resolution.
+Tests | NEXUS 153/153 passed at v1.15 Iter32; same-corpus replay reproducible; unexpected nondeterminism=false. DAEDALUS integrated receiver 58/58. Earlier v0.3 historical anchor: NEXUS 117/117.
+Historical sibling anchors | Historical v0.3 handoff: AION 11/11, ARGUS 4/4, ATHENA 3/3, DAEDALUS 45/45. Deep scan now recovered actual AION/ARGUS/ATHENA/DAEDALUS packages; see sibling/foundation sections rather than treating these counts as the only evidence.
+Historical larger corpus anchor | AION/PARALLAX historical anchor: 626 usable entries / 12,588,290 rows / 513 distinct contents / 9 ZIP archives. Current gap: 388 usable entries, 10,617,537 rows, at least 282 distinct contents, plus 106 additional duplicate-lineage entries. Owner expectation roughly 800+ files remains unproven.
+DAEDALUS routing | Iter32: 13 DAEDALUS development-only hypotheses; 4 blocking dependencies; 3 resolved recurring-session closures; 8 resolved representation copy-lineage; 50 open-session diagnostics; 0 protected-holdout-eligible tasks.
+DAEDALUS receiver | 58/58 tests; static audit 34 source files / 6,022 source lines; 13 WAITING_NO_NEW_BYTES. Retrospective diagnostics: 8 direction-stable, 5 strong nonstationarity; these are prioritization/stability evidence, not independent confirmation.
+Authority | Protected holdout spent=false; production_authorized=false; current scanned history selection-contaminated and cannot become pristine holdout later. Event/transformed representations do not generate fixed-cadence gap hypotheses; open-session residuals are diagnostic, not automatic data-loss assertions.
+
+
+10.1 NEXUS invariants
+Do not trust filename timeframe/representation claims as truth.
+Do not silently sort away repeated/fractional timestamps.
+Do not delete duplicate source lineage merely because compute is shared.
+Do not invent historical availability/receipt times.
+Do not forward-fill missing state into truth without an explicit derived-imputation contract.
+Do not let equivalent representations overweight one symbol merely by count.
+Do not use full-data normalization or centered/future-aware transforms in historical evaluation.
+Do not call OHLCV/candle proxies true order flow, depth, or L2.
+Do not let NEXUS absorb AION, ARGUS, ATHENA, DAEDALUS, or ICARUS production authority.
+11. PROMETHEUS — autonomous systems evolution/research loop
+PROMETHEUS is an additive research/meta-layer with zero production authority. It observes subsystem disagreements/failures and creates falsifiable hypotheses and experiments.
+OBSERVE → DETECT → EXPLAIN → HYPOTHESIZE → ATTACK → REPLAY → MEASURE → ACCEPT/REJECT → REMEMBER
+Nested loop: SENTINEL → FORGE → ASCENSION → SENTINEL.
+Disagreement mining, adversarial tests, deterministic replay, information-value accounting, causal ancestry, tournaments, negative-result memory.
+Plugin-aware architecture: inventory relevant plugins/capabilities, sandbox authorized use, bind normalized evidence to provenance, and treat plugin output as research evidence only. v0.5 adds deterministic experiment routing, stale-lineage vetoes, negative-result reuse scoped to immutable route context, and DEFER/ABSTAIN paths.
+v0.6 design frontier: immutable VerifierAuthority registry; ExternalVerifierResult; AuthoritativeVerifierObservation; stricter REQUIRE_AUTHORITATIVE policy; Sigstore/SLSA result normalizers; PROMETHEUS-issued receipts; deliberately no shell-spawned verifier execution in this slice. External verifier/host retains cryptographic trust-root authority.
+Deep scan recovered PROMETHEUS v0.5 as an actual verified artifact: branch work/prometheus-v0.5-experiment-router; base v0.4 head 2659350553f23f2314b27a80bb04604d5747418e; implementation commits e30223b, d4f2aa0, aba745b; compileall PASS; pytest 77/77; deterministic demo remains research-only with no production authorization. A v0.6 Authoritative Verifier Adapters document exists as DESIGN ONLY — no verified v0.6 implementation was found. PROMETHEUS may be paused by governor topology without losing durable state.
+12. MÖBIUS — Proof-Carrying Project Digital Twin Evolution Engine
+MÖBIUS was designed to collapse three previously separate ideas—portable development capsules, validation/research loops, and live-repo reconciliation—into one recursive project-evolution engine. Its purpose is to make project evolution itself replayable, bitemporal, provenance-aware, and proof-carrying.
+OBSERVE → COMPILE TWIN → FIND LEVERAGE → PROPOSE CHANGE → BUILD SHADOW → ATTACK → PROVE → PACKAGE → RECONCILE → OBSERVE OUTCOME → DISTILL → UPDATE TWIN → REPEAT
+Bitemporal claims: valid-time and observed-time are distinct; contradictions/supersession remain visible rather than being silently erased.
+Typed component/contract/invariant graph with downstream impact traversal.
+Leverage Decision Records rank unresolved gaps by downstream impact, failure recurrence, uncertainty, invariant severity, dependency centrality, information gain, cost, and merge risk.
+Proof verdict taxonomy: PROVEN_FOR_DECLARED_SCOPE, CONDITIONALLY_SUPPORTED, ENGINEERING_CORRECT_NOT_EFFICACY_PROVEN, RESEARCH_SIGNAL_NOT_PROMOTED, FAILED, INCONCLUSIVE, BLOCKED_BY_MISSING_EVIDENCE.
+Proof-carrying CapabilityCapsules contain source changes, destination paths, dependencies, interface assumptions, hashes, tests, outputs, limitations, rollback, impact graph, negative controls, unresolved questions, and machine-readable manifests.
+Reconciliation against real Git/GitHub must detect raw/semantic drift, branch divergence, dependency changes, duplicate functionality, stale paths, and changed test suites before integration.
+Minimum viable implementation sequence: deterministic serialization/hash → append-only event ledger/replay → ArtifactRecord/ProjectClaim → bitemporal contradiction handling → typed graph → deterministic twin root → opportunity engine → ChangeHypothesis/evidence verdict → capability capsule → repo fixtures/reconciliation → negative knowledge → compact context packs.
+13. AION / ARGUS / ATHENA / DAEDALUS / ICARUS sibling authority map
+Item | Recovered detail
+NEXUS | Market-data fabric, identity/clocks, causal replay, source health/data quality, representation consensus, adaptive factors/topology/OOD inputs, sibling-safe market packets.
+AION | Durable evidence memory, historical atlas, long-lived provenance/evidence persistence.
+ARGUS | True microstructure, order flow, execution physics. Candle-derived proxies may not be relabeled as L2/order-book truth.
+ATHENA | Supervisory world-state interpretation, confidence, abstention, risk, and routing.
+DAEDALUS | Scientific validation, protected evidence, research-candidate testing, promotion authority.
+ICARUS | Production execution authority.
+JANUS | Project-twin temporal truth, change evidence, reconciliation, proof synchronization; descriptive, not production-execution authority.
+Infrastructure | Durable persistence/recovery/locking; not market/research authority.
+AEGIS | Candidate discovery/adversarial validation; not live execution authority.
+SuperMesh-X | Capability/provider/runtime orchestration; not automatic business/trading authority.
+
+
+14. ORACLE, OMNIVISION, PARALLAX and less-complete branches
+Item | Recovered detail
+ORACLE | Financial & Research Automation Fabric Checkpoint C / 75% package recovered. Exact embedded Git freeze commit 6255339daf80b709357a2ea581b572ebbcef5905, branch sol/oracle-foundation, tag oracle-checkpoint-c-75pct; 34/34 tests and compileall PASS. ZIP SHA-256 712c97d7e7cc02dd29511d9c4090c0f4626793515b21f7e6afef6959bf097c0a. START_HERE explicitly says not to rebuild the autonomous loop, outbox/journal, scheduler, trigger detector, thesis monitor, action board, or tab API; ORACLE remains research-only and sibling authorities retain promotion/supervision/execution.
+OMNIVISION | Specialist ICARUS extraction/replay/intelligence branch. Stage 1.1 and Stage 1A read-only extraction were reported conversationally (capability-registry proposal from OMNIVISION v2, contracts/ledger bridge/candidate API/advisory ledger), but no dedicated canonical OMNIVISION artifact surfaced in the deep scan. Treat implementation state as unresolved until artifact/repo mapping is recovered.
+PARALLAX | AION contains docs/PARALLAX-PROPOSAL.md. Status is explicitly PROPOSAL ONLY — no PARALLAX feature code built. Concept: multi-view market atlas / decision-time fingerprint / historical analog retrieval / uncertainty-abstention; each CSV is a view, not an independent vote; preserve lineage and no trade/order authority. Historical audit anchor at multi-level-csv commit ce82124352762c14eb33836a5c894bc3a2a71dfe: 9 ZIPs, 626 usable CSV entries, 513 distinct contents, ~12.59M rows, with substantial duplicate/format anomalies.
+Adaptive Market Fabric | NEXUS Adaptive Market Fabric v0.3 reported 117/117 tests in reserve-build context.
+Old Central Orchestration | Superseded as the primary worker allocator by MASTER LOOP GOVERNOR, but remains conceptually distinct as reconciliation/global visibility plane.
+
+
+15. GitHub control-plane / strategic repository loop
+A repository-focused control-loop design was created to make GitHub the durable verification/memory layer for ICARUS/NEXUS while reducing token re-parsing and enforcing causal/data-integrity gates.
+15.1 Tier 0–6 workflow architecture
+Tier 0 — change classification: detect code/data/config changes and produce change_summary.json.
+Tier 1 — fast CI on push/PR: checkout/install/lint/unit/schema; generate TEST_HEALTH.json and SYSTEM_STATE.json.
+Tier 2 — integration/data tests when core/data paths change: ingestion/normalization/integration validation.
+Tier 3 — causal/data-integrity gates: lookahead, timestamp alignment, prefix invariance, future-data protection.
+Tier 4 — baseline regression on merge/schedule using stored checkpoints.
+Tier 5 — scheduled/manual full research loop across available data.
+Tier 6 — manual checkpoint promotion with provenance and proof artifacts.
+15.2 Machine-readable state
+SYSTEM_STATE.json: commit, branch, overall health, tests, corpus status, candidates, last checkpoint, next action.
+CORPUS_MANIFEST.json: every data file/stream with symbol, rows, hash, identity/coverage notes.
+RESEARCH_STATE.json: iteration, start commit, candidates found/promoted/rejected/pending, resource use.
+FAILURE_SUMMARY.json: invariant, test, affected files, baseline/current revisions, downstream impact, first failure location.
+TEST_HEALTH.json and NEXT_ACTIONS.json as compact state for agents to avoid repeatedly re-reading the repository.
+Baton discipline: claim work, save state before pausing, hand off through durable capsules/state rather than conversational memory alone.
+15.3 Prioritization issue
+Restore missing historical CSV batches to reach the historical 626-stream anchor, versus
+Resolve representation/session semantics blocking dozens of candidate tests. The design recognized semantics work could unlock more immediate research while full corpus recovery had higher long-term coverage value.
+16. ICARUS unified-control / fail-closed pipeline history
+Multiple recovered cycles intentionally completed DEGRADED/INCOMPLETE rather than promoting unverified state. This is a safety feature, not a failure to follow through.
+NEXUS canonical admission was repeatedly blocked when ownership/continuity evidence was missing; pipeline advanced fail-closed to AION.
+AION, ARGUS, ATHENA, DAEDALUS, and ORACLE stages were each blocked at different cycles when authoritative ownership/continuity or corpus evidence was unavailable.
+ARGUS ownership was a recurring admission blocker; ATHENA and DAEDALUS advancement occurred without integration promotion when evidence was insufficient.
+DAEDALUS empirical promotion remained blocked pending protected/full-corpus validation. Earlier unified cycles treated ORACLE admission as blocked by canonical identity, but the deep scan later recovered a concrete ORACLE Checkpoint C package with freeze commit/tag; any current remote/default-branch continuity still requires reconciliation before adoption.
+Duplicate cycle suppression existed in durable control-state (e.g., cycle 20260925-17 duplicate-suppressed).
+Loop Governor sometimes held the portfolio steady pending defect repair while health checks stayed healthy.
+Core invariant: “advance” means move the verification cursor to the next subsystem, not authorize adoption.
+17. Trading/strategy component populations feeding research
+The user explicitly wanted legacy strategy families and external complex quantitative ideas converted into candidate-component populations for AEGIS/Challenger Forge. These are research inputs, not automatically production-qualified algorithms.
+17.1 Gold — OperationGoldenExecutioner / V2
+Micro Gold Futures, 5-minute timeframe.
+Inverse DXY correlation filter; DXY MA and correlation logic; pivot/scalping logic.
+Fair-value gaps, support/resistance, higher highs/lower lows, ATR stops, risk:reward.
+Liquidity heat-map targeting; optional key levels and supply/demand visible-range concepts.
+No-news-trading requirement; later automation intent.
+Any pivot/FVG/structure logic used in AEGIS must be re-audited for causal availability.
+17.2 BTC systems
+BTC Daily Pivot Catcher: daily pivot reversals across ~5–10 bars; original replay behavior showed look-ahead symptoms with signals appearing ahead, making causality audit mandatory.
+BTC MASTER SIGNAL v1.0: 15m/1H/4H lock; Ichimoku, ADX/DMI, ATR, EMAs 9/21/50, RSI, pivots, ROC, Kijun proximity, higher-low/lower-high logic; Trend/Pullback/Reversal/Pre-Signal/Exit taxonomy; ATR% floor, max stop %, RR, opposite-signal exit/flattening.
+BTC Swing Trader / Trend Capture Machine: requested large 2,000–12,000 point swing capture, multiple rewrites due syntax and buy/sell clustering.
+BTC fractal strategy: Pine v6 request to capture BTCUSD spot fractals with buy/sell/exit signals.
+Broader goal examples included ~3 trades/day on BTC 4H with average ~0.50% move and larger tails, plus 1H pivots aligned with 4H/daily structure.
+17.3 NQ / Nasdaq systems
+NQ Confluence Matrix Pro v3.0: volatility framework, factor correlations, master regime, structure, liquidity, execution, supply/demand, KNN, RATE, ICS, OTTO, position sizing, display systems.
+Daily/4H factors included NQ/ES/YM/QQQ/RTY, NVDA/MSFT/AAPL, VIX/VXN, TNX, DXY; tech leadership, breadth, macro-risk factor construction.
+1m scalping with 15m/1H/4H structure; 4H pivots; supply/demand across 15m/1H/4H/D/W.
+Observed MNQ/NQ directional-mirroring questions and TradingView strategy-property issues were investigated; these should not be encoded as edge without controlled replay.
+Advanced order-flow/bookmap/order-block concepts were requested, but candle proxies must not be mislabeled as real ARGUS-grade microstructure.
+18. Data/repository/tooling foundation
+User described sending ~200 CSVs in batches and later “over 800 CSV files in total”; recovered accessible corpus is much smaller and must not be overstated.
+Three repositories were described as vital foundation assets; later work repeatedly treated repository identity/adoption as a hard proof gate.
+GitHub access/write capability was inconsistent across runtimes; no agent should claim commits/merges without actual repository evidence.
+TradingView is the main strategy-development surface; Pine v6 is preferred for current builds; TradersPost/broker integration questions exist but are outside proof of strategy efficacy.
+Claude/Claude Code and Opus are intended as external coding/review agents; handoffs should therefore be self-contained, evidence-classified, and restartable.
+19. Exact recovered hash / test ledger — earlier checkpoints
+Artifact / checkpoint | Recovered verification | SHA-256
+NEXUS Advanced CSV loop earlier artifact | 118/118 at earlier checkpoint | 458f2cf2554b4630d995dacc745bc3dab489ac68b2c6cefccd28a88c72abd3e1
+SuperMesh-X v2.4.0 | 234/234 regression; 87/87 critical | 4b538b72bccb641dda22b0053cd6153ae04735113d42d5855e1145b965a44d93
+SuperMesh-X v2.6.0 | 261/261 regression; 75/75 critical | 334601953154001b73fc0f5b47313557011ef67d7312c4206f5f36bd4ec163ec
+SuperMesh-X v3.0.0 | historical baseline | 724b76a2de7898dfb17d58d9f4e3604b5532ce460016c3d98aeb030824777c7b
+SuperMesh-X v3.1.0 | 288/288 regression; 80/80 critical | 1a4a9e24129c88cddc54cf8f046c2051385e8414d4771f62b8989f46ac4f1e24
+ASCENSION Collision Detector v0.2.1 | rollback baseline | e71d28d701b9693ce78173c8d0fa603d3ae7fd5ca1bbfdab4dc659d17b0ec9cc
+ASCENSION Adapter v0.2 | candidate | 86be5d506dbfea57504871ffcbe16542831151f0826cb4545ee27b4baaf80adf
+ASCENSION Evaluator v0.6 | candidate rollback transparency backend | ed5c6ec83d08630a903bd26f73166360c0193d7f6dcb28c36729dac6e018acd9
+ASCENSION Evaluator v0.7 | 16/16 focused; 27/27 combined | f010e9986eb366d7b65179e722934acb4fa0d30768da3d575eebaa467e889ca7
+VECTOR v24 state | synthetic lab | 22dd9f69a24ffc55905539c983a1472d5612a4df097d4ca145a22ae52e37babf
+VECTOR v28.1 corrected capsule | critical negative result preserved | 7ae0a7187e00eac8ad782fc15832c375f1ff611941b34eca83d54b7eeb7afb13
+VECTOR v28.1 state | joint ambiguity calibration | 2a7ba810886bd9176bb481658079cba82662edc4fd1a77ef1349729f5c595841
+VECTOR v32 state | sequential recurrence/root provenance | 2689cdd5935da5c49d46108c49559f1fa7636f76d49565d094950ceb81957dbd
+Infrastructure V4 | 18 tests | 7b8700382495e1e894094417be37242942b3e7f24d69c2208dac6ef1d369abfb
+Infrastructure V26 | 163 tests reported | a9b6d91e5336ede1d96ce91fb97610d50aeb59dedc07eeb6dc065c91888f8eda
+Infrastructure V28 | 171/171 | c02bd9029e24c0447f4de6c210bd8634fd93d34ecbb5da1e49577bd6ecc779c0
+Infrastructure V34 | 245/245 | e58bd2fe66354dc11980159d4c8b3fd6940900ab71d9cf6d54c39e1d1f24c25c
+JANUS Run 018 | 71/71 | ab5bb91f1c1c3237991c10b7d625590a0c2693beb1b7d998a976775012ec44e2
+JANUS Run 026 | 99/99 | 5d8db843ea7c7d1d875764a6d0795b9c9cdbc63a0f117209a8a9843474608f21
+JANUS Run 027 | 102/102 | d11c823242597403700cfffd13163a7319e41773eee0735a00a08dd43c791977
+JANUS Run 029 | 108/108; 46/46 schemas | 6244dcc32e71a578ecc56fefdff6069f8aa5cf27f0e55faec7d240f6fd763c45
+JANUS Run 034 | 128/128; 62/62 schemas | c6f2206007afbefc51f402bac49be06616e506ea9972f3b0f4392b50a1847c76
+JANUS Run 035 | 132/132; 64/64 schemas | 9ae662ad45b0810a2d1a33b2d147442fbfb125d2db3f0ee216d7e71dc3dda563
+
+
+20. Recovered timeline / activity history
+Item | Recovered detail
+2026-09-23 | NEXUS v0.3 handoff anchors: 117/117 NEXUS, 11/11 AION, 4/4 ARGUS, 3/3 ATHENA, 45/45 DAEDALUS; sealed sibling boundaries; corpus handoff artifacts and historical larger-corpus claims.
+2026-09-23/24 | Advanced CSV loop v1.x recovery: 238 streams / 1,970,753 rows; 118/118→121/121. GitHub strategic control-loop design created. MÖBIUS master handoff written. PROMETHEUS design committed e057047. Central Orchestration checkpointed proof-carrying handoff architecture.
+2026-09-24/25 | Governor topology established. AEGIS expanded red-team and candidate integrity work. Multiple ICARUS cycles fail-closed on missing ownership/continuity evidence. SuperMesh and Infrastructure progressed through many versions. VECTOR/ASCENSION produced synthetic/package checkpoints.
+2026-09-25 | AEGIS CP007/008; PR #18 pinned at 76569e… remained draft/unmerged. Infrastructure advanced through V28/V34 and later V37 report. JANUS advanced through Runs 027–031. SuperMesh advanced through v3.x trust/transparency. Advanced terminal/browser capability plane defined.
+Late 2026-09-25 to 2026-09-26 | JANUS Runs 034 and 035 completed; Run 035 persisted to Drive. Deep scan subsequently recovered later durable lines including SuperMesh-X v3.7 FINAL2, Infrastructure V39, ASCENSION v021, AEGIS CP009, NEXUS v1.15 Iter32, PROMETHEUS v0.5, plus concrete ORACLE/AION/ARGUS/ATHENA/DAEDALUS foundations. Later SuperMesh v4 READY_TO_COMMIT status remains conversational/unreverified.
+
+
+21. What is completed, what was being done, and what remains
+21.1 Strongly completed/recovered work
+Durable SuperMesh-X runtime/trust packages now recovered through v3.7.0 Cycle 7 FINAL2, including 351/351 full regression and trusted-time/expiry hardening; independent Governor promotion still open.
+JANUS proof/recovery/acquisition chain through Run 035 with exact hashes and Drive persistence for the latest recovered run.
+Infrastructure durability/recovery line now recovered exactly through V39, 290/290, with GovernanceTransactionJournal and exact artifact hash.
+ASCENSION now recovered through v021 Conformance Kit v0.1: 32/32 focused + 6,800/6,800 adversarial; Adapter v0.4/Evaluator v0.8 candidates preserved; Transfer still blocked.
+VECTOR synthetic/shadow research capsules through v32, including preserved negative results rather than selective success-only reporting.
+NEXUS/DAEDALUS recovered through NEXUS v1.15 Iter32 (153/153) and DAEDALUS receiver 58/58, with explicit corpus incompleteness, P0 representation-evidence, and selection-contamination gates.
+MASTER LOOP GOVERNOR topology and evidence-gated rotation policy.
+MÖBIUS architecture/implementation blueprint plus PROMETHEUS v0.5 verified 77/77 artifact; PROMETHEUS v0.6 verifier-adapter work is a design frontier, not yet a verified build.
+GitHub Tier 0–6 strategic control-loop blueprint and machine-readable state design.
+21.2 In-progress / blocked / not canonically adopted
+AEGIS repair stack and PR #18: substantial testing and red-team work, but canonical merge/adoption unresolved.
+Historical CSV corpus recovery: accessible corpus remains far below the historical 626-stream / 12.59M-row anchor and the user’s ~800+ file expectation.
+DAEDALUS confirmatory validation: waiting for genuinely unseen evidence / independent non-overlapping source.
+JANUS live Git adoption: authoritative checkout unavailable despite strong offline artifacts.
+SuperMesh v4: later READY_TO_COMMIT status should be re-verified against the actual artifact/repository before Opus relies on it.
+Concrete OS/container/VM enforcement, secrets materialization, and large worker-swarm activation remained intentionally gated in the recovered SuperMesh line.
+ORACLE is no longer role-only: Checkpoint C / 75% package, exact freeze commit/tag and 34/34 tests were recovered. PARALLAX is explicitly an AION proposal with no feature code built. OMNIVISION remains the weakly recovered branch requiring canonical artifact recovery.
+End-to-end Integrated Shadow Spine remains the major system-level integration target.
+22. ICARUS Integrated Shadow Spine target
+NEXUS publishes versioned, provenance-rich, causally safe market-data packets/corpus manifests.
+JANUS binds project/runtime temporal truth, state lineage, synchronization receipts, and change evidence.
+AEGIS evaluates candidate components under protected causal evidence and red-team attack.
+VECTOR stress-tests robustness, uncertainty, recurrence, and decision policies in shadow research mode.
+ASCENSION verifies evidence/trust/collision compatibility and transfer semantics.
+SuperMesh-X routes governed capabilities/providers/runtime sessions under isolation and authority policy.
+Infrastructure persists/recoveries state and handoffs with fencing, leases, and authenticated restoration.
+MASTER LOOP GOVERNOR allocates active work and enforces READY_TO_COMMIT gates; Central Orchestration reconciles proof-carrying adoption.
+DAEDALUS remains promotion authority for protected scientific validation; ICARUS remains production execution authority.
+23. Non-negotiable instructions for Opus
+Do not restart the ecosystem from scratch. Resume from the newest verified durable checkpoint per subsystem.
+Do not silently rename, merge, overwrite, duplicate, or transfer ownership between sibling systems.
+Do not treat conversational “completed” language as stronger than artifact/repository evidence.
+Do not interpret CI success as merge/default-branch adoption.
+Do not reinterpret a local ZIP/Drive file as canonical repository truth without reconciliation.
+Do not reuse protected holdout evidence after inspection and then call it fresh.
+Do not allow pivot/fractal/HTF logic to use future information or confirmation that was unavailable at decision time.
+Do not equate engineering correctness with strategy efficacy or live profitability.
+Do not activate live trading, unrestricted shells, broad credentials, or large worker swarms merely because local tests pass.
+Preserve failed experiments and negative results (e.g., VECTOR v28.1 100% abstention) as durable knowledge.
+Require evidence-to-claim binding, code/environment identity, hashes, receipts, and deterministic replay where practical.
+When statuses conflict, prefer the later independently verified artifact; otherwise keep the conflict explicit and unresolved.
+For OMNIVISION or any other weakly recovered branch, recover canonical artifacts before modifying or integrating it. ORACLE should reconcile from its recovered Checkpoint C identity; PARALLAX should remain proposal-only unless implementation is explicitly started.
+24. Source artifact index consulted/recovered
+ICARUS_OPUS_SUPER_HANDOFF.docx (earlier abbreviated handoff; superseded by this file for breadth)
+Master Loop Governor Report
+Icarus Central Orchestration — Checkpoint 04
+Designing a Resumable, Dependency-Aware GitHub Control Loop for ICARUS/NEXUS
+ICARUS_CSV_RESEARCH_CURRENT_STATE_2026-09-24.md plus ICARUS_CSV_RESEARCH_v1.15_ITER32_2026-09-25.zip (latest recovered NEXUS checkpoint)
+MOBIUS_ONE_LOOP_MASTER_HANDOFF.md
+SuperMesh-X state capsules/packages including v2.3.0, v2.4.0, v3.0/3.1/3.2, v3.6, and v3.7.0 Cycle 7 FINAL2; later v4 status retained only as unreverified conversational state
+ASCENSION state lineage including v017.1, v020, v021; Sibling Manifest Conformance Kit v0.1; Evaluator Fabric v0.8; Adapter v0.4
+VECTOR_STATE_CAPSULE_v2026.09.25-24.md, v28.1, v32
+JANUS run states recovered from prior-chat context and handoff archives through Run 035
+Infrastructure state capsules/packages through exact V39 (superseding older V37-only status)
+AEGIS Challenger Forge checkpoints through CP009; ORACLE Checkpoint C package/Git bundle; AION v0.1 repo artifact; ARGUS/ATHENA starter handoffs; DAEDALUS+ATHENA handoff; OMNIVISION conversational status; trading/repo/loop context
+25. Completeness limits / access gaps
+IMPORTANT: No model can honestly certify “every single historical chat turn” unless that complete chat corpus is actually exposed to retrieval. This document includes everything materially recoverable in the accessible prior-chat context and project-artifact library during this pass. It explicitly does not fabricate content for inaccessible, deleted, unindexed, or never-persisted chats/files.
+
+Not every historical chat log is directly enumerable from the current interface; prior-chat retrieval is relevance-based rather than a guaranteed full export.
+Some reported later versions remain conversational rather than artifact-reopened, especially the later SuperMesh v4 READY_TO_COMMIT claim. The deep scan did recover exact durable SuperMesh v3.7, Infrastructure v39, ASCENSION v021, AEGIS CP009, NEXUS v1.15 Iter32, PROMETHEUS v0.5, ORACLE, AION, ARGUS, ATHENA, and DAEDALUS artifacts.
+OMNIVISION remains the main named branch lacking a dedicated canonical artifact in accessible storage. ORACLE now has a recovered checkpoint/Git identity; PARALLAX is proven to be an AION proposal rather than an implemented sibling.
+Authoritative Git history/default-branch state was unavailable in several runs; repository truth must be rechecked before code changes.
+The historical CSV corpus itself is incomplete in accessible storage; coverage claims remain forbidden until manifests/hashes prove recovery.
+If Opus gains direct access to the complete chat export, repository, and all Drive artifacts, it should ingest this document as the seed index and reconcile additional evidence rather than discarding it.
+26. Compact handoff directive
+OPUS: Treat this document as a reconstruction ledger, not a license to assume all claims are current. First reconcile durable artifacts and repository state. Preserve ownership, causal/holdout integrity, and fail-closed gates. Continue the newest verified work; do not rebuild solved layers. The major ecosystem objective is to turn the separate, already-sophisticated subsystem lines into a proof-carrying Integrated Shadow Spine without sacrificing their isolation or falsifiability.
+27. Deep-scan supersession: latest recovered checkpoints and exact resume map
+This section records the material findings recovered after the first “complete” handoff was created. Where this section conflicts with an earlier status row, the durable artifact evidence below supersedes the older conversational or earlier-checkpoint status. It does not supersede subsystem authority boundaries.
+Subsystem | Latest durable/recovered state | Verification | Exact identity | Resume / hard gate
+SuperMesh-X | v3.7.0 Cycle 7 FINAL2 | 351/351 full; 60 focused; compile/smoke/validator/ZIP/fresh extract PASS | SHA-256 85556a3800cd053cf832d29cc61fc39f776e3607019f73a758c712e3c5cf03cd | READY_TO_COMMIT=NO; independent Governor verification; v3.8 cross-runtime canonicalization next
+Infrastructure | V39 GovernanceTransactionJournal | 290/290 full + fresh extraction; compileall/ZIP PASS | SHA-256 8ed4567160aaa31c7bd9fbdb2a6f053525839f33322fa4441679b9210dcb1f71 | V40 failpoint-integrated coordinator; production/live adoption remains gated
+AEGIS | Checkpoint 009 | 36/36; final NQ/BTC holdouts untouched | ZIP SHA-256 8199c5758294ae04cf474ae1d4ce9c10c900154ee47281c3c676d310a02c46f8 | No live trading; quarantined negative directional alphas stay quarantined; canonical PR adoption separate
+ASCENSION | v021 Sibling Manifest Conformance Kit v0.1 | 32/32 focused; 6,800/6,800 adversarial; compile PASS | SHA-256 23970729247a64465967611fac44db73ae25e013a0bf43f6b4bd65d06126dbb1 | Transfer BLOCKED; get exact signed PROMETHEUS runtime export; conformance ≠ authentication
+NEXUS | v1.15.0 Iteration 32 | 153/153; reproducible same-corpus replay; nondeterminism=false | ZIP SHA-256 c88b3c679f6f96b758f4ffbd4fbfb0309ad4d37dcc54b789500c1ca1827bb683 | Coverage claim forbidden; recover historical corpus and resolve export-specific P0 evidence
+DAEDALUS | NEXUS-integrated receiver | 58/58; static audit 34 files / 6,022 lines | Bound to NEXUS Iter32 handoff / exact current artifact lineage | 13 WAITING_NO_NEW_BYTES; 0 protected-holdout-eligible; no production authorization
+PROMETHEUS | v0.5 verified; v0.6 design only | 77/77 + compileall; scans/diff/demo PASS | v0.5 ZIP SHA-256 6d27cb5ab4bd9ec2b53dc486e765ee9768403bffa8a243d65949c00afebffbb8 | Resume v0.5; v0.6 verifier adapters require external verifier/host trust boundary
+AION | Market Memory v0.1 | 11/11 + compileall + JS check; synthetic replay demo | Git HEAD 8e1a0f1a837daa3da6285400fb485bf668abdabd; ZIP SHA-256 7af272b7c68c6f855a7ddf2758239a79dc69781711946d37e62355b59c41a935 | No real-data acceptance/live execution; implement real provider availability/sequence adapter
+ARGUS | Microstructure OS starter foundation | 4/4 + compile | ZIP SHA-256 0f9209a7764ea06da78ecddaa8409adec0c77af6ae8b29c2389572c13973f37c | Needs real trade/depth validation; candle proxies remain non-L2
+ATHENA | Supervisory Fabric Phase-0 foundation | 3/3 + compile | ZIP SHA-256 47225305132b1ac4fcc2a332e71ef73bb18b56290e921b50e0989381189c51bc | Not trained/production authorized; preserve advisory risk/abstention role
+DAEDALUS foundation | Historical protocol-v3 handoff | 45/45; static audit 32 files / 5,235 lines; ~79% coverage | ZIP SHA-256 34a9286189d9ef31c7098437976417672e901ee70512df50b86c775f00895cce | ResourceWarning cleanup, meaningful core coverage, real-data smoke, authoritative full-corpus validation remain
+ORACLE | Checkpoint C / 75% | 34/34 + compileall | Git freeze 6255339daf80b709357a2ea581b572ebbcef5905; tag oracle-checkpoint-c-75pct; ZIP SHA-256 712c97d7e7cc02dd29511d9c4090c0f4626793515b21f7e6afef6959bf097c0a | Reconcile current remote before mutation; do not rebuild already-present autonomous/operating layers
+JANUS | Run 035 | 132/132; 64/64 schemas; Drive persistence verified | ZIP SHA-256 9ae662ad45b0810a2d1a33b2d147442fbfb125d2db3f0ee216d7e71dc3dda563 | Live Git unavailable; Run 036 provenance/cache/adversarial receipt frontier
+VECTOR | v32 synthetic/shadow | Serialized checkpoint exact; authority malformed-state rejection 100% | State SHA-256 2689cdd5935da5c49d46108c49559f1fa7636f76d49565d094950ceb81957dbd | No production authority; real replay/root provenance/forward evidence still missing
+OMNIVISION | Conversational Stage 1.1 / Stage 1A only | No dedicated artifact recovered | UNRESOLVED | Recover canonical artifact before integration
+PARALLAX | AION proposal only | No feature code built | Proposal housed in AION v0.1 artifact | If implemented, preserve multi-view lineage/view-not-vote and no order authority
+
+27.1 AEGIS CP009 decisions that Opus must preserve
+BTCUSD corpus is now 23,976 clean 1-hour bars; final 4,796-bar holdout remains untouched. Payload SHA-256 fc7d0c2a37ba48f8dc9e912cf1b90d5d738d5905bfd5ba982f6eb74f8b6ed417.
+Quarantine decisions are durable negative knowledge: BTC Ichimoku directional use = QUARANTINE_DIRECTIONAL_USE_RETAIN_REGIME_FEATURE; Ichimoku+ADX combined alpha = QUARANTINE_COMBINED_ALPHA; EMA pullback alpha = QUARANTINE_ALPHA.
+NQ point-in-time QQQ factor stays RETAIN_CONTEXT_FEATURE_ONLY; KNN OOD stays RETAIN_OOD_GUARD_SHADOW. Do not silently promote either to alpha authority.
+Conflicting confident horizons force abstention. Circular evidence / duplicate lineage cannot be counted as independent evidence. Tombstone/rollback semantics remain reversible and auditable.
+27.2 NEXUS Iter32 corpus and representation truth
+Current physical materialization remains 476 CSV entries / 238 usable streams / 1,970,753 rows / 231 distinct contents / 7 exact duplicates. This is still far below the historical AION/PARALLAX anchor of 626 usable entries / 12,588,290 rows / 513 distinct contents / nine ZIPs.
+Gap versus anchor: 388 usable entries, 10,617,537 rows, at least 282 distinct contents, plus 106 additional duplicate-lineage entries. The owner’s ~800+ file expectation remains an expectation, not a proved corpus fact.
+92 P0 representation-evidence items remain unresolved. Export/vendor evidence must bind to exact stream identity + raw SHA-256; representation evidence must not be inherited across copied/sibling streams.
+Residual-gap diagnostics do not prove data loss: 28 cross-resolution-activity dominant, 10 mixed, 11 shared-silence dominant, one insufficient sibling overlap. Production_authorized=false and protected_holdout_spent=false.
+27.3 Foundational sibling corrections
+AION is an implemented local repository, not merely a historical role label. It includes source/observation contracts, evidence-tier firewall, append-only hash-linked SQLite event ledger, revisions/as-of/gap recovery/tamper detection, evidence-bound forecasts/outcome settlement, deterministic replay and a synthetic time-machine cockpit. Its demo remains synthetic and execution_authorized=false.
+ARGUS is a tested starter foundation, not a full production microstructure engine. Real trade/depth evidence is required for true L2/order-flow validation; candle-derived approximations remain proxies and must never be relabeled as authenticated depth/order book truth.
+ATHENA is a tested supervisory Phase-0 foundation, not a trained world model. It owns supervisory interpretation/uncertainty/abstention/risk/routing, not broker/order execution.
+DAEDALUS has both a historical 45/45 protocol-v3 foundation handoff and a later 58/58 NEXUS-integrated receiver. Preserve unfinished foundation release tasks rather than assuming the higher receiver test count solved SQLite ResourceWarnings, low-coverage modules, real-data smoke, or full-corpus validation.
+PARALLAX is explicitly a proposal inside AION. Opus must not accidentally “resume” it as if feature code already exists.
+27.4 ORACLE and PROMETHEUS resume boundaries
+ORACLE Checkpoint C contains a concrete embedded Git state. Treat commit 6255339daf80b709357a2ea581b572ebbcef5905 / tag oracle-checkpoint-c-75pct as the checkpoint identity, then reconcile against any live remote before modifying. Avoid rebuilding modules the checkpoint explicitly says are already present.
+PROMETHEUS v0.5 is the latest verified build recovered. Its deterministic demo produces research routing, not trading/production authority. v0.6 is an architectural design for external verifier result normalization/authority policy; no verified v0.6 build surfaced, so do not label v0.6 implemented.
+ASCENSION v021 specifically identifies PROMETHEUS as the best first real sibling handoff candidate. Obtain exact runtime export/attestation/trust-policy bytes, validate them read-only, then let Adapter v0.4/Evaluator gates decide Transfer. Never use the Conformance Kit to manufacture authentication.
+27.5 Remaining irreducible gaps after deep scan
+No complete historical chat export is exposed, so unindexed/deleted/inaccessible chat turns cannot be certified as included.
+OMNIVISION remains represented by conversational status only; no dedicated canonical artifact was recovered in the accessible Library scan.
+The later SuperMesh-X v4.0 READY_TO_COMMIT/retirement claim remains conversational in this reconstruction; the durable v3.7 artifact is the highest exact package reopened here.
+Multiple subsystems still lack authoritative live/default-branch Git adoption even when their local ZIP/state capsules are strong; always reconcile before code mutation.
+Deep Research was invoked for the gap scan but the app reported a rate-limited state in this session; the exhaustive artifact recovery therefore relied heavily on direct Library enumeration/search/materialization and package inspection rather than a completed Deep Research report.
+27.6 First actions for Opus
+1. Verify hashes for the exact latest artifacts before using them.
+2. Reconcile any available live repositories against these checkpoint identities; do not infer merge/adoption from local evidence.
+3. Load the latest subsystem checkpoint independently; preserve ownership boundaries and rollback baselines.
+4. Resolve the highest-leverage evidence/dependency blockers (corpus recovery, PROMETHEUS→ASCENSION signed handoff, AEGIS canonical adoption, Infrastructure V40, SuperMesh v3.8) without spending protected holdouts.
+5. Build the Integrated Shadow Spine only from versioned/proof-carrying contracts; live trading and broad execution authority remain disabled until the proper promotion systems explicitly qualify them.

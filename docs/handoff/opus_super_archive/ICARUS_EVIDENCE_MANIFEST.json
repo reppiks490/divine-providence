@@ -1,0 +1,32 @@
+{
+  "snapshot": "2026-09-26",
+  "purpose": "Opus super handoff of recovered ICARUS system-build state",
+  "evidence_classes": [
+    "RECOVERED_FILE",
+    "PRIOR_CHAT_CONTEXT",
+    "REPORTED_STATUS",
+    "UNRESOLVED"
+  ],
+  "known_exact_hashes": {
+    "SuperMesh-X v2.4.0": "4b538b72bccb641dda22b0053cd6153ae04735113d42d5855e1145b965a44d93",
+    "SuperMesh-X v3.1.0": "1a4a9e24129c88cddc54cf8f046c2051385e8414d4771f62b8989f46ac4f1e24",
+    "SuperMesh-X v3.0.0": "724b76a2de7898dfb17d58d9f4e3604b5532ce460016c3d98aeb030824777c7b",
+    "JANUS Run 027": "d11c823242597403700cfffd13163a7319e41773eee0735a00a08dd43c791977",
+    "JANUS Run 029": "6244dcc32e71a578ecc56fefdff6069f8aa5cf27f0e55faec7d240f6fd763c45",
+    "JANUS Run 034": "c6f2206007afbefc51f402bac49be06616e506ea9972f3b0f4392b50a1847c76",
+    "Infrastructure V28": "c02bd9029e24c0447f4de6c210bd8634fd93d34ecbb5da1e49577bd6ecc779c0",
+    "Infrastructure V34": "e58bd2fe66354dc11980159d4c8b3fd6940900ab71d9cf6d54c39e1d1f24c25c",
+    "NEXUS earlier artifact": "458f2cf2554b4630d995dacc745bc3dab489ac68b2c6cefccd28a88c72abd3e1"
+  },
+  "repository_revisions": {
+    "canonical_baseline": "007e70189945b8e112904cf92b2b1a12e43792d6",
+    "later_runtime_pin": "76569e1962e721b0f4dc973df21358f40c31ce81"
+  },
+  "critical_gaps": [
+    "Historical CSV corpus not fully recovered",
+    "PR #18 evidence remained open/draft/unmerged",
+    "Some latest hashes only partially recovered",
+    "Conversation-reported later states require artifact/repository re-verification",
+    "Authoritative live Git adoption unavailable in several build runs"
+  ]
+}

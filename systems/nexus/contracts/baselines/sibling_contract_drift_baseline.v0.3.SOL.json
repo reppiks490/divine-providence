@@ -1,0 +1,46 @@
+{
+  "files": [
+    {
+      "ast_sha256": "d18f164ca705601d3c6c4b7ddc6e5fe4c1b587eaa2cd4d63f42d1b2a32e6b452",
+      "path": "/mnt/data/nexus_build/aion/icarus-aion/aion/contracts.py",
+      "raw_sha256": "df9cf2b8323558fbaa2e9bdb67dc73219ab51034e6785f798cc5d16e7d584d7d",
+      "role": "contracts",
+      "sibling": "AION",
+      "size_bytes": 9570
+    },
+    {
+      "ast_sha256": "eb979e11d340ed87fa1255b1879961d152fe979627c42cd9fd5ec57957d8acc5",
+      "path": "/mnt/data/nexus_build/aion/icarus-aion/aion/store.py",
+      "raw_sha256": "8712ee1757b5e000d4e20f71499cdb80def7954b6010f6cf7948c73f1b2fb313",
+      "role": "store",
+      "sibling": "AION",
+      "size_bytes": 19613
+    },
+    {
+      "ast_sha256": "4d267aedd36a100a5e31a73397fa5ac3d34e85ab652cf1002f99b138671231ca",
+      "path": "/mnt/data/nexus_build/argus/argus-microstructure-os/src/argus/contracts.py",
+      "raw_sha256": "5a541877fc61f62517591ba47ac35d88cabb33b6b1e17099e3f52e95f7ae06e2",
+      "role": "contracts",
+      "sibling": "ARGUS",
+      "size_bytes": 1088
+    },
+    {
+      "ast_sha256": "7aecc949aeaea80d663102514fe769e6a3356d9999049e0c9c7125e2255706bd",
+      "path": "/mnt/data/nexus_build/athena/athena-supervisory-fabric/src/athena/contracts.py",
+      "raw_sha256": "22876f80019466418a0a512242a3d84bebaeb9a172bd9f9d1b851bc7862d5bf0",
+      "role": "contracts",
+      "sibling": "ATHENA",
+      "size_bytes": 1452
+    },
+    {
+      "ast_sha256": "eff3ee371e9d1c7b1b243aa204e9fdff483e9468b4fc62001e9710f478f0b848",
+      "path": "/mnt/data/nexus_build/daedalus/daedalus-research-os/src/daedalus/bridge.py",
+      "raw_sha256": "110f777aaca91d77997d482b799cb5d52c1bc2f2a93528955a4afde8fe1d2491",
+      "role": "bridge",
+      "sibling": "DAEDALUS",
+      "size_bytes": 651
+    }
+  ],
+  "schema": "nexus.contract-drift-snapshot.v1",
+  "snapshot_hash": "1119ef3d9b561dc89668a9768893a2b1ab09cd542ffd1d7a02dd73f5a81388a2"
+}

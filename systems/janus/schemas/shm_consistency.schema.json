@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS SQLite SHM/WAL Consistency Classification v1",
+  "type": "object",
+  "required": ["path", "exists", "classification", "header_copies_identical", "header_checksum_valid", "frame_map_valid"],
+  "properties": {
+    "classification": {"enum": ["absent", "shm_consistent", "shm_corrupt_header", "shm_corrupt_layout", "shm_header_copies_diverge", "shm_corrupt_header_checksum", "shm_invalid_backfill_horizon", "shm_wal_unverifiable", "shm_wal_page_size_mismatch", "shm_wal_checksum_order_mismatch", "shm_wal_salt_mismatch", "shm_wal_horizon_mismatch", "shm_wal_frame_checksum_mismatch", "shm_wal_frame_map_mismatch"]},
+    "header_copies_identical": {"type": "boolean"},
+    "header_checksum_valid": {"type": "boolean"},
+    "frame_map_valid": {"type": "boolean"},
+    "mx_frame": {"type": "integer", "minimum": 0},
+    "n_backfill": {"type": "integer", "minimum": 0},
+    "n_backfill_attempted": {"type": "integer", "minimum": 0},
+    "first_frame_map_mismatch": {"type": ["integer", "null"], "minimum": 1},
+    "salt_hex": {"type": ["string", "null"]},
+    "frame_checksum": {"type": "array", "items": {"type": "integer", "minimum": 0}, "minItems": 2, "maxItems": 2}
+  }
+}

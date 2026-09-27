@@ -1,0 +1,357 @@
+{
+  "version": "0.7.0",
+  "integrations": [
+    {
+      "id": "deep-research",
+      "capabilities": [
+        "research.deep",
+        "research.synthesis"
+      ],
+      "access_mode": "runtime",
+      "permission_class": "orchestration",
+      "priority": 100
+    },
+    {
+      "id": "exa",
+      "capabilities": [
+        "research.search",
+        "research.fetch"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 94
+    },
+    {
+      "id": "tavily",
+      "capabilities": [
+        "research.search",
+        "research.crawl",
+        "research.extract"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 94
+    },
+    {
+      "id": "firecrawl",
+      "capabilities": [
+        "research.search",
+        "research.crawl",
+        "research.extract",
+        "research.monitor"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 94
+    },
+    {
+      "id": "parallel-search",
+      "capabilities": [
+        "research.search",
+        "research.fetch"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 90
+    },
+    {
+      "id": "consensus",
+      "capabilities": [
+        "research.academic",
+        "research.literature"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 91
+    },
+    {
+      "id": "scite",
+      "capabilities": [
+        "research.academic",
+        "research.citations",
+        "research.literature"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 92
+    },
+    {
+      "id": "datablue",
+      "capabilities": [
+        "data.web",
+        "data.structured",
+        "research.search",
+        "research.crawl",
+        "media.youtube"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 88
+    },
+    {
+      "id": "twelve-data",
+      "capabilities": [
+        "market.quote",
+        "market.history",
+        "market.technical",
+        "market.fundamentals",
+        "market.news"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 95
+    },
+    {
+      "id": "tickerlayer",
+      "capabilities": [
+        "market.quote",
+        "market.history",
+        "market.sessions",
+        "market.rates"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 93
+    },
+    {
+      "id": "factorweave",
+      "capabilities": [
+        "market.factors",
+        "market.regime",
+        "market.similarity",
+        "market.risk"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 95
+    },
+    {
+      "id": "zacks",
+      "capabilities": [
+        "market.fundamentals",
+        "market.research",
+        "market.news",
+        "market.estimates"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 92
+    },
+    {
+      "id": "coingecko",
+      "capabilities": [
+        "crypto.market",
+        "crypto.news",
+        "crypto.history"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 92
+    },
+    {
+      "id": "blockscout",
+      "capabilities": [
+        "crypto.onchain",
+        "blockchain.contracts",
+        "blockchain.wallets"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 92
+    },
+    {
+      "id": "exoscope",
+      "capabilities": [
+        "crypto.market",
+        "crypto.chart"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 84
+    },
+    {
+      "id": "economist-graphs",
+      "capabilities": [
+        "data.graphs",
+        "research.politics_data"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 70
+    },
+    {
+      "id": "omgskills",
+      "capabilities": [
+        "skills.discover"
+      ],
+      "access_mode": "plugin",
+      "permission_class": "read_only",
+      "priority": 80
+    },
+    {
+      "id": "nvidia-skills",
+      "capabilities": [
+        "gpu.nvidia",
+        "skills.discover"
+      ],
+      "access_mode": "runtime_skill",
+      "permission_class": "local_runtime",
+      "priority": 85
+    },
+    {
+      "id": "codex-coordinator",
+      "capabilities": [
+        "code.orchestrate",
+        "repo.coordinate"
+      ],
+      "access_mode": "runtime_skill",
+      "permission_class": "orchestration",
+      "priority": 92
+    },
+    {
+      "id": "youtube-conversation",
+      "capabilities": [
+        "media.youtube",
+        "study.learn"
+      ],
+      "access_mode": "runtime_skill",
+      "permission_class": "orchestration",
+      "priority": 84
+    },
+    {
+      "id": "baton-pass",
+      "capabilities": [
+        "code.handoff",
+        "state.handoff"
+      ],
+      "access_mode": "runtime_skill",
+      "permission_class": "orchestration",
+      "priority": 88
+    },
+    {
+      "id": "founder-pulse",
+      "capabilities": [
+        "repo.requirements",
+        "product.operations"
+      ],
+      "access_mode": "runtime_skill",
+      "permission_class": "orchestration",
+      "priority": 82
+    },
+    {
+      "id": "superpowers",
+      "capabilities": [
+        "code.plan",
+        "code.tdd",
+        "evidence.verify"
+      ],
+      "access_mode": "runtime_skill",
+      "permission_class": "orchestration",
+      "priority": 96
+    },
+    {
+      "id": "astral-orchestrator",
+      "capabilities": [
+        "code.orchestrate",
+        "agents.route"
+      ],
+      "access_mode": "runtime_skill",
+      "permission_class": "orchestration",
+      "priority": 92
+    },
+    {
+      "id": "akinator",
+      "capabilities": [
+        "repo.intelligence",
+        "code.repo"
+      ],
+      "access_mode": "runtime_skill",
+      "permission_class": "orchestration",
+      "priority": 86
+    },
+    {
+      "id": "hey-traders",
+      "capabilities": [
+        "market.quant",
+        "market.strategy"
+      ],
+      "access_mode": "runtime_skill",
+      "permission_class": "orchestration",
+      "priority": 88
+    },
+    {
+      "id": "study",
+      "capabilities": [
+        "study.learn",
+        "study.quiz"
+      ],
+      "access_mode": "runtime_skill",
+      "permission_class": "orchestration",
+      "priority": 80
+    },
+    {
+      "id": "finances",
+      "capabilities": [
+        "finance.accounts",
+        "finance.transactions",
+        "finance.watchlist",
+        "portfolio.holdings",
+        "portfolio.allocation",
+        "portfolio.event_impact",
+        "portfolio.sync_state"
+      ],
+      "access_mode": "authorized_private_connector",
+      "permission_class": "private_read_write_gated",
+      "priority": 96
+    },
+    {
+      "id": "interactive-brokers",
+      "capabilities": [
+        "market.quote",
+        "market.history",
+        "broker.market_data",
+        "broker.portfolio",
+        "broker.orders",
+        "broker.executions"
+      ],
+      "access_mode": "authorized_external",
+      "permission_class": "read_write_gated",
+      "priority": 99
+    },
+    {
+      "id": "forex-factory",
+      "capabilities": [
+        "market.macro",
+        "market.calendar",
+        "market.macro.forex_factory"
+      ],
+      "access_mode": "public_export",
+      "permission_class": "read_only",
+      "priority": 90
+    },
+    {
+      "id": "substack",
+      "capabilities": [
+        "research.substack",
+        "research.newsletters",
+        "research.author_graph"
+      ],
+      "access_mode": "public_or_authorized",
+      "permission_class": "read_only",
+      "priority": 82
+    },
+    {
+      "id": "gmail",
+      "capabilities": [
+        "communications.email.search",
+        "communications.email.thread",
+        "communications.email.attachment",
+        "research.newsletter.private",
+        "alerts.email.market_event"
+      ],
+      "access_mode": "authorized_private_connector",
+      "permission_class": "private_read_write_gated",
+      "priority": 91
+    }
+  ]
+}

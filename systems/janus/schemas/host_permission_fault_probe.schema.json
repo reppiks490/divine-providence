@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Host Permission Fault Probe v1",
+  "type": "object",
+  "required": ["format","mechanism","requested_directory","target_path","returncode","classification","write_succeeded","probe_digest"],
+  "properties": {
+    "format": {"const": "janus-host-permission-fault-probe-v1"},
+    "mechanism": {"const": "filesystem_mode_bits"},
+    "classification": {"enum": ["kernel_write_denied","kernel_storage_error","unexpected_write_success","probe_failed"]},
+    "errno": {"type": ["integer","null"]},
+    "errno_name": {"type": ["string","null"]},
+    "write_succeeded": {"type": "boolean"},
+    "returncode": {"type": "integer"},
+    "probe_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

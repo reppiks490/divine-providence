@@ -1,0 +1,41 @@
+{
+  "cycle_id": "ascension-cycle-020",
+  "focused_tests": {
+    "passed": 28,
+    "failed": 0,
+    "errors": 0
+  },
+  "combined_regression": {
+    "passed": 105,
+    "failed": 0,
+    "errors": 0
+  },
+  "property_v07": {
+    "valid_transitions": 2016,
+    "mutated_proofs_rejected": 1000
+  },
+  "property_v08": {
+    "valid_inclusions": 8256,
+    "mutated_nodes_rejected": 1500,
+    "geometry_attacks_rejected": 1000,
+    "binding_attacks_rejected": 1000,
+    "v06_false_index_relabels_accepted": 42,
+    "v08_false_index_relabels_rejected": 42
+  },
+  "adapter_failure_injection": {
+    "backend_substitutions_rejected": "500/500",
+    "pinned_policy_substitutions_rejected": "500/500",
+    "strict_inclusion_node_mutations_rejected": "500/500",
+    "false_index_relabels_rejected": "500/500",
+    "witness_mutations_rejected": "400/400",
+    "malformed_inputs_fail_closed_safe_for_siblings": "300/300",
+    "dependency_digest_contract_substitutions_rejected": "500/500",
+    "provenance_deletions_detected": "26/26",
+    "total": 3226
+  },
+  "runtime_dependency_file_tamper": {
+    "detected": "4/4"
+  },
+  "deep_research_actually_invoked": false,
+  "real_authenticated_sibling_manifest_validated": false
+}

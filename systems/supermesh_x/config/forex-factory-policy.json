@@ -1,0 +1,6 @@
+{
+  "version":"0.6.0",
+  "export_formats":["ics","csv","json","xml"],
+  "fields":["event","currency","impact","scheduled_time","actual","forecast","previous","revision","retrieved_time","timezone"],
+  "policy":{"times_may_change":true,"preserve_revisions":true,"positive_surprise_not_directional_by_default":true,"use_as_confounder_source":true}
+}

@@ -1,0 +1,30 @@
+{
+  "kit_version": "0.1",
+  "profile_id": "ascension-adapter-v0.4-transfer-profile",
+  "sibling_id": "PROMETHEUS",
+  "grants_authority": false,
+  "target_adapter_package_sha256": "0145bf2ecb3ecd606c9d70b26b671ce397bba17f35dc56da4c691997bbd8e224",
+  "required_layers": [
+    "collision_manifest",
+    "artifact_digest_and_transferable_bytes",
+    "sibling_attestation_descriptor",
+    "external_verification_receipt",
+    "adapter_v0_4_prior_collision_report",
+    "adapter_v0_4_trust_policy",
+    "adapter_v0_4_attestations",
+    "adapter_v0_4_transparency_evidence",
+    "adapter_v0_4_backend_contract"
+  ],
+  "mandatory_receipt_checks": [
+    "signature",
+    "subject_digest",
+    "signer_identity",
+    "trusted_root"
+  ],
+  "explicit_nonclaims": [
+    "conformance_is_not_authentication",
+    "receipt_is_not_reverified_by_this_kit",
+    "sibling_authority_is_not_created_by_ascension",
+    "transfer_is_not_verified_until_adapter_execution"
+  ]
+}

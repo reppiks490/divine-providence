@@ -1,0 +1,10 @@
+NEXUS/DAEDALUS integration checkpoint — 2026-09-24
+DAEDALUS tests: 56/56 passed
+Static audit: 34 source files / 5,982 source lines passed
+NEXUS handoff source: v1.3.1 iteration 0007
+Behavioral development-only candidates: 13
+Retrospective diagnostics: 8 direction-stable; 5 strong nonstationarity
+Future confirmation readiness: 0 ready; 13 WAITING_NO_NEW_BYTES
+Protected outcomes touched: false
+Protected holdout spent: false
+Production authorized: false

@@ -1,0 +1,12 @@
+{
+  "capsule_type": "icarus_central_orchestration_run_capsule",
+  "capsule_version": "1.0",
+  "producer": "Icarus Central Orchestration",
+  "producer_checkpoint": 10,
+  "artifact_id": "icarus-central-orchestration-current-work-2026-09-24",
+  "state": "BUILT",
+  "verification_scope": "package_integrity_only",
+  "authority_boundary": "cross-system reconciliation and routing only",
+  "revalidation_condition": "newer evidence-backed specialist checkpoint or live-repository reconciliation",
+  "next_action": "Recover this package in a later cycle and verify its ZIP SHA-256."
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Temporal Conflict",
+  "type": "object",
+  "required": ["kind", "subject", "predicate", "overlap_from", "overlap_to", "facts", "resolution", "proof_required", "blast_radius"],
+  "properties": {
+    "kind": {"const": "overlap_conflict"},
+    "subject": {"type": "string"},
+    "predicate": {"type": "string"},
+    "overlap_from": {"type": "string"},
+    "overlap_to": {"type": "string"},
+    "facts": {"type": "array", "minItems": 2},
+    "resolution": {
+      "type": "object",
+      "required": ["status", "reason"],
+      "properties": {
+        "status": {"enum": ["resolved", "quarantined"]},
+        "reason": {"enum": ["explicit_authority_precedence", "authority_policy_missing", "authority_tie"]},
+        "winner_fact_id": {"type": "string"},
+        "winner_authority": {"type": "string"},
+        "winner_rank": {"type": "integer"}
+      }
+    },
+    "proof_required": {"type": "boolean"},
+    "blast_radius": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  }
+}

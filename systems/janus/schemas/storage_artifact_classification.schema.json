@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Storage Artifact Classification v2",
+  "type": "object",
+  "required": [
+    "format",
+    "main_db",
+    "wal",
+    "shm",
+    "classification_digest"
+  ],
+  "properties": {
+    "format": {
+      "const": "janus-storage-artifact-classification-v2"
+    },
+    "classification_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "wal": {
+      "type": "object",
+      "required": [
+        "path",
+        "exists",
+        "classification",
+        "header_checksum_valid",
+        "frame_count",
+        "valid_frame_count"
+      ],
+      "properties": {
+        "classification": {
+          "enum": [
+            "absent",
+            "wal_corrupt_header",
+            "wal_corrupt_header_checksum",
+            "wal_corrupt_frame_layout",
+            "wal_corrupt_frame_salt",
+            "wal_corrupt_frame_checksum",
+            "wal_valid"
+          ]
+        },
+        "header_checksum_valid": {
+          "type": "boolean"
+        },
+        "frame_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "valid_frame_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "first_invalid_frame": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "checksum_mismatch_frame": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "salt_mismatch_frame": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "last_commit_frame": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_commit_checksum": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "salt_hex": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "shm": {
+      "$ref": "shm_consistency.schema.json"
+    }
+  }
+}

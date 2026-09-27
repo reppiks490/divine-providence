@@ -1,0 +1,85 @@
+[
+  {
+    "name": "deterministic output",
+    "pass": true,
+    "detail": null
+  },
+  {
+    "name": "loss audit clean",
+    "pass": true,
+    "detail": {
+      "loss_free": true,
+      "losses": {}
+    }
+  },
+  {
+    "name": "dropped authority_boundaries detected",
+    "pass": true,
+    "detail": {
+      "loss_free": false,
+      "losses": {
+        "authority_boundaries": 1
+      }
+    }
+  },
+  {
+    "name": "dropped contradictions detected",
+    "pass": true,
+    "detail": {
+      "loss_free": false,
+      "losses": {
+        "contradictions": 1
+      }
+    }
+  },
+  {
+    "name": "dropped provenance detected",
+    "pass": true,
+    "detail": {
+      "loss_free": false,
+      "losses": {
+        "provenance": 1
+      }
+    }
+  },
+  {
+    "name": "dropped dependencies detected",
+    "pass": true,
+    "detail": {
+      "loss_free": false,
+      "losses": {
+        "dependencies": 1
+      }
+    }
+  },
+  {
+    "name": "dropped revalidation detected",
+    "pass": true,
+    "detail": {
+      "loss_free": false,
+      "losses": {
+        "revalidation": 1
+      }
+    }
+  },
+  {
+    "name": "opposing contradiction retained",
+    "pass": true,
+    "detail": null
+  },
+  {
+    "name": "all critical entries source attributed",
+    "pass": true,
+    "detail": null
+  },
+  {
+    "name": "input immutable",
+    "pass": true,
+    "detail": null
+  },
+  {
+    "name": "500 critical-field deletion attacks detected",
+    "pass": true,
+    "detail": null
+  }
+]

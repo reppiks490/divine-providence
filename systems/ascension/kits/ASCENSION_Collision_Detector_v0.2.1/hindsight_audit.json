@@ -1,0 +1,21 @@
+{
+  "move": "hindsight",
+  "audit_scope": "Collision Detector v0.2 -> v0.2.1 continuation",
+  "audit_verdict": "action required -> remediated in v0.2.1 candidate",
+  "claimed_vs_done": [
+    {
+      "claimed": "v0.2 produced an executable Collision Detector candidate",
+      "observed": "ZIP collision_detector_v0_2.py contained only a one-line placeholder docstring",
+      "impact": "Packaged artifact could not reproduce notebook-tested behavior",
+      "resolution": "v0.2.1 ships executable implementation and tests it after clean extraction"
+    },
+    {
+      "claimed": "cycle handling was implemented",
+      "observed": "cycle signal test failed because reachability discarded the origin before cycle membership check",
+      "impact": "Cycles could be missed",
+      "resolution": "path-preserving DFS explicitly records back-edge cycle paths"
+    }
+  ],
+  "verification_gap": "Previous tests did not import and execute the packaged module from a clean environment.",
+  "new_convention": "Every ASCENSION code package must pass a clean-extraction execution test before any runnable/build claim."
+}

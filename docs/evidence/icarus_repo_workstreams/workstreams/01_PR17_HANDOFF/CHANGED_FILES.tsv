@@ -1,0 +1,14 @@
+A	.github/workflows/icarus-full-export.yml
+M	HANDOFF_LOG.md
+M	MODEL_HANDOFF.md
+A	docs/icarus-control-plane/CONNECTION_CONTRACTS.md
+A	docs/icarus-control-plane/EVIDENCE_FINDINGS_LEDGER.md
+A	docs/icarus-control-plane/HANDOFF_STATE.json
+A	docs/icarus-control-plane/INTEGRATION_MANIFEST.json
+A	docs/icarus-control-plane/MASTER_INTEGRATION_INDEX.md
+A	docs/icarus-control-plane/NEXT_CONNECTION_SEQUENCE.md
+A	docs/icarus-control-plane/PROVIDER_CAPABILITY_SNAPSHOT.json
+A	docs/icarus-control-plane/README.md
+A	docs/icarus-control-plane/SUBSYSTEM_ROTATION_FINDINGS.md
+A	docs/icarus-control-plane/UNIFIED_CYCLE_RUNBOOK.md
+A	docs/superpowers/plans/2026-09-24-icarus-control-plane-handoff.md

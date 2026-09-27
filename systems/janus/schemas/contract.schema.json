@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"JANUS Authority/Interface Contract",
+  "type":"object",
+  "required":["producer","consumer","contract_name","authority_owner"],
+  "properties":{
+    "producer":{"type":"string"},
+    "consumer":{"type":"string"},
+    "contract_name":{"type":"string"},
+    "authority_owner":{"type":"string"},
+    "semantic_hash":{"type":["string","null"]},
+    "version":{"type":["string","null"]},
+    "constraints":{"type":"array","items":{"type":"string"}}
+  }
+}

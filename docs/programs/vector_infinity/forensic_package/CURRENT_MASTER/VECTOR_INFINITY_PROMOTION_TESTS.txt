@@ -1,0 +1,18 @@
+1. Chronological / walk-forward evaluation
+2. Leakage and prefix-invariance checks
+3. Calibration and reliability curves
+4. Contextual competence and minimum support
+5. Regime and tail robustness
+6. OOD detection and abstention
+7. Router entropy/concentration and independent-auditor checks
+8. Shadow stability and rollback readiness
+9. Redundancy injection / signal cloning / source removal
+10. Transformation and delayed-duplicate attacks
+11. Propagation-loop and common-shock attacks
+12. Hidden-common-cause / partial-common-cause / residual-novelty tests
+13. Dependency shift / edge reversal / leader-follower reversal
+14. Asynchronous / scale-specific / tail-only graph shifts
+15. Graph split / merge / false-recurrence / stale-graph replay
+16. Checkpoint/resume determinism
+17. Malformed/NaN/schema/TTL/version fail-open behavior
+18. Real Icarus replay with costs/latency before any production-adjacent authority

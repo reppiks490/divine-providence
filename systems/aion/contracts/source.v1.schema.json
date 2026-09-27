@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icarus-aion.local/contracts/source.v1.schema.json",
+  "title": "AION source manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source_id", "representation_id", "symbol", "capabilities", "max_evidence_tier", "source_sha256", "sequence_policy", "origin", "license_reference", "evidence_reference"],
+  "properties": {
+    "source_id": {"type": "string", "minLength": 1, "maxLength": 160},
+    "representation_id": {"type": "string", "minLength": 1, "maxLength": 160},
+    "symbol": {"type": "string", "minLength": 1, "maxLength": 160},
+    "capabilities": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["bar", "schedule", "macro", "trade", "book_snapshot", "book_delta", "context"]}},
+    "max_evidence_tier": {"type": "integer", "enum": [1, 2, 3, 4]},
+    "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sequence_policy": {"enum": ["none", "monotone", "contiguous"]},
+    "origin": {"type": "string", "minLength": 1, "maxLength": 160},
+    "license_reference": {"type": "string"},
+    "evidence_reference": {"type": "string"}
+  }
+}

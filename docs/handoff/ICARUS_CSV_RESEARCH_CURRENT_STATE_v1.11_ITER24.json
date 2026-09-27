@@ -1,0 +1,104 @@
+{
+  "as_of": "2026-09-25",
+  "daedalus": {
+    "blocked_representation_identity_count": 0,
+    "blocked_session_semantics_count": 0,
+    "confirmation_ready_count": 0,
+    "confirmation_status_counts": {
+      "WAITING_NO_NEW_BYTES": 13
+    },
+    "development_task_count": 13,
+    "production_authorized": false,
+    "protected_holdout_eligible_task_count": 0,
+    "protected_holdout_spent": false,
+    "retrospective_status_counts": {
+      "RETROSPECTIVE_DIRECTION_STABLE": 8,
+      "RETROSPECTIVE_NONSTATIONARITY_STRONG": 5
+    },
+    "source_iteration": 24,
+    "static_audit": "passed; 34 source files / 6022 source lines",
+    "tests": "58/58 passed"
+  },
+  "hard_invariants": [
+    "existing discovery history is selection-contaminated and cannot become a pristine holdout later",
+    "event/transformed representations do not generate fixed-cadence sampling-gap hypotheses",
+    "open-session residuals are diagnostics and never automatic data-loss assertions",
+    "copy/snapshot lineage does not receive independent statistical voting weight",
+    "full-corpus coverage is not claimed from the current 238-stream materialization",
+    "NEXUS and DAEDALUS do not authorize production execution"
+  ],
+  "next_priorities": [
+    "recover missing historical CSV/ZIP batches by content hash and reconcile against the 626-stream / 12,588,290-row historical anchor",
+    "research the 44 P0 representation-evidence clusters using vendor/source documentation and export-setting evidence; keep all 92 P0 items unresolved until authoritative evidence exists",
+    "obtain genuinely unseen appended rows or independently reviewed non-overlapping evidence for the 13 behavioral hypotheses",
+    "investigate the single remaining fixed-time residual-gap stream with insufficient temporal sibling overlap without asserting data loss"
+  ],
+  "nexus": {
+    "corpus_manifest_hash": "b818fc808954e88474550a55b9a6e18f6d87aecf17f2c01b65a92cb34982fc2d",
+    "coverage_claim_allowed": false,
+    "handoff_semantic_hash": "31072d1f4924afd75391504922dd1b27d1cf8d52a48af16323608a89b0679c79",
+    "historical_anchor": {
+      "name": "AION_PRIOR_CHECKPOINT",
+      "usable_entries": 626,
+      "usable_rows": 12588290
+    },
+    "iteration": 24,
+    "iteration_hash": "ab2b01a4776acd0a9242ec202dade3116803a96c5908ffe2ab36090cbe78edc8",
+    "loop_code_version": "1.11.0",
+    "physical_csv_entries": 476,
+    "representation_lineage": {
+      "candidate_count": 8,
+      "production_authorized": false,
+      "resolved_count": 8,
+      "unresolved_count": 0
+    },
+    "representation_review_triage": {
+      "auto_resolved_count": 0,
+      "cluster_count": 44,
+      "p0_count": 92,
+      "p2_count": 146,
+      "production_authorized": false,
+      "triage_class_counts": {
+        "EVENT_OR_TRANSFORMED_REQUIRES_VENDOR_DEFINITION": 47,
+        "TIMEFRAME_MISMATCH_REQUIRES_EXPORT_SETTING_EVIDENCE": 45
+      }
+    },
+    "research_candidate_count": 78,
+    "residual_gap_triage": {
+      "aggregate_sibling_activity_ratio": 0.4446125983079862,
+      "candidate_count": 50,
+      "classification_counts": {
+        "CROSS_RESOLUTION_ACTIVITY_PRESENT_DOMINANT": 28,
+        "INSUFFICIENT_CROSS_RESOLUTION_EVIDENCE": 1,
+        "MIXED_CROSS_RESOLUTION_ACTIVITY_AND_SHARED_SILENCE": 10,
+        "SHARED_SILENCE_DOMINANT": 11
+      },
+      "cross_resolution_comparable_gap_count": 40307,
+      "data_loss_asserted": false,
+      "gaps_with_sibling_activity": 17921,
+      "production_authorized": false
+    },
+    "route_counts": {
+      "BLOCKING_DEPENDENCY": 4,
+      "DAEDALUS_DEVELOPMENT_ONLY": 13,
+      "RESOLVED_RECURRING_SESSION_CLOSURE": 3,
+      "RESOLVED_REPRESENTATION_COPY_LINEAGE": 8,
+      "SESSION_SEMANTICS_RESOLVED_OPEN_SESSION_DIAGNOSTIC": 50
+    },
+    "same_corpus_reproducible": true,
+    "session_gap_resolution": {
+      "candidate_count": 53,
+      "data_loss_asserted": false,
+      "production_authorized": false,
+      "residual_diagnostic_count": 50,
+      "session_semantics_resolved_count": 53,
+      "still_session_blocked_count": 0
+    },
+    "tests": "144/144 passed",
+    "unexpected_nondeterminism": false,
+    "usable_rows": 1970753,
+    "usable_streams": 238
+  },
+  "production_authorized": false,
+  "schema": "icarus.csv-research-current-state.v1"
+}

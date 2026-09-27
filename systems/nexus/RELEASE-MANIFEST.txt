@@ -1,0 +1,16 @@
+NEXUS Adaptive Market Fabric v0.3 SOL handoff
+Date: 2026-09-23
+Prepared/signed by: SOL
+Receiving model: Sol Extra High
+Canonical Git tag: nexus-v0.3-sol-handoff
+NEXUS tests: 117 passed
+Sibling fresh tests: AION 11; ARGUS 4; ATHENA 3
+DAEDALUS: 45/45 passed on a fresh full monolithic rerun
+Exact same-instant sibling contract validation: passed, including AION durable genealogy and source-health atomic binding
+Contract drift sentinel: baseline captured for AION contracts/store, ARGUS contracts, ATHENA contracts, DAEDALUS bridge
+Representation review queue: 238 candidates; 92 P0, 146 P2; no inferred timestamp semantics
+Compileall: passed
+Current accessible corpus: 476 physical CSV entries; 238 usable; 238 AppleDouble; 1,970,753 parsed rows
+Catalog SHA-256 baseline: 3a63534063728b76cb8e3048d18f4bc4bac911ec61ef90cdb6ed64057e4ff633
+Known prior AION checkpoint: 626 usable / ~12,588,290 rows; current authoritative corpus remains unresolved
+No live execution authority. No predictive-edge claim. Full ~800+ corpus not yet reconciled.

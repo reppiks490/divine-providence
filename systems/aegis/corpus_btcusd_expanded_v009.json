@@ -1,0 +1,51 @@
+{
+  "asset_class": "crypto",
+  "bar_type": "OHLCV",
+  "canonical_payload_sha256": "fc7d0c2a37ba48f8dc9e912cf1b90d5d738d5905bfd5ba982f6eb74f8b6ed417",
+  "corpus_id": "ACF-BTCUSD-TICKERLAYER-1H-20240101-20260925-v009",
+  "first_timestamp_ms": 1704067200000,
+  "holdout_rows": 4796,
+  "holdout_start_index": 19180,
+  "holdout_status": "UNTOUCHED",
+  "last_timestamp_ms": 1790377200000,
+  "manifest_sha256": "f457d6a7f8577fa1d118c75d5f367e2defa5da2d0619f4f4cf8aca210f4a5a19",
+  "provider": "TickerLayer",
+  "quality": {
+    "bad_ohlc": 0,
+    "duplicates": 0,
+    "irregular_intervals": 0,
+    "max_gap_hours": 1,
+    "negative_volume": 0
+  },
+  "row_count": 23976,
+  "session": "24x7",
+  "source_chunks": [
+    [
+      "2024-01-01",
+      "2024-06-30"
+    ],
+    [
+      "2024-07-01",
+      "2024-12-31"
+    ],
+    [
+      "2025-01-01",
+      "2025-06-30"
+    ],
+    [
+      "2025-07-01",
+      "2025-12-31"
+    ],
+    [
+      "2026-01-01",
+      "2026-06-30"
+    ],
+    [
+      "2026-07-01",
+      "2026-09-25"
+    ]
+  ],
+  "symbol": "BTCUSD",
+  "timeframe": "1h",
+  "timezone": "UTC"
+}

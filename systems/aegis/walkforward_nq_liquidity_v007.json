@@ -1,0 +1,113 @@
+{
+  "experiment_id": "ACF-EXP-NQ-LIQUIDITY-WF-002",
+  "corpus_id": "ACF-NQ-CONT-MASSIVE-VOLROLL-1H-20250902-20260925-v007",
+  "final_holdout_touched": false,
+  "cost_points_per_trade": 1.0,
+  "folds": [
+    {
+      "fold": 1,
+      "validation": [
+        2024,
+        2723
+      ],
+      "incumbent": {
+        "trades": 23,
+        "hit_rate": 0.3043,
+        "avg_net": -3.2609,
+        "total_net": -75.0
+      },
+      "challenger": {
+        "trades": 5,
+        "hit_rate": 0.2,
+        "avg_net": -21.45,
+        "total_net": -107.25
+      }
+    },
+    {
+      "fold": 2,
+      "validation": [
+        2724,
+        3423
+      ],
+      "incumbent": {
+        "trades": 23,
+        "hit_rate": 0.3913,
+        "avg_net": -13.2609,
+        "total_net": -305.0
+      },
+      "challenger": {
+        "trades": 5,
+        "hit_rate": 0.4,
+        "avg_net": 20.2,
+        "total_net": 101.0
+      }
+    },
+    {
+      "fold": 3,
+      "validation": [
+        3424,
+        4123
+      ],
+      "incumbent": {
+        "trades": 28,
+        "hit_rate": 0.5714,
+        "avg_net": 7.4554,
+        "total_net": 208.75
+      },
+      "challenger": {
+        "trades": 2,
+        "hit_rate": 0.0,
+        "avg_net": -30.0,
+        "total_net": -60.0
+      }
+    },
+    {
+      "fold": 4,
+      "validation": [
+        4124,
+        4823
+      ],
+      "incumbent": {
+        "trades": 29,
+        "hit_rate": 0.4138,
+        "avg_net": -5.9052,
+        "total_net": -171.25
+      },
+      "challenger": {
+        "trades": 9,
+        "hit_rate": 0.4444,
+        "avg_net": -40.5,
+        "total_net": -364.5
+      }
+    }
+  ],
+  "pooled_uncertainty": {
+    "incumbent": {
+      "trades": 103,
+      "mean_net_points": -3.325242718446602,
+      "bootstrap95": [
+        -20.72894417475728,
+        15.656553398058234
+      ],
+      "sign_flip_p": 0.7450509898020395,
+      "bonferroni_p": 1.0,
+      "positive_folds": 1
+    },
+    "challenger": {
+      "trades": 21,
+      "mean_net_points": -20.511904761904763,
+      "bootstrap95": [
+        -67.74196428571429,
+        30.547916666666662
+      ],
+      "sign_flip_p": 0.4215156968606279,
+      "bonferroni_p": 0.8430313937212558,
+      "positive_folds": 1
+    }
+  },
+  "decision": {
+    "NQCM-LIQ-SWEEP-001": "QUARANTINE",
+    "EXT-SESSION-VWAP-VOL-SWEEP-001": "QUARANTINE_OVERFIT_RISK"
+  },
+  "interpretation": "Neither candidate demonstrates stable positive validation expectancy. No holdout access and no threshold rescue is permitted."
+}

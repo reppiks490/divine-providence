@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Unified Forensic Proof DAG v1",
+  "type": "object",
+  "required": ["format", "root_link_digest", "nodes", "edges", "dag_digest"],
+  "properties": {
+    "format": {"const": "janus-forensic-proof-dag-v1"},
+    "root_link_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "dag_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "digest", "payload"],
+        "properties": {
+          "kind": {"enum": ["forensic_link", "storage_audit", "quarantine", "recovery_certificate", "receipt"]},
+          "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "payload": {"type": "object"}
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "relation"],
+        "properties": {
+          "from": {"type": "string"},
+          "to": {"type": "string"},
+          "relation": {"enum": ["binds_audit", "binds_recovery", "binds_session_receipt", "binds_receipt_head", "previous_link", "attests_quarantine", "previous_audit", "previous_receipt"]}
+        }
+      }
+    }
+  }
+}

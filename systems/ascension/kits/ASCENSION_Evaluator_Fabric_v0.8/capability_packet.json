@@ -1,0 +1,249 @@
+{
+  "capability_id": "ascension.evaluator-fabric",
+  "name": "Evaluator Fabric \u2014 Strict RFC 9162 Inclusion Verification",
+  "version": "0.8.0",
+  "cycle_id": "ascension-cycle-019",
+  "status": "CANDIDATE",
+  "problem": "The legacy v0.6 inclusion verifier checks that a declared leaf index is in range but does not derive proof orientation/geometry from that index and tree size, permitting position relabeling of otherwise valid proofs.",
+  "hypothesis": "Deriving every proof fold and exact path length from RFC 9162 leaf_index/tree_size semantics closes index relabeling and proof-geometry ambiguity while composing cleanly with v0.7 compact consistency and witness evidence.",
+  "beneficiaries": [
+    "ASCENSION",
+    "future versioned Manifest Trust -> Collision Adapter backend",
+    "optional read-only transparency consumers"
+  ],
+  "authority_exclusions": [
+    "No sibling mutation",
+    "No sibling adoption",
+    "No trust-root or witness-governance authority",
+    "No claim that cryptographic inclusion proves semantic truth"
+  ],
+  "dependencies": [
+    {
+      "name": "Evaluator Fabric v0.7",
+      "role": "compact consistency + signed witness transition dependency",
+      "sha256": "f010e9986eb366d7b65179e722934acb4fa0d30768da3d575eebaa467e889ca7"
+    },
+    {
+      "name": "Evaluator Fabric v0.6",
+      "role": "rollback/comparison inclusion primitive",
+      "sha256": "ed5c6ec83d08630a903bd26f73166360c0193d7f6dcb28c36729dac6e018acd9"
+    },
+    {
+      "name": "RFC 9162 \u00a72.1.1/\u00a72.1.3.2",
+      "role": "normative Merkle hash and inclusion verification contract"
+    }
+  ],
+  "interfaces": [
+    {
+      "name": "merkle_leaf_hash",
+      "interface_version": "0.8",
+      "required_inputs": [
+        "raw leaf bytes"
+      ],
+      "emitted_outputs": [
+        "32-byte SHA-256 CT leaf hash"
+      ],
+      "assumptions": [
+        "SHA-256"
+      ],
+      "invariants": [
+        "0x00 domain separation",
+        "strict bytes-like input"
+      ]
+    },
+    {
+      "name": "expected_inclusion_path_length",
+      "interface_version": "0.8",
+      "required_inputs": [
+        "leaf_index",
+        "tree_size"
+      ],
+      "emitted_outputs": [
+        "exact proof-node count"
+      ],
+      "assumptions": [
+        "RFC 9162 tree shape"
+      ],
+      "invariants": [
+        "uint64 domain",
+        "index < tree_size",
+        "bounded <=64 nodes"
+      ]
+    },
+    {
+      "name": "verify_strict_inclusion",
+      "interface_version": "0.8",
+      "required_inputs": [
+        "leaf_hash",
+        "leaf_index",
+        "tree_size",
+        "root_hash",
+        "inclusion_path"
+      ],
+      "emitted_outputs": [
+        "valid",
+        "reasons",
+        "proof_nodes",
+        "expected_proof_nodes",
+        "computed_root"
+      ],
+      "assumptions": [
+        "leaf_hash is already CT-domain-separated"
+      ],
+      "invariants": [
+        "read-only",
+        "deterministic",
+        "fail-closed",
+        "index-bound orientation",
+        "exact geometry"
+      ]
+    },
+    {
+      "name": "verify_transparency_evidence",
+      "interface_version": "0.8",
+      "required_inputs": [
+        "strict inclusion evidence",
+        "v0.7 compact transition evidence",
+        "signed witness observations"
+      ],
+      "emitted_outputs": [
+        "combined validity",
+        "inclusion evidence",
+        "transition evidence"
+      ],
+      "assumptions": [
+        "external trust/witness key governance"
+      ],
+      "invariants": [
+        "both gates must pass",
+        "read-only",
+        "malformed evidence does not escape exception boundary"
+      ]
+    }
+  ],
+  "evidence": {
+    "red": {
+      "status": "observed",
+      "evidence": "ModuleNotFoundError before evaluator_fabric_v0_8.py existed"
+    },
+    "focused": {
+      "tests": 19,
+      "failures": 0,
+      "errors": 0
+    },
+    "regression": {
+      "v0_6_plus_v0_7_plus_v0_8_tests": 46,
+      "failures": 0,
+      "errors": 0
+    },
+    "property": {
+      "valid_inclusions": 8256,
+      "tree_sizes": "1..128",
+      "max_proof_nodes": 7,
+      "mutated_nodes_rejected": 1500,
+      "geometry_attacks_rejected": 1000,
+      "binding_attacks_rejected": 1000
+    },
+    "hostile": {
+      "proof_order_attacks_rejected": 500,
+      "bad_node_lengths_rejected": 500,
+      "malformed_top_level_fail_closed": 500
+    },
+    "comparison": {
+      "v0_6_false_index_relabels_accepted": 42,
+      "v0_8_false_index_relabels_rejected": 42,
+      "probe_tree_size": 7
+    },
+    "rfc_alignment": {
+      "official_rfc_9162_checked": true,
+      "leaf_prefix": "0x00",
+      "node_prefix": "0x01",
+      "example_indices": {
+        "0": 3,
+        "3": 3,
+        "4": 3,
+        "6": 2
+      }
+    },
+    "clean_package_verification": "Performed only after final ZIP creation; authoritative result and SHA-256 are recorded in external ASCENSION_STATE_CAPSULE_v019.md. Package bytes are not mutated afterward."
+  },
+  "evaluation_vector": {
+    "correctness": "stronger local evidence for index/geometry binding",
+    "reproducibility": "strong local deterministic and property evidence; exact-ZIP verification required",
+    "transferability": "blocked: no authoritative signed real sibling manifest",
+    "integration_cost": "low-to-moderate; pure read-only functions but Adapter v0.3 is not silently upgraded",
+    "observability": "deterministic reason codes + expected/actual proof node count + computed root",
+    "rollback_safety": "strong: v0.7 remains unchanged",
+    "non_interference": "strong local evidence: pure/read-only; malformed evidence fails closed",
+    "evidence_quality": "strong local/RFC-aligned; external Transfer absent"
+  },
+  "acceptance_tests": [
+    "single-leaf empty proof",
+    "RFC seven-leaf proof examples",
+    "all 8,256 inclusions for tree sizes 1..128",
+    "combined strict-inclusion + v0.7 transition/witness gate"
+  ],
+  "negative_tests": [
+    "out-of-range/invalid uint64",
+    "bad hash/path types",
+    "padded proof",
+    "truncated proof",
+    "mutated sibling",
+    "wrong leaf/root",
+    "false index relabel",
+    "malformed combined evidence"
+  ],
+  "regression_tests": [
+    "all v0.6 tests",
+    "all v0.7 tests",
+    "46-test combined suite",
+    "3,500 property attacks",
+    "1,500 hostile input/order attacks"
+  ],
+  "failure_modes": [
+    "SHA-256 fixed rather than algorithm-agile",
+    "cryptographic inclusion does not prove semantic truth",
+    "trust/witness bootstrap remains external",
+    "Adapter v0.3 is not upgraded in this package",
+    "real authenticated sibling Transfer remains absent"
+  ],
+  "rollback": {
+    "method": "Use Evaluator Fabric v0.7; retain v0.6 inclusion/full-history baseline and Adapter v0.3 unchanged."
+  },
+  "observability": {
+    "deterministic_reason_codes": true,
+    "proof_geometry_counts": true,
+    "computed_root": true,
+    "combined_subgate_evidence": true
+  },
+  "compatibility": {
+    "v0_7_source_unchanged": true,
+    "adapter_v0_3_changed": false,
+    "v0_6_source_unchanged": true
+  },
+  "artifacts": [
+    "evaluator_fabric_v0_8.py",
+    "test_evaluator_fabric_v0_8.py",
+    "property_test_v0_8.py",
+    "hostile_test_v0_8.py",
+    "evaluator_fabric_v0_7.py",
+    "evaluator_fabric_v0_6.py",
+    "test_evaluator_fabric_v0_7.py",
+    "test_evaluator_fabric_v0_6.py",
+    "research_notes.md",
+    "comparison_report.json",
+    "dependency_hashes.json",
+    "test_report.json",
+    "capability_packet.json",
+    "capability_ledger.json",
+    "experience_capsule.json",
+    "state_capsule.md"
+  ],
+  "revalidation_conditions": [
+    "hash algorithm changes",
+    "RFC interpretation changes",
+    "adapter backend upgrade",
+    "real authenticated sibling manifest becomes available"
+  ],
+  "next_experiment": "If no real signed sibling manifest is available, build a versioned Adapter v0.4 backend contract that optionally pins Evaluator Fabric v0.8 strict inclusion without mutating Adapter v0.3."
+}

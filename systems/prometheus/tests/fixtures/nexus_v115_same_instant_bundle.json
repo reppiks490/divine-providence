@@ -1,0 +1,611 @@
+{
+  "aion": {
+    "decision_ns": 160,
+    "derivation_hash": "4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a",
+    "derivation_hashes": [
+      "4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a"
+    ],
+    "derivation_observations": [
+      {
+        "availability_basis": "observed_receipt",
+        "available_ns": 160,
+        "event_ns": 160,
+        "evidence_tier": 1,
+        "ingested_ns": 160,
+        "kind": "context",
+        "payload": {
+          "code_version": "divine-providence-hub",
+          "decision_ns": 160,
+          "derivation_hash": "4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a",
+          "input_hashes": [
+            [
+              "NQ",
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            ]
+          ],
+          "parameters_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "product_id": "NEXUS:DIVINE_PROVIDENCE_LINK",
+          "product_version": "1",
+          "spec_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "plane": "research",
+        "published_ns": null,
+        "quality_flags": [],
+        "revision": 1,
+        "sequence": null,
+        "source_event_id": "derivation:4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a",
+        "source_id": "nexus-derivation:NEXUS:DIVINE_PROVIDENCE_LINK:1"
+      }
+    ],
+    "derivation_source_specs": [
+      {
+        "capabilities": [
+          "context"
+        ],
+        "evidence_reference": "spec:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "license_reference": "inherits_inputs",
+        "max_evidence_tier": 1,
+        "origin": "nexus_derived",
+        "representation_id": "nexus.derivation.v1",
+        "sequence_policy": "none",
+        "source_id": "nexus-derivation:NEXUS:DIVINE_PROVIDENCE_LINK:1",
+        "source_sha256": "3a974ba465e7657afde87022810e6a56907e7e795935e0ae97b24c6ba1a25fae",
+        "symbol": "NEXUS:DIVINE_PROVIDENCE_LINK"
+      }
+    ],
+    "frame_hash": "99f5e574cc430087d6972550f0ff7052907f8ee16124ec01a101b46c7a0ef0d6",
+    "observations": [
+      {
+        "availability_basis": "verified_bar_close",
+        "available_ns": 160,
+        "event_ns": 100,
+        "evidence_tier": 1,
+        "ingested_ns": 170,
+        "kind": "bar",
+        "payload": {
+          "close": 1.5,
+          "high": 2,
+          "low": 0.5,
+          "open": 1,
+          "volume": 10
+        },
+        "plane": "research",
+        "published_ns": null,
+        "quality_flags": [],
+        "revision": 1,
+        "sequence": 0,
+        "source_event_id": "bar:0",
+        "source_id": "csv:NQ1!:aaaaaaaaaaaa"
+      },
+      {
+        "availability_basis": "observed_receipt",
+        "available_ns": 160,
+        "event_ns": 160,
+        "evidence_tier": 1,
+        "ingested_ns": 160,
+        "kind": "context",
+        "payload": {
+          "code_version": "divine-providence-hub",
+          "decision_ns": 160,
+          "derivation_hash": "4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a",
+          "input_hashes": [
+            [
+              "NQ",
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            ]
+          ],
+          "parameters_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "product_id": "NEXUS:DIVINE_PROVIDENCE_LINK",
+          "product_version": "1",
+          "spec_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "plane": "research",
+        "published_ns": null,
+        "quality_flags": [],
+        "revision": 1,
+        "sequence": null,
+        "source_event_id": "derivation:4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a",
+        "source_id": "nexus-derivation:NEXUS:DIVINE_PROVIDENCE_LINK:1"
+      },
+      {
+        "availability_basis": "observed_receipt",
+        "available_ns": 160,
+        "event_ns": 160,
+        "evidence_tier": 1,
+        "ingested_ns": 170,
+        "kind": "context",
+        "payload": {
+          "configured_slo_streams": [
+            "csv:NQ1!:aaaaaaaaaaaa"
+          ],
+          "decision_ns": 160,
+          "failed_streams": [],
+          "healthy_fraction": 1.0,
+          "healthy_streams": [
+            "csv:NQ1!:aaaaaaaaaaaa"
+          ],
+          "plane_hash": "20c169d09c80d554fc1afc383de22bf6b82846e5fae889ba76c739e441329894",
+          "snapshots": {
+            "csv:NQ1!:aaaaaaaaaaaa": {
+              "availability_before_event_samples": 0,
+              "availability_unknown_samples": 0,
+              "availability_violations": 0,
+              "clock_uncertainty_ns_latest": 0,
+              "clock_uncertainty_ns_max": 0,
+              "connected": true,
+              "impossible_time_samples": 0,
+              "last_available_ns": 160,
+              "last_event_ns": 100,
+              "last_received_ns": 170,
+              "longest_gap": 0,
+              "missing_sequence_slots": 0,
+              "out_of_order_receipts": 0,
+              "receipt_before_available_samples": 0,
+              "receipt_clock_violations": 0,
+              "receive_lag_ns_latest": 10,
+              "receive_lag_ns_max": 10,
+              "receive_lag_ns_p95": 10,
+              "receive_lag_samples": 1,
+              "reconnect_epochs": 0,
+              "revision_events": 0,
+              "revision_rate": 0.0,
+              "samples": 1,
+              "sequence_gap_runs": 0,
+              "sequence_nonmonotone_events": 0,
+              "slo_failures": [],
+              "slo_passed": true,
+              "stream_id": "csv:NQ1!:aaaaaaaaaaaa"
+            }
+          },
+          "stream_count": 1,
+          "unknown_slo_streams": []
+        },
+        "plane": "research",
+        "published_ns": null,
+        "quality_flags": [
+          "nexus_source_health"
+        ],
+        "revision": 1,
+        "sequence": null,
+        "source_event_id": "health:20c169d09c80d554fc1afc38",
+        "source_id": "NEXUS:HEALTH:20c169d09c80d554fc1a"
+      }
+    ],
+    "production_authorized": false,
+    "source_health": {
+      "configured_slo_streams": [
+        "csv:NQ1!:aaaaaaaaaaaa"
+      ],
+      "decision_ns": 160,
+      "failed_streams": [],
+      "healthy_fraction": 1.0,
+      "healthy_streams": [
+        "csv:NQ1!:aaaaaaaaaaaa"
+      ],
+      "plane_hash": "20c169d09c80d554fc1afc383de22bf6b82846e5fae889ba76c739e441329894",
+      "snapshots": {
+        "csv:NQ1!:aaaaaaaaaaaa": {
+          "availability_before_event_samples": 0,
+          "availability_unknown_samples": 0,
+          "availability_violations": 0,
+          "clock_uncertainty_ns_latest": 0,
+          "clock_uncertainty_ns_max": 0,
+          "connected": true,
+          "impossible_time_samples": 0,
+          "last_available_ns": 160,
+          "last_event_ns": 100,
+          "last_received_ns": 170,
+          "longest_gap": 0,
+          "missing_sequence_slots": 0,
+          "out_of_order_receipts": 0,
+          "receipt_before_available_samples": 0,
+          "receipt_clock_violations": 0,
+          "receive_lag_ns_latest": 10,
+          "receive_lag_ns_max": 10,
+          "receive_lag_ns_p95": 10,
+          "receive_lag_samples": 1,
+          "reconnect_epochs": 0,
+          "revision_events": 0,
+          "revision_rate": 0.0,
+          "samples": 1,
+          "sequence_gap_runs": 0,
+          "sequence_nonmonotone_events": 0,
+          "slo_failures": [],
+          "slo_passed": true,
+          "stream_id": "csv:NQ1!:aaaaaaaaaaaa"
+        }
+      },
+      "stream_count": 1,
+      "unknown_slo_streams": []
+    },
+    "source_health_plane_hash": "20c169d09c80d554fc1afc383de22bf6b82846e5fae889ba76c739e441329894",
+    "source_specs": [
+      {
+        "capabilities": [
+          "bar"
+        ],
+        "evidence_reference": "NQ.csv",
+        "license_reference": "requires_source_review",
+        "max_evidence_tier": 1,
+        "origin": "historical_csv",
+        "representation_id": "clock:1m",
+        "sequence_policy": "monotone",
+        "source_id": "csv:NQ1!:aaaaaaaaaaaa",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "symbol": "NQ1!"
+      },
+      {
+        "capabilities": [
+          "context"
+        ],
+        "evidence_reference": "spec:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "license_reference": "inherits_inputs",
+        "max_evidence_tier": 1,
+        "origin": "nexus_derived",
+        "representation_id": "nexus.derivation.v1",
+        "sequence_policy": "none",
+        "source_id": "nexus-derivation:NEXUS:DIVINE_PROVIDENCE_LINK:1",
+        "source_sha256": "3a974ba465e7657afde87022810e6a56907e7e795935e0ae97b24c6ba1a25fae",
+        "symbol": "NEXUS:DIVINE_PROVIDENCE_LINK"
+      },
+      {
+        "capabilities": [
+          "context"
+        ],
+        "evidence_reference": "health-plane:20c169d09c80d554fc1afc383de22bf6b82846e5fae889ba76c739e441329894",
+        "license_reference": "inherits_inputs",
+        "max_evidence_tier": 1,
+        "origin": "nexus_derived",
+        "representation_id": "nexus.source-health.v1",
+        "sequence_policy": "none",
+        "source_id": "NEXUS:HEALTH:20c169d09c80d554fc1a",
+        "source_sha256": "cd3ee4cb48320bd7848a0a16feb58f3e84b2f1cc8928c521bd9f2fdf83b7334b",
+        "symbol": "NEXUS_HEALTH"
+      }
+    ]
+  },
+  "argus": {
+    "consumer": "ARGUS",
+    "contract": "nexus.market-state.v2",
+    "data_plane": "research",
+    "decision_ns": 160,
+    "evidence_tier": "CANDLE_PROXY",
+    "factors": {
+      "market_state": 0.25
+    },
+    "features": [
+      {
+        "event_time_ns": 160,
+        "evidence_tier": 1,
+        "name": "nexus.factor.market_state",
+        "reason": "NEXUS CSV/market-context derived factor; never trade/depth truth",
+        "source_id": "NEXUS:99f5e574cc430087d6972550f0ff7052907f8ee16124ec01a101b46c7a0ef0d6",
+        "value": 0.25
+      }
+    ],
+    "frame_hash": "99f5e574cc430087d6972550f0ff7052907f8ee16124ec01a101b46c7a0ef0d6",
+    "lineage": [
+      {
+        "availability_basis": "verified_bar_close",
+        "available_ns": 160,
+        "event_ns": 100,
+        "revision": 0,
+        "source_path": "NQ.csv",
+        "source_sequence": 0,
+        "stream_id": "csv:NQ1!:aaaaaaaaaaaa"
+      },
+      {
+        "code_version": "divine-providence-hub",
+        "decision_ns": 160,
+        "derivation_hash": "4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a",
+        "input_hashes": [
+          [
+            "NQ",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          ]
+        ],
+        "kind": "nexus_derivation",
+        "parameters_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "product_id": "NEXUS:DIVINE_PROVIDENCE_LINK",
+        "product_version": "1",
+        "spec_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      {
+        "decision_ns": 160,
+        "failed_streams": [],
+        "healthy_fraction": 1.0,
+        "kind": "nexus_source_health_plane",
+        "plane_hash": "20c169d09c80d554fc1afc383de22bf6b82846e5fae889ba76c739e441329894",
+        "stream_count": 1,
+        "unknown_slo_streams": []
+      }
+    ],
+    "microstructure_truth": false,
+    "ood": {
+      "novelty": 0.1
+    },
+    "production_authorized": false,
+    "quality": {
+      "coverage": 1.0
+    },
+    "same_instant_batch_size": 1,
+    "source_health": {
+      "configured_slo_streams": [
+        "csv:NQ1!:aaaaaaaaaaaa"
+      ],
+      "decision_ns": 160,
+      "failed_streams": [],
+      "healthy_fraction": 1.0,
+      "healthy_streams": [
+        "csv:NQ1!:aaaaaaaaaaaa"
+      ],
+      "plane_hash": "20c169d09c80d554fc1afc383de22bf6b82846e5fae889ba76c739e441329894",
+      "snapshots": {
+        "csv:NQ1!:aaaaaaaaaaaa": {
+          "availability_before_event_samples": 0,
+          "availability_unknown_samples": 0,
+          "availability_violations": 0,
+          "clock_uncertainty_ns_latest": 0,
+          "clock_uncertainty_ns_max": 0,
+          "connected": true,
+          "impossible_time_samples": 0,
+          "last_available_ns": 160,
+          "last_event_ns": 100,
+          "last_received_ns": 170,
+          "longest_gap": 0,
+          "missing_sequence_slots": 0,
+          "out_of_order_receipts": 0,
+          "receipt_before_available_samples": 0,
+          "receipt_clock_violations": 0,
+          "receive_lag_ns_latest": 10,
+          "receive_lag_ns_max": 10,
+          "receive_lag_ns_p95": 10,
+          "receive_lag_samples": 1,
+          "reconnect_epochs": 0,
+          "revision_events": 0,
+          "revision_rate": 0.0,
+          "samples": 1,
+          "sequence_gap_runs": 0,
+          "sequence_nonmonotone_events": 0,
+          "slo_failures": [],
+          "slo_passed": true,
+          "stream_id": "csv:NQ1!:aaaaaaaaaaaa"
+        }
+      },
+      "stream_count": 1,
+      "unknown_slo_streams": []
+    },
+    "topology": {
+      "entropy": 0.5
+    }
+  },
+  "athena": {
+    "advisory_only": true,
+    "consumer": "ATHENA",
+    "contract": "nexus.market-state.v2",
+    "data_plane": "research",
+    "decision_ns": 160,
+    "factors": {
+      "market_state": 0.25
+    },
+    "frame_hash": "99f5e574cc430087d6972550f0ff7052907f8ee16124ec01a101b46c7a0ef0d6",
+    "lineage": [
+      {
+        "availability_basis": "verified_bar_close",
+        "available_ns": 160,
+        "event_ns": 100,
+        "revision": 0,
+        "source_path": "NQ.csv",
+        "source_sequence": 0,
+        "stream_id": "csv:NQ1!:aaaaaaaaaaaa"
+      },
+      {
+        "code_version": "divine-providence-hub",
+        "decision_ns": 160,
+        "derivation_hash": "4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a",
+        "input_hashes": [
+          [
+            "NQ",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          ]
+        ],
+        "kind": "nexus_derivation",
+        "parameters_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "product_id": "NEXUS:DIVINE_PROVIDENCE_LINK",
+        "product_version": "1",
+        "spec_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      {
+        "decision_ns": 160,
+        "failed_streams": [],
+        "healthy_fraction": 1.0,
+        "kind": "nexus_source_health_plane",
+        "plane_hash": "20c169d09c80d554fc1afc383de22bf6b82846e5fae889ba76c739e441329894",
+        "stream_count": 1,
+        "unknown_slo_streams": []
+      }
+    ],
+    "ood": {
+      "novelty": 0.1
+    },
+    "production_authorized": false,
+    "provenance": [
+      {
+        "event_time_ns": 100,
+        "ingestion_time_ns": 170,
+        "lineage_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "plane": "research",
+        "quality_flags": [],
+        "representation_id": "clock:1m",
+        "source_id": "csv:NQ1!:aaaaaaaaaaaa",
+        "version": "nexus-v0.3.0"
+      }
+    ],
+    "purpose": "state_input",
+    "quality": {
+      "coverage": 1.0
+    },
+    "same_instant_batch_size": 1,
+    "source_health": {
+      "configured_slo_streams": [
+        "csv:NQ1!:aaaaaaaaaaaa"
+      ],
+      "decision_ns": 160,
+      "failed_streams": [],
+      "healthy_fraction": 1.0,
+      "healthy_streams": [
+        "csv:NQ1!:aaaaaaaaaaaa"
+      ],
+      "plane_hash": "20c169d09c80d554fc1afc383de22bf6b82846e5fae889ba76c739e441329894",
+      "snapshots": {
+        "csv:NQ1!:aaaaaaaaaaaa": {
+          "availability_before_event_samples": 0,
+          "availability_unknown_samples": 0,
+          "availability_violations": 0,
+          "clock_uncertainty_ns_latest": 0,
+          "clock_uncertainty_ns_max": 0,
+          "connected": true,
+          "impossible_time_samples": 0,
+          "last_available_ns": 160,
+          "last_event_ns": 100,
+          "last_received_ns": 170,
+          "longest_gap": 0,
+          "missing_sequence_slots": 0,
+          "out_of_order_receipts": 0,
+          "receipt_before_available_samples": 0,
+          "receipt_clock_violations": 0,
+          "receive_lag_ns_latest": 10,
+          "receive_lag_ns_max": 10,
+          "receive_lag_ns_p95": 10,
+          "receive_lag_samples": 1,
+          "reconnect_epochs": 0,
+          "revision_events": 0,
+          "revision_rate": 0.0,
+          "samples": 1,
+          "sequence_gap_runs": 0,
+          "sequence_nonmonotone_events": 0,
+          "slo_failures": [],
+          "slo_passed": true,
+          "stream_id": "csv:NQ1!:aaaaaaaaaaaa"
+        }
+      },
+      "stream_count": 1,
+      "unknown_slo_streams": []
+    },
+    "topology": {
+      "entropy": 0.5
+    }
+  },
+  "bundle_hash": "f5ed5c3b161b8403162383081c0ad1155242a802981788016e76dd7d8f3fcffd",
+  "daedalus": {
+    "candidate": {
+      "decision_ns": 160,
+      "derivation_hash": "4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a",
+      "derivation_hashes": [
+        "4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a"
+      ],
+      "factors": {
+        "market_state": 0.25
+      },
+      "frame_hash": "99f5e574cc430087d6972550f0ff7052907f8ee16124ec01a101b46c7a0ef0d6",
+      "kind": "nexus_market_instant",
+      "lineage": [
+        {
+          "availability_basis": "verified_bar_close",
+          "available_ns": 160,
+          "event_ns": 100,
+          "revision": 0,
+          "source_path": "NQ.csv",
+          "source_sequence": 0,
+          "stream_id": "csv:NQ1!:aaaaaaaaaaaa"
+        },
+        {
+          "code_version": "divine-providence-hub",
+          "decision_ns": 160,
+          "derivation_hash": "4bd531c2941d9d2e6650b8e57fc555a671f99d00d4c5a419459d24dc5c53903a",
+          "input_hashes": [
+            [
+              "NQ",
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            ]
+          ],
+          "kind": "nexus_derivation",
+          "parameters_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "product_id": "NEXUS:DIVINE_PROVIDENCE_LINK",
+          "product_version": "1",
+          "spec_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        {
+          "decision_ns": 160,
+          "failed_streams": [],
+          "healthy_fraction": 1.0,
+          "kind": "nexus_source_health_plane",
+          "plane_hash": "20c169d09c80d554fc1afc383de22bf6b82846e5fae889ba76c739e441329894",
+          "stream_count": 1,
+          "unknown_slo_streams": []
+        }
+      ],
+      "ood": {
+        "novelty": 0.1
+      },
+      "quality": {
+        "coverage": 1.0
+      },
+      "source_health": {
+        "configured_slo_streams": [
+          "csv:NQ1!:aaaaaaaaaaaa"
+        ],
+        "decision_ns": 160,
+        "failed_streams": [],
+        "healthy_fraction": 1.0,
+        "healthy_streams": [
+          "csv:NQ1!:aaaaaaaaaaaa"
+        ],
+        "plane_hash": "20c169d09c80d554fc1afc383de22bf6b82846e5fae889ba76c739e441329894",
+        "snapshots": {
+          "csv:NQ1!:aaaaaaaaaaaa": {
+            "availability_before_event_samples": 0,
+            "availability_unknown_samples": 0,
+            "availability_violations": 0,
+            "clock_uncertainty_ns_latest": 0,
+            "clock_uncertainty_ns_max": 0,
+            "connected": true,
+            "impossible_time_samples": 0,
+            "last_available_ns": 160,
+            "last_event_ns": 100,
+            "last_received_ns": 170,
+            "longest_gap": 0,
+            "missing_sequence_slots": 0,
+            "out_of_order_receipts": 0,
+            "receipt_before_available_samples": 0,
+            "receipt_clock_violations": 0,
+            "receive_lag_ns_latest": 10,
+            "receive_lag_ns_max": 10,
+            "receive_lag_ns_p95": 10,
+            "receive_lag_samples": 1,
+            "reconnect_epochs": 0,
+            "revision_events": 0,
+            "revision_rate": 0.0,
+            "samples": 1,
+            "sequence_gap_runs": 0,
+            "sequence_nonmonotone_events": 0,
+            "slo_failures": [],
+            "slo_passed": true,
+            "stream_id": "csv:NQ1!:aaaaaaaaaaaa"
+          }
+        },
+        "stream_count": 1,
+        "unknown_slo_streams": []
+      },
+      "topology": {
+        "entropy": 0.5
+      }
+    },
+    "production_authorized": false,
+    "schema": "icarus-candidate-v1",
+    "status": "RESEARCH_CANDIDATE_ONLY"
+  },
+  "decision_ns": 160,
+  "frame_hash": "99f5e574cc430087d6972550f0ff7052907f8ee16124ec01a101b46c7a0ef0d6",
+  "production_authorized": false
+}

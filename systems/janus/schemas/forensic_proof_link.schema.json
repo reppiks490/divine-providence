@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Forensic Proof Link v1",
+  "type": "object",
+  "required": ["format", "audit_digest", "fault_evidence_digest", "session_id", "recovery_certificate_digest", "receipt_head_digest", "signer_authority", "created_at", "link_digest", "signature"],
+  "properties": {
+    "format": {"const": "janus-forensic-proof-link-v1"},
+    "audit_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "fault_evidence_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "session_id": {"type": "string", "minLength": 1},
+    "recovery_certificate_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "session_receipt_digest": {"type": ["string", "null"]},
+    "receipt_head_digest": {"type": ["string", "null"]},
+    "fence_epoch": {"type": ["integer", "null"], "minimum": 0},
+    "previous_link_digest": {"type": ["string", "null"]},
+    "signer_authority": {"type": "string", "minLength": 1},
+    "link_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "signature": {"type": "object"}
+  }
+}

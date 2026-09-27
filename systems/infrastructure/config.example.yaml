@@ -1,0 +1,29 @@
+
+loop:
+  cycle_seconds: 5
+  shadow_mode: true
+  learning_enabled: true
+  journal_path: infra_loop_journal.jsonl
+
+guard:
+  max_action_risk: 0.35
+  min_confidence: 0.55
+  min_reversibility: 0.55
+  cooldown_seconds: 30
+  max_mutations_per_cycle: 2
+  critical_health_floor: 0.25
+  canary_required_above_risk: 0.18
+  fail_open: true
+
+verification:
+  settle_seconds: 0.2
+  min_improvement: -0.015
+  rollback_below_score: 0.30
+
+# Recovery continuity/authentication remains opt-in and is configured through LoopConfig.
+# Example code-level fields (secrets must not be committed to YAML):
+#   durable_proof_journal_path: /var/lib/icarus/proof.journal
+#   startup_recovery_enabled: true
+#   recovery_chain_dir: /var/lib/icarus/recovery-chain
+#   recovery_chain_lock_timeout_seconds: 2.0
+#   recovery_authenticator: <HMACRecoveryAuthenticator or HMACRecoveryKeyring injected at runtime>

@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"JANUS Certificate Temporal Conflict Crosslink","type":"object","required":["format","conflicts","winner_selected"],"properties":{"format":{"const":"janus-certificate-temporal-conflict-crosslink-v1"},"conflicts":{"type":"array"},"winner_selected":{"const":false}}}

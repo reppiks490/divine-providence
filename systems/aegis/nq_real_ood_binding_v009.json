@@ -1,0 +1,46 @@
+{
+  "experiment_id": "ACF-NQ-OOD-REAL-001",
+  "corpus_id": "ACF-NQ-CONT-MASSIVE-VOLROLL-1H-20250902-20260925-v007",
+  "holdout_touched": false,
+  "features": [
+    "log_return",
+    "range_pct",
+    "log_volume_change"
+  ],
+  "lookback": 120,
+  "k": 5,
+  "threshold": 3.0,
+  "development_points_checked": 4931,
+  "overall_abstain_rate": 0.012776313121070776,
+  "folds": {
+    "1": {
+      "rate": 0.014285714285714285
+    },
+    "2": {
+      "rate": 0.012857142857142857
+    },
+    "3": {
+      "rate": 0.01
+    },
+    "4": {
+      "rate": 0.011428571428571429
+    }
+  },
+  "regimes": {
+    "LOW": {
+      "rate": 0.0005577244841048522,
+      "avg_score": 0.48299615988427663
+    },
+    "NORMAL": {
+      "rate": 0.013944954128440367,
+      "avg_score": 0.6427643579836942
+    },
+    "HIGH": {
+      "rate": 0.05811138014527845,
+      "avg_score": 0.9912744568823236
+    }
+  },
+  "max_score": 16.19200002435399,
+  "decision": "RETAIN_OOD_GUARD_SHADOW",
+  "reason": "fixed threshold produces low normal abstention and materially higher HIGH-volatility abstention; no holdout use"
+}

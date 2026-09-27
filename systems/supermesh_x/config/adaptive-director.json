@@ -1,0 +1,27 @@
+{
+  "version": "0.8.0",
+  "routing": {
+    "base_weight": 0.65,
+    "feedback_weight": 0.35,
+    "cold_start_score": 0.5
+  },
+  "schema_drift": {
+    "removed_tool": "breaking",
+    "removed_parameter": "breaking",
+    "parameter_type_change": "breaking",
+    "new_required_parameter": "breaking",
+    "new_optional_parameter": "compatible",
+    "new_tool": "compatible"
+  },
+  "discovery_receipt": {
+    "withheld_preview": 5,
+    "forbid_raw_arguments": true,
+    "forbid_raw_outputs": true,
+    "forbid_private_payloads": true,
+    "forbid_credentials": true
+  },
+  "replacement": {
+    "breaking_surface_triggers_replacement": true,
+    "no_verified_fallback_action": "degrade"
+  }
+}

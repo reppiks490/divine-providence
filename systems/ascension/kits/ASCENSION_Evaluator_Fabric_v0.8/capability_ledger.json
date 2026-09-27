@@ -1,0 +1,12 @@
+{
+  "capabilities": [
+    {
+      "capability_id": "ascension.evaluator-fabric",
+      "version": "0.8.0",
+      "status": "CANDIDATE",
+      "cycle_id": "ascension-cycle-019",
+      "rollback": "0.7.0",
+      "promotion_blocker": "No authoritative authenticated real sibling manifest / Transfer evidence"
+    }
+  ]
+}

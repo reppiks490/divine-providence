@@ -1,0 +1,39 @@
+{
+  "profile_id": "prometheus-v0.5-declared-attestation-contract",
+  "source_commit": "4746f11d493a1e6ed906da8e8d516e9b0963c276",
+  "evidence_class": "DECLARED_CONTRACT",
+  "is_runtime_manifest": false,
+  "external_attestation_required_fields": [
+    "plugin_evidence_id",
+    "subject_sha256",
+    "predicate_type",
+    "envelope_ref",
+    "envelope_sha256",
+    "verification_material_sha256",
+    "signer_identity",
+    "attestation_format"
+  ],
+  "verification_receipt_required_fields": [
+    "attestation_id",
+    "verifier_id",
+    "trusted_root_id",
+    "verification_policy_id",
+    "checks",
+    "external_verification_ref"
+  ],
+  "mandatory_receipt_checks": [
+    "signature",
+    "subject_digest",
+    "signer_identity",
+    "trusted_root"
+  ],
+  "declared_trust_boundary": "external_verifier_receipt_only",
+  "known_gap_to_adapter_v0_4": [
+    "raw_runtime_manifest_not_supplied_here",
+    "artifact_bytes_not_supplied_here",
+    "trust_policy_not_supplied_here",
+    "adapter_attestation_set_not_supplied_here",
+    "strict_transparency_evidence_not_supplied_here",
+    "pinned_backend_contract_not_supplied_here"
+  ]
+}

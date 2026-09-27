@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/mnt/data/ASCENSION_Manifest_Trust_Collision_Adapter_v0.4/test_adapter_v0_4.py", line 8, in <module>
+    import manifest_trust_collision_adapter_v0_4 as a4
+ModuleNotFoundError: No module named 'manifest_trust_collision_adapter_v0_4'

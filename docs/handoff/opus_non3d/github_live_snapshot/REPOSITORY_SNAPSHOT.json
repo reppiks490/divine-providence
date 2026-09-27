@@ -1,0 +1,93 @@
+{
+  "captured_at_utc": "2026-09-26T05:15:05Z",
+  "note": "Read-only GitHub connector snapshot. Not a byte-for-byte repository mirror.",
+  "repositories": [
+    {
+      "full_name": "reppiks490/Icarus",
+      "visibility": "public",
+      "default_branch": "main",
+      "reported_size": 4409,
+      "head_observed": {
+        "sha": "007e70189945b8e112904cf92b2b1a12e43792d6",
+        "message": "Create instruction.txt",
+        "created_at": "2026-09-22T23:26:55Z"
+      }
+    },
+    {
+      "full_name": "reppiks490/Icarus-engine",
+      "visibility": "public",
+      "default_branch": "main",
+      "reported_size": 7599,
+      "head_observed": {
+        "sha": "f9e71c5dc1ca7035745ed6d4fb5e0d001248f8ad",
+        "message": "Grok (xAI): this stub is not the engine. Clone Icarus.",
+        "created_at": "2026-09-21T01:46:26Z"
+      }
+    },
+    {
+      "full_name": "reppiks490/icarus-owner-actions",
+      "visibility": "private",
+      "default_branch": "main",
+      "reported_size": 16,
+      "head_observed": {
+        "sha": "cf9947b340e6138b14551dfe34f83a21973bdb4a",
+        "message": "Sign owner action documentation",
+        "created_at": "2026-09-23T06:18:38Z"
+      }
+    },
+    {
+      "full_name": "reppiks490/icarus-csv-evidence-lab",
+      "visibility": "private",
+      "default_branch": "main",
+      "head_observed": {
+        "sha": "d6a5868e3f3202ef82579aca40b83cb3f8a4b491",
+        "message": "docs: preserve superseded chart setup and private backtest scope",
+        "created_at": "2026-09-24T00:31:48Z"
+      }
+    },
+    {
+      "full_name": "reppiks490/icarus-causal-router",
+      "visibility": "private",
+      "default_branch": "main",
+      "head_observed": {
+        "sha": "d95a53c70b04349fbef42c0a9dc35de87ca72f40",
+        "message": "Build isolated causal adaptive research core and test harness",
+        "created_at": "2026-09-24T11:07:38Z"
+      }
+    },
+    {
+      "full_name": "reppiks490/daedalus-research-os",
+      "visibility": "private",
+      "default_branch": "main",
+      "head_observed": {
+        "sha": "74ad94149b02ddd3f69d535ee5fdc00c1fdbe096",
+        "message": "CA: enforce duplicate-source identity parity and count ledger exposures",
+        "created_at": "2026-09-23T13:49:18Z"
+      }
+    },
+    {
+      "full_name": "reppiks490/aion-parallax-research",
+      "visibility": "private",
+      "default_branch": "main",
+      "head_observed": {
+        "sha": "12a7cb8ef99e84ce50b766db0aea1592b3906f80",
+        "message": "CA: inventory Parallax corpus and harden AION research evidence",
+        "created_at": "2026-09-23T18:43:16Z"
+      }
+    }
+  ],
+  "icarus_branches_observed": [
+    "chatgpt/icarus-control-plane-handoff-20260924",
+    "chatgpt/icarus-control-plane-runtime-20260924",
+    "chatgpt/icarus-data-vintage-20260924",
+    "chatgpt/icarus-plant-cli-contract-20260924",
+    "chatgpt/icarus-plant-root-cli-regression-20260925",
+    "integration/chatgpt-icarus-fabric-2026-09-24",
+    "codex/aion-parallax-handoff",
+    "codex/exotic-research-loop",
+    "codex/ml-d9d4db8",
+    "integration/icarus-capability-fabric-20260924",
+    "icarus/integration-handoff-20260924-1829",
+    "icarus-loop-integration-2026-09-24"
+  ]
+}

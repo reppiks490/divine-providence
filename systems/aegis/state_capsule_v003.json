@@ -1,0 +1,41 @@
+{
+  "system": "AEGIS Challenger Forge",
+  "checkpoint": "003",
+  "created_at_utc": "2026-09-25T23:22:19.425169+00:00",
+  "status": "EXECUTABLE_VALIDATION_HARNESS_STARTED_NOT_READY_TO_COMMIT",
+  "supersedes": "Checkpoint 002",
+  "built": [
+    "Base component adapter contract",
+    "Prefix-invariance causality auditor",
+    "Confirmed causal pivot adapter",
+    "Deliberately leaky/backdated pivot negative control",
+    "ATR risk adapter",
+    "DXY macro-pressure adapter",
+    "Chronological purged/embargo partition planner"
+  ],
+  "verification": {
+    "unittest_returncode": 0,
+    "tests_output_file": "test_output.txt",
+    "confirmed_pivot_prefix_invariance_passed": true,
+    "leaky_pivot_detected": true,
+    "leaky_pivot_violation_count": 5
+  },
+  "partitions": {
+    "BTCUSD": "development partitions assigned; final 96/600 bars untouched",
+    "NQ_continuous": "development partitions assigned; final 57/408 bars untouched; corpus too small for final model selection"
+  },
+  "hard_gates": [
+    "No live-trading authority",
+    "No final-holdout access during development",
+    "No pivot signal may be timestamped before confirmation",
+    "No candidate promotion from synthetic causality tests alone"
+  ],
+  "next": [
+    "Implement remaining nine component adapters",
+    "Run the same prefix-invariance audit across all executable adapters",
+    "Add formal event-time availability metadata to every component output",
+    "Implement NQ liquidity-sweep incumbent and independent VWAP/volume-sweep challenger",
+    "Run first corpus-bound shadow comparison on development partitions only",
+    "Add slippage/spread/latency stress harness"
+  ]
+}

@@ -1,0 +1,8 @@
+JANUS ∞ Run 028 verification
+Parent baseline: Run 027
+Baseline before mutation: 102/102 passed with PYTHONPATH=src; compileall passed.
+TDD RED: 3 Run 028 tests failed for missing full WAL validation, post-backup wait boundary, and forensic-proof-link APIs.
+Focused GREEN: 3/3 Run 028 tests passed.
+Fresh full suite: 105/105 passed.
+Python compileall: passed.
+Live Git repository reconciliation: not run — extracted package is not a Git repository.

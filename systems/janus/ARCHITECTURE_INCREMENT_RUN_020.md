@@ -1,0 +1,5 @@
+# JANUS ∞ Run 020 — Atomic Resumable Joint Proof Synchronization
+
+Run 020 joins the previously independent causal-evidence and trust-lineage proof paths. A deterministic sync session binds change ID, causal Merkle root, trust bundle digest, and authorization decision digest. Synchronization executes against an isolated SQLite staging twin cloned from the receiver. Portable trust lineage is verified/imported and authorization is replayed there; causal chunks are then hash/Merkle verified, imported, and the causal certificate is independently reproduced. Only after both digests match is the staged database promoted to the receiver. Failure records control-plane session metadata but does not promote project-truth/trust domain mutations.
+
+The resulting `janus-joint-proof-receipt-v1` binds the session, causal root, trust bundle, authorization decision, causal certificate, subsystem/evidence class, and `(valid_at, known_at)` boundary. This does not expand subsystem authority: JANUS verifies evidence and authorization under explicit policies; it does not become NEXUS/AION/ARGUS/ATHENA/DAEDALUS/Icarus authority.

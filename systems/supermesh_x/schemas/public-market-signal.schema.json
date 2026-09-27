@@ -1,0 +1,23 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"Public Market Signal",
+  "type":"object",
+  "required":["entity","signal_type","event_time","public_only","content_hash","provenance"],
+  "properties":{
+    "entity":{"type":"string"},
+    "entity_id":{"type":["string","null"]},
+    "signal_type":{"enum":["social_post","public_statement","speech","press_release","interview","regulatory_action","executive_action","company_announcement","public_schedule_event"]},
+    "platform":{"type":"string"},
+    "event_time":{"type":"string"},
+    "published_time":{"type":["string","null"]},
+    "retrieved_time":{"type":["string","null"]},
+    "available_time":{"type":["string","null"]},
+    "text":{"type":"string"},
+    "topics":{"type":"array","items":{"type":"string"}},
+    "asset_mentions":{"type":"array","items":{"type":"string"}},
+    "content_hash":{"type":"string"},
+    "public_only":{"const":true},
+    "provenance":{"type":"object"}
+  },
+  "additionalProperties":true
+}

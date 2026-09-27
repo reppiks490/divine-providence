@@ -1,0 +1,46 @@
+{
+  "files": [
+    {
+      "ast_sha256": "01af92d6950dafe65650cade624f664155564ae16bf58933fc47b59973b3cc41",
+      "path": "aion/aion/contracts.py",
+      "raw_sha256": "df9cf2b8323558fbaa2e9bdb67dc73219ab51034e6785f798cc5d16e7d584d7d",
+      "role": "contracts",
+      "sibling": "AION",
+      "size_bytes": 9570
+    },
+    {
+      "ast_sha256": "9097314eb3fda3020619302945941019f11e5c05d507cb07780487c8fdddc125",
+      "path": "aion/aion/store.py",
+      "raw_sha256": "8712ee1757b5e000d4e20f71499cdb80def7954b6010f6cf7948c73f1b2fb313",
+      "role": "store",
+      "sibling": "AION",
+      "size_bytes": 19613
+    },
+    {
+      "ast_sha256": "53dc762d3fba6d6c6d305524112a65af65b13c9e66e759b4a1256a9d2e848dd8",
+      "path": "argus/src/argus/contracts.py",
+      "raw_sha256": "5a541877fc61f62517591ba47ac35d88cabb33b6b1e17099e3f52e95f7ae06e2",
+      "role": "contracts",
+      "sibling": "ARGUS",
+      "size_bytes": 1088
+    },
+    {
+      "ast_sha256": "dc5a958b55162afca9d6302de7174d776f540bc6bc8c936136d45ecb165525c0",
+      "path": "athena/src/athena/contracts.py",
+      "raw_sha256": "22876f80019466418a0a512242a3d84bebaeb9a172bd9f9d1b851bc7862d5bf0",
+      "role": "contracts",
+      "sibling": "ATHENA",
+      "size_bytes": 1452
+    },
+    {
+      "ast_sha256": "c5b3fca8869eeb54986572039215bdd09324cd04c118c129c78372e801e87825",
+      "path": "daedalus/src/daedalus/bridge.py",
+      "raw_sha256": "677fbc958f699bab72cec074058bbb3a02567314ed80168b6751775d48650925",
+      "role": "bridge",
+      "sibling": "DAEDALUS",
+      "size_bytes": 9577
+    }
+  ],
+  "schema": "nexus.contract-drift-snapshot.v1",
+  "snapshot_hash": "b394df6cf80ddbac014f4024222469b169178fadd7c26f4a597aed58671b5bb3"
+}

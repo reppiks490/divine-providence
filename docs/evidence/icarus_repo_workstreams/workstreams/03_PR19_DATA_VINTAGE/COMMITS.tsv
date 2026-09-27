@@ -1,0 +1,3 @@
+4b90538ba868c049397c154215bfc181b7afbf4c	2026-09-24T17:09:04-05:00	ChatGPT: RED preserve as-observed market-data provenance
+df6fe08123d48a37c77d4a3b2d21bd115448f62e	2026-09-24T17:10:55-05:00	ChatGPT: record append-only market-data source observations
+e05c122f7a8e5501d98251c7449cbe7ce3ec6dda	2026-09-24T17:10:57-05:00	ChatGPT: fail closed on provenance before canonical history merge

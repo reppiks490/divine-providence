@@ -1,0 +1,131 @@
+{
+  "stage": "Stage 1 - file integrity, de-duplication, and visual taxonomy",
+  "unique_video_count": 11,
+  "original_video_count": 15,
+  "unique_duration_seconds": 2447.97,
+  "unique_duration_minutes": 40.8,
+  "duplicates": {
+    "Tutorial_8.mp4": [
+      "Tutorial_8 (1).mp4"
+    ],
+    "Tutorial_9_UPDATE_A.mp4": [
+      "Tutorial_9_UPDATE_A (1).mp4"
+    ],
+    "Tutorial_9_UPDATE_B.mp4": [
+      "Tutorial_9_UPDATE_B (1).mp4",
+      "Tutorial_9_UPDATE_B (2).mp4"
+    ]
+  },
+  "visible_orderblockpro_legend": {
+    "Major Order Blocks/Icebergs": {
+      "tiers": [
+        "Super-Blocks",
+        "Mega-Blocks",
+        "Maxi-Blocks",
+        "Medi-Blocks",
+        "Mini-Blocks"
+      ],
+      "buy_volume": "green family",
+      "sell_volume": "red family"
+    },
+    "Minor Liquidity Levels": {
+      "tiers": [
+        "Mega-Levels",
+        "Maxi-Levels",
+        "Medi-Levels",
+        "Mini-Levels"
+      ],
+      "buy_volume": "blue/cyan family",
+      "sell_volume": "purple/pink family"
+    },
+    "Nano-Blocks (Price Rips)": {
+      "buy_volume": "green-to-light-green family",
+      "sell_volume": "red-to-light-pink family",
+      "note": "legend includes a 'COLORS --> Stronger' scale"
+    },
+    "Fortresses (Mini Icebergs)": {
+      "buy_volume": "blue",
+      "sell_volume": "yellow"
+    }
+  },
+  "videos": [
+    {
+      "file": "Iceberg 2_EDIT_RENDER.mp4",
+      "duration_s": 142.8,
+      "instrument": "NQ Futures / Nasdaq 100 E-mini",
+      "visual_focus": "Highlighted stacked overhead sell-side zones/levels; repeated interaction with a large circled upper cluster."
+    },
+    {
+      "file": "Iceberg Orders In OrderBlockPro_1.mp4",
+      "duration_s": 154.35,
+      "instrument": "NQ Futures / Nasdaq 100 E-mini",
+      "visual_focus": "Large red major sell-side block overhead, green major buy-side blocks below, then denser minor levels as price tests the upper area."
+    },
+    {
+      "file": "Powerline Tutorial_2.mp4",
+      "duration_s": 349.02,
+      "instrument": "NQ Futures / Nasdaq 100 E-mini",
+      "visual_focus": "Dense multi-level map spanning major blocks, minor liquidity levels, and other horizontal references across several price rotations."
+    },
+    {
+      "file": "Tutorial_3a.mp4",
+      "duration_s": 186.28,
+      "instrument": "NQ Futures / Nasdaq 100 E-mini",
+      "visual_focus": "Price rotates from upper red/magenta zones toward lower green/cyan zones; both upper and lower clusters are emphasized."
+    },
+    {
+      "file": "Tutorial_4a.mov",
+      "duration_s": 113.84,
+      "instrument": "NQ Futures / Nasdaq 100 E-mini",
+      "visual_focus": "Sparse major zones with a cleaner hierarchy; price expansion upward from lower buy-side areas."
+    },
+    {
+      "file": "Tutorial_5d.mp4",
+      "duration_s": 71.37,
+      "instrument": "NQ Futures / Nasdaq 100 E-mini",
+      "visual_focus": "Upper red/pink/magenta resistance cluster highlighted while price rises into and works around intermediate levels."
+    },
+    {
+      "file": "Tutorial_6b.mp4",
+      "duration_s": 178.97,
+      "instrument": "NQ Futures / Nasdaq 100 E-mini",
+      "visual_focus": "Trend advances into a red/magenta upper cluster followed by a sharp rejection/rotation toward lower blue/green references."
+    },
+    {
+      "file": "Tutorial_7b.mp4",
+      "duration_s": 87.73,
+      "instrument": "NQ Futures / Nasdaq 100 E-mini",
+      "visual_focus": "Dense range bounded by magenta sell-side and cyan/blue buy-side liquidity levels, then an upside expansion."
+    },
+    {
+      "file": "Tutorial_8.mp4",
+      "duration_s": 76.8,
+      "instrument": "ES Futures / S&P 500 E-mini",
+      "visual_focus": "ES example showing repeated rotation between upper magenta/red liquidity and lower cyan/green levels, then a higher expansion."
+    },
+    {
+      "file": "Tutorial_9_UPDATE_A.mp4",
+      "duration_s": 598.39,
+      "instrument": "NQ + ES examples",
+      "visual_focus": "Multiple examples across NQ and ES, emphasizing lower buy-side green zones in some segments and upper red sell-side zones in others."
+    },
+    {
+      "file": "Tutorial_9_UPDATE_B.mp4",
+      "duration_s": 488.42,
+      "instrument": "ES Futures / S&P 500 E-mini",
+      "visual_focus": "Multiple ES examples with strong moves between lower green/cyan support-side zones and upper red/magenta resistance-side zones."
+    }
+  ],
+  "limitations": [
+    "The current cloud chat session does not expose the local Yaps desktop CLI, so Yaps transcription cannot be executed here.",
+    "The Transcriptor connector accepts supported public video URLs rather than these local uploaded MP4/MOV files.",
+    "Spoken trading rules have therefore not yet been treated as authoritative; current per-video notes are visual observations only."
+  ],
+  "next_stage": [
+    "Obtain transcripts in a local-capable Yaps/desktop session or from public URLs if available.",
+    "Extract exact entry, confirmation, invalidation, target, and contextual rules with timestamps.",
+    "Cross-compare repeated/contradictory rules across videos.",
+    "Map rules back to chart frames and historical NQ/ES examples.",
+    "Build final playbook, searchable knowledge base, and marketing/education derivatives."
+  ]
+}

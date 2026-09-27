@@ -1,0 +1,66 @@
+{
+  "export_version": "0.1",
+  "sibling_id": "<SIBLING_ID>",
+  "manifest": {
+    "system_id": "<SIBLING_ID>",
+    "owned_domains": [],
+    "mutation_rights": [],
+    "interfaces": [],
+    "requires": [],
+    "forbids": [],
+    "shared_state": [],
+    "coordination_contracts": []
+  },
+  "artifact": {
+    "sha256": "<64-lowercase-hex>",
+    "content_ref": "<stable-content-reference>",
+    "content_b64": "<optional-base64-bytes>"
+  },
+  "authority": {
+    "owner_system": "<SIBLING_ID>",
+    "attestation": {
+      "plugin_evidence_id": "<VALUE>",
+      "subject_sha256": "<VALUE>",
+      "predicate_type": "<VALUE>",
+      "envelope_ref": "<VALUE>",
+      "envelope_sha256": "<VALUE>",
+      "verification_material_sha256": "<VALUE>",
+      "signer_identity": "<VALUE>",
+      "attestation_format": "<VALUE>",
+      "artifact_id": "<VALUE>"
+    },
+    "verification_receipt": {
+      "attestation_id": "<external-attestation-id>",
+      "verifier_id": "<verifier-id>",
+      "trusted_root_id": "<trusted-root-id>",
+      "verification_policy_id": "<policy-id>",
+      "checks": [
+        [
+          "signature",
+          "<true-or-false>"
+        ],
+        [
+          "subject_digest",
+          "<true-or-false>"
+        ],
+        [
+          "signer_identity",
+          "<true-or-false>"
+        ],
+        [
+          "trusted_root",
+          "<true-or-false>"
+        ]
+      ],
+      "external_verification_ref": "<stable-receipt-reference>"
+    }
+  },
+  "adapter_v0_4_evidence": {
+    "prior_collision_report": "<full-v0.4-bound-report-object>",
+    "trust_policy": "<full-v0.4-policy-object>",
+    "attestations": "<actual-v0.4-attestation-list>",
+    "transparency_evidence": "<v0.8-inclusion-plus-v0.7-transition/witness-object>",
+    "backend_contract": "<pinned-adapter-v0.4-backend-contract>"
+  },
+  "extensions": {}
+}

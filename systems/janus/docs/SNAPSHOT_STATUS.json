@@ -1,0 +1,128 @@
+{
+  "content_hash": "32d09fbf70ce39002361ba8ea4527ffbd0a391cd4a03bc03d13e14dfc2baa8a1",
+  "entries": [
+    {
+      "mtime_ns": 1790265347859111189,
+      "path": "MASTER_HANDOFF.md",
+      "sha256": "25da06d7bdaec23f0eb0a6c0fe6afa1e4239bba044c0a3e6461a4936895240c8",
+      "size": 10999
+    },
+    {
+      "mtime_ns": 1790265347858911458,
+      "path": "README.md",
+      "sha256": "f2b79b2de26db4b8a054ecbab36b92fb86879777f9ca2df59473b0d1863d29e9",
+      "size": 4480
+    },
+    {
+      "mtime_ns": 1790265159737824051,
+      "path": "docs/ICARUS_CONTEXT_SEED.md",
+      "sha256": "e0835d8b6259cdd3175ef8df90dbdb00ae73645b3d14ba13c289c2bd0ad366f6",
+      "size": 4421
+    },
+    {
+      "mtime_ns": 1790265159748907497,
+      "path": "docs/IMPLEMENTATION_ROADMAP.md",
+      "sha256": "51200f408956bf032b36efe33ab39081ad11af5fbcb34ba825e7dded6f049cf1",
+      "size": 1551
+    },
+    {
+      "mtime_ns": 1790265159749787173,
+      "path": "docs/RECEIVER_CHECKLIST.md",
+      "sha256": "d77488449a37d29ab5bfde4397fe5ad655ef706b76c6e770323f2018fa96ff72",
+      "size": 880
+    },
+    {
+      "mtime_ns": 1790265349698644886,
+      "path": "docs/SEED_STATUS.json",
+      "sha256": "27ec33fffb3f62bc844855162ea3d8ab66bbcd7b534d1de958354aae3ac82cab",
+      "size": 226
+    },
+    {
+      "mtime_ns": 1790265350478564271,
+      "path": "docs/SNAPSHOT_STATUS.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "mtime_ns": 1790265349081577449,
+      "path": "docs/TEST_REPORT.txt",
+      "sha256": "dc0a092139dba64191f2b78e5cc517ed84bb81984fd8255d6018eef9efcdcfbb",
+      "size": 923
+    },
+    {
+      "mtime_ns": 1790265159739454169,
+      "path": "examples/icarus_seed_manifest.json",
+      "sha256": "c247c0ba926e4020db56e2bc440b702f6986e6fcd749b6f0a462672b58c29c49",
+      "size": 3479
+    },
+    {
+      "mtime_ns": 1790265347986525355,
+      "path": "examples/reference_proof_bundle.json",
+      "sha256": "83111950cf7b192cc01c9b97404fe4e05bb9489b84277a2d7e4515c27d14dca9",
+      "size": 1613
+    },
+    {
+      "mtime_ns": 1790265159744121564,
+      "path": "pyproject.toml",
+      "sha256": "58f8835dd0cdb825dbe62b2cf0f4a6d5c40b4d9cb0361eb10b8c35b7ba9fd842",
+      "size": 253
+    },
+    {
+      "mtime_ns": 1790265159742258376,
+      "path": "schemas/candidate.schema.json",
+      "sha256": "d314581f5e3859d1bd89b27c10875bde4c90c7f9e335938b070ebe66153c09f6",
+      "size": 940
+    },
+    {
+      "mtime_ns": 1790265159743161206,
+      "path": "schemas/contract.schema.json",
+      "sha256": "08a919d32687f627cc44a6367d1aa2a51f41ceb9ec536c0967c6064fbd0260c2",
+      "size": 523
+    },
+    {
+      "mtime_ns": 1790265159740463039,
+      "path": "schemas/fact.schema.json",
+      "sha256": "f5883142ff1585fa635fdca5226347fa015213b5c1f30acf2eb8192a7438d79b",
+      "size": 677
+    },
+    {
+      "mtime_ns": 1790265159741346962,
+      "path": "schemas/proof_bundle.schema.json",
+      "sha256": "fa95eb52331c3408dfbe36ad4f11d4fb5ea6660c7ce0d99b67afb7c7def8a936",
+      "size": 992
+    },
+    {
+      "mtime_ns": 1790265159736853098,
+      "path": "specs/JANUS_ARCHITECTURE.md",
+      "sha256": "85d600c3350e3e1be7510b13a3da70af80713d6410ffc2dc2c36f991b5d9f056",
+      "size": 11211
+    },
+    {
+      "mtime_ns": 1790265159745019397,
+      "path": "src/janus_infinity/__init__.py",
+      "sha256": "a0c349c54d5de897cb9370b143144f9687f223e66a319af2961973f7b10b4b34",
+      "size": 130
+    },
+    {
+      "mtime_ns": 1790265266446765341,
+      "path": "src/janus_infinity/__main__.py",
+      "sha256": "cf7b228168a9343a0b63b9c1384a5bb3629a79f5b9d53c90520754ecff476daf",
+      "size": 2220
+    },
+    {
+      "mtime_ns": 1790265266446629867,
+      "path": "src/janus_infinity/core.py",
+      "sha256": "6d813a4cdc5c7e4603d547004ed238c41d1df5c15a3184dea28c6cb7c107a76a",
+      "size": 23420
+    },
+    {
+      "mtime_ns": 1790265266446815928,
+      "path": "tests/test_janus.py",
+      "sha256": "f8a551f0b7bc9b723bc5d4e7115d696b095f27e9fa2b00f944b29952dd7ea7a2",
+      "size": 4817
+    }
+  ],
+  "git_head": null,
+  "root": "/mnt/data/JANUS_INFINITY_HANDOFF",
+  "snapshot_id": "cf4ccf92382898dee057293577c9be231e62a506c38481db600cd6e4de5cef1f"
+}

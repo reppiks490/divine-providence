@@ -1,0 +1,38 @@
+{
+  "system": "AEGIS Challenger Forge",
+  "checkpoint": "009",
+  "created_at_utc": "2026-09-26T00:12:08.158544+00:00",
+  "status": "REAL_FACTOR_OOD_BTC_VALIDATION_AND_VECTOR_GUARDS_ACTIVE_NOT_READY_TO_COMMIT",
+  "supersedes": "Checkpoint 008",
+  "verified": [
+    "NQ QQQ PIT factor bound with explicit one-hour availability shift and no forward fill.",
+    "NQ real KNN OOD guard measured across development folds/regimes.",
+    "BTCUSD corpus expanded to 23,976 continuous hourly bars with immutable payload hash; 4,796-row final holdout untouched.",
+    "Ichimoku directional, Ichimoku+ADX and EMA pullback interpretations evaluated across four fixed BTC development folds and quarantined as directional alpha.",
+    "VECTOR-style horizon disagreement guard, circular-evidence firewall and reversible tombstone ledger implemented."
+  ],
+  "nq_factor_decision": "RETAIN_CONTEXT_FEATURE_ONLY",
+  "nq_ood_decision": "RETAIN_OOD_GUARD_SHADOW",
+  "btc_decisions": {
+    "ichimoku_directional": "QUARANTINE_DIRECTIONAL_USE_RETAIN_REGIME_FEATURE",
+    "ichimoku_plus_adx": "QUARANTINE_COMBINED_ALPHA",
+    "ema_pullback": "QUARANTINE_ALPHA"
+  },
+  "hard_gates": [
+    "NQ final holdout untouched",
+    "BTC final 4,796-row holdout untouched",
+    "No rescue tuning against failed validation",
+    "No duplicated observations counted as independent evidence",
+    "Conflicting confident horizons force abstention",
+    "No live trading authority"
+  ],
+  "next": [
+    "Complete SPY/NVDA factor pages only when provider rate limit/entitlement permits, then test multicollinearity and incremental value.",
+    "Add BTC composite-exit upstream primitives (TK cross/cloud breach/RSI deceleration/EMA cross/kijun break) and evaluate exits without changing entry thresholds.",
+    "Add parameter-plateau maps as descriptive robustness only, never selecting from validation.",
+    "Add cross-market transfer tests for OOD and trend/regime components.",
+    "Continue external candidate discovery/evidence grading."
+  ],
+  "test_returncode": 0,
+  "test_count_detected": 36
+}

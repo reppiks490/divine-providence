@@ -1,0 +1,21 @@
+# JANUS ∞ STATE CAPSULE — Run 028
+
+- Authoritative offline checkpoint: Run 028.
+- Parent: Run 027 package SHA-256 `d11c823242597403700cfffd13163a7319e41773eee0735a00a08dd43c791977`.
+- Scope completed: full SQLite WAL header/frame/salt/rolling-checksum validation; external parent-issued SIGKILL after authoritative backup with deterministic committed recovery; Ed25519-signed forensic proof link binding storage-fault audit to recovery certificate, session receipt/current receipt head, and fencing epoch.
+- Baseline reproduced before mutation: 102/102 tests passed with `PYTHONPATH=src`; compileall passed.
+- TDD RED: 3 Run 028 tests failed for the intended missing capabilities after the test-import typo was corrected.
+- Focused GREEN: 3/3 Run 028 tests passed.
+- Final verification: 105/105 tests passed; `python -m compileall -q src tests` passed; 43 JSON schemas parsed successfully.
+- Key interfaces: `classify_storage_artifacts`, `_classify_wal_bytes`, `_wal_checksum`, test-only `hard_wait_at='after_promotion_backup'`, `sign_forensic_proof_link`, `verify_forensic_proof_link`.
+- Content hashes: `src/janus_infinity/core.py` = `40293021030615749f7e1d05acb0bdb287bc635590e43b7eb4f0ff1c8f87abc5`; `tests/test_janus.py` = `0eda5b33b83463a51485496bef72a711fa6fa5797de31417f3533c4ca85da8f8`; `schemas/storage_artifact_classification.schema.json` = `0853e84de397c6ddedd058639efbaec951141551624548f114eda19d6da83f56`; `schemas/forensic_proof_link.schema.json` = `8e6561eb5e164d08f8b58e79c8a80c18ee84392a2cbd3d49b41f028f0e50a31c`.
+- Dependencies: Python >=3.11, SQLite via stdlib, `cryptography>=41` for Ed25519.
+- SQLite WAL semantics source used: official SQLite database file-format documentation, https://sqlite.org/fileformat.html.
+- Ownership: JANUS remains limited to project-twin temporal truth/conflict/proof synchronization and forensic proof continuity. It does not acquire NEXUS/AION/ARGUS/ATHENA/DAEDALUS/Icarus authority.
+- Live repository: unreconciled. The extracted package is not a Git repository; no commit identity or live adoption is claimed.
+- Deep Research: exact first-party Deep Research capability was searched and unavailable; no substitute was mislabeled.
+- Skills/tools actually used: Plugin Management; Superpowers using-superpowers/TDD/systematic-debugging/verification; Baton Pass guidance; Codex Coordinator guidance; Akinator guidance; web lookup of official SQLite WAL format; container/Python/pytest/compileall/SQLite/subprocess/SIGKILL; Files/Google Drive persistence after packaging.
+- Risks: WAL-index/SHM semantics are not fully validated; no real kernel ENOSPC/torn-sector/network-filesystem test; forensic proof links authenticate provenance/continuity but do not grant semantic authority; live-repo drift remains unknown.
+- Next: Run 029 — WAL-index/SHM consistency + true kernel/storage fault harness + unified forensic DAG verification.
+- Resume exactly: verify `JANUS_INFINITY_HANDOFF_RUN_028.zip` SHA-256 from the adjacent authoritative Run 028 capsule/final report, extract, run `PYTHONPATH=src python -m pytest -q` and `python -m compileall -q src tests`, verify JSON schemas parse, then continue from Run 028. Do not restart from Run 020/older baselines.
+- Package self-hash is intentionally recorded only in the adjacent standalone capsule/final report after ZIP creation; a ZIP cannot truthfully embed its own final SHA-256 without changing that hash.

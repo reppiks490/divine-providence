@@ -1,0 +1,15 @@
+{
+  "cycle_id": "ascension-cycle-006",
+  "observation": "The previous cycle's visible failure was cycle detection, but audit revealed a more serious artifact drift: the ZIP contained a placeholder Python module while tests exercised notebook-only code.",
+  "prior_belief": "Fixing cycle reachability would be sufficient.",
+  "intervention": "Used TDD to rebuild the packaged API, added path-preserving cycle/transitive analysis, policy-configurable anomaly severity, randomized oracle comparison, input immutability checks, and clean-package execution verification.",
+  "measured_outcome": "13/13 local tests passed before packaging; clean-package verification is recorded separately in test_report.json after ZIP extraction.",
+  "evidence_quality": "Strong local deterministic/adversarial evidence; no authenticated real sibling manifests; exact Deep Research unavailable this cycle.",
+  "confidence_delta": "High increase in packaging/reproduction confidence; moderate increase in algorithm confidence; no increase in manifest-authenticity confidence.",
+  "failure_or_surprise": "Artifact/runtime mismatch was more severe than the known test failure.",
+  "reusable_lesson": "Verification must execute the shipped artifact from a clean extraction, not merely the in-memory/notebook implementation.",
+  "invalidated_assumption": "A passing notebook harness implies the packaged capability is runnable.",
+  "retry_condition": "When authenticated real manifests are available or a new graph collision class is proposed.",
+  "expiration_revalidation_condition": "Any detector API, manifest schema, dependency policy, or packaging process change.",
+  "next_experiment": "Authenticated manifest provenance plus Evaluator Fabric integration contract."
+}

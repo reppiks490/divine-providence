@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://supermesh-x.local/schemas/provider-state.schema.json",
+  "title": "SuperMesh-X Provider Runtime State",
+  "type": "object",
+  "required": ["provider", "state", "health", "observed_at"],
+  "properties": {
+    "provider": {"type": "string", "minLength": 1},
+    "state": {
+      "type": "string",
+      "enum": ["ready", "degraded", "quota_constrained", "preflight_required", "auth_required", "unavailable", "unverified"]
+    },
+    "health": {"type": "number", "minimum": 0, "maximum": 1},
+    "quota_remaining_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+    "latency_ms": {"type": "number", "minimum": 0},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "preflight": {
+      "type": "object",
+      "properties": {
+        "required": {"type": "boolean"},
+        "kind": {"type": "string"},
+        "session_scoped": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

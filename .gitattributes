@@ -1,0 +1,16 @@
+# Normalise text to LF in the repository. Several subsystems hash their own
+# source/fixture bytes, so line endings must not change between platforms.
+* text=auto eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+*.csv text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.patch -text
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+# Corpus-derived documents are evidence: keep their exact bytes so the SHA-256 values in
+# provenance/docs_provenance.json stay verifiable (some sources were authored with CRLF).
+docs/*/** -text

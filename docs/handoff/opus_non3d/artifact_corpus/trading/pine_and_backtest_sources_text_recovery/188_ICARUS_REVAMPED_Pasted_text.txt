@@ -1,0 +1,1000 @@
+//@version=6
+strategy(
+    "THE PULSE OF ICARUS X AGENT REACH ultracoded",
+    overlay                 = true,
+    initial_capital         = 500000,
+    default_qty_type        = strategy.fixed,
+    default_qty_value       = 5,
+    commission_type         = strategy.commission.cash_per_contract,
+    commission_value        = 2.0,
+    pyramiding              = 2,   // allows RATE Mythos + TIDE to coexist when same-direction; opposite-direction conflicts are prevented by design (see §9.15), not by this setting
+    calc_on_every_tick      = false,   // ← EXEC: false=bar close | true=every tick
+    process_orders_on_close = false,   // ← EXEC: true=process orders at bar close price
+    max_labels_count        = 500,
+    max_lines_count         = 500,
+    max_boxes_count         = 200
+)
+// ▲ Bar Detalization & Script Execution: Edit the two booleans above,
+//   OR via TradingView → Strategy → Properties tab.
+//   NOTE: slippage is left at 0 so v1 ↔ v2 ↔ v3 backtests compare like-for-like.
+//   For a live-realistic read, set Properties → Slippage = 1 tick on ALL.
+//   ★ Properties → Backtesting → "Use bar magnifier" should be ON: with
+//     resting brackets on 1–5m bars the emulator otherwise GUESSES whether
+//     TP1 or SL printed first inside a bar — the #1 source of fake win rate.
+
+// ══════════════════════════════════════════════════════════════════
+// v3 — EVIDENCE PASS (see ICARUS_v3_RESEARCH_DOSSIER.md for sources)
+//
+//   Every v3 change traces to a large-sample study or an NQ-specific
+//   dataset; every one is a SOFT modifier with a weight and a toggle
+//   (the one hard rule — event blackout — fires a handful of days/yr).
+//   Nothing in the RATE/gate/engine math changed.
+//
+//   RUNNER PROTECTION (§12.7) — replaces v2's immediate break-even.
+//     Five independent tests (Market Stalker, Trading Rush, Quantfish,
+//     setup4alpha 105k trades, r/algotrading ES) agree: arming BE at
+//     ~0.33R — which is exactly v2's TP1/SL geometry — converts winners
+//     into scratches and cuts expectancy ~20%, while Davey's 567k-test
+//     "BE ≈ best exit" used far larger arm thresholds. v3 default:
+//       1) after TP1 the runner stop moves to NET break-even — the level
+//          where TP1's banked profit exactly covers the runner's loss, so
+//          the TRADE can no longer lose while the runner keeps ~0.8 ATR
+//          of room (entry − q1·TP1/q2 ≈ −10 pts on 5-lot defaults);
+//       2) true BE+offset arms only after ≥N bars since TP1 AND price
+//          has extended ≥m·ATR beyond TP1 (continuation proven);
+//       3) if the regime is WEAK at TP1 (regime score < 0.40, LTF health
+//          weak, or volume-delta exhaustion against the position), BE
+//          arms immediately — the one case the evidence says BE helps.
+//     "Immediate BE (v2)" remains selectable for A/B.
+//
+//   SESSION STRUCTURE BIAS (§9.16) — nqstats 10-yr NQ (2,571 days):
+//     Initial Balance (09:30–10:30) closing above its own midpoint → IB
+//     high breaks by the close 82.3%; below → IB low breaks 76.5%.
+//     tradingstats (2,827 days): RTH open above the overnight midpoint →
+//     overnight high breaks first 76.2%. Gao et al. (JFE 2018): the first
+//     half-hour's return predicts the last half-hour's. Combined into
+//     one directional day-prior applied as ±0.5·avg_weight.
+//
+//   HOUR-BREACH TIMING (§9.16) — nqstats (17,701 events): a breach of
+//     the prior hour's range in minutes 0–20 reverts to the hour open
+//     67–87% of the time; in minutes 40–60 only 10–33%. Applied as
+//     −/+0.5·avg_weight when the entry bar is that breach.
+//
+//   MIDDAY (§11) — practitioner consensus + nqstats' lowest MFE/MAE
+//     ratios 11:00–13:00 + Quantpedia's flat 11–12 drift: 11:30–13:00
+//     ET is a gate PENALTY by default (hard block optional).
+//
+//   EVENT BLACKOUT (§11) — Lucca & Moench / CME / LSEG: FOMC-day
+//     13:45–15:00 no new entries (editable date list); optional
+//     CPI/NFP-day 09:30–10:00 block.
+//
+//   SIZING (§12) — Harvey et al. (vol targeting), r/algotrading ES/NQ
+//     (vol-tercile sizing, −40% flat-regime DD): "Risk-$ per trade" and
+//     "Vol-regime tercile" modes added. Default stays Fixed so your
+//     baseline comparison is untouched.
+//
+//   NOT added, deliberately: ORB overlay (≈50% on index products in a
+//   1.17M-trade dataset), ML/meta-labeling (matched random on NQ), more
+//   indicator filters ("the filter pile is why nothing survives").
+// ══════════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════════
+// v2 — EXECUTION-LAYER REBUILD (R.A.T.E. signal math is UNTOUCHED)
+//
+//   The RATE engine, the 12-vote gate, every regime/SMC/Kalman/PE/
+//   structure engine and TIDE's range logic are byte-for-byte the v1
+//   math. What changed is everything between "signal" and "fill":
+//
+//   ENTRY TIMING
+//     • Arming window: a RATE flip now ARMS the direction for N bars
+//       (default 3) instead of requiring the confluence gate to clear
+//       on the exact flip bar. v1 silently discarded every flip where
+//       the gate confirmed one bar late. A max-chase guard (×ATR from
+//       the flip close) stops the window from buying extended prints.
+//     • Entry window (default 09:30–15:30 ET) separate from the RTH
+//       gate: no new risk opened into the close.
+//     • Optional pullback-limit entry (OFF): rests a limit N×ATR below/
+//       above the signal close for a few bars, with market fallback.
+//
+//   EXITS
+//     • Bracket orders are placed on the SAME bar as the entry, in tick
+//       distances relative to the actual fill (profit=/loss=). TP1/TP2/
+//       SL are live from the fill tick and fill at their exact levels
+//       intrabar. v1 only placed each exit AFTER a bar had already
+//       crossed the level, so every fill landed one bar late at the
+//       next open — stops slipped, TPs got phantom better-than-limit
+//       fills, and a gap through the stop had no resting order at all.
+//     • Break-even runner: after TP1 fills, the remaining position's
+//       stop moves to entry + offset (default +1 pt, covers commission)
+//       — converts "TP1 then full-stop" from a net loser into a net
+//       winner. Optional ATR/Kalman trail ratchets ABOVE break-even.
+//     • Opposite-flip exit / reversal: a RATE flip against an open RATE
+//       position closes it (thesis invalidated) and, if the gate clears,
+//       reverses in a single order.
+//     • EOD flat (default 15:55 ET, bar-size agnostic): an intraday
+//       system no longer carries 45-pt stops through the Globex reopen.
+//     • Exit distances are computed on the signal bar and FROZEN — v1
+//       recomputed Structure-mode targets every bar from a moving swing.
+//
+//   STATE INTEGRITY
+//     • All position state (RATE qty/side/avg price, TIDE qty/side) is
+//       derived from strategy.opentrades per entry id, every bar. v1
+//       hand-tracked these and assumed exits had filled on the bar they
+//       were detected; it also used strategy.position_avg_price, which
+//       is the AGGREGATE average when RATE and TIDE co-hold.
+//     • Vote-weight learning and time-of-day stats now read only RATE
+//       closed trades (v1 booked ANY strategy.closedtrades increment —
+//       including TIDE's — against the open RATE slot).
+//     • A RATE reversal explicitly closes an opposing TIDE position; a
+//       TIDE signal is refused on a bar where RATE is entering the other
+//       way (v1 could net the two into a garbage position).
+//
+//   DATA CONSISTENCY
+//     • HTF/LTF request.security() now uses the confirmed-bar idiom
+//       (expr[1] + lookahead_on) so historical and realtime bars see the
+//       same values. v1's lookahead_off returned the developing HTF bar
+//       in realtime but the previous confirmed bar in the backtest.
+//     • ta.stdev hoisted out of the Kalman conditional (consistent calc).
+// ══════════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════════
+// §0  TIMEFRAME GUARD — removed.
+//     The HTF/LTF system (§3) now uses independently user-configurable
+//     timeframes rather than a chart-relative ladder, so the script no
+//     longer assumes or requires a specific base chart timeframe.
+//     Usable on any timeframe (1m through 1h+) — RTH session gating in
+//     §9/§11 still applies to entries regardless of chart timeframe.
+// ══════════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════════
+// §1  INPUTS
+// ══════════════════════════════════════════════════════════════════
+string GRP_TP   = "TP / SL"
+string GRP_RT   = "RATE Engine"
+string GRP_FDI  = "FDI / Ehlers Cycle"
+string GRP_MP   = "Market Profile"
+string GRP_SZ   = "Position Sizing"
+string GRP_FLT  = "Filters"
+string GRP_SES  = "Session (RTH)"
+string GRP_DSP  = "Display"
+string GRP_CONF = "Confluence Gate"
+string GRP_ZN   = "Supply / Demand Zones"
+string GRP_KF   = "Kalman / PMA Engine"
+
+float tp1_pts = input.float(15.0, "TP1 (NQ pts)",  minval=1.0, step=1.0, group=GRP_TP)
+float tp2_pts = input.float(30.0, "TP2 (NQ pts)",  minval=1.0, step=1.0, group=GRP_TP)
+float sl_pts  = input.float(45.0, "SL  (NQ pts)",  minval=1.0, step=1.0, group=GRP_TP)
+
+int   rate_atr_len    = input.int(14,    "ATR Length",          minval=1,            group=GRP_RT)
+int   rate_adx_len    = input.int(14,    "ADX Length",          minval=1,            group=GRP_RT)
+int   rate_adx_smooth = input.int(14,    "ADX Smooth",          minval=1,            group=GRP_RT)
+int   rate_atr_fast   = input.int(5,     "ATR Fast",            minval=1,            group=GRP_RT)
+int   rate_atr_slow   = input.int(30,    "ATR Slow",            minval=1,            group=GRP_RT)
+int   rate_eff_len    = input.int(30,    "Efficiency Lookback", minval=5, maxval=80,  group=GRP_RT)
+float rate_min_mult   = input.float(2.0, "Min ATR Mult",        minval=0.5, step=0.1, group=GRP_RT)
+float rate_max_mult   = input.float(5.0, "Max ATR Mult",        minval=1.0, step=0.1, group=GRP_RT)
+
+int  fdi_len      = input.int(30,  "FDI Length",         minval=5, maxval=100, group=GRP_FDI)
+int  fdi_smooth   = input.int(5,   "FDI EMA Smooth",     minval=1, maxval=50,  group=GRP_FDI)
+bool use_cycle    = input.bool(true,"Cycle Phase Modifier",                     group=GRP_FDI)
+int  cycle_smooth = input.int(5,   "Cycle EMA Smooth",   minval=1, maxval=20,  group=GRP_FDI)
+
+bool use_mp        = input.bool(true,"Market Profile Modifier",             group=GRP_MP)
+int  mp_atr_div    = input.int(4,   "Bin Size ATR Divisor", minval=1, maxval=20, group=GRP_MP)
+bool show_mp_lines = input.bool(true,"Show POC / VAH / VAL",                group=GRP_MP)
+
+int   qty_contracts = input.int(5,     "Contracts",      minval=1,   group=GRP_SZ)
+float point_value   = input.float(20.0,"$/pt/Contract (display only)",  minval=1.0, group=GRP_SZ)  // informational — not wired into strategy P&L (TradingView handles that via commission settings)
+
+bool  use_session    = input.bool(true,    "RTH Session Gate",      group=GRP_SES, tooltip="Gate entries to 9:30-16:00 ET. Exits always run.")
+string sess_window   = input.session("0930-1600","Session (ET)",     group=GRP_SES)
+bool  use_cooldown   = input.bool(true,    "Cooldown After SL",     group=GRP_FLT)
+int   cooldown_bars  = input.int(3,        "Cooldown Bars", minval=1, maxval=20, group=GRP_FLT)
+bool  use_max_loss   = input.bool(false,   "Daily Loss Breaker",    group=GRP_FLT)
+float max_daily_loss = input.float(-5000.0,"Max Daily Loss ($)", step=500.0, group=GRP_FLT)
+
+bool show_st      = input.bool(true,  "SuperTrend Line",   group=GRP_DSP)
+bool show_signals = input.bool(true,  "Entry Signals",     group=GRP_DSP)
+bool show_tp_sl   = input.bool(true,  "TP / SL Levels",    group=GRP_DSP)
+bool show_regime  = input.bool(true,  "HUD Table",      group=GRP_DSP)
+string hud_position = input.string("Top Right", "HUD Position", options=["Top Right","Top Left","Bottom Right","Bottom Left"], group=GRP_DSP, tooltip="Fixed-corner table — never sits on top of price the way the old label did.")
+bool show_zones   = input.bool(true,  "S/D Zone Boxes",    group=GRP_DSP)
+bool show_bg      = input.bool(false, "Regime Background", group=GRP_DSP)
+
+bool use_confluence         = input.bool(true,"Enable Gate",              group=GRP_CONF)
+bool use_adaptive_weights   = input.bool(true,"Adaptive Vote Weights",    group=GRP_CONF)
+bool use_adaptive_threshold = input.bool(true,"Adaptive Threshold",       group=GRP_CONF)
+int  conf_min_votes         = input.int(5,   "Manual Min Votes (override)", minval=0, maxval=10, group=GRP_CONF)
+int  cci_len                = input.int(10,  "CCI Length", minval=2, maxval=50, group=GRP_CONF)
+
+int   zone_piv      = input.int(5,    "Pivot Length",       minval=3, maxval=10, group=GRP_ZN)
+int   max_zones_n   = input.int(5,    "Max Zones Per Side", minval=2, maxval=8,  group=GRP_ZN)
+float zone_min_reac = input.float(1.5,"Min Reaction ATRx",  minval=0.5, step=0.25, group=GRP_ZN)
+
+string GRP_STRUCT = "Structure / BOS-CHoCH"
+bool  use_struct       = input.bool(true, "Enable Structure Engine",           group=GRP_STRUCT)
+int   struct_piv       = input.int(3,     "Structure Pivot Length", minval=2, maxval=10, group=GRP_STRUCT)
+bool  show_struct_map  = input.bool(false, "Show Structure Skeleton (polyline)", group=GRP_STRUCT)
+bool  alert_choch       = input.bool(true, "Alert on CHoCH (early warning)",    group=GRP_STRUCT)
+float struct_label_offset_atr = input.float(2.2, "Label Vertical Offset (×ATR)", minval=0.0, step=0.1, group=GRP_STRUCT, tooltip="Pushes BOS/CHoCH labels away from price so continuing price action doesn't overrun them. Also blended with a short recent-range measure so the offset widens further during sudden volatility spikes that the slower ATR average lags behind.")
+int   bos_min_spacing_bars    = input.int(8, "BOS Min Spacing (bars)",   minval=1, maxval=50, group=GRP_STRUCT, tooltip="Minimum bars between drawn BOS labels. Does not affect detection — only how often a label is drawn.")
+int   choch_min_spacing_bars  = input.int(4, "CHoCH Min Spacing (bars)", minval=1, maxval=50, group=GRP_STRUCT, tooltip="Minimum bars between drawn CHoCH labels. Alerts are never throttled by this — only the on-chart label.")
+
+string GRP_LIQ = "Liquidity Sweeps"
+int   sweep_min_level_age = input.int(4, "Min Level Age (bars)", minval=0, maxval=30, group=GRP_LIQ, tooltip="The swept level must have existed at least this many bars before being swept. Filters noise where struct_piv is short and a level barely forms before immediately getting poked.")
+float sweep_min_wick_atr = input.float(0.15, "Min Wick Size (×ATR)", minval=0.0, step=0.05, group=GRP_LIQ, tooltip="The wick beyond the level must be at least this fraction of ATR. Filters trivial tick-level pokes that aren't meaningful liquidity events.")
+bool  use_sweep         = input.bool(true, "Enable Liquidity Sweep Detection", group=GRP_LIQ)
+bool  show_sweep_boxes = input.bool(true, "Show Sweep Boxes",                group=GRP_LIQ)
+int   sweep_min_spacing_bars = input.int(6, "Sweep Box Min Spacing (bars)", minval=1, maxval=50, group=GRP_LIQ)
+
+string GRP_OB = "Order Blocks"
+bool  use_ob        = input.bool(true,  "Enable Order Blocks",              group=GRP_OB)
+float ob_disp_mult  = input.float(1.4,  "Displacement Trigger (×ATR)", minval=0.5, step=0.1, group=GRP_OB)
+int   ob_max_count  = input.int(4,      "Max OBs Per Side", minval=1, maxval=8, group=GRP_OB)
+float ob_invalidate_atr = input.float(0.4, "Invalidation Buffer (×ATR)", minval=0.0, step=0.1, group=GRP_OB)
+
+string GRP_PD = "Premium / Discount"
+bool  use_premdisc  = input.bool(true, "Enable Premium/Discount Zones", group=GRP_PD)
+bool  show_pd_bands = input.bool(true, "Show P/D Bands",                group=GRP_PD)
+
+string GRP_SMC = "SMC Enhancement"
+bool  use_smc_enhance    = input.bool(true, "Enable SMC Confluence Enhancement", group=GRP_SMC, tooltip="Wraps structure/sweep/OB/FVG signals into RATE Mythos as a confidence enhancer — when a strong SMC rejection cluster agrees with a RATE signal's direction, the confluence threshold gets a small discount, same mechanism as TRC. Does not gate entries; only makes qualifying trades easier to confirm.")
+float smc_enhance_discount = input.float(0.90, "SMC Agreement Discount", minval=0.5, maxval=1.0, step=0.02, group=GRP_SMC)
+int   smc_confirm_window = input.int(5,  "SMC Confirm Window (bars)", minval=1, maxval=15, group=GRP_SMC)
+
+string GRP_TPSL = "TP/SL Mode"
+string GRP_TRAIL = "Trailing TP2"
+bool  use_trailing_tp2   = input.bool(false, "Enable Trailing TP2 (runner replaces static TP2)", group=GRP_TRAIL, tooltip="OFF (default): TP2 stays a fixed target exactly as before, zero behavior change. ON: once TP1 fills, the remaining position trails instead of sitting at a static TP2 — targets the portion of a move that a fixed exit gives up.")
+float trail_atr_mult     = input.float(2.5, "Trail Distance (×ATR)", minval=0.5, step=0.25, group=GRP_TRAIL)
+float trail_kf_buffer_atr = input.float(0.3, "Kalman Trail Buffer (×ATR)", minval=0.0, step=0.1, group=GRP_TRAIL, tooltip="Each bar, the trail uses whichever is MORE protective: an ATR-behind-price ratchet, or a small buffer behind the Kalman filter's own smoothed level.")
+bool  use_ltf_trail_tighten = input.bool(true, "Tighten Trail on LTF Weakness", group=GRP_TRAIL, tooltip="Reuses the 2m/5m regime-strength reads already computed for LTF failure detection — when both are soft, shrinks the trail distance so a weakening runner locks in profit faster instead of giving more back.")
+float ltf_weak_thresh = input.float(0.35, "LTF Weak Threshold", minval=0.0, maxval=1.0, step=0.05, group=GRP_TRAIL)
+float ltf_tighten_mult = input.float(0.55, "Tighten Multiplier", minval=0.1, maxval=1.0, step=0.05, group=GRP_TRAIL)
+
+string GRP_ENTRY = "Entry Timing (v2)"
+bool   use_arm_window     = input.bool(true, "Arming Window After RATE Flip", group=GRP_ENTRY, tooltip="ON: a RATE SuperTrend flip arms that direction for the next N bars — the confluence gate may confirm on ANY bar in the window, not only the flip bar itself. OFF: v1 behaviour (gate must clear on the exact flip bar). One entry per flip, never more.")
+int    arm_bars           = input.int(3, "Arming Window (bars after flip)", minval=0, maxval=10, group=GRP_ENTRY)
+float  arm_max_chase_atr  = input.float(0.75, "Max Chase From Flip Close (×ATR)", minval=0.0, step=0.05, group=GRP_ENTRY, tooltip="Inside the window, refuse an entry if price has already run more than this far past the flip bar's close in the trade direction. 0 = no chase limit.")
+bool   use_entry_window   = input.bool(true, "Restrict New Entries to Window", group=GRP_ENTRY)
+string sess_entry_window  = input.session("0930-1530", "Entry Window (ET)", group=GRP_ENTRY, tooltip="New RATE entries only inside this window. The RTH session gate above still governs Market Profile / cycle modifiers; this one just stops fresh risk being opened into the close.")
+bool   use_pullback_entry = input.bool(false, "Pullback Limit Entry (instead of market)", group=GRP_ENTRY, tooltip="OFF (default): market entry at next bar open, exactly as v1. ON: rests a limit order N×ATR below (long) / above (short) the signal close and waits up to the bar limit for a fill. Bracket exits are attached to the limit and go live on fill. Cancelled automatically if RATE flips against it or EOD arrives.")
+float  pullback_atr       = input.float(0.35, "Pullback Depth (×ATR)", minval=0.05, step=0.05, group=GRP_ENTRY)
+int    pullback_max_bars  = input.int(3, "Pullback Wait (bars)", minval=1, maxval=10, group=GRP_ENTRY)
+bool   pullback_fallback  = input.bool(true, "Fallback to Market if Unfilled", group=GRP_ENTRY, tooltip="If the limit hasn't filled by the bar limit, enter at market instead of abandoning the signal.")
+
+string GRP_EXIT = "Exit Management (v2)"
+string GRP_RUN  = "Runner Protection (v3)"
+string runner_mode = input.string("Net-BE → Delayed BE", "Runner Stop Mode (after TP1)", options=["Net-BE → Delayed BE","Immediate BE (v2)","Net-BE only","Original SL"], group=GRP_RUN, tooltip="Net-BE → Delayed BE (default, evidence-backed): after TP1 the runner's stop moves to the level where TP1's banked profit exactly offsets the runner's loss — the trade can no longer lose while the runner keeps room to breathe. True BE+offset arms only once continuation is proven (bars + extension below). Immediate BE = v2 behaviour (five independent tests show this scratches too many winners at a 0.33R arm). Net-BE only = never tighten past net break-even. Original SL = no change after TP1.")
+float  be_offset_pts      = input.float(1.0, "Break-Even Offset (pts)", minval=0.0, step=0.25, group=GRP_RUN, tooltip="Distance beyond entry for the armed break-even stop. 1.0 pt on NQ ($20) covers the $4 round-trip commission so a BE exit still books as a winner.")
+int    be_delay_bars      = input.int(3, "Delayed BE: Min Bars After TP1", minval=0, maxval=30, group=GRP_RUN, tooltip="BE cannot arm until this many bars have passed since TP1 filled (r/algotrading ES test: bar-delayed BE kept the long tail; price-triggered BE killed it).")
+float  be_extend_atr      = input.float(0.5, "Delayed BE: Min Extension Past TP1 (×ATR)", minval=0.0, step=0.1, group=GRP_RUN, tooltip="BE also cannot arm until price has travelled this far beyond the TP1 level — the 'quite a bit of movement away' the evidence requires before protecting.")
+bool   runner_weak_be     = input.bool(true, "Immediate BE When Regime Is Weak", group=GRP_RUN, tooltip="Trading Rush (100 trades): BE hurts in strong trends but HELPS when the trend is slow/weak. If at TP1 the regime score is below the threshold, LTF health is weak, or volume-delta exhaustion opposes the position, BE arms immediately instead of waiting.")
+float  runner_weak_regime = input.float(0.40, "Weak-Regime Threshold (regime score)", minval=0.0, maxval=1.0, step=0.05, group=GRP_RUN)
+bool   tide_be_after_tp1  = input.bool(true, "TIDE: Break-Even After T1", group=GRP_RUN, tooltip="TIDE's runner (range-fade, small size) keeps the simple BE rule.")
+
+string GRP_SIZE3 = "Position Sizing (v3)"
+string size_mode  = input.string("Fixed", "Sizing Mode", options=["Fixed","Risk-$ per trade","Vol-regime tercile"], group=GRP_SIZE3, tooltip="Fixed = Contracts input, unchanged (default so your baseline comparison stays clean). Risk-$ = contracts sized so the initial stop risks a fixed dollar amount (Kaufman: capital ÷ dollar volatility). Vol-regime tercile = full size when ATR is in its upper tercile, 0.75× middle, 0.5× lower — an ES/NQ momentum trader reported −40% flat-regime drawdown with no loss of capture. Conviction sizing (if on) multiplies on top.")
+float  risk_usd_per_trade = input.float(1500.0, "Risk-$ per Trade (Risk-$ mode)", minval=50.0, step=50.0, group=GRP_SIZE3)
+int    vol_rank_bars      = input.int(500, "Vol-Regime Lookback (bars)", minval=50, maxval=2000, group=GRP_SIZE3)
+float  vol_low_mult       = input.float(0.50, "Vol-Regime: Lower-Tercile Size ×", minval=0.1, maxval=1.0, step=0.05, group=GRP_SIZE3)
+float  vol_mid_mult       = input.float(0.75, "Vol-Regime: Middle-Tercile Size ×", minval=0.1, maxval=1.0, step=0.05, group=GRP_SIZE3)
+
+string GRP_SESS3 = "Session Structure Bias (v3)"
+bool   use_session_bias   = input.bool(true, "Enable Session Structure Bias", group=GRP_SESS3, tooltip="Day-level directional prior from NQ's own 10-year statistics: before 10:30 ET, RTH open vs the overnight (18:00–09:30) midpoint (76% predicts which overnight level breaks first); after the Initial Balance (09:30–10:30) closes, IB close vs IB midpoint (82%/77% predicts which IB extreme breaks by the close), reinforced when the IB's last extreme agrees; after 15:00, the sign of the first half-hour's return (Gao et al., JFE 2018). Applied as a soft vote modifier, never a gate.")
+float  sess_bias_weight   = input.float(0.5, "Bias Weight (×avg vote weight)", minval=0.0, maxval=1.5, step=0.1, group=GRP_SESS3)
+bool   use_hour_breach    = input.bool(true, "Enable Hour-Breach Timing Modifier", group=GRP_SESS3, tooltip="nqstats (17,701 events): a breach of the prior hour's range in the first 20 minutes of an hour reverts to the hour open 67–87% of the time; in the last 20 minutes only 10–33%. When the entry bar IS that breach: penalty early in the hour, bonus late.")
+float  hour_breach_weight = input.float(0.5, "Hour-Breach Weight (×avg vote weight)", minval=0.0, maxval=1.5, step=0.1, group=GRP_SESS3)
+
+string GRP_TIME3 = "Intraday Timing (v3)"
+string midday_mode        = input.string("Penalize", "Midday Window Handling", options=["Off","Penalize","Block"], group=GRP_TIME3, tooltip="11:30–13:00 ET has the smallest MFE/MAE ratios of the session in NQ's 10-year hour stats and is the practitioner-consensus chop window. Penalize (default) subtracts 0.5×avg vote weight from both sides; Block refuses new entries. The per-hour tracker (Time-of-Day group) will confirm on your own data.")
+string midday_window      = input.session("1130-1300", "Midday Window (ET)", group=GRP_TIME3)
+bool   use_event_blackout = input.bool(true, "FOMC-Day Blackout", group=GRP_TIME3, tooltip="No new RATE entries in the window below on FOMC decision days (Lucca & Moench: post-14:00 repricing; CME: largest volume shocks of the year). Dates are an editable list — VERIFY against federalreserve.gov each year.")
+string fomc_dates         = input.string("2025-01-29,2025-03-19,2025-05-07,2025-06-18,2025-07-30,2025-09-17,2025-10-29,2025-12-10,2026-01-28,2026-03-18,2026-04-29,2026-06-17,2026-07-29,2026-09-16,2026-10-28,2026-12-09", "FOMC Decision Dates (YYYY-MM-DD, comma-separated)", group=GRP_TIME3)
+string fomc_window        = input.session("1345-1500", "FOMC Blackout Window (ET)", group=GRP_TIME3)
+bool   use_hv_open_block  = input.bool(false, "CPI/NFP-Day Open Block", group=GRP_TIME3, tooltip="OFF by default. When ON, no new entries in the window below on the listed dates (8:30 releases drive an unusually violent open — LSEG/CME).")
+string hv_open_dates      = input.string("", "CPI/NFP Dates (YYYY-MM-DD, comma-separated)", group=GRP_TIME3)
+string hv_open_window     = input.session("0930-1000", "CPI/NFP Open Block Window (ET)", group=GRP_TIME3)
+int    tp1_split_pct      = input.int(50, "TP1 Share of Position (%)", minval=10, maxval=90, step=5, group=GRP_EXIT, tooltip="Percent of contracts closed at TP1 (floored). 50% on 5 lots = 2 at TP1, 3 run — identical to v1's split.")
+bool   use_flip_exit      = input.bool(true, "Exit / Reverse on Opposite RATE Flip", group=GRP_EXIT, tooltip="A RATE SuperTrend flip against an open RATE position is the thesis being invalidated — close it. If the confluence gate also clears for the new direction, the position is reversed in one order.")
+bool   use_eod_flat       = input.bool(true, "Flatten RATE at Session End", group=GRP_EXIT, tooltip="Closes any open RATE position at the trigger time below. v1 held positions through the 16:00 close and the Globex reopen with the full stop exposed.")
+int    eod_flat_hhmm      = input.int(1555, "EOD Flat Trigger (HHMM, ET)", minval=0, maxval=2359, group=GRP_EXIT, tooltip="Fires on the first bar whose CLOSE time is at/after this; the market close then fills at the NEXT bar's open. 1555 on a 5m or 1m chart = flat at 15:55. On a 15m chart the 15:45 bar closes at 16:00, so use 1545 there to be flat at 15:45.")
+bool   eod_flat_tide      = input.bool(false, "Also Flatten TIDE at EOD", group=GRP_EXIT, tooltip="OFF: TIDE keeps its own 05-17 ET window logic untouched.")
+
+string tpsl_mode = input.string("Fixed Points", "TP/SL Calculation Mode", options=["Fixed Points","ATR-Based","Percentage-Based","Structure-Based"], group=GRP_TPSL, tooltip="Fixed Points = current behavior (unchanged default). Other modes recompute TP1/TP2/SL price levels using the same TP1/TP2/SL slots.")
+float tp1_atr_mult = input.float(3.0,  "TP1 ATR Multiple", minval=0.5, step=0.25, group=GRP_TPSL)
+float tp2_atr_mult = input.float(6.0,  "TP2 ATR Multiple", minval=0.5, step=0.25, group=GRP_TPSL)
+float sl_atr_mult  = input.float(4.5,  "SL ATR Multiple",  minval=0.5, step=0.25, group=GRP_TPSL)
+float tp1_pct = input.float(0.12, "TP1 % of Price", minval=0.01, step=0.01, group=GRP_TPSL)
+float tp2_pct = input.float(0.24, "TP2 % of Price", minval=0.01, step=0.01, group=GRP_TPSL)
+float sl_pct  = input.float(0.18, "SL % of Price",  minval=0.01, step=0.01, group=GRP_TPSL)
+float struct_sl_buffer_atr = input.float(0.5, "Structure SL Buffer (×ATR)",       minval=0.0,  step=0.1,  group=GRP_TPSL)
+float struct_tp2_ext_mult  = input.float(1.0, "Structure TP2 Extension (×Range)", minval=0.25, step=0.25, group=GRP_TPSL)
+
+string GRP_EXT = "External Macro Context (informational only)"
+string ext_sym_1 = input.symbol("CBOE:VIX", "Source 1 (default: VIX)", group=GRP_EXT, tooltip="Any symbol. Defaults to VIX — volatility regime context, genuinely independent of price-structure analysis.")
+string ext_sym_2 = input.symbol("TVC:DXY",  "Source 2 (default: DXY)", group=GRP_EXT, tooltip="Any symbol. Defaults to Dollar Index — macro/currency context.")
+string ext_sym_3 = input.symbol("TVC:TNX",  "Source 3 (default: TNX)", group=GRP_EXT, tooltip="Any symbol. Defaults to 10Y Treasury Yield — rates context, a well-known driver of tech/growth valuation.")
+bool   show_ext_hud = input.bool(true, "Show in HUD", group=GRP_EXT)
+
+f_ext_combined() =>
+    float _v = close
+    float _chg = close - close[5]
+    [_v, _chg]
+
+[ext_val_1, ext_chg_1] = request.security(ext_sym_1, timeframe.period, f_ext_combined(), lookahead=barmerge.lookahead_off)
+[ext_val_2, ext_chg_2] = request.security(ext_sym_2, timeframe.period, f_ext_combined(), lookahead=barmerge.lookahead_off)
+[ext_val_3, ext_chg_3] = request.security(ext_sym_3, timeframe.period, f_ext_combined(), lookahead=barmerge.lookahead_off)
+
+bool  use_kalman       = input.bool(true,  "Enable Kalman-CFV Engine",          group=GRP_KF)
+float kf_r_base        = input.float(0.15, "KF Measurement Noise Base (×ATR)",  minval=0.02, step=0.01, group=GRP_KF)
+float kf_r_fdi_gain    = input.float(0.35, "KF Measurement Noise FDI Gain",     minval=0.0,  step=0.05, group=GRP_KF)
+bool  use_adaptive_kf_r = input.bool(true, "Adaptive Measurement Noise (innovation matching)", group=GRP_KF, tooltip="Estimates R from the observed variance of recent innovations rather than assuming ATR x constant — the filter self-calibrates to the instrument instead of being told.")
+float kf_adapt_blend   = input.float(0.50, "Adaptive R Blend", minval=0.0, maxval=1.0, step=0.05, group=GRP_KF, tooltip="0 = pure heuristic (old behaviour), 1 = pure empirical. Blended by default so a short burst of unusual innovations cannot destabilise the filter.")
+float kf_q_base        = input.float(0.05, "KF Process Noise Base",             minval=0.01, step=0.01, group=GRP_KF)
+bool  use_pma          = input.bool(true,  "Enable MAMA + FAMA",              group=GRP_KF)
+float mama_fast_lim    = input.float(0.5,  "MAMA Fast Limit",  minval=0.1, maxval=0.9, step=0.05, group=GRP_KF)
+float mama_slow_lim    = input.float(0.05, "MAMA Slow Limit",  minval=0.01, maxval=0.2, step=0.01, group=GRP_KF)
+float shock_z_thresh   = input.float(2.5,  "Shock Z-Score Trigger", minval=1.0, step=0.1,  group=GRP_KF)
+int   shock_decay_bars = input.int(8,      "Shock Threshold Decay (bars)", minval=1, maxval=50, group=GRP_KF)
+float shock_boost_mult = input.float(1.35, "Shock Threshold Boost ×", minval=1.0, step=0.05, group=GRP_KF)
+
+string GRP_PE = "Permutation Entropy"
+bool  use_pe     = input.bool(true,  "Enable Permutation Entropy",            group=GRP_PE)
+int   pe_len     = input.int(30,     "PE Lookback (bars)", minval=10, maxval=100, group=GRP_PE)
+bool  use_pe_weighted = input.bool(true, "Amplitude-Weighted PE", group=GRP_PE, tooltip="Classic PE is amplitude-blind: a 1-tick wiggle and a large move with the same ordinal shape score identically. Weighting by window range makes structured large moves count for more than micro-noise.")
+float pe_thresh  = input.float(0.75, "PE Ordered Threshold", minval=0.3, maxval=1.0, step=0.01, group=GRP_PE)
+float pe_trc_fdi = input.float(1.35, "TRC FDI Upper Bound",  minval=1.0, maxval=1.6,  step=0.01, group=GRP_PE)
+float pe_trc_hst = input.float(0.52, "TRC Hurst Lower Bound",minval=0.3, maxval=0.65, step=0.01, group=GRP_PE)
+bool  use_cc           = input.bool(true,  "Enable Cyber Cycle",               group=GRP_KF)
+float cc_alpha_inp     = input.float(0.07, "Cyber Cycle Alpha", minval=0.02, maxval=0.25, step=0.01, group=GRP_KF)
+
+bool  use_div_veto   = input.bool(true,  "Composite Divergence Veto",         group=GRP_PE)
+int   div_lkb        = input.int(20,     "Divergence Lookback (bars)", minval=8, maxval=50, group=GRP_PE)
+bool  div_adaptive   = input.bool(true,  "Adaptive Lookback (uses dom period)", group=GRP_PE)
+float dv_sd_mult     = input.float(0.75, "Divergence Sensitivity (SD of own distribution)", minval=0.1, maxval=3.0, step=0.05, group=GRP_PE, tooltip="Thresholds are now expressed in standard deviations of each metric's own recent distribution rather than hardcoded constants, so they self-scale across instruments and volatility regimes. Lower = more sensitive.")
+int   div_min_count  = input.int(2,      "Min Divergences to Veto",   minval=1, maxval=3,  group=GRP_PE, tooltip="Only 3 divergence signals exist (RATE regime, Kalman velocity, PE entropy) — 3 requires all of them to agree.")
+
+string GRP_HTF = "Higher Timeframe Bias (5 Connections)"
+string htf_tf_1 = input.timeframe("15",  "HTF Connection 1", group=GRP_HTF)
+string htf_tf_2 = input.timeframe("30",  "HTF Connection 2", group=GRP_HTF)
+string htf_tf_3 = input.timeframe("60",  "HTF Connection 3", group=GRP_HTF)
+string htf_tf_4 = input.timeframe("240", "HTF Connection 4", group=GRP_HTF)
+string htf_tf_5 = input.timeframe("D",   "HTF Connection 5", group=GRP_HTF)
+int    htf_min_bull_for_bias = input.int(3, "Min Bullish HTFs for MTF Vote", minval=1, maxval=5, group=GRP_HTF, tooltip="How many of the 5 HTF connections must agree bullish (or bearish) for the MTF confluence vote to fire. Replaces the old fixed 2-of-2 ladder.")
+
+string GRP_LTF = "Lower Timeframe Failure Detection"
+bool   use_ltf_check     = input.bool(true,  "Enable 2m/5m Signal-Failure Analysis", group=GRP_LTF, tooltip="Reads RATE-style direction and regime strength directly from the 2-minute and 5-minute timeframes, independent of your chart timeframe.")
+int    ltf_instability_bars = input.int(3,   "'Just Flipped' Threshold (LTF bars)",  minval=1, maxval=10, group=GRP_LTF, tooltip="A lower timeframe that changed direction within this many of its OWN bars is treated as an unproven / potentially-failed signal.")
+bool   use_ltf_veto      = input.bool(false, "Apply as Entry Veto", group=GRP_LTF, tooltip="OFF by default — informational only until enabled. When ON, blocks an entry if the 2m or 5m timeframe just flipped AGAINST that entry's direction.")
+
+string GRP_OHLC = "Real OHLC Data"
+bool use_real_ohlc = input.bool(false, "Use Real OHLC for Calculations", group=GRP_OHLC, tooltip="OFF (default): script uses whatever open/high/low/close the chart is currently displaying — including Heikin Ashi if your Properties panel has Chart Type set to Heikin Ashi. ON: pulls genuine market OHLC via request.security, independent of chart display, and uses it for RATE's own ATR/ADX/flip-band (hand-rebuilt from real data — Pine's ta.atr/ta.dmi/ta.supertrend cannot be redirected to an alternate source directly), plus every other calculation in the script that accepts an explicit price source. Does not touch the 5 HTF / 2 LTF cross-timeframe connections.")
+
+// ══════════════════════════════════════════════════════════════════
+// §1.5  REAL OHLC — foundation for the toggle above
+//
+//     request.security() re-requesting the SAME symbol/timeframe pulls
+//     the underlying market data, not the chart's HA-transformed view —
+//     this is the one place a script CAN get real OHLC regardless of
+//     what the Properties panel has the chart set to display.
+//
+//     Pine's ta.atr()/ta.dmi()/ta.supertrend() cannot accept an
+//     alternate source — they always read the chart's own displayed
+//     series. RATE's regime score and flip-band both depend on ATR/DMI,
+//     so real independence requires hand-rebuilding Wilder's ATR and
+//     DMI/ADX from real_h/real_l/real_c using ta.rma (which DOES take
+//     an explicit source) rather than the ta.atr/ta.dmi built-ins.
+//     Computed unconditionally (cheap); only CONSUMED when the toggle
+//     above is on.
+// ══════════════════════════════════════════════════════════════════
+f_real_ohlc() =>
+    [open, high, low, close]
+
+[_ro_raw, _rh_raw, _rl_raw, _rc_raw] = request.security(syminfo.tickerid, timeframe.period, f_real_ohlc(), lookahead=barmerge.lookahead_off)
+
+// FIX (audit): na-guard the fetch. If request.security ever returns na
+// (data gap, symbol issue), falling back to the chart's own values is
+// vastly safer than propagating na through ATR, DMI, the SuperTrend
+// flip, and every downstream engine.
+float real_o = nz(_ro_raw, open)
+float real_h = nz(_rh_raw, high)
+float real_l = nz(_rl_raw, low)
+float real_c = nz(_rc_raw, close)
+
+float real_tr = math.max(real_h - real_l, math.max(math.abs(real_h - real_c[1]), math.abs(real_l - real_c[1])))
+
+float real_up       = real_h - real_h[1]
+float real_dn       = real_l[1] - real_l
+float real_plus_dm  = (real_up > real_dn and real_up > 0.0) ? real_up : 0.0
+float real_minus_dm = (real_dn > real_up and real_dn > 0.0) ? real_dn : 0.0
+
+// Master dispatch — every downstream section below reads from these
+// four instead of bare open/high/low/close, so the toggle propagates
+// uniformly rather than needing to be checked in dozens of places.
+float _o = use_real_ohlc ? real_o : open
+float _h = use_real_ohlc ? real_h : high
+float _l = use_real_ohlc ? real_l : low
+float _c = use_real_ohlc ? real_c : close
+
+// ── Cross-system position state — DERIVED every bar from the broker
+//    emulator's own open-trade list, routed by entry id. Declared this
+//    early because TIDE's conflict check in §9.15 reads it hundreds of
+//    lines before §12. v1 hand-tracked these counters and assumed each
+//    exit had filled on the bar it was detected, which let them drift
+//    from the real position; reading strategy.opentrades makes the
+//    state exact by construction and immune to RATE/TIDE cross-talk.
+//    (On the bar an entry is PLACED the position doesn't exist yet —
+//    it fills at the next open — so these read 0 on that bar. Every
+//    consumer below is written with that in mind.)
+int   rate_qty_open  = 0      // RATE Mythos's OWN open quantity
+bool  rate_pos_long  = false
+float rate_avg_price = na     // RATE's OWN fill price (NOT strategy.position_avg_price — that is the aggregate incl. TIDE)
+int   rate_entry_bar = na
+int   h4_qty_open    = 0      // TIDE's OWN open quantity
+bool  h4_pos_long    = false
+float h4_avg_price   = na
+if strategy.opentrades > 0
+    for _oi = 0 to strategy.opentrades - 1
+        string _eid = strategy.opentrades.entry_id(_oi)
+        float  _sz  = strategy.opentrades.size(_oi)
+        if _eid == "Long" or _eid == "Short"
+            rate_qty_open  += int(math.round(math.abs(_sz)))
+            rate_pos_long  := _sz > 0.0
+            rate_avg_price := strategy.opentrades.entry_price(_oi)
+            rate_entry_bar := strategy.opentrades.entry_bar_index(_oi)
+        else if _eid == "TideLong" or _eid == "TideShort"
+            h4_qty_open  += int(math.round(math.abs(_sz)))
+            h4_pos_long  := _sz > 0.0
+            h4_avg_price := strategy.opentrades.entry_price(_oi)
+
+// ══════════════════════════════════════════════════════════════════
+// §2  HTF / LTF HELPERS
+// ══════════════════════════════════════════════════════════════════
+f_st_dir() =>
+    [_v, _d] = ta.supertrend(3.0, 14)
+    _d
+
+// Lightweight regime-strength proxy for cross-timeframe reads — mirrors
+// the ADX component already used as the heaviest-weighted piece of the
+// real rate_regime formula (§4), without recomputing that entire
+// multi-engine chain 7 additional times per bar via request.security.
+f_regime_proxy() =>
+    [_dip, _dim, _adx] = ta.dmi(14, 14)
+    math.min(math.max((_adx - 15.0) / 20.0, 0.0), 1.0)
+
+// One combined call per HTF connection: direction + regime strength.
+//
+// v2 — CONFIRMED-BAR IDIOM. Every value is offset by one bar INSIDE the
+// requested timeframe and fetched with lookahead_on. That combination
+// returns the last fully-CLOSED bar of that timeframe on every chart
+// bar, identically on historical and realtime data. The v1 form
+// (no offset, lookahead_off) returned the previous confirmed HTF bar on
+// historical chart bars but the still-DEVELOPING HTF bar in realtime —
+// so the live HUD/gate saw fresher (and mutable) HTF state than the
+// backtest ever did. There is no future leak in either form; this one
+// just makes backtest == live.
+f_htf_combined() =>
+    [_v, _d] = ta.supertrend(3.0, 14)
+    float _reg = f_regime_proxy()
+    [_d[1], _reg[1]]
+
+// One combined call per LTF connection: direction + bars since that
+// timeframe's own last direction flip + regime strength. Bars-since-flip
+// is the "has this LTF signal proven itself yet" read — a small value
+// means the LTF direction is brand new and unproven.
+f_ltf_combined() =>
+    [_v, _d] = ta.supertrend(3.0, 14)
+    int _bsf = ta.barssince(_d != _d[1])
+    float _reg = f_regime_proxy()
+    [_d[1], _bsf[1], _reg[1]]
+
+// ══════════════════════════════════════════════════════════════════
+// §3  HTF BIAS (5 independently-configurable connections)
+//     + LTF SIGNAL-FAILURE DETECTION (fixed 2m / 5m)
+//
+//     Replaces the old chart-timeframe-relative 2-rung ladder, which
+//     only worked correctly when the chart itself was locked to 1m/3m/5m
+//     (its ternary silently fell through to the wrong rungs on any other
+//     timeframe). Every connection here is independent of chart
+//     timeframe by construction — the script now works correctly on
+//     any base timeframe.
+// ══════════════════════════════════════════════════════════════════
+// lookahead_on is SAFE here only because f_htf_combined() returns [1]-
+// offset (already-closed) values — see the note above the function.
+[htf1_dir, htf1_regime] = request.security(syminfo.tickerid, htf_tf_1, f_htf_combined(), lookahead=barmerge.lookahead_on)
+[htf2_dir, htf2_regime] = request.security(syminfo.tickerid, htf_tf_2, f_htf_combined(), lookahead=barmerge.lookahead_on)
+[htf3_dir, htf3_regime] = request.security(syminfo.tickerid, htf_tf_3, f_htf_combined(), lookahead=barmerge.lookahead_on)
+[htf4_dir, htf4_regime] = request.security(syminfo.tickerid, htf_tf_4, f_htf_combined(), lookahead=barmerge.lookahead_on)
+[htf5_dir, htf5_regime] = request.security(syminfo.tickerid, htf_tf_5, f_htf_combined(), lookahead=barmerge.lookahead_on)
+
+int htf_bull_count5 = (htf1_dir == -1 ? 1 : 0) + (htf2_dir == -1 ? 1 : 0) + (htf3_dir == -1 ? 1 : 0) + (htf4_dir == -1 ? 1 : 0) + (htf5_dir == -1 ? 1 : 0)
+int htf_bear_count5 = (htf1_dir ==  1 ? 1 : 0) + (htf2_dir ==  1 ? 1 : 0) + (htf3_dir ==  1 ? 1 : 0) + (htf4_dir ==  1 ? 1 : 0) + (htf5_dir ==  1 ? 1 : 0)
+// FIX (audit): nz-guarded — users can point these 5 connections at any
+// timeframe, including ones with sparse/missing data. 0.5 = neutral.
+float htf_regime_avg = (nz(htf1_regime, 0.5) + nz(htf2_regime, 0.5) + nz(htf3_regime, 0.5) + nz(htf4_regime, 0.5) + nz(htf5_regime, 0.5)) / 5.0
+
+bool mtf_long  = htf_bull_count5 >= htf_min_bull_for_bias
+bool mtf_short = htf_bear_count5 >= htf_min_bull_for_bias
+
+// FIX: §6's zone-scoring formula (f_zone_score) was calibrated and
+// validated assuming a 0-2 alignment range from the old 2-rung ladder —
+// float(htf_a)/2.0*25.0 contributes up to 25 of the zone's 0-85 score.
+// Feeding it a raw 0-5 count would double that contribution and silently
+// shift every zone's E/S/W tier threshold relative to the validated
+// backtest. Rescaled proportionally onto the same 0-2 range so §6's
+// calibration is completely unaffected by having more HTF connections.
+int htf_bull = int(math.round(float(htf_bull_count5) / 5.0 * 2.0))
+int htf_bear = int(math.round(float(htf_bear_count5) / 5.0 * 2.0))
+
+[ltf_2m_dir, ltf_2m_bsf, ltf_2m_regime] = request.security(syminfo.tickerid, "2", f_ltf_combined(), lookahead=barmerge.lookahead_on)
+[ltf_5m_dir, ltf_5m_bsf, ltf_5m_regime] = request.security(syminfo.tickerid, "5", f_ltf_combined(), lookahead=barmerge.lookahead_on)
+
+// "Failed / unproven lower-timeframe signal" — that timeframe changed
+// direction within its own last N bars AND currently opposes the trade
+// direction being evaluated. Informational by default; use_ltf_veto
+// (off by default) opts into using this as a hard entry block.
+bool ltf_fail_long  = use_ltf_check and ((ltf_2m_dir == 1  and ltf_2m_bsf <= ltf_instability_bars) or (ltf_5m_dir == 1  and ltf_5m_bsf <= ltf_instability_bars))
+bool ltf_fail_short = use_ltf_check and ((ltf_2m_dir == -1 and ltf_2m_bsf <= ltf_instability_bars) or (ltf_5m_dir == -1 and ltf_5m_bsf <= ltf_instability_bars))
+
+// ══════════════════════════════════════════════════════════════════
+// §4  RATE ENGINE  +  FDI (Fractal Dimension Index)
+// ══════════════════════════════════════════════════════════════════
+
+// ── Component scores ──
+[_dmi_p, _dmi_m, _dmi_adx] = ta.dmi(rate_adx_len, rate_adx_smooth)
+// Hand-rolled real-OHLC DMI/ADX (Wilder's formula) — only meaningfully
+// different from the native ta.dmi() call above when use_real_ohlc is on.
+float real_tr_rma_adx   = ta.rma(real_tr, rate_adx_len)
+float real_plus_dm_rma  = ta.rma(real_plus_dm, rate_adx_len)
+float real_minus_dm_rma = ta.rma(real_minus_dm, rate_adx_len)
+float real_plus_di      = real_tr_rma_adx != 0.0 ? 100.0 * real_plus_dm_rma / real_tr_rma_adx : 0.0
+float real_minus_di     = real_tr_rma_adx != 0.0 ? 100.0 * real_minus_dm_rma / real_tr_rma_adx : 0.0
+float real_dx           = (real_plus_di + real_minus_di) != 0.0 ? 100.0 * math.abs(real_plus_di - real_minus_di) / (real_plus_di + real_minus_di) : 0.0
+float real_adx          = ta.rma(real_dx, rate_adx_smooth)
+
+float rate_di_plus  = use_real_ohlc ? real_plus_di  : _dmi_p
+float rate_di_minus = use_real_ohlc ? real_minus_di : _dmi_m
+float rate_adx       = use_real_ohlc ? real_adx      : _dmi_adx
+float rate_adx_score = math.min(math.max((rate_adx - 15.0) / 20.0, 0.0), 1.0)
+
+// ── ATR fast/slow — dispatch between native ta.atr() and real-OHLC RMA(TR) ──
+float _rate_atr_s_real = ta.rma(real_tr, rate_atr_fast)
+float _rate_atr_s_chart = ta.atr(rate_atr_fast)
+float rate_atr_s    = use_real_ohlc ? _rate_atr_s_real : _rate_atr_s_chart
+float _rate_atr_l_real = ta.rma(real_tr, rate_atr_slow)
+float _rate_atr_l_chart = ta.atr(rate_atr_slow)
+float rate_atr_l    = use_real_ohlc ? _rate_atr_l_real : _rate_atr_l_chart
+float rate_vol_ratio = rate_atr_l > 0.0 ? rate_atr_s / rate_atr_l : 1.0
+float rate_vol_score = math.min(math.max((rate_vol_ratio - 0.5) / 1.0, 0.0), 1.0)
+
+float rate_net = math.abs(_c - _c[rate_eff_len])
+float rate_sum = 0.0
+for _ri = 0 to rate_eff_len - 1
+    rate_sum += math.abs(_c[_ri] - _c[_ri + 1])
+float rate_eff       = rate_sum > 0.0 ? rate_net / rate_sum : 0.0
+float rate_eff_score = math.min(math.max((rate_eff - 0.1) / 0.35, 0.0), 1.0)
+
+int   rate_dir  = _c > _c[1] ? 1 : -1
+float rate_cons = 0.0
+for _ri = 0 to rate_eff_len - 1
+    rate_cons += ((_c[_ri] > _c[_ri + 1]) == (rate_dir > 0)) ? 1.0 : 0.0
+float rate_cons_score = rate_cons / float(rate_eff_len)
+
+// ── FDI: independent loop (works even when fdi_len ≠ rate_eff_len) ──
+// Formula: FDI = 1 + log(path/net) / log(2*N)
+// FDI ≈ 1.0 = clean trend | FDI ≈ 1.5 = random/noisy
+float fdi_path = 0.0
+for _fi = 0 to fdi_len - 1
+    fdi_path += math.abs(_c[_fi] - _c[_fi + 1])
+float fdi_net = math.max(math.abs(_c - _c[fdi_len]), 0.0001)
+float fdi_raw = fdi_path > 0.0 ? 1.0 + math.log(fdi_path / fdi_net) / math.log(2.0 * fdi_len) : 1.5
+float fdi     = ta.ema(fdi_raw, fdi_smooth)
+fdi           := math.max(1.0, math.min(2.0, fdi))
+
+// ── FDI adjusts regime component weights (weights always sum to 1.0) ──
+// Low FDI (trending): trust ADX + efficiency more. High FDI (noisy): trust volatility more.
+float fdi_t    = math.max(0.0, math.min(1.0, (fdi - 1.0) / 0.5))  // 0=trending → 1=noisy
+float w_adx    = 0.30 + (1.0 - fdi_t) * 0.10   // 0.40 → 0.30
+float w_vol    = 0.30 +        fdi_t  * 0.10   // 0.30 → 0.40
+float w_eff    = 0.25 + (1.0 - fdi_t) * 0.05   // 0.30 → 0.25
+float w_cons   = 0.15 -        fdi_t  * 0.05   // 0.15 → 0.10
+
+float rate_regime = ta.ema(
+    rate_adx_score  * w_adx  +
+    rate_vol_score  * w_vol  +
+    rate_eff_score  * w_eff  +
+    rate_cons_score * w_cons, 5)
+
+// ── FDI widens ATR mult in noisy markets, tightens in trending ──
+float fdi_mult_adj  = 1.0 + (fdi - 1.0) * 0.30
+float rate_atr_mult = (rate_max_mult - (rate_max_mult - rate_min_mult) * rate_regime) * fdi_mult_adj
+rate_atr_mult       := math.max(rate_min_mult, math.min(rate_max_mult, rate_atr_mult))
+
+// ── SuperTrend ──
+float _rate_atr_val_real = ta.rma(real_tr, rate_atr_len)
+float _rate_atr_val_chart = ta.atr(rate_atr_len)
+float rate_atr_val   = use_real_ohlc ? _rate_atr_val_real : _rate_atr_val_chart
+float rate_hl2       = (_h + _l) / 2.0
+float rate_upper_raw = rate_hl2 + rate_atr_mult * rate_atr_val
+float rate_lower_raw = rate_hl2 - rate_atr_mult * rate_atr_val
+
+var bool  rate_uptrend = true
+var float rate_st_line = na
+var float rate_p_upper = na
+var float rate_p_lower = na
+
+if na(rate_p_upper)
+    rate_p_upper := rate_upper_raw
+    rate_p_lower := rate_lower_raw
+    rate_st_line := rate_lower_raw
+
+float rate_lower = rate_uptrend ? math.max(rate_lower_raw, rate_p_lower) : rate_lower_raw
+float rate_upper = rate_uptrend ? rate_upper_raw : math.min(rate_upper_raw, rate_p_upper)
+
+if rate_uptrend
+    if _c < rate_p_lower
+        rate_uptrend := false
+        rate_st_line := rate_upper
+    else
+        rate_st_line := rate_lower
+else
+    if _c > rate_p_upper
+        rate_uptrend := true
+        rate_st_line := rate_lower
+    else
+        rate_st_line := rate_upper
+
+rate_p_upper := rate_uptrend ? rate_upper : math.min(rate_upper_raw, rate_p_upper)
+rate_p_lower := rate_uptrend ? math.max(rate_lower_raw, rate_p_lower) : rate_lower
+
+bool rate_long  = rate_uptrend and not rate_uptrend[1]
+bool rate_short = not rate_uptrend and rate_uptrend[1]
+bool rate_bull  = rate_uptrend
+
+// ── Hurst Exponent — multi-window log-log regression (audit #4) ──
+// The previous implementation used a SINGLE window R/S ratio mapped
+// through log(R/S)/log(n). That is a crude, noisy, biased estimator:
+// true Hurst is the SLOPE of log(R/S) against log(n) across multiple
+// window sizes, not one point evaluated at a single n. Estimated here
+// across 4 windows by least-squares slope — the textbook rescaled-
+// range method, materially more stable.
+//
+// Mean and standard deviation are computed MANUALLY inside the loop
+// rather than via ta.sma/ta.stdev: those require a simple-int length,
+// which a user-function parameter does not reliably satisfy.
+f_rs_ratio(int len) =>
+    float _sum = 0.0
+    for _i = 0 to len - 1
+        _sum += (_c[_i] - _c[_i + 1])
+    float _mean = _sum / float(len)
+    float _cum = 0.0
+    float _cmax = 0.0
+    float _cmin = 0.0
+    float _sq = 0.0
+    for _i = 0 to len - 1
+        float _dev = (_c[_i] - _c[_i + 1]) - _mean
+        _cum  := _cum + _dev
+        _cmax := math.max(_cmax, _cum)
+        _cmin := math.min(_cmin, _cum)
+        _sq   += _dev * _dev
+    float _R = _cmax - _cmin
+    float _S = math.sqrt(_sq / float(len))
+    (_R > 0.0 and _S > 0.0) ? _R / _S : 1.0
+
+float _rs1 = f_rs_ratio(10)
+float _rs2 = f_rs_ratio(20)
+float _rs3 = f_rs_ratio(30)
+float _rs4 = f_rs_ratio(40)
+
+float _lx1 = math.log(10.0)
+float _lx2 = math.log(20.0)
+float _lx3 = math.log(30.0)
+float _lx4 = math.log(40.0)
+float _ly1 = math.log(math.max(_rs1, 0.0001))
+float _ly2 = math.log(math.max(_rs2, 0.0001))
+float _ly3 = math.log(math.max(_rs3, 0.0001))
+float _ly4 = math.log(math.max(_rs4, 0.0001))
+
+float _lxm = (_lx1 + _lx2 + _lx3 + _lx4) / 4.0
+float _lym = (_ly1 + _ly2 + _ly3 + _ly4) / 4.0
+float _hnum = (_lx1-_lxm)*(_ly1-_lym) + (_lx2-_lxm)*(_ly2-_lym) + (_lx3-_lxm)*(_ly3-_lym) + (_lx4-_lxm)*(_ly4-_lym)
+float _hden = (_lx1-_lxm)*(_lx1-_lxm) + (_lx2-_lxm)*(_lx2-_lxm) + (_lx3-_lxm)*(_lx3-_lxm) + (_lx4-_lxm)*(_lx4-_lxm)
+float hurst_raw = _hden > 0.0 ? _hnum / _hden : 0.5
+hurst_raw := math.max(0.0, math.min(1.0, hurst_raw))
+
+float hurst = ta.ema(hurst_raw, 5)
+
+// ── 6-State Regime (RATE × Hurst matrix) ──
+// FIX CE10156: multi-line ternary in declaration → if/else block
+string rate_regime_str = "TRANSITION"
+if rate_regime >= 0.65 and hurst > 0.55
+    rate_regime_str := "STRONG TREND"
+else if rate_regime >= 0.65 and hurst <= 0.55
+    rate_regime_str := "WEAK TREND"
+else if rate_regime >= 0.40 and hurst > 0.55
+    rate_regime_str := "EMERGING"
+else if rate_regime >= 0.40 and hurst < 0.40
+    rate_regime_str := "CHOPPY"
+else if hurst < 0.40
+    rate_regime_str := "MEAN-REV"
+
+bool regime_accel = (rate_regime - rate_regime[3]) > 0.02
+
+// ══════════════════════════════════════════════════════════════════
+// §5  EHLERS HOMODYNE DISCRIMINATOR — Dominant Cycle Phase
+//     Manual atan2 quadrant correction (Pine has no atan2)
+// ══════════════════════════════════════════════════════════════════
+float sp           = (4.0*_c + 3.0*_c[1] + 2.0*_c[2] + _c[3]) / 10.0
+float detrender    = 0.0962*sp + 0.5769*sp[2] - 0.5769*sp[4] - 0.0962*sp[6]
+float I1_raw       = detrender[3]
+float Q1_raw       = 0.0962*detrender + 0.5769*detrender[2] - 0.5769*detrender[4] - 0.0962*detrender[6]
+float I1           = ta.ema(I1_raw, cycle_smooth)
+float Q1           = ta.ema(Q1_raw, cycle_smooth)
+float phase_raw    = I1 != 0.0 ? math.atan(math.abs(Q1 / I1)) : 0.0
+
+// Quadrant reconstruction — fixes CE10156 multi-line ternary
+float phase_angle = 0.0
+if I1 >= 0.0 and Q1 >= 0.0
+    phase_angle := phase_raw
+else if I1 < 0.0 and Q1 >= 0.0
+    phase_angle := math.pi - phase_raw
+else if I1 < 0.0 and Q1 < 0.0
+    phase_angle := math.pi + phase_raw
+else
+    phase_angle := 2.0 * math.pi - phase_raw
+
+float phase_deg = phase_angle * 180.0 / math.pi   // 0–360°
+
+bool cycle_rising  = phase_deg > 270.0 or phase_deg <= 90.0
+bool cycle_falling = phase_deg > 90.0 and phase_deg <= 270.0
+
+// ══════════════════════════════════════════════════════════════════
+// §6  SUPPLY / DEMAND ZONES — 5-Factor Adaptive Ranking
+//
+//     Score (0-85 at creation):
+//       Reaction ATR    0-30 | Volume ratio 0-20
+//       HTF alignment   0-25 | Fresh base     10
+//     Post-creation: Touch1 +10 | Touch2+ -8 | Age decay -5/-10/-15
+//     Tier: E ≥75 | S ≥50 | W <50
+//     FIX CW10004: ta.highest/ta.lowest extracted BEFORE conditionals
+// ══════════════════════════════════════════════════════════════════
+float _atr14_real = ta.rma(real_tr, 14)
+float _atr14_chart = ta.atr(14)
+// FIX (audit): atr14 is used as a DIVISOR in ~40 places across this
+// script. On a completely flat bar (no range at all — halted/illiquid
+// data) it could be 0, producing inf/na cascades. syminfo.mintick is
+// the smallest meaningful price increment, so this floor is
+// numerically negligible but makes every downstream division safe.
+float atr14    = math.max(use_real_ohlc ? _atr14_real : _atr14_chart, syminfo.mintick)
+float avg_vol  = ta.sma(volume, 50)
+
+// ══════════════════════════════════════════════════════════════════
+// §4.5  RATE FLIP ARMING WINDOW (v2 entry timing)
+//
+//     v1's entry trigger was the one-bar pulse rate_long/rate_short —
+//     the confluence gate had to clear on the EXACT bar the SuperTrend
+//     flipped or the flip was discarded forever. Confluence very often
+//     completes one to three bars after a flip (VWAP reclaimed, Fisher
+//     crossing, Kalman velocity turning): v1 threw all of those away.
+//
+//     A flip now ARMS its direction for arm_bars bars. The gate may
+//     confirm on any bar in the window; the trade is taken once, then
+//     the flip is marked used. Two guards keep this from degrading into
+//     chasing: (1) the trend must still be intact (rate_bull unchanged),
+//     (2) price may not have run more than arm_max_chase_atr × ATR past
+//     the flip bar's close. With use_arm_window off, this collapses to
+//     exactly the v1 pulse.
+// ══════════════════════════════════════════════════════════════════
+var int   rate_flip_bar   = -999
+var int   rate_flip_dir   = 0
+var float rate_flip_close = na
+var bool  rate_flip_used  = false     // set by §12 on entry; reset on every new flip
+if rate_long or rate_short
+    rate_flip_bar   := bar_index
+    rate_flip_dir   := rate_long ? 1 : -1
+    rate_flip_close := _c
+    rate_flip_used  := false
+int  rate_bars_since_flip = bar_index - rate_flip_bar
+bool _arm_win_ok  = rate_bars_since_flip <= (use_arm_window ? arm_bars : 0)
+bool _arm_chase_l = arm_max_chase_atr <= 0.0 or na(rate_flip_close) or (_c - rate_flip_close) <= atr14 * arm_max_chase_atr
+bool _arm_chase_s = arm_max_chase_atr <= 0.0 or na(rate_flip_close) or (rate_flip_close - _c) <= atr14 * arm_max_chase_atr
+bool rate_armed_long  = rate_bull     and rate_flip_dir ==  1 and _arm_win_ok and not rate_flip_used and _arm_chase_l
+bool rate_armed_short = not rate_bull and rate_flip_dir == -1 and _arm_win_ok and not rate_flip_used and _arm_chase_s
+
+// Pre-extract before all conditional blocks (fixes CW10004)
+float _d_hi_lkb = ta.highest(_h, zone_piv + 1)
+float _s_lo_lkb = ta.lowest(_l,   zone_piv + 1)
+
+var array<float> d_top   = array.new_float(0)
+var array<float> d_bot   = array.new_float(0)
+var array<float> d_score = array.new_float(0)
+var array<int>   d_touch = array.new_int(0)
+var array<bool>  d_inzn  = array.new_bool(0)
+var array<int>   d_cbar  = array.new_int(0)
+var array<box>   d_box   = array.new<box>(0)
+
+var array<float> s_top   = array.new_float(0)
+var array<float> s_bot   = array.new_float(0)
+var array<float> s_score = array.new_float(0)
+var array<int>   s_touch = array.new_int(0)
+var array<bool>  s_inzn  = array.new_bool(0)
+var array<int>   s_cbar  = array.new_int(0)
+var array<box>   s_box   = array.new<box>(0)
+
+// FIX CE10156: multi-line + chain as implicit-return function body → discrete single-line locals
+f_zone_score(float react, float vol_r, int htf_a) =>
+    float _zs_react = math.min(react / 6.0, 1.0) * 30.0
+    float _zs_vol   = math.min(vol_r / 2.5, 1.0) * 20.0
+    float _zs_htf   = float(htf_a) / 2.0 * 25.0
+    _zs_react + _zs_vol + _zs_htf + 10.0
+
+float ph = ta.pivothigh(_h, zone_piv, zone_piv)
+float pl = ta.pivotlow(_l,  zone_piv, zone_piv)
+
+// ── Demand Zone ──
+if not na(pl)
+    float z_top    = _h[zone_piv]
+    float z_bot    = pl
+    float react    = atr14 > 0.0 ? (_d_hi_lkb - pl) / atr14 : 0.0
+    float vol_r    = avg_vol > 0.0 ? volume[zone_piv] / avg_vol : 1.0
+    bool  no_ovlp  = true
+    if array.size(d_top) > 0
+        for j = 0 to array.size(d_top) - 1
+            if not (z_bot > array.get(d_top,j) or z_top < array.get(d_bot,j))
+                no_ovlp := false
+    if react >= zone_min_reac and no_ovlp
+        if array.size(d_top) >= max_zones_n
+            box bxr = array.shift(d_box)
+            if not na(bxr)
+                box.delete(bxr)
+            array.shift(d_top), array.shift(d_bot), array.shift(d_score)
+            array.shift(d_touch), array.shift(d_inzn), array.shift(d_cbar)
+        float zs = f_zone_score(react, vol_r, htf_bull)
+        string zt = zs >= 75 ? "E" : zs >= 50 ? "S" : "W"
+        color  zc = zs >= 75 ? color.new(#00e676,80) : zs >= 50 ? color.new(#4caf50,84) : color.new(#1b5e20,88)
+        array.push(d_top, z_top), array.push(d_bot, z_bot), array.push(d_score, zs)
+        array.push(d_touch, 0), array.push(d_inzn, false), array.push(d_cbar, bar_index - zone_piv)
+        array.push(d_box, show_zones ? box.new(bar_index - zone_piv, z_top, bar_index+1, z_bot,
+            bgcolor=zc, border_color=color.new(#00e676,35), extend=extend.right,
+            text=zt+" "+str.tostring(math.round(zs)), text_size=size.tiny,
+            text_color=color.new(color.white,20)) : na)
+
+// ── Supply Zone ──
+if not na(ph)
+    float z_top   = ph
+    float z_bot   = _l[zone_piv]
+    float react   = atr14 > 0.0 ? (ph - _s_lo_lkb) / atr14 : 0.0
+    float vol_r   = avg_vol > 0.0 ? volume[zone_piv] / avg_vol : 1.0
+    bool  no_ovlp = true
+    if array.size(s_top) > 0
+        for j = 0 to array.size(s_top) - 1
+            if not (z_bot > array.get(s_top,j) or z_top < array.get(s_bot,j))
+                no_ovlp := false
+    if react >= zone_min_reac and no_ovlp
+        if array.size(s_top) >= max_zones_n
+            box bxr = array.shift(s_box)
+            if not na(bxr)
+                box.delete(bxr)
+            array.shift(s_top), array.shift(s_bot), array.shift(s_score)
+            array.shift(s_touch), array.shift(s_inzn), array.shift(s_cbar)
+        float zs = f_zone_score(react, vol_r, htf_bear)
+        string zt = zs >= 75 ? "E" : zs >= 50 ? "S" : "W"
+        color  zc = zs >= 75 ? color.new(#f44336,80) : zs >= 50 ? color.new(#e53935,84) : color.new(#b71c1c,88)
+        array.push(s_top, z_top), array.push(s_bot, z_bot), array.push(s_score, zs)
+        array.push(s_touch, 0), array.push(s_inzn, false), array.push(s_cbar, bar_index - zone_piv)
+        array.push(s_box, show_zones ? box.new(bar_index - zone_piv, z_top, bar_index+1, z_bot,
+            bgcolor=zc, border_color=color.new(#f44336,35), extend=extend.right,
+            text=zt+" "+str.tostring(math.round(zs)), text_size=size.tiny,
+            text_color=color.new(color.white,20)) : na)
+
+// ── Zone Update: touches · distance · invalidation ──
+float nearest_demand_dist = na
+float nearest_supply_dist = na
+string best_demand_tier   = "W"
+string best_supply_tier   = "W"
+
+if array.size(d_top) > 0
+    // FIX: 'by' is a magnitude, not a signed direction — Pine infers descending order
+    // automatically since (array.size(d_top)-1) > 0; a negative step is invalid
+    for i = array.size(d_top) - 1 to 0 by 1
+        float zt  = array.get(d_top, i)
+        float zb  = array.get(d_bot, i)
+        int   age = bar_index - array.get(d_cbar, i)
+        float ap  = age > 200 ? 15.0 : age > 100 ? 10.0 : age > 50 ? 5.0 : 0.0
+        float eff = math.max(0.0, array.get(d_score, i) - ap)
+        bool was_in = array.get(d_inzn, i)
+        bool is_in  = _l <= zt and _h >= zb
+        if is_in and not was_in
+            int t = array.get(d_touch, i) + 1
+            array.set(d_touch, i, t)
+            array.set(d_score, i, math.max(0.0, array.get(d_score,i) + (t == 1 ? 10.0 : -8.0)))
+        array.set(d_inzn, i, is_in)
+        if _l > zt
+            float dist = (_l - zt) / atr14
+            if na(nearest_demand_dist) or dist < nearest_demand_dist
+                nearest_demand_dist := dist
+                best_demand_tier := eff >= 75 ? "E" : eff >= 50 ? "S" : "W"
+        if _c < zb - atr14 * 0.5
+            box bxd = array.get(d_box, i)
+            if not na(bxd)
+                box.delete(bxd)
+            array.remove(d_top,i), array.remove(d_bot,i), array.remove(d_score,i)
+            array.remove(d_touch,i), array.remove(d_inzn,i), array.remove(d_cbar,i), array.remove(d_box,i)
+
+if array.size(s_top) > 0
+    // FIX: same negative-step issue as the demand-zone loop above
+    for i = array.size(s_top) - 1 to 0 by 1
+        float zt  = array.get(s_top, i)
+        float zb  = array.get(s_bot, i)
+        int   age = bar_index - array.get(s_cbar, i)
+        float ap  = age > 200 ? 15.0 : age > 100 ? 10.0 : age > 50 ? 5.0 : 0.0
+        float eff = math.max(0.0, array.get(s_score, i) - ap)
+        bool was_in = array.get(s_inzn, i)
+        bool is_in  = _l <= zt and _h >= zb
+        if is_in and not was_in
+            int t = array.get(s_touch, i) + 1
+            array.set(s_touch, i, t)
+            array.set(s_score, i, math.max(0.0, array.get(s_score,i) + (t == 1 ? 10.0 : -8.0)))
+        array.set(s_inzn, i, is_in)
+        if _h < zb
+            float dist = (zb - _h) / atr14
+            if na(nearest_supply_dist) or dist < nearest_supply_dist
+                nearest_supply_dist := dist
+                best_supply_tier := eff >= 75 ? "E" : eff >= 50 ? "S" : "W"
+        if _c > zt + atr14 * 0.5
+            box bxs = array.get(s_box, i)
+            if not na(bxs)
+                box.delete(bxs)
+            array.remove(s_top,i), array.remove(s_bot,i), array.remove(s_score,i)
+            array.remove(s_touch,i), array.remove(s_inzn,i), array.remove(s_cbar,i), array.remove(s_box,i)
+
+// ══════════════════════════════════════════════════════════════════
+// §7  SHARED INDICATORS  +  CCI
+// ══════════════════════════════════════════════════════════════════
+float rsi_val   = ta.rsi(_c, 14)
+float rsi_slope = rsi_val - rsi_val[3]
+
+// ── Fisher Transform RSI — statistically grounded thresholds ──
+// Normalises RSI over a 14-bar rolling window into [-1,1], then applies
+// the inverse hyperbolic tangent (Fisher transform). The result lives in
+// Gaussian space: crossovers of the Fisher signal line carry actual
+// statistical weight rather than the arbitrary > 50 threshold.
+float ftr_hi    = ta.highest(rsi_val, 14)
+float ftr_lo    = ta.lowest(rsi_val,  14)
+float ftr_rng   = ftr_hi - ftr_lo
+float ftr_n     = ftr_rng > 0.0 ? 2.0 * (rsi_val - ftr_lo) / ftr_rng - 1.0 : 0.0
+float ftr_c     = math.max(-0.9999, math.min(0.9999, ftr_n))
+float ftr_val   = 0.5 * math.log((1.0 + ftr_c) / (1.0 - ftr_c))
+float ftr_sig   = ftr_val[1]   // 1-bar lag = signal line
+float _hlc3     = (_h + _l + _c) / 3.0
+float vwap_val  = ta.vwap(_hlc3)
+float vol_ma    = ta.sma(volume, 20)
+
+// CCI(10) — state-based (positive = bull momentum, negative = bear)
+float cci_tp  = (_h + _l + _c) / 3.0
+float cci_sma = ta.sma(cci_tp, cci_len)
+float cci_dev = ta.sma(math.abs(cci_tp - cci_sma), cci_len)
+float cci_val = cci_dev != 0.0 ? (cci_tp - cci_sma) / (0.015 * cci_dev) : 0.0
+bool  cci_long  = cci_val > 0.0
+bool  cci_short = cci_val < 0.0
+
+// ══════════════════════════════════════════════════════════════════
+// §8  XGBOOST5 — Standalone 5-Tree Gradient Boosted Ensemble
+//     UNCHANGED from v1.3. Features: ADX+DI, RSI, Volume, VWAP,
+//     Zone proximity. NOT fed FDI / Cycle / MP data per design spec.
+// ══════════════════════════════════════════════════════════════════
+// FIX (audit #1): XGB5's features previously were ADX, rsi_val,
+// volume/vol_ma, close-vs-VWAP, and zone proximity. Three of those are
+// the SAME information as standalone votes 1 (Fisher-RSI, built from
+// rsi_val), 2 (above/below VWAP — an identical comparison), and 4
+// (vol_surge, the same volume/vol_ma test). So when price was above
+// VWAP with strong RSI, votes 1, 2, 4 fired AND XGB5 fired because of
+// those same facts — the gate saw four confirmations where there were
+// really about two pieces of information counted twice. That inflates
+// confluence exactly when it most needs to be honest.
+//
+// Rebuilt on inputs that are NOT separately tallied elsewhere:
+//   xf1 ADX               — trend strength (not a standalone vote)
+//   xf2 Hurst persistence — long-memory (only used in regime string)
+//   xf3 FDI cleanliness   — path geometry (only used for weights)
+//   xf4 zone proximity    — S/D structure (not a standalone vote)

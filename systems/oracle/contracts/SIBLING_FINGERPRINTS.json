@@ -1,0 +1,10 @@
+{
+  "contracts": [
+    "AION.Observation",
+    "AION.SourceSpec",
+    "ARGUS.MicrostructureFeature",
+    "ATHENA.Provenance",
+    "ATHENA.ResearchRequest"
+  ],
+  "fingerprint": "8b1ae0719fcfd6f2bf7b087fbcd4b1cd714cc868a6eb72ec68f1429c7d5fa91b"
+}

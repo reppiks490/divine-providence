@@ -1,0 +1,376 @@
+{
+  "authority_precedence": [],
+  "components": [
+    {
+      "authority": "durable_evidence_memory",
+      "metadata_json": "{}",
+      "name": "AION"
+    },
+    {
+      "authority": "microstructure_execution_physics",
+      "metadata_json": "{}",
+      "name": "ARGUS"
+    },
+    {
+      "authority": "supervisory_state_risk_routing",
+      "metadata_json": "{}",
+      "name": "ATHENA"
+    },
+    {
+      "authority": "scientific_validation_promotion",
+      "metadata_json": "{}",
+      "name": "DAEDALUS"
+    },
+    {
+      "authority": "production_execution",
+      "metadata_json": "{}",
+      "name": "ICARUS"
+    },
+    {
+      "authority": "project_twin_reconciliation_handoff",
+      "metadata_json": "{}",
+      "name": "JANUS"
+    },
+    {
+      "authority": "market_data_fabric",
+      "metadata_json": "{}",
+      "name": "NEXUS"
+    }
+  ],
+  "contradictions": [],
+  "current_facts": [
+    {
+      "authority": null,
+      "confidence": "reported",
+      "fact_id": "e92da53439a3930869a229f00a4f8f11e51d22d7565455cf214206f1356e6ea2",
+      "known_at": "2026-09-23T12:00:00Z",
+      "predicate": "count",
+      "source": "START_HERE_SOL_EXTRA_HIGH_v0.3.md",
+      "source_hash": null,
+      "subject": "AION.prior_corpus.usable_entries",
+      "supersedes": null,
+      "valid_from": "2026-09-23T00:00:00Z",
+      "valid_to": null,
+      "value": 626
+    },
+    {
+      "authority": null,
+      "confidence": "reported",
+      "fact_id": "1e12c5445add43b6b97d21293c0b2ecedd12f355897e27d9c6d2fd423df9030e",
+      "known_at": "2026-09-23T12:00:00Z",
+      "predicate": "count",
+      "source": "START_HERE_SOL_EXTRA_HIGH_v0.3.md",
+      "source_hash": null,
+      "subject": "NEXUS.corpus.usable_csv",
+      "supersedes": null,
+      "valid_from": "2026-09-23T00:00:00Z",
+      "valid_to": null,
+      "value": 238
+    },
+    {
+      "authority": null,
+      "confidence": "authoritative_handoff",
+      "fact_id": "e772706a26a67412e5b94bfd090ba01f246753ea3c6e8d6e4485099d48f8e7e0",
+      "known_at": "2026-09-23T12:00:00Z",
+      "predicate": "is",
+      "source": "START_HERE_SOL_EXTRA_HIGH_v0.3.md",
+      "source_hash": null,
+      "subject": "NEXUS.coverage_claim_allowed",
+      "supersedes": null,
+      "valid_from": "2026-09-23T00:00:00Z",
+      "valid_to": null,
+      "value": false
+    },
+    {
+      "authority": null,
+      "confidence": "reported",
+      "fact_id": "49ee6bb6fbb99d1fe159f675e8fe5976fca31e1d8bc43d2bdc271370e6405617",
+      "known_at": "2026-09-24T00:00:00Z",
+      "predicate": "passed",
+      "source": "START_HERE_SOL_EXTRA_HIGH_v0.3.md",
+      "source_hash": null,
+      "subject": "NEXUS.tests",
+      "supersedes": null,
+      "valid_from": "2026-09-23T18:00:00Z",
+      "valid_to": null,
+      "value": 117
+    }
+  ],
+  "dependencies": [
+    {
+      "dst": "NEXUS",
+      "kind": "depends_on",
+      "src": "AION"
+    },
+    {
+      "dst": "NEXUS",
+      "kind": "depends_on",
+      "src": "ARGUS"
+    },
+    {
+      "dst": "AION",
+      "kind": "depends_on",
+      "src": "ATHENA"
+    },
+    {
+      "dst": "ARGUS",
+      "kind": "depends_on",
+      "src": "ATHENA"
+    },
+    {
+      "dst": "NEXUS",
+      "kind": "depends_on",
+      "src": "ATHENA"
+    },
+    {
+      "dst": "AION",
+      "kind": "depends_on",
+      "src": "DAEDALUS"
+    },
+    {
+      "dst": "NEXUS",
+      "kind": "depends_on",
+      "src": "DAEDALUS"
+    },
+    {
+      "dst": "ARGUS",
+      "kind": "depends_on",
+      "src": "ICARUS"
+    },
+    {
+      "dst": "ATHENA",
+      "kind": "depends_on",
+      "src": "ICARUS"
+    },
+    {
+      "dst": "DAEDALUS",
+      "kind": "depends_on",
+      "src": "ICARUS"
+    },
+    {
+      "dst": "AION",
+      "kind": "depends_on",
+      "src": "JANUS"
+    },
+    {
+      "dst": "ARGUS",
+      "kind": "depends_on",
+      "src": "JANUS"
+    },
+    {
+      "dst": "ATHENA",
+      "kind": "depends_on",
+      "src": "JANUS"
+    },
+    {
+      "dst": "DAEDALUS",
+      "kind": "depends_on",
+      "src": "JANUS"
+    },
+    {
+      "dst": "ICARUS",
+      "kind": "depends_on",
+      "src": "JANUS"
+    },
+    {
+      "dst": "NEXUS",
+      "kind": "depends_on",
+      "src": "JANUS"
+    }
+  ],
+  "evidence_precedence": [],
+  "exported_at": "2026-09-25T00:59:46.132190Z",
+  "format": "janus-handoff-v1",
+  "invariants": [
+    {
+      "invariant_hash": "0372cf9e5f388f6282801a5d3b679c0e29f886ad5c67da6889a8afb4fba819ee",
+      "source": "examples/icarus_seed_manifest.json",
+      "text": "Do not call candle proxies true L2/order flow."
+    },
+    {
+      "invariant_hash": "09f4961befce2d0596e0654b75409a2cfdfe1d58f4a43a7c8afc1401802303d9",
+      "source": "examples/icarus_seed_manifest.json",
+      "text": "Preserve repeated/fractional timestamps and source-local order."
+    },
+    {
+      "invariant_hash": "398829745d717f8d5369b94f1982af9a6a6a1cb0336da6dc2fb5a6fa2081b05d",
+      "source": "examples/icarus_seed_manifest.json",
+      "text": "A proof bundle is required before a candidate may be represented as promoted."
+    },
+    {
+      "invariant_hash": "44690954faa19978b18170e7d3ab1ee929f49b0a31c1d37aa8d16ff46d906740",
+      "source": "examples/icarus_seed_manifest.json",
+      "text": "Preserve raw lineage and duplicate-source provenance."
+    },
+    {
+      "invariant_hash": "66eb5ac9122db24c7f98b0673c493af4dede7080a3a42caf961e10f4318cbc3a",
+      "source": "examples/icarus_seed_manifest.json",
+      "text": "Distinguish event, availability and ingestion/receipt time."
+    },
+    {
+      "invariant_hash": "9a331885a970b98c9dc937f7391c7b346e6c6a2046ce12e35a2cae6125bd6d39",
+      "source": "examples/icarus_seed_manifest.json",
+      "text": "Do not infer stream identity solely from filename claims."
+    },
+    {
+      "invariant_hash": "a162fd6ffcb48d3f2f1fd51bf650b25a6d2ac33eefcadccc9c655a084e7a9caa",
+      "source": "examples/icarus_seed_manifest.json",
+      "text": "JANUS must not absorb sibling authority."
+    },
+    {
+      "invariant_hash": "b9b437ea31aef4a3a3f149403c2a7cbf78331f9d977df38f8e1ebd5dc26a1179",
+      "source": "examples/icarus_seed_manifest.json",
+      "text": "Do not fabricate historical availability time."
+    },
+    {
+      "invariant_hash": "f6d3f253e2c5d1b33a2379f1fead465b809dfb4847db929f3d21f92dd818bfac",
+      "source": "examples/icarus_seed_manifest.json",
+      "text": "Do not use future-aware preprocessing in historical evaluation."
+    }
+  ],
+  "normalization_decisions": [],
+  "normalization_overlays": [],
+  "prioritized_candidates": [
+    {
+      "id": "C002",
+      "metrics": {
+        "centrality": 1.0,
+        "cost": 0.35,
+        "duplication_risk": 0.1,
+        "evidence_gap": 0.9,
+        "failure_pressure": 0.9,
+        "impact": 0.95,
+        "regression_risk": 0.1,
+        "reusability": 1.0,
+        "uncertainty_reduction": 0.9
+      },
+      "score": 2.221033492379275,
+      "status": "proposed",
+      "title": "Proof-carrying cross-model handoff round-trip"
+    },
+    {
+      "id": "C003",
+      "metrics": {
+        "centrality": 0.95,
+        "cost": 0.55,
+        "duplication_risk": 0.2,
+        "evidence_gap": 0.85,
+        "failure_pressure": 0.8,
+        "impact": 0.9,
+        "regression_risk": 0.25,
+        "reusability": 0.95,
+        "uncertainty_reduction": 0.95
+      },
+      "score": 1.088595223622762,
+      "status": "proposed",
+      "title": "Live repo semantic reconciliation engine"
+    },
+    {
+      "id": "C001",
+      "metrics": {
+        "centrality": 0.95,
+        "cost": 0.65,
+        "duplication_risk": 0.15,
+        "evidence_gap": 1.0,
+        "failure_pressure": 0.8,
+        "impact": 0.95,
+        "regression_risk": 0.2,
+        "reusability": 0.9,
+        "uncertainty_reduction": 1.0
+      },
+      "score": 1.0375383894304284,
+      "status": "proposed",
+      "title": "Authoritative corpus reconciliation"
+    },
+    {
+      "id": "C004",
+      "metrics": {
+        "centrality": 0.85,
+        "cost": 0.6,
+        "duplication_risk": 0.15,
+        "evidence_gap": 0.9,
+        "failure_pressure": 0.75,
+        "impact": 0.9,
+        "regression_risk": 0.25,
+        "reusability": 0.85,
+        "uncertainty_reduction": 0.9
+      },
+      "score": 0.9931434974871917,
+      "status": "proposed",
+      "title": "Representation-specific clock policy completion"
+    }
+  ],
+  "proof_bundles": [],
+  "proof_lifecycle_events": [],
+  "state_digest": "bf7298ae5d40fb00348cc7a85195efa6722ca983fe8b1ba531f428ce20e04bab",
+  "status": {
+    "active_normalization_overlays": 0,
+    "candidates": 4,
+    "components": 7,
+    "contradictions": 0,
+    "current_facts": 4,
+    "facts": 5,
+    "normalization_decisions": 0,
+    "proof_bundles": 0,
+    "proof_lifecycle_events": 0,
+    "quarantined_temporal_conflicts": 1,
+    "snapshots": 0,
+    "state_digest": "bf7298ae5d40fb00348cc7a85195efa6722ca983fe8b1ba531f428ce20e04bab",
+    "temporal_conflicts": 1,
+    "temporal_normalization_proposals": 0,
+    "verified_normalization_overlays": 0
+  },
+  "temporal_conflicts": [
+    {
+      "blast_radius": [
+        "AION",
+        "ARGUS",
+        "ATHENA",
+        "DAEDALUS",
+        "ICARUS",
+        "JANUS"
+      ],
+      "facts": [
+        {
+          "authority": null,
+          "confidence": "reported",
+          "fact_id": "1f147155915fab75c6f7062b1fdc8f89fd95aa676e12f41b7a992b0781ec74c6",
+          "known_at": "2026-09-23T12:00:00Z",
+          "predicate": "passed",
+          "source": "READ_FIRST_SOL_EXTRA_HIGH.md",
+          "source_hash": null,
+          "subject": "NEXUS.tests",
+          "supersedes": null,
+          "valid_from": "2026-09-23T00:00:00Z",
+          "valid_to": null,
+          "value": 80
+        },
+        {
+          "authority": null,
+          "confidence": "reported",
+          "fact_id": "49ee6bb6fbb99d1fe159f675e8fe5976fca31e1d8bc43d2bdc271370e6405617",
+          "known_at": "2026-09-24T00:00:00Z",
+          "predicate": "passed",
+          "source": "START_HERE_SOL_EXTRA_HIGH_v0.3.md",
+          "source_hash": null,
+          "subject": "NEXUS.tests",
+          "supersedes": null,
+          "valid_from": "2026-09-23T18:00:00Z",
+          "valid_to": null,
+          "value": 117
+        }
+      ],
+      "kind": "overlap_conflict",
+      "overlap_from": "2026-09-23T18:00:00Z",
+      "overlap_to": "9999-12-31T23:59:59.999999Z",
+      "predicate": "passed",
+      "proof_required": true,
+      "resolution": {
+        "reason": "authority_policy_missing",
+        "status": "quarantined"
+      },
+      "subject": "NEXUS.tests"
+    }
+  ],
+  "temporal_normalization_proposals": []
+}

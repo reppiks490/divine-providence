@@ -1,0 +1,684 @@
+//@version=6
+strategy("ICARUS RATE — REGULAR CANDLE / STANDARD OHLC ENHANCED", overlay=true,
+     initial_capital=500000, default_qty_type=strategy.fixed, default_qty_value=5,
+     commission_type=strategy.commission.cash_per_contract, commission_value=2.0,
+     pyramiding=2, calc_on_every_tick=false, process_orders_on_close=false,
+     fill_orders_on_standard_ohlc=true, max_labels_count=500, max_lines_count=500, max_boxes_count=200)
+
+// ============================================================================
+// ICARUS REGULAR-CANDLE EDITION
+// -----------------------------------------------------------------------------
+// Design invariant:
+//   1) All signal math uses STANDARD market OHLC, never chart-transformed OHLC.
+//   2) All HTF/LTF calculations use the same STANDARD ticker context.
+//   3) Execution remains on actual strategy fills; standard OHLC is also forced
+//      at the strategy declaration for non-standard chart safety.
+//   4) No lookahead is introduced by the enhancement layer.
+//   5) Existing RATE/TIDE concepts are preserved; enhancements are soft unless
+//      explicitly configured as vetoes.
+// ============================================================================
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. INPUTS
+// ─────────────────────────────────────────────────────────────────────────────
+string G_RATE = "RATE Engine"
+string G_REG  = "Regime / Statistics"
+string G_MTF  = "HTF / LTF"
+string G_CONF = "12-Vote Confluence"
+string G_SMC  = "Structure / SMC"
+string G_EXEC = "Execution"
+string G_TIDE = "TIDE Range Engine"
+string G_SESS = "Session / Risk"
+string G_DISP = "Display"
+
+int rate_len = input.int(14, "RATE ATR Length", minval=2, group=G_RATE)
+float rate_min_mult = input.float(1.8, "RATE Min ATR Mult", minval=0.5, step=0.1, group=G_RATE)
+float rate_max_mult = input.float(4.0, "RATE Max ATR Mult", minval=1.0, step=0.1, group=G_RATE)
+int regime_len = input.int(50, "Regime Volatility Length", minval=10, group=G_REG)
+int hurst_len = input.int(40, "Hurst / R-S Length", minval=20, group=G_REG)
+int fdi_len = input.int(30, "FDI Length", minval=10, group=G_REG)
+int pe_len = input.int(30, "Permutation Entropy Length", minval=10, maxval=100, group=G_REG)
+bool use_pe = input.bool(true, "Permutation Entropy", group=G_REG)
+bool use_kalman = input.bool(true, "Adaptive Kalman", group=G_REG)
+bool use_pma = input.bool(true, "Ehlers Predictive MA", group=G_REG)
+bool use_cyber = input.bool(true, "Cyber Cycle", group=G_REG)
+
+string htf1 = input.timeframe("15", "HTF 1", group=G_MTF)
+string htf2 = input.timeframe("30", "HTF 2", group=G_MTF)
+string htf3 = input.timeframe("60", "HTF 3", group=G_MTF)
+string htf4 = input.timeframe("240", "HTF 4", group=G_MTF)
+string htf5 = input.timeframe("D", "HTF 5", group=G_MTF)
+int htf_min = input.int(3, "Minimum HTF Agreement", minval=1, maxval=5, group=G_MTF)
+bool use_ltf = input.bool(true, "Use 2m / 5m Failure Detection", group=G_MTF)
+bool ltf_veto = input.bool(false, "LTF Failure Entry Veto", group=G_MTF)
+
+bool use_confluence = input.bool(true, "Enable Confluence Gate", group=G_CONF)
+bool adaptive_weights = input.bool(true, "Adaptive Vote Weights", group=G_CONF)
+bool adaptive_threshold = input.bool(true, "Adaptive Threshold", group=G_CONF)
+int manual_votes = input.int(5, "Manual Minimum Votes", minval=0, maxval=12, group=G_CONF)
+float family_discount = input.float(0.90, "Cross-Family Discount", minval=0.5, maxval=1.0, step=0.02, group=G_CONF)
+
+bool use_structure = input.bool(true, "Structure / BOS / CHoCH", group=G_SMC)
+int struct_piv = input.int(3, "Structure Pivot", minval=2, maxval=10, group=G_SMC)
+bool use_sweep = input.bool(true, "Liquidity Sweeps", group=G_SMC)
+float sweep_atr = input.float(0.15, "Minimum Sweep Wick ×ATR", minval=0, step=0.05, group=G_SMC)
+bool use_ob = input.bool(true, "Order Blocks", group=G_SMC)
+float ob_atr = input.float(1.4, "OB Displacement ×ATR", minval=0.5, step=0.1, group=G_SMC)
+bool use_fvg = input.bool(true, "Fair Value Gaps", group=G_SMC)
+float fvg_atr = input.float(0.25, "FVG Minimum ×ATR", minval=0, step=0.05, group=G_SMC)
+int smc_window = input.int(5, "SMC Confirmation Window", minval=1, maxval=20, group=G_SMC)
+float smc_discount = input.float(0.90, "SMC Agreement Discount", minval=0.5, maxval=1.0, step=0.02, group=G_SMC)
+
+float tp1_pts = input.float(15, "TP1 Points", minval=1, group=G_EXEC)
+float tp2_pts = input.float(30, "TP2 Points", minval=1, group=G_EXEC)
+float sl_pts = input.float(45, "SL Points", minval=1, group=G_EXEC)
+int qty = input.int(5, "Contracts", minval=1, group=G_EXEC)
+int arm_bars = input.int(3, "RATE Arming Window", minval=0, maxval=10, group=G_EXEC)
+float max_chase_atr = input.float(0.75, "Max Chase ×ATR", minval=0, step=0.05, group=G_EXEC)
+bool use_runner_be = input.bool(true, "Runner Net-BE", group=G_EXEC)
+int be_delay = input.int(3, "BE Delay Bars", minval=0, maxval=30, group=G_EXEC)
+float be_extend = input.float(0.5, "BE Extension ×ATR", minval=0, step=0.1, group=G_EXEC)
+bool use_flip_exit = input.bool(true, "Exit on Opposite RATE Flip", group=G_EXEC)
+bool use_eod = input.bool(true, "Flatten at RTH End", group=G_EXEC)
+int eod_hhmm = input.int(1555, "EOD Flatten HHMM ET", minval=0, maxval=2359, group=G_EXEC)
+
+bool use_tide = input.bool(true, "Enable TIDE", group=G_TIDE)
+int tide_confirm = input.int(2, "TIDE Confirm Bars", minval=1, maxval=3, group=G_TIDE)
+int tide_qty = input.int(2, "TIDE Contracts", minval=1, group=G_TIDE)
+string tide_mode = input.string("Balanced", "TIDE Confirmation", options=["Strict","Balanced","Loose"], group=G_TIDE)
+
+bool rth_gate = input.bool(true, "RTH Entry Gate", group=G_SESS)
+string rth_window = input.session("0930-1530", "Entry Window ET", group=G_SESS)
+bool midday_penalty = input.bool(true, "Midday Penalty", group=G_SESS)
+string midday_window = input.session("1130-1300", "Midday Window ET", group=G_SESS)
+bool use_tod = input.bool(true, "Time-of-Day Learning", group=G_SESS)
+int tod_min = input.int(12, "TOD Minimum Sample", minval=5, group=G_SESS)
+float tod_min_wr = input.float(0.55, "TOD Minimum Win Rate", minval=0, maxval=1, step=0.05, group=G_SESS)
+
+bool show_hud = input.bool(true, "HUD", group=G_DISP)
+bool show_signals = input.bool(true, "Signals", group=G_DISP)
+bool show_structure = input.bool(false, "Structure Map", group=G_DISP)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 2. STANDARD MARKET DATA LAYER
+// ─────────────────────────────────────────────────────────────────────────────
+// TradingView documents ticker.new(syminfo.prefix, syminfo.ticker) as the safe
+// route for retrieving real OHLC on a Heikin-Ashi/non-standard chart.
+string std_ticker = ticker.new(syminfo.prefix, syminfo.ticker)
+[std_o, std_h, std_l, std_c, std_v] = request.security(std_ticker, timeframe.period, [open, high, low, close, volume], gaps=barmerge.gaps_off, lookahead=barmerge.lookahead_off)
+
+float O = nz(std_o, open)
+float H = nz(std_h, high)
+float L = nz(std_l, low)
+float C = nz(std_c, close)
+float V = nz(std_v, volume)
+
+float prevC = nz(C[1], C)
+float tr = math.max(H - L, math.max(math.abs(H - prevC), math.abs(L - prevC)))
+float atr = math.max(ta.rma(tr, rate_len), syminfo.mintick)
+float atr_fast = math.max(ta.rma(tr, 7), syminfo.mintick)
+float atr_slow = math.max(ta.rma(tr, 50), syminfo.mintick)
+float avg_vol = ta.sma(V, 50)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3. FDI + HURST + REGIME
+// ─────────────────────────────────────────────────────────────────────────────
+float net_move = math.abs(C - C[fdi_len])
+float path = 0.0
+for i = 0 to fdi_len - 2
+    path += math.abs(C[i] - C[i + 1])
+float fdi_raw = net_move > 0 and path > 0 ? 1.0 + math.log(path / net_move) / math.log(2.0 * fdi_len) : 1.5
+float fdi = math.max(1.0, math.min(2.0, ta.ema(fdi_raw, 5)))
+
+float mean_c = ta.sma(C, hurst_len)
+float dev_sum = 0.0
+for i = 0 to hurst_len - 1
+    dev_sum += nz(C[i], C) - nz(mean_c[i], mean_c)
+float range_rs = ta.highest(dev_sum, hurst_len) - ta.lowest(dev_sum, hurst_len)
+float sd_c = math.max(ta.stdev(C, hurst_len), syminfo.mintick)
+float hurst = range_rs > 0 ? math.log(range_rs / (sd_c * math.sqrt(hurst_len))) / math.log(hurst_len) : 0.5
+hurst := math.max(0.0, math.min(1.0, hurst))
+hurst := ta.ema(hurst, 5)
+
+float adx_score = 0.0
+float plus_di = 0.0
+float minus_di = 0.0
+float up = H - H[1]
+float dn = L[1] - L
+float plus_dm = up > dn and up > 0 ? up : 0.0
+float minus_dm = dn > up and dn > 0 ? dn : 0.0
+float atr_dm = math.max(ta.rma(tr, 14), syminfo.mintick)
+plus_di := 100.0 * ta.rma(plus_dm, 14) / atr_dm
+minus_di := 100.0 * ta.rma(minus_dm, 14) / atr_dm
+float dx = plus_di + minus_di > 0 ? 100.0 * math.abs(plus_di - minus_di) / (plus_di + minus_di) : 0.0
+float adx = ta.rma(dx, 14)
+adx_score := math.max(0.0, math.min(1.0, (adx - 15.0) / 25.0))
+float vol_score = math.max(0.0, math.min(1.0, atr_fast / atr_slow - 0.75))
+float efficiency = path > 0 ? math.min(1.0, net_move / path) : 0.0
+float consistency = 1.0 - math.min(1.0, fdi - 1.0)
+float fdi_t = math.max(0.0, math.min(1.0, (fdi - 1.0) / 0.5))
+float w_adx = 0.30 + (1.0 - fdi_t) * 0.10
+float w_vol = 0.30 + fdi_t * 0.10
+float w_eff = 0.25 + (1.0 - fdi_t) * 0.05
+float w_con = 0.15 - fdi_t * 0.05
+float regime = ta.ema(adx_score*w_adx + vol_score*w_vol + efficiency*w_eff + consistency*w_con, 5)
+regime := math.max(0.0, math.min(1.0, regime))
+string regime_name = "TRANSITION"
+if regime >= 0.65 and hurst > 0.55
+    regime_name := "STRONG TREND"
+else if regime >= 0.65
+    regime_name := "WEAK TREND"
+else if regime >= 0.40 and hurst > 0.55
+    regime_name := "EMERGING"
+else if hurst < 0.40
+    regime_name := "MEAN-REV"
+else if regime >= 0.40
+    regime_name := "CHOPPY"
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 4. ADAPTIVE RATE / SUPERTREND
+// ─────────────────────────────────────────────────────────────────────────────
+float fdi_adj = 1.0 + (fdi - 1.0) * 0.30
+float rate_mult = (rate_max_mult - (rate_max_mult-rate_min_mult)*regime) * fdi_adj
+rate_mult := math.max(rate_min_mult, math.min(rate_max_mult, rate_mult))
+float rate_atr = math.max(ta.rma(tr, rate_len), syminfo.mintick)
+float mid = (H + L) * 0.5
+float upper_raw = mid + rate_mult * rate_atr
+float lower_raw = mid - rate_mult * rate_atr
+var bool rate_bull = true
+var float upper = na
+var float lower = na
+var float st = na
+if na(upper)
+    upper := upper_raw
+    lower := lower_raw
+    st := lower_raw
+else
+    upper := rate_bull ? math.min(upper_raw, upper) : upper_raw
+    lower := rate_bull ? lower_raw : math.max(lower_raw, lower)
+    if rate_bull and C < lower
+        rate_bull := false
+    else if not rate_bull and C > upper
+        rate_bull := true
+    st := rate_bull ? lower : upper
+bool rate_long = rate_bull and not rate_bull[1]
+bool rate_short = not rate_bull and rate_bull[1]
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. HTF / LTF — STANDARD OHLC CONTEXT + CONFIRMED VALUES
+// ─────────────────────────────────────────────────────────────────────────────
+f_htf() =>
+    float _tr = math.max(high-low, math.max(math.abs(high-close[1]), math.abs(low-close[1])))
+    float _atr = ta.rma(_tr, 14)
+    float _mid = (high+low)*0.5
+    [_, _d] = ta.supertrend(3.0, 14)
+    float _adx0 = ta.rma(ta.rma(math.max(high-high[1],0),14),14)
+    [_d[1], _adx0[1]]
+
+[hd1, hr1] = request.security(std_ticker, htf1, f_htf(), lookahead=barmerge.lookahead_on)
+[hd2, hr2] = request.security(std_ticker, htf2, f_htf(), lookahead=barmerge.lookahead_on)
+[hd3, hr3] = request.security(std_ticker, htf3, f_htf(), lookahead=barmerge.lookahead_on)
+[hd4, hr4] = request.security(std_ticker, htf4, f_htf(), lookahead=barmerge.lookahead_on)
+[hd5, hr5] = request.security(std_ticker, htf5, f_htf(), lookahead=barmerge.lookahead_on)
+int htf_bull = (hd1 == -1 ? 1 : 0) + (hd2 == -1 ? 1 : 0) + (hd3 == -1 ? 1 : 0) + (hd4 == -1 ? 1 : 0) + (hd5 == -1 ? 1 : 0)
+int htf_bear = (hd1 == 1 ? 1 : 0) + (hd2 == 1 ? 1 : 0) + (hd3 == 1 ? 1 : 0) + (hd4 == 1 ? 1 : 0) + (hd5 == 1 ? 1 : 0)
+bool mtf_long = htf_bull >= htf_min
+bool mtf_short = htf_bear >= htf_min
+
+f_ltf() =>
+    [_, _d] = ta.supertrend(3.0, 14)
+    float _r = ta.atr(14)
+    [_d[1], ta.barssince(_d != _d[1])[1], _r[1]]
+[l2d, l2age, l2atr] = request.security(std_ticker, "2", f_ltf(), lookahead=barmerge.lookahead_on)
+[l5d, l5age, l5atr] = request.security(std_ticker, "5", f_ltf(), lookahead=barmerge.lookahead_on)
+bool ltf_bad_long = use_ltf and ((l2d == 1 and nz(l2age,99) <= 3) or (l5d == 1 and nz(l5age,99) <= 3))
+bool ltf_bad_short = use_ltf and ((l2d == -1 and nz(l2age,99) <= 3) or (l5d == -1 and nz(l5age,99) <= 3))
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6. EHLERS / KALMAN / ENTROPY / MOMENTUM VOTES
+// ─────────────────────────────────────────────────────────────────────────────
+float rsi = ta.rsi(C, 14)
+float rsi_norm = math.max(-0.999, math.min(0.999, (rsi-50.0)/50.0))
+float fisher = 0.5 * math.log((1+rsi_norm)/(1-rsi_norm))
+bool fisher_l = fisher > 0 and fisher > fisher[1]
+bool fisher_s = fisher < 0 and fisher < fisher[1]
+
+float vwap = ta.vwap(C)
+bool vwap_l = C > vwap
+bool vwap_s = C < vwap
+float cci = ta.cci((H+L+C)/3.0, 20)
+bool cci_l = cci > 0 and cci > cci[1]
+bool cci_s = cci < 0 and cci < cci[1]
+bool vol_surge = V > ta.sma(V, 20) * 1.20
+bool regime_accel = regime > nz(regime[3], regime) + 0.02
+
+// Ehlers predictive MA
+float pma_src = (C + C[1] + C[2]) / 3.0
+float pma = ta.ema(pma_src, 10)
+float pma_pred = pma + (pma - pma[1]) * 2.0
+bool pma_l = use_pma and C > pma_pred
+bool pma_s = use_pma and C < pma_pred
+
+// Adaptive two-state scalar Kalman. Measurement noise is linked to both FDI and
+// recent innovation variance; this keeps the filter from becoming overconfident
+// when regular candles become noisy after a regime transition.
+var float kf_x = na
+var float kf_p = 1.0
+float kf_q = math.max(0.001, 0.05 * atr * atr)
+float kf_r = math.max(0.001, (0.15 + (fdi-1.0)*0.35) * atr * atr)
+if na(kf_x)
+    kf_x := C
+float kf_pred = kf_x
+float kf_pp = kf_p + kf_q
+float kf_innov = C - kf_pred
+float kf_gain = kf_pp / math.max(kf_pp + kf_r, 0.000001)
+kf_x := kf_pred + kf_gain * kf_innov
+kf_p := (1.0-kf_gain) * kf_pp
+float kf_vel = kf_x - nz(kf_x[1], kf_x)
+bool kf_l = use_kalman and kf_vel > 0 and C >= kf_x
+bool kf_s = use_kalman and kf_vel < 0 and C <= kf_x
+
+// Permutation entropy, m=4. A compact rank encoder gives 24 ordinal patterns.
+rank_code(float a, float b, float c, float d) =>
+    int code = 0
+    code += a > b ? 1 : 0
+    code += a > c ? 2 : 0
+    code += a > d ? 4 : 0
+    code += b > c ? 8 : 0
+    code += b > d ? 16 : 0
+    code += c > d ? 32 : 0
+    code % 24
+var int[] pe_counts = array.new_int(24, 0)
+var int[] pe_queue = array.new_int(0)
+int pe_code = rank_code(C, C[1], C[2], C[3])
+if bar_index > 5
+    array.push(pe_queue, pe_code)
+    array.set(pe_counts, pe_code, array.get(pe_counts, pe_code)+1)
+    if array.size(pe_queue) > pe_len
+        int old = array.shift(pe_queue)
+        array.set(pe_counts, old, math.max(0, array.get(pe_counts, old)-1))
+float pe_h = 0.0
+int pe_n = array.size(pe_queue)
+if pe_n > 0
+    for i = 0 to 23
+        float p = float(array.get(pe_counts,i)) / float(pe_n)
+        if p > 0
+            pe_h -= p * math.log(p)
+float pe_norm = pe_n >= 24 ? pe_h / math.log(24.0) : 0.5
+bool pe_l = use_pe and pe_norm < 0.75 and rate_bull
+bool pe_s = use_pe and pe_norm < 0.75 and not rate_bull
+
+// Cyber Cycle
+var float cyber = 0.0
+float a = 0.07
+cyber := math.pow(1-a/2,2) * (C - 2*nz(C[1],C) + nz(C[2],C)) + 2*(1-a)*nz(cyber[1],0) - math.pow(1-a,2)*nz(cyber[2],0)
+float chi = ta.highest(cyber,7)
+float clo = ta.lowest(cyber,7)
+float cst = chi > clo ? (cyber-clo)/(chi-clo) : 0.5
+bool cyber_l = use_cyber and cyber > cyber[1] and cst < 0.5 and rate_bull
+bool cyber_s = use_cyber and cyber < cyber[1] and cst > 0.5 and not rate_bull
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 7. STRUCTURE / SMC
+// ─────────────────────────────────────────────────────────────────────────────
+float ph = ta.pivothigh(H, struct_piv, struct_piv)
+float pl = ta.pivotlow(L, struct_piv, struct_piv)
+var float swing_h = na
+var float prev_swing_h = na
+var float swing_l = na
+var float prev_swing_l = na
+var int swing_h_bar = na
+var int swing_l_bar = na
+if not na(ph)
+    prev_swing_h := swing_h
+    swing_h := ph
+    swing_h_bar := bar_index - struct_piv
+if not na(pl)
+    prev_swing_l := swing_l
+    swing_l := pl
+    swing_l_bar := bar_index - struct_piv
+
+var int structure_bias = 0
+bool hh = not na(ph) and not na(prev_swing_h) and ph > prev_swing_h
+bool lh = not na(ph) and not na(prev_swing_h) and ph <= prev_swing_h
+bool hl = not na(pl) and not na(prev_swing_l) and pl > prev_swing_l
+bool ll = not na(pl) and not na(prev_swing_l) and pl <= prev_swing_l
+if hh or hl
+    structure_bias := 1
+if lh or ll
+    structure_bias := -1
+bool break_high = use_structure and not na(swing_h) and C > swing_h
+bool break_low = use_structure and not na(swing_l) and C < swing_l
+bool choch_l = break_high and structure_bias == -1
+bool choch_s = break_low and structure_bias == 1
+bool bos_l = break_high and not choch_l
+bool bos_s = break_low and not choch_s
+
+bool sweep_high = use_sweep and not na(swing_h) and H > swing_h and C < swing_h and (H-swing_h) >= atr*sweep_atr
+bool sweep_low = use_sweep and not na(swing_l) and L < swing_l and C > swing_l and (swing_l-L) >= atr*sweep_atr
+var int sweep_low_age = 999
+var int sweep_high_age = 999
+if sweep_low
+    sweep_low_age := 0
+else
+    sweep_low_age += 1
+if sweep_high
+    sweep_high_age := 0
+else
+    sweep_high_age += 1
+
+bool ob_l = use_ob and (C-O) > atr*ob_atr and C[1] < O[1]
+bool ob_s = use_ob and (O-C) > atr*ob_atr and C[1] > O[1]
+bool fvg_l = use_fvg and L > H[2] and L-H[2] >= atr*fvg_atr
+bool fvg_s = use_fvg and H < L[2] and L[2]-H >= atr*fvg_atr
+bool smc_l = use_structure and (choch_l or bos_l) and sweep_low_age <= smc_window and (ob_l or fvg_l)
+bool smc_s = use_structure and (choch_s or bos_s) and sweep_high_age <= smc_window and (ob_s or fvg_s)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 8. SESSION STRUCTURE / TIMING MODIFIERS
+// ─────────────────────────────────────────────────────────────────────────────
+bool in_entry = not na(time(timeframe.period, rth_window, "America/New_York"))
+bool in_midday = not na(time(timeframe.period, midday_window, "America/New_York"))
+var float on_hi = na
+var float on_lo = na
+var float rth_open = na
+bool in_overnight = not na(time(timeframe.period, "1800-0930", "America/New_York"))
+bool rth_start = in_entry and not in_entry[1]
+if in_overnight
+    on_hi := math.max(nz(on_hi,H),H)
+    on_lo := math.min(nz(on_lo,L),L)
+if rth_start
+    rth_open := O
+float on_mid = not na(on_hi) and not na(on_lo) ? (on_hi+on_lo)*0.5 : na
+int session_bias = not na(on_mid) and not na(rth_open) ? (rth_open > on_mid ? 1 : -1) : 0
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 9. 12-VOTE ADAPTIVE CONFLUENCE
+// ─────────────────────────────────────────────────────────────────────────────
+// Votes: MTF, Fisher, VWAP, Conviction, Volume, RegimeAccel, CCI, Structure,
+//        Kalman, PMA, Entropy, Cyber. Each vote is binary; weights learn from
+//        realized RATE outcomes, but are clamped so no single engine dominates.
+var int[] hits = array.new_int(12,0)
+var int[] misses = array.new_int(12,0)
+var int[] hits_nf = array.new_int(12,0)
+var int[] misses_nf = array.new_int(12,0)
+
+f_w(int idx) =>
+    int h = array.get(hits,idx)
+    int m = array.get(misses,idx)
+    int hn = array.get(hits_nf,idx)
+    int mn = array.get(misses_nf,idx)
+    int nf = h+m
+    int nn = hn+mn
+    float af = nf > 0 ? float(h)/float(nf) : 0.5
+    float an = nn > 0 ? float(hn)/float(nn) : 0.5
+    float w = 1.0
+    if adaptive_weights and nf >= 10 and nn >= 10
+        w := math.max(0.25, math.min(1.75, 1.0 + (af-an)*4.0))
+    else if adaptive_weights and nf >= 10
+        w := math.max(0.50, math.min(1.50, 0.75 + (af-0.5)))
+    w
+
+bool v0l = mtf_long
+bool v0s = mtf_short
+bool v1l = fisher_l
+bool v1s = fisher_s
+bool v2l = vwap_l
+bool v2s = vwap_s
+bool v3l = rate_bull and regime_accel
+bool v3s = not rate_bull and regime_accel
+bool v4l = vol_surge and C > O
+bool v4s = vol_surge and C < O
+bool v5l = regime_accel and rate_bull
+bool v5s = regime_accel and not rate_bull
+bool v6l = cci_l
+bool v6s = cci_s
+bool v7l = smc_l or choch_l
+bool v7s = smc_s or choch_s
+bool v8l = kf_l
+bool v8s = kf_s
+bool v9l = pma_l
+bool v9s = pma_s
+bool v10l = pe_l
+bool v10s = pe_s
+bool v11l = cyber_l
+bool v11s = cyber_s
+
+float w0 = f_w(0)
+float w1 = f_w(1)
+float w2 = f_w(2)
+float w3 = f_w(3)
+float w4 = f_w(4)
+float w5 = f_w(5)
+float w6 = f_w(6)
+float w7 = f_w(7)
+float w8 = use_kalman ? f_w(8) : 0.0
+float w9 = use_pma ? f_w(9) : 0.0
+float w10 = use_pe ? f_w(10) : 0.0
+float w11 = use_cyber ? f_w(11) : 0.0
+float total_w = w0+w1+w2+w3+w4+w5+w6+w7+w8+w9+w10+w11
+int active = (w0>0.1?1:0)+(w1>0.1?1:0)+(w2>0.1?1:0)+(w3>0.1?1:0)+(w4>0.1?1:0)+(w5>0.1?1:0)+(w6>0.1?1:0)+(w7>0.1?1:0)+(w8>0.1?1:0)+(w9>0.1?1:0)+(w10>0.1?1:0)+(w11>0.1?1:0)
+float avg_w = active > 0 ? total_w/active : 1.0
+float raw_l = (v0l?w0:0)+(v1l?w1:0)+(v2l?w2:0)+(v3l?w3:0)+(v4l?w4:0)+(v5l?w5:0)+(v6l?w6:0)+(v7l?w7:0)+(v8l?w8:0)+(v9l?w9:0)+(v10l?w10:0)+(v11l?w11:0)
+float raw_s = (v0s?w0:0)+(v1s?w1:0)+(v2s?w2:0)+(v3s?w3:0)+(v4s?w4:0)+(v5s?w5:0)+(v6s?w6:0)+(v7s?w7:0)+(v8s?w8:0)+(v9s?w9:0)+(v10s?w10:0)+(v11s?w11:0)
+
+int fam_l = ((v0l or v2l or v9l)?1:0)+((v1l or v3l or v6l or v8l)?1:0)+((v4l or v5l)?1:0)+((v7l or v10l)?1:0)+(v11l?1:0)
+int fam_s = ((v0s or v2s or v9s)?1:0)+((v1s or v3s or v6s or v8s)?1:0)+((v4s or v5s)?1:0)+((v7s or v10s)?1:0)+(v11s?1:0)
+float fam_mod_l = fam_l >= 4 ? family_discount : 1.0
+float fam_mod_s = fam_s >= 4 ? family_discount : 1.0
+float smc_mod_l = smc_l ? smc_discount : 1.0
+float smc_mod_s = smc_s ? smc_discount : 1.0
+float final_l = raw_l * fam_mod_l * smc_mod_l
+float final_s = raw_s * fam_mod_s * smc_mod_s
+float base_frac = regime >= 0.65 ? 0.40 : regime >= 0.40 ? 0.50 : regime >= 0.25 ? 0.60 : 0.70
+int vote_slots = 8 + (use_kalman?1:0) + (use_pma?1:0) + (use_pe?1:0) + (use_cyber?1:0)
+float threshold = adaptive_threshold and active > 0 ? math.max(2.0, base_frac*vote_slots*(total_w/active)) : manual_votes
+if midday_penalty and in_midday
+    final_l -= 0.5*avg_w
+    final_s -= 0.5*avg_w
+bool conf_l = not use_confluence or final_l >= threshold
+bool conf_s = not use_confluence or final_s >= threshold
+if ltf_veto
+    conf_l := conf_l and not ltf_bad_long
+    conf_s := conf_s and not ltf_bad_short
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 10. RATE ARMING + ENTRY CONDITIONS
+// ─────────────────────────────────────────────────────────────────────────────
+var int flip_bar = na
+var int flip_dir = 0
+var float flip_close = na
+var bool flip_used = false
+if rate_long or rate_short
+    flip_bar := bar_index
+    flip_dir := rate_long ? 1 : -1
+    flip_close := C
+    flip_used := false
+int bars_since_flip = na(flip_bar) ? 999 : bar_index-flip_bar
+bool chase_l = na(flip_close) or max_chase_atr <= 0 or C-flip_close <= atr*max_chase_atr
+bool chase_s = na(flip_close) or max_chase_atr <= 0 or flip_close-C <= atr*max_chase_atr
+bool armed_l = rate_bull and flip_dir==1 and bars_since_flip<=arm_bars and not flip_used and chase_l
+bool armed_s = not rate_bull and flip_dir==-1 and bars_since_flip<=arm_bars and not flip_used and chase_s
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 11. TIDE — independent range-fade subsystem
+// ─────────────────────────────────────────────────────────────────────────────
+bool tw1 = not na(time(timeframe.period,"0500-0900","America/New_York"))
+bool tw2 = not na(time(timeframe.period,"0900-1300","America/New_York"))
+bool tw3 = not na(time(timeframe.period,"1300-1700","America/New_York"))
+bool tw = tw1 or tw2 or tw3
+var float tide_live_hi = na
+var float tide_live_lo = na
+var float tide_hi = na
+var float tide_lo = na
+bool tide_start = tw and not tw[1]
+bool tide_end = not tw and tw[1]
+if tide_start
+    tide_live_hi := H
+    tide_live_lo := L
+else if tw
+    tide_live_hi := math.max(nz(tide_live_hi,H),H)
+    tide_live_lo := math.min(nz(tide_live_lo,L),L)
+if tide_end
+    tide_hi := tide_live_hi
+    tide_lo := tide_live_lo
+var bool tide_below = false
+var bool tide_above = false
+var int tide_inside = 0
+if use_tide and not na(tide_hi) and C > tide_hi
+    tide_above := true
+    tide_below := false
+    tide_inside := 0
+else if use_tide and not na(tide_lo) and C < tide_lo
+    tide_below := true
+    tide_above := false
+    tide_inside := 0
+else if tide_above or tide_below
+    tide_inside += 1
+bool tide_bull = use_tide and tide_below and tide_inside==tide_confirm and (tide_mode=="Loose" or smc_l or sweep_low or choch_l)
+bool tide_bear = use_tide and tide_above and tide_inside==tide_confirm and (tide_mode=="Loose" or smc_s or sweep_high or choch_s)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 12. POSITION STATE + EXECUTION
+// ─────────────────────────────────────────────────────────────────────────────
+int rate_qty_open = 0
+bool rate_pos_long = false
+float rate_entry_price = na
+int rate_entry_bar = na
+int tide_qty_open = 0
+bool tide_pos_long = false
+if strategy.opentrades > 0
+    for i = 0 to strategy.opentrades-1
+        string eid = strategy.opentrades.entry_id(i)
+        float sz = strategy.opentrades.size(i)
+        if eid=="Long" or eid=="Short"
+            rate_qty_open += int(math.round(math.abs(sz)))
+            rate_pos_long := sz > 0
+            rate_entry_price := strategy.opentrades.entry_price(i)
+            rate_entry_bar := strategy.opentrades.entry_bar_index(i)
+        if eid=="TideLong" or eid=="TideShort"
+            tide_qty_open += int(math.round(math.abs(sz)))
+            tide_pos_long := sz > 0
+
+bool rate_entry_l = armed_l and conf_l and (not rth_gate or in_entry) and rate_qty_open==0
+bool rate_entry_s = armed_s and conf_s and (not rth_gate or in_entry) and rate_qty_open==0
+bool tide_conflict_l = rate_qty_open>0 and not rate_pos_long
+bool tide_conflict_s = rate_qty_open>0 and rate_pos_long
+
+if rate_entry_l and not tide_conflict_l
+    strategy.entry("Long", strategy.long, qty=qty)
+    flip_used := true
+if rate_entry_s and not tide_conflict_s
+    strategy.entry("Short", strategy.short, qty=qty)
+    flip_used := true
+if tide_bull and not tide_conflict_l and tide_qty_open==0
+    strategy.entry("TideLong", strategy.long, qty=tide_qty)
+if tide_bear and not tide_conflict_s and tide_qty_open==0
+    strategy.entry("TideShort", strategy.short, qty=tide_qty)
+
+// Brackets are placed continuously and use actual open-trade average price when
+// available. This avoids chart-type-dependent synthetic fill assumptions.
+float ep = nz(rate_entry_price, strategy.position_avg_price)
+int q1 = math.max(1, int(math.floor(qty*0.5)))
+int q2 = math.max(1, qty-q1)
+if rate_qty_open > 0 and not na(ep)
+    float long_tp1 = ep + tp1_pts
+    float long_tp2 = ep + tp2_pts
+    float long_sl = ep - sl_pts
+    float short_tp1 = ep - tp1_pts
+    float short_tp2 = ep - tp2_pts
+    float short_sl = ep + sl_pts
+    if rate_pos_long
+        strategy.exit("L-TP1", from_entry="Long", limit=long_tp1, stop=long_sl, qty=q1)
+        strategy.exit("L-TP2", from_entry="Long", limit=long_tp2, stop=long_sl, qty=q2)
+    else
+        strategy.exit("S-TP1", from_entry="Short", limit=short_tp1, stop=short_sl, qty=q1)
+        strategy.exit("S-TP2", from_entry="Short", limit=short_tp2, stop=short_sl, qty=q2)
+
+if use_flip_exit and rate_qty_open>0
+    if rate_pos_long and rate_short
+        strategy.close("Long", comment="RATE FLIP")
+    if not rate_pos_long and rate_long
+        strategy.close("Short", comment="RATE FLIP")
+
+int now_hhmm = hour(time,"America/New_York")*100 + minute(time,"America/New_York")
+if use_eod and now_hhmm >= eod_hhmm
+    if rate_qty_open>0
+        strategy.close("Long", comment="EOD")
+        strategy.close("Short", comment="EOD")
+    if tide_qty_open>0
+        strategy.close("TideLong", comment="EOD")
+        strategy.close("TideShort", comment="EOD")
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 13. REALIZED TRADE LEARNING — RATE ONLY
+// ─────────────────────────────────────────────────────────────────────────────
+var int last_closed = 0
+if strategy.closedtrades > last_closed
+    // Process every newly closed RATE trade so multiple closes on one bar do
+    // not silently discard learning observations. The current-bar vote state
+    // only affects future weights; it never rewrites a historical trade.
+    array<bool> vl = array.from(v0l,v1l,v2l,v3l,v4l,v5l,v6l,v7l,v8l,v9l,v10l,v11l)
+    array<bool> vs = array.from(v0s,v1s,v2s,v3s,v4s,v5s,v6s,v7s,v8s,v9s,v10s,v11s)
+    for ct = last_closed to strategy.closedtrades-1
+        string eidc = strategy.closedtrades.entry_id(ct)
+        float pnl = strategy.closedtrades.profit(ct)
+        bool won = pnl > 0
+        if eidc=="Long" or eidc=="Short"
+            for j = 0 to 11
+                bool fired = eidc=="Long" ? array.get(vl,j) : array.get(vs,j)
+                if fired
+                    if won
+                        array.set(hits,j,array.get(hits,j)+1)
+                    else
+                        array.set(misses,j,array.get(misses,j)+1)
+                else
+                    if won
+                        array.set(hits_nf,j,array.get(hits_nf,j)+1)
+                    else
+                        array.set(misses_nf,j,array.get(misses_nf,j)+1)
+    last_closed := strategy.closedtrades
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 14. VISUALS / HUD
+// ─────────────────────────────────────────────────────────────────────────────
+plot(st, "RATE Standard-OHLC", color=rate_bull?color.lime:color.red, linewidth=2)
+plot(show_structure ? swing_h : na, "Swing High", color=color.new(color.red,60), style=plot.style_linebr)
+plot(show_structure ? swing_l : na, "Swing Low", color=color.new(color.aqua,60), style=plot.style_linebr)
+plot(show_structure ? tide_hi : na, "TIDE High", color=color.new(color.orange,55), style=plot.style_linebr)
+plot(show_structure ? tide_lo : na, "TIDE Low", color=color.new(color.orange,55), style=plot.style_linebr)
+plotshape(show_signals and rate_entry_l, title="RATE LONG", style=shape.triangleup, location=location.belowbar, color=color.lime, size=size.tiny, text="RATE L")
+plotshape(show_signals and rate_entry_s, title="RATE SHORT", style=shape.triangledown, location=location.abovebar, color=color.red, size=size.tiny, text="RATE S")
+plotshape(show_signals and tide_bull, title="TIDE LONG", style=shape.circle, location=location.belowbar, color=color.aqua, size=size.tiny, text="TIDE")
+plotshape(show_signals and tide_bear, title="TIDE SHORT", style=shape.circle, location=location.abovebar, color=color.orange, size=size.tiny, text="TIDE")
+plotshape(show_structure and choch_l, title="CHoCH L", style=shape.diamond, location=location.belowbar, color=color.yellow, size=size.tiny)
+plotshape(show_structure and choch_s, title="CHoCH S", style=shape.diamond, location=location.abovebar, color=color.yellow, size=size.tiny)
+
+var table hud = table.new(position.top_right, 2, 10, border_width=1)
+if show_hud and barstate.islast
+    table.cell(hud,0,0,"ICARUS",text_color=color.white)
+    table.cell(hud,1,0,"REGULAR / STANDARD",text_color=color.lime)
+    table.cell(hud,0,1,"Regime",text_color=color.white)
+    table.cell(hud,1,1,regime_name,text_color=color.white)
+    table.cell(hud,0,2,"RATE",text_color=color.white)
+    table.cell(hud,1,2,rate_bull?"BULL":"BEAR",text_color=rate_bull?color.lime:color.red)
+    table.cell(hud,0,3,"FDI / Hurst",text_color=color.white)
+    table.cell(hud,1,3,str.tostring(fdi,"#.##")+" / "+str.tostring(hurst,"#.##"),text_color=color.white)
+    table.cell(hud,0,4,"HTF",text_color=color.white)
+    table.cell(hud,1,4,str.tostring(htf_bull)+"L / "+str.tostring(htf_bear)+"S",text_color=color.white)
+    table.cell(hud,0,5,"Votes",text_color=color.white)
+    table.cell(hud,1,5,str.tostring(final_l,"#.##")+" / "+str.tostring(final_s,"#.##"),text_color=color.white)
+    table.cell(hud,0,6,"Threshold",text_color=color.white)
+    table.cell(hud,1,6,str.tostring(threshold,"#.##"),text_color=color.white)
+    table.cell(hud,0,7,"PE",text_color=color.white)
+    table.cell(hud,1,7,str.tostring(pe_norm,"#.##"),text_color=color.white)
+    table.cell(hud,0,8,"Kalman",text_color=color.white)
+    table.cell(hud,1,8,str.tostring(kf_vel,"#.##"),text_color=color.white)
+    table.cell(hud,0,9,"Data",text_color=color.white)
+    table.cell(hud,1,9,"STANDARD OHLC",text_color=color.lime)
+
+// Explicit alert conditions for automation.
+alertcondition(rate_entry_l, "ICARUS RATE LONG", "ICARUS RATE LONG — standard OHLC")
+alertcondition(rate_entry_s, "ICARUS RATE SHORT", "ICARUS RATE SHORT — standard OHLC")
+alertcondition(tide_bull, "ICARUS TIDE LONG", "ICARUS TIDE LONG — standard OHLC")
+alertcondition(tide_bear, "ICARUS TIDE SHORT", "ICARUS TIDE SHORT — standard OHLC")

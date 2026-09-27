@@ -1,0 +1,42 @@
+
+test_atr_adapter_causal (test_adapters.AdapterTests.test_atr_adapter_causal) ... ok
+test_macro_adapter_causal (test_adapters.AdapterTests.test_macro_adapter_causal) ... ok
+test_partitions_keep_final_holdout (test_adapters.AdapterTests.test_partitions_keep_final_holdout) ... ok
+test_adx_causal (test_btc_master.BTCMasterTests.test_adx_causal) ... ok
+test_exit_composite (test_btc_master.BTCMasterTests.test_exit_composite) ... ok
+test_ichimoku_causal (test_btc_master.BTCMasterTests.test_ichimoku_causal) ... ok
+test_pullback_causal (test_btc_master.BTCMasterTests.test_pullback_causal) ... ok
+test_backdated_pivot_is_detected (test_causality.CausalityTests.test_backdated_pivot_is_detected) ... ok
+test_confirmed_pivot_is_prefix_invariant (test_causality.CausalityTests.test_confirmed_pivot_is_prefix_invariant) ... ok
+test_prefix_slices_bar_aligned_metadata (test_core_metadata.CoreMetadataTests.test_prefix_slices_bar_aligned_metadata) ... ok
+test_prefix_slices_nested_bar_aligned_metadata (test_core_nested_metadata.NestedMetadataTests.test_prefix_slices_nested_bar_aligned_metadata) ... ok
+test_tombstone_and_revive_are_reversible (test_decision_ledger.LedgerTests.test_tombstone_and_revive_are_reversible) ... ok
+test_no_oos_caps_grade (test_evidence.EvidenceTests.test_no_oos_caps_grade) ... ok
+test_review_cannot_be_direct_performance_evidence (test_evidence.EvidenceTests.test_review_cannot_be_direct_performance_evidence) ... ok
+test_strong_oos_costed_evidence_can_reach_A (test_evidence.EvidenceTests.test_strong_oos_costed_evidence_can_reach_A) ... ok
+test_cycle_is_rejected (test_evidence_firewall.FirewallTests.test_cycle_is_rejected) ... ok
+test_duplicate_observation_not_double_counted (test_evidence_firewall.FirewallTests.test_duplicate_observation_not_double_counted) ... ok
+test_partial_fill_and_cost_reduce_total (test_execution_stress.ExecutionStressTests.test_partial_fill_and_cost_reduce_total) ... ok
+test_factor_adapter_causal (test_factor.FactorTests.test_factor_adapter_causal) ... ok
+test_future_factor_availability_is_rejected (test_factor.FactorTests.test_future_factor_availability_is_rejected) ... ok
+test_conflict_forces_abstention (test_horizon.HorizonTests.test_conflict_forces_abstention) ... ok
+test_consensus_passes (test_horizon.HorizonTests.test_consensus_passes) ... ok
+test_challenger_causal_and_event_time (test_liquidity.LiquidityTests.test_challenger_causal_and_event_time) ... ok
+test_cost_harness_penalizes (test_liquidity.LiquidityTests.test_cost_harness_penalizes) ... ok
+test_incumbent_causal_and_event_time (test_liquidity.LiquidityTests.test_incumbent_causal_and_event_time) ... ok
+test_deterministic (test_negative_controls.NegativeControlTests.test_deterministic) ... ok
+test_only_rewrites_active_signals (test_negative_controls.NegativeControlTests.test_only_rewrites_active_signals) ... ok
+test_knn_ood_is_causal_and_detects_spike (test_regime_ood.RegimeOODTests.test_knn_ood_is_causal_and_detects_spike) ... ok
+test_vol_regime_is_causal (test_regime_ood.RegimeOODTests.test_vol_regime_is_causal) ... ok
+test_bootstrap_ci_contains_mean (test_robustness.RobustnessTests.test_bootstrap_ci_contains_mean) ... ok
+test_multiple_testing_adjusts_upward (test_robustness.RobustnessTests.test_multiple_testing_adjusts_upward) ... ok
+test_sign_flip_reasonable (test_robustness.RobustnessTests.test_sign_flip_reasonable) ... ok
+test_walk_forward_never_touches_holdout (test_robustness.RobustnessTests.test_walk_forward_never_touches_holdout) ... ok
+test_crossing_zero_cannot_promote (test_tournament.TournamentTests.test_crossing_zero_cannot_promote) ... ok
+test_specialist_requires_same_rigor (test_tournament.TournamentTests.test_specialist_requires_same_rigor) ... ok
+test_strong_candidate_can_promote_shadow (test_tournament.TournamentTests.test_strong_candidate_can_promote_shadow) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 0.540s
+
+OK

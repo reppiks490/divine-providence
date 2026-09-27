@@ -1,0 +1,7 @@
+JANUS Run 030 verification report
+- Parent Run 029 baseline reproduced: 108/108 tests passed.
+- TDD RED: 3/3 Run 030 tests failed because build_storage_state_certificate, run_host_permission_fault_probe, and live_reconciliation_gate were absent.
+- Focused GREEN: 3/3 Run 030 tests passed after implementation.
+- Review RED: clean Git checkout without explicit expected hashes incorrectly qualified as reconciled; certificate lacked an explicit forensic root-link binding.
+- Review GREEN: reconciliation now returns expected_hashes_required; certificate now binds forensic_root_link_digest and enforces root-link session/recovery/receipt/quarantine consistency.
+- Full final test count to be written in the authoritative standalone Run 030 capsule after final verification.

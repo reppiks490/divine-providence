@@ -1,0 +1,37 @@
+{
+  "project": "Icarus",
+  "seed_version": "2026-09-24-a",
+  "components": [
+    {"name":"NEXUS","authority":"market_data_fabric","depends_on":[]},
+    {"name":"AION","authority":"durable_evidence_memory","depends_on":["NEXUS"]},
+    {"name":"ARGUS","authority":"microstructure_execution_physics","depends_on":["NEXUS"]},
+    {"name":"ATHENA","authority":"supervisory_state_risk_routing","depends_on":["NEXUS","AION","ARGUS"]},
+    {"name":"DAEDALUS","authority":"scientific_validation_promotion","depends_on":["NEXUS","AION"]},
+    {"name":"ICARUS","authority":"production_execution","depends_on":["ATHENA","ARGUS","DAEDALUS"]},
+    {"name":"JANUS","authority":"project_twin_reconciliation_handoff","depends_on":["NEXUS","AION","ARGUS","ATHENA","DAEDALUS","ICARUS"]}
+  ],
+  "facts": [
+    {"subject":"NEXUS.tests","predicate":"passed","value":80,"valid_from":"2026-09-23T00:00:00Z","known_at":"2026-09-23T12:00:00Z","source":"READ_FIRST_SOL_EXTRA_HIGH.md","confidence":"reported"},
+    {"subject":"NEXUS.tests","predicate":"passed","value":117,"valid_from":"2026-09-23T18:00:00Z","known_at":"2026-09-24T00:00:00Z","source":"START_HERE_SOL_EXTRA_HIGH_v0.3.md","confidence":"reported"},
+    {"subject":"NEXUS.corpus.usable_csv","predicate":"count","value":238,"valid_from":"2026-09-23T00:00:00Z","known_at":"2026-09-23T12:00:00Z","source":"START_HERE_SOL_EXTRA_HIGH_v0.3.md","confidence":"reported"},
+    {"subject":"AION.prior_corpus.usable_entries","predicate":"count","value":626,"valid_from":"2026-09-23T00:00:00Z","known_at":"2026-09-23T12:00:00Z","source":"START_HERE_SOL_EXTRA_HIGH_v0.3.md","confidence":"reported"},
+    {"subject":"NEXUS.coverage_claim_allowed","predicate":"is","value":false,"valid_from":"2026-09-23T00:00:00Z","known_at":"2026-09-23T12:00:00Z","source":"START_HERE_SOL_EXTRA_HIGH_v0.3.md","confidence":"authoritative_handoff"}
+  ],
+  "candidates": [
+    {"id":"C001","title":"Authoritative corpus reconciliation","impact":0.95,"centrality":0.95,"uncertainty_reduction":1.0,"reusability":0.9,"failure_pressure":0.8,"evidence_gap":1.0,"cost":0.65,"regression_risk":0.2,"duplication_risk":0.15},
+    {"id":"C002","title":"Proof-carrying cross-model handoff round-trip","impact":0.95,"centrality":1.0,"uncertainty_reduction":0.9,"reusability":1.0,"failure_pressure":0.9,"evidence_gap":0.9,"cost":0.35,"regression_risk":0.1,"duplication_risk":0.1},
+    {"id":"C003","title":"Live repo semantic reconciliation engine","impact":0.9,"centrality":0.95,"uncertainty_reduction":0.95,"reusability":0.95,"failure_pressure":0.8,"evidence_gap":0.85,"cost":0.55,"regression_risk":0.25,"duplication_risk":0.2},
+    {"id":"C004","title":"Representation-specific clock policy completion","impact":0.9,"centrality":0.85,"uncertainty_reduction":0.9,"reusability":0.85,"failure_pressure":0.75,"evidence_gap":0.9,"cost":0.6,"regression_risk":0.25,"duplication_risk":0.15}
+  ],
+  "invariants": [
+    "Preserve raw lineage and duplicate-source provenance.",
+    "Do not infer stream identity solely from filename claims.",
+    "Preserve repeated/fractional timestamps and source-local order.",
+    "Distinguish event, availability and ingestion/receipt time.",
+    "Do not fabricate historical availability time.",
+    "Do not call candle proxies true L2/order flow.",
+    "Do not use future-aware preprocessing in historical evaluation.",
+    "JANUS must not absorb sibling authority.",
+    "A proof bundle is required before a candidate may be represented as promoted."
+  ]
+}

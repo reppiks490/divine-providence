@@ -1,0 +1,711 @@
+{
+  "aion": {
+    "decision_ns": 160,
+    "derivation_hash": null,
+    "derivation_hashes": [],
+    "derivation_observations": [],
+    "derivation_source_specs": [],
+    "frame_hash": "b9056e25cf6474002399876f4b8290cf0b8747d2c9ae5b149898ccff07c9a199",
+    "observations": [
+      {
+        "availability_basis": "verified_bar_close",
+        "available_ns": 160,
+        "event_ns": 100,
+        "evidence_tier": 1,
+        "ingested_ns": 170,
+        "kind": "bar",
+        "payload": {
+          "close": 1.5,
+          "high": 2,
+          "low": 0.5,
+          "open": 1
+        },
+        "plane": "research",
+        "published_ns": null,
+        "quality_flags": [],
+        "revision": 1,
+        "sequence": 0,
+        "source_event_id": "bar:0",
+        "source_id": "csv:A:aaaaaaaaaaaa"
+      },
+      {
+        "availability_basis": "verified_bar_close",
+        "available_ns": 160,
+        "event_ns": 100,
+        "evidence_tier": 1,
+        "ingested_ns": 170,
+        "kind": "bar",
+        "payload": {
+          "close": 2.5,
+          "high": 3,
+          "low": 1.5,
+          "open": 2
+        },
+        "plane": "research",
+        "published_ns": null,
+        "quality_flags": [],
+        "revision": 1,
+        "sequence": 0,
+        "source_event_id": "bar:0",
+        "source_id": "csv:B:bbbbbbbbbbbb"
+      },
+      {
+        "availability_basis": "observed_receipt",
+        "available_ns": 160,
+        "event_ns": 160,
+        "evidence_tier": 1,
+        "ingested_ns": 170,
+        "kind": "context",
+        "payload": {
+          "configured_slo_streams": [
+            "csv:A:aaaaaaaaaaaa",
+            "csv:B:bbbbbbbbbbbb"
+          ],
+          "decision_ns": 160,
+          "failed_streams": [],
+          "healthy_fraction": 1.0,
+          "healthy_streams": [
+            "csv:A:aaaaaaaaaaaa",
+            "csv:B:bbbbbbbbbbbb"
+          ],
+          "plane_hash": "edb0530db177daf84d92e63a2eece9e7d5c62afd382a39708d616e41fe7b9ce5",
+          "snapshots": {
+            "csv:A:aaaaaaaaaaaa": {
+              "availability_before_event_samples": 0,
+              "availability_unknown_samples": 0,
+              "availability_violations": 0,
+              "clock_uncertainty_ns_latest": 0,
+              "clock_uncertainty_ns_max": 0,
+              "connected": true,
+              "impossible_time_samples": 0,
+              "last_available_ns": 160,
+              "last_event_ns": 100,
+              "last_received_ns": 170,
+              "longest_gap": 0,
+              "missing_sequence_slots": 0,
+              "out_of_order_receipts": 0,
+              "receipt_before_available_samples": 0,
+              "receipt_clock_violations": 0,
+              "receive_lag_ns_latest": 10,
+              "receive_lag_ns_max": 10,
+              "receive_lag_ns_p95": 10,
+              "receive_lag_samples": 1,
+              "reconnect_epochs": 0,
+              "revision_events": 0,
+              "revision_rate": 0.0,
+              "samples": 1,
+              "sequence_gap_runs": 0,
+              "sequence_nonmonotone_events": 0,
+              "slo_failures": [],
+              "slo_passed": true,
+              "stream_id": "csv:A:aaaaaaaaaaaa"
+            },
+            "csv:B:bbbbbbbbbbbb": {
+              "availability_before_event_samples": 0,
+              "availability_unknown_samples": 0,
+              "availability_violations": 0,
+              "clock_uncertainty_ns_latest": 0,
+              "clock_uncertainty_ns_max": 0,
+              "connected": true,
+              "impossible_time_samples": 0,
+              "last_available_ns": 160,
+              "last_event_ns": 100,
+              "last_received_ns": 170,
+              "longest_gap": 0,
+              "missing_sequence_slots": 0,
+              "out_of_order_receipts": 0,
+              "receipt_before_available_samples": 0,
+              "receipt_clock_violations": 0,
+              "receive_lag_ns_latest": 10,
+              "receive_lag_ns_max": 10,
+              "receive_lag_ns_p95": 10,
+              "receive_lag_samples": 1,
+              "reconnect_epochs": 0,
+              "revision_events": 0,
+              "revision_rate": 0.0,
+              "samples": 1,
+              "sequence_gap_runs": 0,
+              "sequence_nonmonotone_events": 0,
+              "slo_failures": [],
+              "slo_passed": true,
+              "stream_id": "csv:B:bbbbbbbbbbbb"
+            }
+          },
+          "stream_count": 2,
+          "unknown_slo_streams": []
+        },
+        "plane": "research",
+        "published_ns": null,
+        "quality_flags": [
+          "nexus_source_health"
+        ],
+        "revision": 1,
+        "sequence": null,
+        "source_event_id": "health:edb0530db177daf84d92e63a",
+        "source_id": "NEXUS:HEALTH:edb0530db177daf84d92"
+      }
+    ],
+    "production_authorized": false,
+    "source_health": {
+      "configured_slo_streams": [
+        "csv:A:aaaaaaaaaaaa",
+        "csv:B:bbbbbbbbbbbb"
+      ],
+      "decision_ns": 160,
+      "failed_streams": [],
+      "healthy_fraction": 1.0,
+      "healthy_streams": [
+        "csv:A:aaaaaaaaaaaa",
+        "csv:B:bbbbbbbbbbbb"
+      ],
+      "plane_hash": "edb0530db177daf84d92e63a2eece9e7d5c62afd382a39708d616e41fe7b9ce5",
+      "snapshots": {
+        "csv:A:aaaaaaaaaaaa": {
+          "availability_before_event_samples": 0,
+          "availability_unknown_samples": 0,
+          "availability_violations": 0,
+          "clock_uncertainty_ns_latest": 0,
+          "clock_uncertainty_ns_max": 0,
+          "connected": true,
+          "impossible_time_samples": 0,
+          "last_available_ns": 160,
+          "last_event_ns": 100,
+          "last_received_ns": 170,
+          "longest_gap": 0,
+          "missing_sequence_slots": 0,
+          "out_of_order_receipts": 0,
+          "receipt_before_available_samples": 0,
+          "receipt_clock_violations": 0,
+          "receive_lag_ns_latest": 10,
+          "receive_lag_ns_max": 10,
+          "receive_lag_ns_p95": 10,
+          "receive_lag_samples": 1,
+          "reconnect_epochs": 0,
+          "revision_events": 0,
+          "revision_rate": 0.0,
+          "samples": 1,
+          "sequence_gap_runs": 0,
+          "sequence_nonmonotone_events": 0,
+          "slo_failures": [],
+          "slo_passed": true,
+          "stream_id": "csv:A:aaaaaaaaaaaa"
+        },
+        "csv:B:bbbbbbbbbbbb": {
+          "availability_before_event_samples": 0,
+          "availability_unknown_samples": 0,
+          "availability_violations": 0,
+          "clock_uncertainty_ns_latest": 0,
+          "clock_uncertainty_ns_max": 0,
+          "connected": true,
+          "impossible_time_samples": 0,
+          "last_available_ns": 160,
+          "last_event_ns": 100,
+          "last_received_ns": 170,
+          "longest_gap": 0,
+          "missing_sequence_slots": 0,
+          "out_of_order_receipts": 0,
+          "receipt_before_available_samples": 0,
+          "receipt_clock_violations": 0,
+          "receive_lag_ns_latest": 10,
+          "receive_lag_ns_max": 10,
+          "receive_lag_ns_p95": 10,
+          "receive_lag_samples": 1,
+          "reconnect_epochs": 0,
+          "revision_events": 0,
+          "revision_rate": 0.0,
+          "samples": 1,
+          "sequence_gap_runs": 0,
+          "sequence_nonmonotone_events": 0,
+          "slo_failures": [],
+          "slo_passed": true,
+          "stream_id": "csv:B:bbbbbbbbbbbb"
+        }
+      },
+      "stream_count": 2,
+      "unknown_slo_streams": []
+    },
+    "source_health_plane_hash": "edb0530db177daf84d92e63a2eece9e7d5c62afd382a39708d616e41fe7b9ce5",
+    "source_specs": [
+      {
+        "capabilities": [
+          "bar"
+        ],
+        "evidence_reference": "A.csv",
+        "license_reference": "requires_source_review",
+        "max_evidence_tier": 1,
+        "origin": "historical_csv",
+        "representation_id": "clock:1m",
+        "sequence_policy": "monotone",
+        "source_id": "csv:A:aaaaaaaaaaaa",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "symbol": "A"
+      },
+      {
+        "capabilities": [
+          "bar"
+        ],
+        "evidence_reference": "B.csv",
+        "license_reference": "requires_source_review",
+        "max_evidence_tier": 1,
+        "origin": "historical_csv",
+        "representation_id": "clock:1m",
+        "sequence_policy": "monotone",
+        "source_id": "csv:B:bbbbbbbbbbbb",
+        "source_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "symbol": "B"
+      },
+      {
+        "capabilities": [
+          "context"
+        ],
+        "evidence_reference": "health-plane:edb0530db177daf84d92e63a2eece9e7d5c62afd382a39708d616e41fe7b9ce5",
+        "license_reference": "inherits_inputs",
+        "max_evidence_tier": 1,
+        "origin": "nexus_derived",
+        "representation_id": "nexus.source-health.v1",
+        "sequence_policy": "none",
+        "source_id": "NEXUS:HEALTH:edb0530db177daf84d92",
+        "source_sha256": "5211efa15919d879cecda3a170644496db85cc0ac926c86bcc20bee4cf2ca84e",
+        "symbol": "NEXUS_HEALTH"
+      }
+    ]
+  },
+  "argus": {
+    "consumer": "ARGUS",
+    "contract": "nexus.market-state.v2",
+    "data_plane": "research",
+    "decision_ns": 160,
+    "evidence_tier": "CANDLE_PROXY",
+    "factors": {
+      "risk": 0.2,
+      "tech": 0.4
+    },
+    "features": [
+      {
+        "event_time_ns": 160,
+        "evidence_tier": 1,
+        "name": "nexus.factor.risk",
+        "reason": "NEXUS CSV/market-context derived factor; never trade/depth truth",
+        "source_id": "NEXUS:b9056e25cf6474002399876f4b8290cf0b8747d2c9ae5b149898ccff07c9a199",
+        "value": 0.2
+      },
+      {
+        "event_time_ns": 160,
+        "evidence_tier": 1,
+        "name": "nexus.factor.tech",
+        "reason": "NEXUS CSV/market-context derived factor; never trade/depth truth",
+        "source_id": "NEXUS:b9056e25cf6474002399876f4b8290cf0b8747d2c9ae5b149898ccff07c9a199",
+        "value": 0.4
+      }
+    ],
+    "frame_hash": "b9056e25cf6474002399876f4b8290cf0b8747d2c9ae5b149898ccff07c9a199",
+    "lineage": [
+      {
+        "availability_basis": "verified_bar_close",
+        "available_ns": 160,
+        "event_ns": 100,
+        "revision": 0,
+        "source_path": "A.csv",
+        "source_sequence": 0,
+        "stream_id": "csv:A:aaaaaaaaaaaa"
+      },
+      {
+        "availability_basis": "verified_bar_close",
+        "available_ns": 160,
+        "event_ns": 100,
+        "revision": 0,
+        "source_path": "B.csv",
+        "source_sequence": 0,
+        "stream_id": "csv:B:bbbbbbbbbbbb"
+      },
+      {
+        "decision_ns": 160,
+        "failed_streams": [],
+        "healthy_fraction": 1.0,
+        "kind": "nexus_source_health_plane",
+        "plane_hash": "edb0530db177daf84d92e63a2eece9e7d5c62afd382a39708d616e41fe7b9ce5",
+        "stream_count": 2,
+        "unknown_slo_streams": []
+      }
+    ],
+    "microstructure_truth": false,
+    "ood": {
+      "novelty": 0.1
+    },
+    "production_authorized": false,
+    "quality": {
+      "coverage": 1.0
+    },
+    "same_instant_batch_size": 2,
+    "source_health": {
+      "configured_slo_streams": [
+        "csv:A:aaaaaaaaaaaa",
+        "csv:B:bbbbbbbbbbbb"
+      ],
+      "decision_ns": 160,
+      "failed_streams": [],
+      "healthy_fraction": 1.0,
+      "healthy_streams": [
+        "csv:A:aaaaaaaaaaaa",
+        "csv:B:bbbbbbbbbbbb"
+      ],
+      "plane_hash": "edb0530db177daf84d92e63a2eece9e7d5c62afd382a39708d616e41fe7b9ce5",
+      "snapshots": {
+        "csv:A:aaaaaaaaaaaa": {
+          "availability_before_event_samples": 0,
+          "availability_unknown_samples": 0,
+          "availability_violations": 0,
+          "clock_uncertainty_ns_latest": 0,
+          "clock_uncertainty_ns_max": 0,
+          "connected": true,
+          "impossible_time_samples": 0,
+          "last_available_ns": 160,
+          "last_event_ns": 100,
+          "last_received_ns": 170,
+          "longest_gap": 0,
+          "missing_sequence_slots": 0,
+          "out_of_order_receipts": 0,
+          "receipt_before_available_samples": 0,
+          "receipt_clock_violations": 0,
+          "receive_lag_ns_latest": 10,
+          "receive_lag_ns_max": 10,
+          "receive_lag_ns_p95": 10,
+          "receive_lag_samples": 1,
+          "reconnect_epochs": 0,
+          "revision_events": 0,
+          "revision_rate": 0.0,
+          "samples": 1,
+          "sequence_gap_runs": 0,
+          "sequence_nonmonotone_events": 0,
+          "slo_failures": [],
+          "slo_passed": true,
+          "stream_id": "csv:A:aaaaaaaaaaaa"
+        },
+        "csv:B:bbbbbbbbbbbb": {
+          "availability_before_event_samples": 0,
+          "availability_unknown_samples": 0,
+          "availability_violations": 0,
+          "clock_uncertainty_ns_latest": 0,
+          "clock_uncertainty_ns_max": 0,
+          "connected": true,
+          "impossible_time_samples": 0,
+          "last_available_ns": 160,
+          "last_event_ns": 100,
+          "last_received_ns": 170,
+          "longest_gap": 0,
+          "missing_sequence_slots": 0,
+          "out_of_order_receipts": 0,
+          "receipt_before_available_samples": 0,
+          "receipt_clock_violations": 0,
+          "receive_lag_ns_latest": 10,
+          "receive_lag_ns_max": 10,
+          "receive_lag_ns_p95": 10,
+          "receive_lag_samples": 1,
+          "reconnect_epochs": 0,
+          "revision_events": 0,
+          "revision_rate": 0.0,
+          "samples": 1,
+          "sequence_gap_runs": 0,
+          "sequence_nonmonotone_events": 0,
+          "slo_failures": [],
+          "slo_passed": true,
+          "stream_id": "csv:B:bbbbbbbbbbbb"
+        }
+      },
+      "stream_count": 2,
+      "unknown_slo_streams": []
+    },
+    "topology": {
+      "entropy": 0.7
+    }
+  },
+  "athena": {
+    "advisory_only": true,
+    "consumer": "ATHENA",
+    "contract": "nexus.market-state.v2",
+    "data_plane": "research",
+    "decision_ns": 160,
+    "factors": {
+      "risk": 0.2,
+      "tech": 0.4
+    },
+    "frame_hash": "b9056e25cf6474002399876f4b8290cf0b8747d2c9ae5b149898ccff07c9a199",
+    "lineage": [
+      {
+        "availability_basis": "verified_bar_close",
+        "available_ns": 160,
+        "event_ns": 100,
+        "revision": 0,
+        "source_path": "A.csv",
+        "source_sequence": 0,
+        "stream_id": "csv:A:aaaaaaaaaaaa"
+      },
+      {
+        "availability_basis": "verified_bar_close",
+        "available_ns": 160,
+        "event_ns": 100,
+        "revision": 0,
+        "source_path": "B.csv",
+        "source_sequence": 0,
+        "stream_id": "csv:B:bbbbbbbbbbbb"
+      },
+      {
+        "decision_ns": 160,
+        "failed_streams": [],
+        "healthy_fraction": 1.0,
+        "kind": "nexus_source_health_plane",
+        "plane_hash": "edb0530db177daf84d92e63a2eece9e7d5c62afd382a39708d616e41fe7b9ce5",
+        "stream_count": 2,
+        "unknown_slo_streams": []
+      }
+    ],
+    "ood": {
+      "novelty": 0.1
+    },
+    "production_authorized": false,
+    "provenance": [
+      {
+        "event_time_ns": 100,
+        "ingestion_time_ns": 170,
+        "lineage_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "plane": "research",
+        "quality_flags": [],
+        "representation_id": "clock:1m",
+        "source_id": "csv:A:aaaaaaaaaaaa",
+        "version": "nexus-v0.3.0"
+      },
+      {
+        "event_time_ns": 100,
+        "ingestion_time_ns": 170,
+        "lineage_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "plane": "research",
+        "quality_flags": [],
+        "representation_id": "clock:1m",
+        "source_id": "csv:B:bbbbbbbbbbbb",
+        "version": "nexus-v0.3.0"
+      }
+    ],
+    "purpose": "state_input",
+    "quality": {
+      "coverage": 1.0
+    },
+    "same_instant_batch_size": 2,
+    "source_health": {
+      "configured_slo_streams": [
+        "csv:A:aaaaaaaaaaaa",
+        "csv:B:bbbbbbbbbbbb"
+      ],
+      "decision_ns": 160,
+      "failed_streams": [],
+      "healthy_fraction": 1.0,
+      "healthy_streams": [
+        "csv:A:aaaaaaaaaaaa",
+        "csv:B:bbbbbbbbbbbb"
+      ],
+      "plane_hash": "edb0530db177daf84d92e63a2eece9e7d5c62afd382a39708d616e41fe7b9ce5",
+      "snapshots": {
+        "csv:A:aaaaaaaaaaaa": {
+          "availability_before_event_samples": 0,
+          "availability_unknown_samples": 0,
+          "availability_violations": 0,
+          "clock_uncertainty_ns_latest": 0,
+          "clock_uncertainty_ns_max": 0,
+          "connected": true,
+          "impossible_time_samples": 0,
+          "last_available_ns": 160,
+          "last_event_ns": 100,
+          "last_received_ns": 170,
+          "longest_gap": 0,
+          "missing_sequence_slots": 0,
+          "out_of_order_receipts": 0,
+          "receipt_before_available_samples": 0,
+          "receipt_clock_violations": 0,
+          "receive_lag_ns_latest": 10,
+          "receive_lag_ns_max": 10,
+          "receive_lag_ns_p95": 10,
+          "receive_lag_samples": 1,
+          "reconnect_epochs": 0,
+          "revision_events": 0,
+          "revision_rate": 0.0,
+          "samples": 1,
+          "sequence_gap_runs": 0,
+          "sequence_nonmonotone_events": 0,
+          "slo_failures": [],
+          "slo_passed": true,
+          "stream_id": "csv:A:aaaaaaaaaaaa"
+        },
+        "csv:B:bbbbbbbbbbbb": {
+          "availability_before_event_samples": 0,
+          "availability_unknown_samples": 0,
+          "availability_violations": 0,
+          "clock_uncertainty_ns_latest": 0,
+          "clock_uncertainty_ns_max": 0,
+          "connected": true,
+          "impossible_time_samples": 0,
+          "last_available_ns": 160,
+          "last_event_ns": 100,
+          "last_received_ns": 170,
+          "longest_gap": 0,
+          "missing_sequence_slots": 0,
+          "out_of_order_receipts": 0,
+          "receipt_before_available_samples": 0,
+          "receipt_clock_violations": 0,
+          "receive_lag_ns_latest": 10,
+          "receive_lag_ns_max": 10,
+          "receive_lag_ns_p95": 10,
+          "receive_lag_samples": 1,
+          "reconnect_epochs": 0,
+          "revision_events": 0,
+          "revision_rate": 0.0,
+          "samples": 1,
+          "sequence_gap_runs": 0,
+          "sequence_nonmonotone_events": 0,
+          "slo_failures": [],
+          "slo_passed": true,
+          "stream_id": "csv:B:bbbbbbbbbbbb"
+        }
+      },
+      "stream_count": 2,
+      "unknown_slo_streams": []
+    },
+    "topology": {
+      "entropy": 0.7
+    }
+  },
+  "bundle_hash": "f750e97f123be8419a252d3f6810db66efb6427ff9f78483e74cea2a818d7373",
+  "daedalus": {
+    "candidate": {
+      "decision_ns": 160,
+      "derivation_hash": null,
+      "derivation_hashes": [],
+      "factors": {
+        "risk": 0.2,
+        "tech": 0.4
+      },
+      "frame_hash": "b9056e25cf6474002399876f4b8290cf0b8747d2c9ae5b149898ccff07c9a199",
+      "kind": "nexus_market_instant",
+      "lineage": [
+        {
+          "availability_basis": "verified_bar_close",
+          "available_ns": 160,
+          "event_ns": 100,
+          "revision": 0,
+          "source_path": "A.csv",
+          "source_sequence": 0,
+          "stream_id": "csv:A:aaaaaaaaaaaa"
+        },
+        {
+          "availability_basis": "verified_bar_close",
+          "available_ns": 160,
+          "event_ns": 100,
+          "revision": 0,
+          "source_path": "B.csv",
+          "source_sequence": 0,
+          "stream_id": "csv:B:bbbbbbbbbbbb"
+        },
+        {
+          "decision_ns": 160,
+          "failed_streams": [],
+          "healthy_fraction": 1.0,
+          "kind": "nexus_source_health_plane",
+          "plane_hash": "edb0530db177daf84d92e63a2eece9e7d5c62afd382a39708d616e41fe7b9ce5",
+          "stream_count": 2,
+          "unknown_slo_streams": []
+        }
+      ],
+      "ood": {
+        "novelty": 0.1
+      },
+      "quality": {
+        "coverage": 1.0
+      },
+      "source_health": {
+        "configured_slo_streams": [
+          "csv:A:aaaaaaaaaaaa",
+          "csv:B:bbbbbbbbbbbb"
+        ],
+        "decision_ns": 160,
+        "failed_streams": [],
+        "healthy_fraction": 1.0,
+        "healthy_streams": [
+          "csv:A:aaaaaaaaaaaa",
+          "csv:B:bbbbbbbbbbbb"
+        ],
+        "plane_hash": "edb0530db177daf84d92e63a2eece9e7d5c62afd382a39708d616e41fe7b9ce5",
+        "snapshots": {
+          "csv:A:aaaaaaaaaaaa": {
+            "availability_before_event_samples": 0,
+            "availability_unknown_samples": 0,
+            "availability_violations": 0,
+            "clock_uncertainty_ns_latest": 0,
+            "clock_uncertainty_ns_max": 0,
+            "connected": true,
+            "impossible_time_samples": 0,
+            "last_available_ns": 160,
+            "last_event_ns": 100,
+            "last_received_ns": 170,
+            "longest_gap": 0,
+            "missing_sequence_slots": 0,
+            "out_of_order_receipts": 0,
+            "receipt_before_available_samples": 0,
+            "receipt_clock_violations": 0,
+            "receive_lag_ns_latest": 10,
+            "receive_lag_ns_max": 10,
+            "receive_lag_ns_p95": 10,
+            "receive_lag_samples": 1,
+            "reconnect_epochs": 0,
+            "revision_events": 0,
+            "revision_rate": 0.0,
+            "samples": 1,
+            "sequence_gap_runs": 0,
+            "sequence_nonmonotone_events": 0,
+            "slo_failures": [],
+            "slo_passed": true,
+            "stream_id": "csv:A:aaaaaaaaaaaa"
+          },
+          "csv:B:bbbbbbbbbbbb": {
+            "availability_before_event_samples": 0,
+            "availability_unknown_samples": 0,
+            "availability_violations": 0,
+            "clock_uncertainty_ns_latest": 0,
+            "clock_uncertainty_ns_max": 0,
+            "connected": true,
+            "impossible_time_samples": 0,
+            "last_available_ns": 160,
+            "last_event_ns": 100,
+            "last_received_ns": 170,
+            "longest_gap": 0,
+            "missing_sequence_slots": 0,
+            "out_of_order_receipts": 0,
+            "receipt_before_available_samples": 0,
+            "receipt_clock_violations": 0,
+            "receive_lag_ns_latest": 10,
+            "receive_lag_ns_max": 10,
+            "receive_lag_ns_p95": 10,
+            "receive_lag_samples": 1,
+            "reconnect_epochs": 0,
+            "revision_events": 0,
+            "revision_rate": 0.0,
+            "samples": 1,
+            "sequence_gap_runs": 0,
+            "sequence_nonmonotone_events": 0,
+            "slo_failures": [],
+            "slo_passed": true,
+            "stream_id": "csv:B:bbbbbbbbbbbb"
+          }
+        },
+        "stream_count": 2,
+        "unknown_slo_streams": []
+      },
+      "topology": {
+        "entropy": 0.7
+      }
+    },
+    "production_authorized": false,
+    "schema": "icarus-candidate-v1",
+    "status": "RESEARCH_CANDIDATE_ONLY"
+  },
+  "decision_ns": 160,
+  "frame_hash": "b9056e25cf6474002399876f4b8290cf0b8747d2c9ae5b149898ccff07c9a199",
+  "production_authorized": false
+}

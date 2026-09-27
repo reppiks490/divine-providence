@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SuperMesh-X Capability Contract",
+  "type": "object",
+  "required": ["provider", "capabilities", "runtime"],
+  "properties": {
+    "provider": {"type": "string"},
+    "runtime": {"type": "array", "items": {"enum": ["chatgpt", "codex", "claude", "generic"]}},
+    "capabilities": {"type": "array", "items": {"type": "string"}},
+    "auth": {"enum": ["none", "optional", "required", "runtime"]},
+    "freshness": {"enum": ["realtime", "intraday", "daily", "historical", "mixed", "unknown"]},
+    "write_scope": {"enum": ["none", "local", "external", "mixed"]},
+    "notes": {"type": "string"}
+  }
+}

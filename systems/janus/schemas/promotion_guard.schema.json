@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"JANUS Promotion Guard","type":"object","required":["session_id","fence_epoch","acquired_at"],"properties":{"session_id":{"type":"string"},"fence_epoch":{"type":"integer","minimum":1},"expected_receipt_head":{"type":["string","null"]},"acquired_at":{"type":"string"}},"additionalProperties":false}

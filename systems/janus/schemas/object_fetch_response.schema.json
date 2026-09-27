@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"JANUS Object Fetch Response","type":"object","required":["format","graph_digest","objects","object_hashes"],"properties":{"format":{"const":"janus-object-fetch-response-v1"},"graph_digest":{"type":"string"},"objects":{"type":"object"},"object_hashes":{"type":"array","items":{"type":"string"},"uniqueItems":true}}}

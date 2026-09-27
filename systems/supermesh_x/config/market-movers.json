@@ -1,0 +1,400 @@
+{
+  "version": "0.6.0",
+  "policy": {
+    "public_only": true,
+    "private_location_tracking": false,
+    "private_communications": false,
+    "political_persuasion": false,
+    "purpose": "neutral market-impact measurement of public events",
+    "verify_roles_at_runtime": true,
+    "activity_based_priority": true
+  },
+  "source_classes": [
+    "official_primary",
+    "social_public",
+    "company_primary",
+    "regulatory_primary",
+    "reputable_news",
+    "structured_market_data",
+    "shipping_energy_data",
+    "scholarly_calibration"
+  ],
+  "entities": [
+    {
+      "id": "donald_trump",
+      "name": "Donald Trump",
+      "public_channels": [
+        "truth_social",
+        "public_social",
+        "white_house",
+        "speeches",
+        "press",
+        "executive_actions"
+      ],
+      "topics": [
+        "trade",
+        "tariffs",
+        "iran",
+        "strait_of_hormuz",
+        "sanctions",
+        "energy",
+        "geopolitics",
+        "fiscal",
+        "regulation",
+        "technology",
+        "crypto"
+      ]
+    },
+    {
+      "id": "elon_musk",
+      "name": "Elon Musk",
+      "public_channels": [
+        "x",
+        "company_primary",
+        "interviews",
+        "video",
+        "press"
+      ],
+      "topics": [
+        "tesla",
+        "ai",
+        "space",
+        "crypto",
+        "technology",
+        "energy"
+      ]
+    },
+    {
+      "id": "kevin_warsh",
+      "name": "Kevin Warsh",
+      "role_seed": "Federal Reserve Chair",
+      "role_last_verified": "2026-09-24",
+      "must_verify_current_role": true,
+      "public_channels": [
+        "federal_reserve",
+        "speeches",
+        "press_conferences",
+        "testimony"
+      ],
+      "topics": [
+        "rates",
+        "inflation",
+        "liquidity",
+        "treasuries",
+        "usd"
+      ]
+    },
+    {
+      "id": "scott_bessent",
+      "name": "Scott Bessent",
+      "role_seed": "U.S. Treasury Secretary",
+      "role_last_verified": "2026-09-24",
+      "must_verify_current_role": true,
+      "public_channels": [
+        "treasury",
+        "speeches",
+        "press",
+        "sanctions_releases"
+      ],
+      "topics": [
+        "treasuries",
+        "fx",
+        "sanctions",
+        "fiscal",
+        "trade",
+        "crypto"
+      ]
+    },
+    {
+      "id": "jensen_huang",
+      "name": "Jensen Huang",
+      "role_seed": "NVIDIA Founder & CEO",
+      "role_last_verified": "2026-09-24",
+      "must_verify_current_role": true,
+      "public_channels": [
+        "company_primary",
+        "earnings",
+        "keynotes",
+        "interviews"
+      ],
+      "topics": [
+        "ai",
+        "semiconductors",
+        "datacenters",
+        "export_controls",
+        "capital_spending"
+      ]
+    },
+    {
+      "id": "jamie_dimon",
+      "name": "Jamie Dimon",
+      "verify_at_runtime": true,
+      "role_hint": "JPMorgan Chase CEO",
+      "public_channels": [
+        "company_primary",
+        "earnings",
+        "interviews",
+        "shareholder_letters"
+      ],
+      "topics": [
+        "credit",
+        "banking",
+        "rates",
+        "economy",
+        "markets"
+      ]
+    },
+    {
+      "id": "satya_nadella",
+      "name": "Satya Nadella",
+      "verify_at_runtime": true,
+      "role_hint": "Microsoft CEO",
+      "public_channels": [
+        "company_primary",
+        "earnings",
+        "interviews",
+        "keynotes"
+      ],
+      "topics": [
+        "ai",
+        "cloud",
+        "enterprise",
+        "capital_spending"
+      ]
+    },
+    {
+      "id": "tim_cook",
+      "name": "Tim Cook",
+      "verify_at_runtime": true,
+      "role_hint": "Apple CEO",
+      "public_channels": [
+        "company_primary",
+        "earnings",
+        "interviews",
+        "events"
+      ],
+      "topics": [
+        "devices",
+        "supply_chain",
+        "china",
+        "ai",
+        "services"
+      ]
+    },
+    {
+      "id": "sundar_pichai",
+      "name": "Sundar Pichai",
+      "verify_at_runtime": true,
+      "role_hint": "Alphabet CEO",
+      "public_channels": [
+        "company_primary",
+        "earnings",
+        "interviews",
+        "keynotes"
+      ],
+      "topics": [
+        "ai",
+        "cloud",
+        "advertising",
+        "search",
+        "capital_spending"
+      ]
+    },
+    {
+      "id": "mark_zuckerberg",
+      "name": "Mark Zuckerberg",
+      "verify_at_runtime": true,
+      "role_hint": "Meta CEO",
+      "public_channels": [
+        "company_primary",
+        "earnings",
+        "interviews",
+        "public_social"
+      ],
+      "topics": [
+        "ai",
+        "advertising",
+        "capital_spending",
+        "social_media"
+      ]
+    },
+    {
+      "id": "brian_armstrong",
+      "name": "Brian Armstrong",
+      "verify_at_runtime": true,
+      "role_hint": "Coinbase CEO",
+      "public_channels": [
+        "company_primary",
+        "earnings",
+        "public_social",
+        "interviews"
+      ],
+      "topics": [
+        "crypto",
+        "bitcoin",
+        "stablecoins",
+        "regulation",
+        "exchange"
+      ]
+    },
+    {
+      "id": "michael_saylor",
+      "name": "Michael Saylor",
+      "verify_at_runtime": true,
+      "role_hint": "Strategy executive chairman",
+      "public_channels": [
+        "company_primary",
+        "public_social",
+        "interviews"
+      ],
+      "topics": [
+        "bitcoin",
+        "crypto",
+        "treasury_strategy"
+      ]
+    }
+  ],
+  "dynamic_role_buckets": {
+    "central_bank_leadership": {
+      "resolve_current_holder_at_runtime": true,
+      "topics": [
+        "rates",
+        "inflation",
+        "liquidity"
+      ]
+    },
+    "treasury_and_economic_officials": {
+      "resolve_current_holder_at_runtime": true,
+      "topics": [
+        "sanctions",
+        "debt",
+        "currency",
+        "fiscal"
+      ]
+    },
+    "energy_and_geopolitical_officials": {
+      "resolve_current_holder_at_runtime": true,
+      "topics": [
+        "oil",
+        "gas",
+        "shipping",
+        "war",
+        "sanctions",
+        "diplomacy"
+      ]
+    },
+    "mega_cap_technology_leadership": {
+      "resolve_current_holder_at_runtime": true,
+      "topics": [
+        "ai",
+        "cloud",
+        "devices",
+        "capital_spending"
+      ]
+    },
+    "semiconductor_leadership": {
+      "resolve_current_holder_at_runtime": true,
+      "topics": [
+        "chips",
+        "ai",
+        "export_controls",
+        "capacity"
+      ]
+    },
+    "major_bank_leadership": {
+      "resolve_current_holder_at_runtime": true,
+      "topics": [
+        "credit",
+        "liquidity",
+        "economy",
+        "markets"
+      ]
+    },
+    "crypto_ecosystem_leadership": {
+      "resolve_current_holder_at_runtime": true,
+      "topics": [
+        "bitcoin",
+        "stablecoins",
+        "exchanges",
+        "regulation"
+      ]
+    }
+  },
+  "named_seed_candidates": [
+    {
+      "name": "Jamie Dimon",
+      "activity": [
+        "banking",
+        "credit",
+        "economy",
+        "rates"
+      ],
+      "must_verify_current_role": true
+    },
+    {
+      "name": "Satya Nadella",
+      "activity": [
+        "cloud",
+        "AI",
+        "enterprise software"
+      ],
+      "must_verify_current_role": true
+    },
+    {
+      "name": "Tim Cook",
+      "activity": [
+        "consumer technology",
+        "China supply chain",
+        "services"
+      ],
+      "must_verify_current_role": true
+    },
+    {
+      "name": "Mark Zuckerberg",
+      "activity": [
+        "AI",
+        "advertising",
+        "social platforms",
+        "capex"
+      ],
+      "must_verify_current_role": true
+    },
+    {
+      "name": "Andy Jassy",
+      "activity": [
+        "cloud",
+        "consumer",
+        "AI",
+        "capex"
+      ],
+      "must_verify_current_role": true
+    },
+    {
+      "name": "Sam Altman",
+      "activity": [
+        "AI infrastructure",
+        "models",
+        "compute demand"
+      ],
+      "must_verify_current_role": true
+    },
+    {
+      "name": "Larry Fink",
+      "activity": [
+        "asset allocation",
+        "rates",
+        "ETF flows"
+      ],
+      "must_verify_current_role": true
+    },
+    {
+      "name": "Brian Armstrong",
+      "activity": [
+        "crypto",
+        "regulation",
+        "exchange flows"
+      ],
+      "must_verify_current_role": true
+    }
+  ]
+}

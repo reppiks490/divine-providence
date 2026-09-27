@@ -1,0 +1,25 @@
+test_dependency_artifact_hashes_are_pinned (test_adapter_v0_4.AdapterV04.test_dependency_artifact_hashes_are_pinned) ... ERROR
+test_runtime_dependency_integrity_clean (test_adapter_v0_4.AdapterV04.test_runtime_dependency_integrity_clean) ... ERROR
+
+======================================================================
+ERROR: test_dependency_artifact_hashes_are_pinned (test_adapter_v0_4.AdapterV04.test_dependency_artifact_hashes_are_pinned)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/ASCENSION_Manifest_Trust_Collision_Adapter_v0.4/test_adapter_v0_4.py", line 144, in test_dependency_artifact_hashes_are_pinned
+    self.assertEqual(c['backend_artifact_sha256']['inclusion'],a4.EXPECTED_DEPENDENCY_SHA256['inclusion'])
+                     ~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'backend_artifact_sha256'
+
+======================================================================
+ERROR: test_runtime_dependency_integrity_clean (test_adapter_v0_4.AdapterV04.test_runtime_dependency_integrity_clean)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/ASCENSION_Manifest_Trust_Collision_Adapter_v0.4/test_adapter_v0_4.py", line 148, in test_runtime_dependency_integrity_clean
+    r=a4.validate_runtime_dependency_integrity()
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'manifest_trust_collision_adapter_v0_4' has no attribute 'validate_runtime_dependency_integrity'
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.011s
+
+FAILED (errors=2)

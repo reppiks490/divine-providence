@@ -1,0 +1,21 @@
+{
+  "cycle_id": "ascension-cycle-context-001",
+  "entries": [
+    {
+      "capability_id": "ascension.collision-detector",
+      "version": "0.2.1",
+      "status": "CANDIDATE"
+    },
+    {
+      "capability_id": "ascension.evaluator-fabric",
+      "version": "0.6.0",
+      "status": "CANDIDATE"
+    },
+    {
+      "capability_id": "ascension.context-distillation-engine",
+      "version": "0.1.0",
+      "status": "SHADOW",
+      "change": "new provenance-preserving distillation primitive"
+    }
+  ]
+}

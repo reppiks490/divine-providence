@@ -1,0 +1,7 @@
+JANUS ∞ Run 020 verification
+Inherited Run 019 baseline: 74/74 passed before Run 020 mutation.
+RED: 3 new Run 020 tests failed because begin_sync_session / atomic_joint_sync were absent.
+GREEN: 77/77 tests passed after implementation.
+python -m compileall -q src tests: PASS.
+Run 020 regressions: successful atomic joint trust+causal replay; tampered causal chunk fails without project-domain state promotion; deterministic resumable session identity/checkpoint.
+Live repository reconciliation: NOT RUN — authoritative live checkout unavailable.

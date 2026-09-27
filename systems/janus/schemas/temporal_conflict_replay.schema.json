@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Bitemporal Conflict Replay",
+  "type": "object",
+  "required": ["kind", "subject", "predicate", "replay", "facts", "resolution", "proof_required", "blast_radius", "normalization_lineage"],
+  "properties": {
+    "kind": {"const": "bitemporal_replay_conflict"},
+    "subject": {"type": "string"},
+    "predicate": {"type": "string"},
+    "replay": {
+      "type": "object",
+      "required": ["valid_at", "known_at"],
+      "properties": {"valid_at": {"type": "string"}, "known_at": {"type": "string"}}
+    },
+    "facts": {"type": "array", "minItems": 2},
+    "resolution": {"type": "object"},
+    "proof_required": {"type": "boolean"},
+    "blast_radius": {"type": "array", "items": {"type": "string"}},
+    "normalization_lineage": {"type": "array"}
+  },
+  "additionalProperties": true
+}

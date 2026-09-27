@@ -1,0 +1,119 @@
+{
+  "archive": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip",
+  "snapshot": "2026-09-24",
+  "file_count": 22,
+  "files": [
+    {
+      "path": "README_FIRST.md",
+      "size_bytes": 725,
+      "sha256": "d2854edfa87893ae0ea9fa9b26a026b6288131a661d32bbfac6694362b8affc8"
+    },
+    {
+      "path": "VECTOR_HISTORICAL_PRECURSOR_CONTEXT.md",
+      "size_bytes": 1018,
+      "sha256": "9dae52f0ef8ef969090e559f62f8bd578cd0f50998dec7a9ca7e21f3bdf3bbf4"
+    },
+    {
+      "path": "VECTOR_INFINITY_MONOLITHIC_FORENSIC_ARCHIVE.md",
+      "size_bytes": 67053,
+      "sha256": "ac7e324b03c303b951ca3f366b270a38d5f3d2facfc415963abdf230d655d33b"
+    },
+    {
+      "path": "VECTOR_TRUTH_CONFLICT_RESOLUTION.md",
+      "size_bytes": 1390,
+      "sha256": "3bd9a05f8391da18692212e12df0af59cbb42234a599125cf39cdfd447ab1ed9"
+    },
+    {
+      "path": "SOURCE_PROVENANCE.csv",
+      "size_bytes": 863,
+      "sha256": "908364c4bdb7725558127bb5530f12ee51efb2e1a030cf477aca0d06db9b2a32"
+    },
+    {
+      "path": "RETRIEVAL_AND_IMPLEMENTATION_GAPS.md",
+      "size_bytes": 1301,
+      "sha256": "4be17162673a1ef6f1535485ed42ee3b08c536e1360e9a074df11853d6e9254a"
+    },
+    {
+      "path": "VECTOR_RESEARCH_METHOD_LEDGER.md",
+      "size_bytes": 2294,
+      "sha256": "56a96dbc49add7b0504f8f51ef53cf44036c569b3e28f81e14f23cd6ad8af4fc"
+    },
+    {
+      "path": "PRIOR_DELIVERABLES/VECTOR_INFINITY_CURRENT_WORK.docx",
+      "size_bytes": 42157,
+      "sha256": "3cb36575f0a4e684a4d249e9566a747f2626d8b240e2c2d61e65ae4ab1d2c8c0"
+    },
+    {
+      "path": "PRIOR_DELIVERABLES/VECTOR_INFINITY_CURRENT_WORK_BUNDLE_2026-09-24.zip",
+      "size_bytes": 45925,
+      "sha256": "7cfede577452a6da5e698d1d7bdeb366d54292a8d5094a85327d859619215b8e"
+    },
+    {
+      "path": "PRIOR_DELIVERABLES/VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip",
+      "size_bytes": 161660,
+      "sha256": "b861d05e22e01bacd4277ccb91fd5933bebbb934b3787222c6e00ebf78efb942"
+    },
+    {
+      "path": "PRIOR_DELIVERABLES/VECTOR_INFINITY_CURRENT_WORK.md",
+      "size_bytes": 11890,
+      "sha256": "dabb4ca680f2cb448703ce0c97192b1960f8755e59316bb442e56b4745261e00"
+    },
+    {
+      "path": "HISTORICAL_RETRIEVED_ARTIFACTS/VECTOR_CYCLE_1_EXECUTIVE_SUMMARY_RETRIEVED.md",
+      "size_bytes": 16361,
+      "sha256": "b1fffe8346a9690ac50959d08074d2a48542b405dfdade43072d4e48d6ba208d"
+    },
+    {
+      "path": "HISTORICAL_RETRIEVED_ARTIFACTS/ICARUS_CENTRAL_ORCHESTRATION_CHECKPOINT_04_RETRIEVED.md",
+      "size_bytes": 13862,
+      "sha256": "21eee16394b9e4b179c8efc5be0d5d3f98f0dc5154c742fe89dc33570b8b0a54"
+    },
+    {
+      "path": "CURRENT_MASTER/PACKAGE_MANIFEST.json",
+      "size_bytes": 843,
+      "sha256": "9fae293b261831118e678afbcbdce0fe38832f2a2e47367936d375dc482f3ed4"
+    },
+    {
+      "path": "CURRENT_MASTER/VECTOR_INFINITY_EXPERIMENT_LEDGER.csv",
+      "size_bytes": 5928,
+      "sha256": "369eab1157650f0db0361b78b2a99579ba61235036df9929789819264517028d"
+    },
+    {
+      "path": "CURRENT_MASTER/VECTOR_INFINITY_MASTER_HANDOFF.md",
+      "size_bytes": 29863,
+      "sha256": "5b590b4797735818ea919c4fbb8eb92828da0a46c7c0688c75325b0a3dde5a1d"
+    },
+    {
+      "path": "CURRENT_MASTER/README.md",
+      "size_bytes": 1081,
+      "sha256": "bf49ccc6d742745165ea06c0b196b4f2bf868aba064c532e7b467816fb474413"
+    },
+    {
+      "path": "CURRENT_MASTER/VECTOR_INFINITY_PROMOTION_TESTS.txt",
+      "size_bytes": 918,
+      "sha256": "5956a798d97c8fb356304cea3482c164c0b9299a754a1223c217b9c31150d9aa"
+    },
+    {
+      "path": "CURRENT_MASTER/VECTOR_INFINITY_MACHINE_STATE.json",
+      "size_bytes": 14502,
+      "sha256": "1901ac7a030b06cddf7c6a91b0f12b5691f78f1cc7218c9e3aaa1909f389cbe3"
+    },
+    {
+      "path": "CURRENT_MASTER/SHA256SUMS.json",
+      "size_bytes": 741,
+      "sha256": "d77ebd304cfee6ad9d0ab973a1abe4d49e7f40b38b75f14781fbaf9bac4a03f2"
+    },
+    {
+      "path": "CURRENT_MASTER/VECTOR_INFINITY_MASTER_HANDOFF.docx",
+      "size_bytes": 49358,
+      "sha256": "dcf5cd6daf14161885bf24fbb9ac88ed83fd25d66f8d79eaf6c665765588a898"
+    },
+    {
+      "path": "CURRENT_MASTER/VECTOR_INFINITY_COMPONENT_REGISTER.csv",
+      "size_bytes": 2419,
+      "sha256": "7e6f796e3ca32cfb9e4b0fdf1af530802103e135f2ff7793673fc39737dab5bc"
+    }
+  ],
+  "private_chain_of_thought_included": false,
+  "verified_repository_implementation_included": false
+}

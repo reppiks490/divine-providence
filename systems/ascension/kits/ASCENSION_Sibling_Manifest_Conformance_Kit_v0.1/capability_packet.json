@@ -1,0 +1,133 @@
+{
+  "capability_id": "ascension.sibling-manifest-conformance-kit",
+  "name": "Sibling Manifest Conformance Kit",
+  "version": "0.1.0",
+  "cycle_id": "ascension-cycle-021",
+  "status": "CANDIDATE",
+  "problem": "Authenticated Transfer is blocked because sibling-owned provenance/attestation contracts do not yet arrive as complete Adapter v0.4-ready runtime evidence packages.",
+  "hypothesis": "A read-only conformance profile can make the missing authority/evidence layers explicit and let sibling owners prepare a complete package without ASCENSION manufacturing authority.",
+  "beneficiaries": [
+    "ASCENSION",
+    "sibling system owners preparing optional transfer evidence"
+  ],
+  "authority_exclusions": [
+    "No signing",
+    "No key management",
+    "No trust-root creation",
+    "No sibling mutation",
+    "No authentication claim",
+    "No adoption claim"
+  ],
+  "dependencies": [
+    "Python standard library",
+    "Adapter v0.4 contract SHA-256 0145bf2ecb3ecd606c9d70b26b671ce397bba17f35dc56da4c691997bbd8e224"
+  ],
+  "interfaces": [
+    {
+      "name": "validate_export",
+      "interface_version": "0.1",
+      "required_inputs": [
+        "sibling export mapping"
+      ],
+      "emitted_outputs": [
+        "conformance/readiness report"
+      ],
+      "assumptions": [
+        "sibling authority remains external"
+      ],
+      "invariants": [
+        "read-only",
+        "never authenticated"
+      ]
+    },
+    {
+      "name": "build_handoff_checklist",
+      "interface_version": "0.1",
+      "required_inputs": [
+        "sibling_id"
+      ],
+      "emitted_outputs": [
+        "authority handoff requirements"
+      ],
+      "assumptions": [],
+      "invariants": [
+        "deterministic",
+        "does not grant authority"
+      ]
+    }
+  ],
+  "evidence": [
+    "32 focused tests",
+    "6800 adversarial cases",
+    "PROMETHEUS v0.5 declared-contract profile",
+    "exact package verification required before final claim"
+  ],
+  "evaluation_vector": {
+    "correctness": "strong_local",
+    "reproducibility": "high",
+    "transferability": "partial_until_runtime_sibling_export",
+    "integration_cost": "low",
+    "latency_cost_burden": "low",
+    "observability": "high",
+    "rollback_safety": "high",
+    "non_interference": "high",
+    "evidence_quality": "medium_high_local_plus_real_declared_contract",
+    "reuse_breadth": "high"
+  },
+  "acceptance_tests": [
+    "full adapter-ready unverified export",
+    "structural-only export",
+    "deterministic handoff checklist",
+    "PROMETHEUS declared contract remains explicitly non-runtime"
+  ],
+  "negative_tests": [
+    "identity mismatch",
+    "digest mismatch",
+    "receipt failure/duplication/missing checks",
+    "secret injection",
+    "backend downgrade/substitution",
+    "incomplete trust/transparency evidence"
+  ],
+  "regression_tests": [
+    "binary proof evidence hashes deterministically",
+    "inputs immutable",
+    "status never claims authenticated"
+  ],
+  "failure_modes": [
+    "structural conformance cannot establish cryptographic truth",
+    "declared sibling contract may differ from runtime implementation",
+    "out-of-band refs can become unavailable",
+    "backend profile can drift when Adapter v0.4 is superseded"
+  ],
+  "rollback": {
+    "method": "Discard kit output and preserve Adapter v0.4/v0.3 and prior state capsules; kit does not mutate siblings."
+  },
+  "observability": {
+    "reason_codes": true,
+    "readiness_levels": true,
+    "descriptor_digests": true,
+    "explicit_nonclaims": true
+  },
+  "compatibility": {
+    "target_adapter": "v0.4",
+    "target_adapter_sha256": "0145bf2ecb3ecd606c9d70b26b671ce397bba17f35dc56da4c691997bbd8e224",
+    "prometheus_v0_5_profile": "declared-contract-only"
+  },
+  "artifacts": [
+    "sibling_manifest_conformance_v0_1.py",
+    "sibling_manifest_export.schema.json",
+    "sibling_export_template.json",
+    "AUTHORITY_HANDOFF_CHECKLIST.md",
+    "PROMETHEUS_v0.5_GAP_MAP.md",
+    "profiles/prometheus_v0_5_declared_contract.json",
+    "test_report.json",
+    "experience_capsule.json",
+    "state_capsule.md"
+  ],
+  "revalidation_conditions": [
+    "Adapter v0.4 contract changes",
+    "sibling manifest schema changes",
+    "real authoritative sibling export becomes available"
+  ],
+  "next_experiment": "Ask/route a real sibling-owned export through the kit; if ADAPTER_READY_UNVERIFIED, execute Adapter v0.4 unchanged and evaluate nine promotion gates."
+}

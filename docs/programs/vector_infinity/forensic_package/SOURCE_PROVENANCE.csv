@@ -1,0 +1,6 @@
+artifact,provenance,status,notes
+VECTOR_CYCLE_1_EXECUTIVE_SUMMARY_RETRIEVED.md,retrieved prior user-visible generated artifact,historical; preserved verbatim,Only completed user-visible report text retained; internal activity/reasoning excluded.
+ICARUS_CENTRAL_ORCHESTRATION_CHECKPOINT_04_RETRIEVED.md,retrieved prior user-visible generated artifact,historical; preserved verbatim,Only completed user-visible report text retained; internal activity/reasoning excluded.
+CURRENT_MASTER/*,current-session generated master handoff files,current canonical consolidation,No repo/runtime promotion claimed.
+PRIOR_DELIVERABLES/*,exact prior downloadable deliverables,historical deliverables,Included for byte-level continuity where available.
+VECTOR_HISTORICAL_PRECURSOR_CONTEXT.md,conversation-derived prior context,historical context,Branch identity not assumed.

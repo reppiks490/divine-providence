@@ -1,0 +1,24 @@
+test_bad_hash_and_path_types_rejected (test_evaluator_fabric_v0_8.V08.test_bad_hash_and_path_types_rejected) ... ok
+test_combined_gate_rejects_bad_inclusion (test_evaluator_fabric_v0_8.V08.test_combined_gate_rejects_bad_inclusion) ... ok
+test_combined_gate_rejects_bad_transition_or_witness (test_evaluator_fabric_v0_8.V08.test_combined_gate_rejects_bad_transition_or_witness) ... ok
+test_combined_transparency_evidence_valid (test_evaluator_fabric_v0_8.V08.test_combined_transparency_evidence_valid) ... ok
+test_expected_length_matches_generator (test_evaluator_fabric_v0_8.V08.test_expected_length_matches_generator) ... ok
+test_false_index_relabel_rejected (test_evaluator_fabric_v0_8.V08.test_false_index_relabel_rejected) ... ok
+test_hash_hex_inputs_supported_but_strict (test_evaluator_fabric_v0_8.V08.test_hash_hex_inputs_supported_but_strict) ... ok
+test_inputs_not_mutated (test_evaluator_fabric_v0_8.V08.test_inputs_not_mutated) ... ok
+test_malformed_combined_inputs_fail_closed (test_evaluator_fabric_v0_8.V08.test_malformed_combined_inputs_fail_closed) ... ok
+test_merkle_leaf_domain_separation (test_evaluator_fabric_v0_8.V08.test_merkle_leaf_domain_separation) ... ok
+test_mutated_node_rejected (test_evaluator_fabric_v0_8.V08.test_mutated_node_rejected) ... ok
+test_out_of_range_and_zero_tree_rejected (test_evaluator_fabric_v0_8.V08.test_out_of_range_and_zero_tree_rejected) ... ok
+test_padded_proof_rejected_by_geometry (test_evaluator_fabric_v0_8.V08.test_padded_proof_rejected_by_geometry) ... ok
+test_rfc_7_leaf_examples (test_evaluator_fabric_v0_8.V08.test_rfc_7_leaf_examples) ... ok
+test_single_leaf_empty_proof (test_evaluator_fabric_v0_8.V08.test_single_leaf_empty_proof) ... ok
+test_truncated_proof_rejected_by_geometry (test_evaluator_fabric_v0_8.V08.test_truncated_proof_rejected_by_geometry) ... ok
+test_uint64_and_type_bounds_rejected (test_evaluator_fabric_v0_8.V08.test_uint64_and_type_bounds_rejected) ... ok
+test_uint64_max_geometry_is_bounded (test_evaluator_fabric_v0_8.V08.test_uint64_max_geometry_is_bounded) ... ok
+test_wrong_leaf_or_root_rejected (test_evaluator_fabric_v0_8.V08.test_wrong_leaf_or_root_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.021s
+
+OK

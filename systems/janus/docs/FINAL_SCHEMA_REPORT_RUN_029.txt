@@ -1,0 +1,2 @@
+46 schemas parsed and Draft 2020-12 meta-validated
+PASS

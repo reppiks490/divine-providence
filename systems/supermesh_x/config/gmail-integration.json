@@ -1,0 +1,31 @@
+{
+  "version": "0.7.0",
+  "id": "gmail",
+  "source_class": "user_authorized_private",
+  "capabilities": [
+    "communications.email.search",
+    "communications.email.thread",
+    "communications.email.attachment",
+    "research.newsletter.private",
+    "alerts.email.market_event"
+  ],
+  "read_surfaces": [
+    "search",
+    "messages",
+    "threads",
+    "attachments",
+    "labels",
+    "draft_metadata"
+  ],
+  "write_surfaces": [
+    "draft",
+    "send",
+    "forward",
+    "labels",
+    "archive",
+    "trash"
+  ],
+  "write_policy": "explicit_user_intent_required",
+  "raw_content_public_export": false,
+  "derived_feature_export": "allowlisted_only"
+}

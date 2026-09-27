@@ -1,0 +1,52 @@
+{
+  "BTCUSD_600_rows": {
+    "train": [
+      0,
+      336
+    ],
+    "purge_embargo_train_validation": [
+      336,
+      384
+    ],
+    "validation": [
+      384,
+      456
+    ],
+    "purge_embargo_before_holdout": [
+      456,
+      504
+    ],
+    "final_holdout_untouched": [
+      504,
+      600
+    ],
+    "purge_bars": 24,
+    "embargo_bars": 24,
+    "note": "Final 96 rows remain untouched by development/tuning."
+  },
+  "NQ_CONTINUOUS_408_rows": {
+    "train": [
+      0,
+      220
+    ],
+    "purge_embargo_train_validation": [
+      220,
+      269
+    ],
+    "validation": [
+      269,
+      302
+    ],
+    "purge_embargo_before_holdout": [
+      302,
+      351
+    ],
+    "final_holdout_untouched": [
+      351,
+      408
+    ],
+    "purge_bars": 24,
+    "embargo_bars": 25,
+    "note": "Compact corpus; final 57 rows remain untouched. Larger corpus should replace this before serious model selection."
+  }
+}

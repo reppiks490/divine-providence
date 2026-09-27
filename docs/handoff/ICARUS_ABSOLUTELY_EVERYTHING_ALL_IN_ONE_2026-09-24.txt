@@ -1,0 +1,1255 @@
+# ICARUS Complete Chat Archive
+
+Generated: 2026-09-24T20:12:00-05:00
+
+This bundle consolidates the work performed in this ICARUS empirical-integrity / qualification / source-federation lane.
+
+## Critical truth labels
+
+Every claim in this archive is intended to fall into one of these states:
+
+- `EXECUTED` — code/tool/test action was actually run in the referenced earlier work.
+- `SOURCE_VERIFIED` — confirmed by reading the current repository or live provider/tool output.
+- `SPECIFIED_NOT_RUN` — architecture, schema, test, or patch contract designed here but not executed against a writable repository.
+- `BLOCKED` — could not be completed because data, permissions, entitlement, quota, or tool surface was unavailable.
+- `RETRACTED_OR_CORRECTED` — an earlier hypothesis was explicitly corrected after better evidence.
+
+No repository mutation is claimed by this archive.
+`execution_authorized=false` remains the global invariant.
+
+## Program spine
+
+SOURCE -> DATA -> TIME -> BASELINE -> XGB -> ECONOMICS -> ROBUSTNESS
+
+Hard rule:
+Any upstream integrity failure forces downstream authority to zero.
+
+## Contents
+
+- `MASTER_ALL_IN_ONE.md` — consolidated master record.
+- `contracts/` — frozen empirical and evidence contracts.
+- `plans/` — dependency-ordered implementation plan and next-loop plan.
+- `tests/TEST_CATALOG.md` — designed regression/TDD catalog.
+- `evidence/` — repository/provider findings and verification ledger.
+- `raw_artifacts/` — surviving generated/raw artifacts from this chat session.
+- `MANIFEST_SHA256.json` — checksums for the archive contents.
+
+
+# Master Timeline / Worklog
+
+## AEGIS Ω Batch 01 — evidence/provenance/temporal kernel
+State: EXECUTED in an earlier run of this lane.
+
+Created reference components:
+- FeatureContract
+- FeatureObservation
+- EvidenceEnvelope
+- Qualification
+- deterministic canonical JSON
+- SHA-256 identity
+- temporal ordering checks
+- missing/stale critical evidence rejection
+- feature/contract mismatch rejection
+- duplicate feature rejection
+- source sequence monotonicity
+- structural execution_authorized=False
+- rejection -> authority_cap=0
+
+Earlier verification reported: 11/11 tests passing at that time.
+
+Still unproven at that stage:
+- durable sequence persistence
+- cryptographic authenticity
+- venue correction/bust semantics
+- trusted clock policy
+- durable append-only audit linkage
+
+## AEGIS Ω Batch 02 — provenance hardening
+State: EXECUTED in an earlier run of this lane.
+
+Added:
+- SourcePolicy
+- RawObservation
+- SourceCursor
+- IntegrityGate
+- source/key allowlisting
+- clock uncertainty and max lateness
+- HMAC reference authentication
+- correction sequence semantics
+- hash-chained AuditRecord
+- verify_audit_chain
+
+Conservative temporal rule:
+`available_time_ns + clock_uncertainty_ns <= decision_time_ns`
+
+Earlier verification reported: 12/12 tests passing at that time.
+
+Still unproven:
+- crash-safe atomic cursor/audit persistence
+- asymmetric production signing/HSM/KMS
+- venue-specific reset/bust semantics
+- writer fencing
+- audit-head external anchoring
+
+## Empirical Batch 01 — XGB incremental value
+State: SPECIFIED_NOT_RUN.
+Question: Does XGB add out-of-sample probability value over logistic?
+
+Critical finding:
+Frozen SPEC said isotonic calibration on holdout, which contaminates the final holdout if calibrated metrics are evaluated on it.
+
+Corrected design:
+- train 60%
+- validation 20% for early stopping
+- final holdout 20% untouched
+- calibration from pre-holdout chronological predictions
+- compare null -> logistic -> XGB
+- primary metric: log-loss
+
+## Batch 03 — walk-forward / multiple-testing firewall
+State: SPECIFIED_NOT_RUN.
+Required:
+- append-only experiment identity
+- fold/asset-level reporting
+- no pooled-metric shortcut
+- ablations
+- multiple-testing ledger
+- fail closed when trial count/specification history is unknown
+
+## Batch 04 — economic cost/latency qualification
+State: SPECIFIED_NOT_RUN.
+Defined:
+- ExecutionStress
+- EconomicResult / EconomicQualification
+- commission/slippage/latency stress
+- edge-survival frontier
+- tails
+- capacity unresolved without depth/queue evidence
+
+## Batch 05 — parameter fragility
+State: SPECIFIED_NOT_RUN.
+Defined:
+- local perturbation neighborhood
+- specification curve
+- seed sensitivity
+- decision stability
+- redundancy/deletion rule
+
+Process correction:
+This early pass was theory-only and did not satisfy the requested tool-backed workflow. Later passes corrected this.
+
+## Batch 06 — cross-asset transfer / regime
+State: SPECIFIED_NOT_RUN.
+Defined:
+- LOCAL
+- POOLED
+- TRANSFER
+- leave-one-market-out
+- negative transfer
+- per-asset reporting
+- regime cells
+
+## Batch 07 — OOD / calibration / selective authority
+State: SPECIFIED_NOT_RUN.
+Defined:
+- data/model/calibration uncertainty decomposition
+- risk-coverage
+- confidence inversion
+- calibration drift
+- corruption monotonicity
+- authority caps
+
+## Batch 08 — event-time leakage
+State: SOURCE_VERIFIED.
+Current `window_hits()` can include an event timestamp after the bar timestamp.
+Frozen SPEC requires event timestamp <= bar timestamp.
+Current event object lacks separate:
+- scheduled event time
+- schedule-known time
+- realized-result availability time
+
+Result:
+Event-feature path cannot support qualified predictive authority until availability semantics are fixed.
+
+## Batch 09 — label boundary leakage
+State: SOURCE_VERIFIED.
+Current next-bar labels are attached before the 60/20/20 split.
+The last training label can depend on the first validation bar.
+The last validation label can depend on the first holdout bar.
+
+Required:
+- feature_time
+- label_available_time
+- purge samples whose labels resolve into the next block
+
+## Batch 10 — candidate lead/lag
+State: SOURCE_VERIFIED.
+Canonical bar timestamp is bar OPEN.
+Candidate audit `_asof(exec_ts)` can use completed candidate bar information from the same timestamped interval to explain an execution return over that same interval.
+This is contemporaneous agreement, not predictive lead.
+
+Required:
+`candidate_feature_available_time <= execution_decision_time < future_outcome_available_time`
+
+## Batch 11 — candidate selection / multiple testing
+State: SOURCE_VERIFIED + SPECIFIED_NOT_RUN.
+Current candidate statistics are computed across supplied history, then thresholded.
+This is not discovery -> freeze -> validation -> holdout.
+
+Required:
+- discovery 60%
+- validation 20% with frozen candidate list
+- holdout 20% untouched
+- selection-adjusted null / trial ledger
+
+Earlier IID diagnostic:
+At n=200, reaching >=55% agreement under p=.5 is not rare enough by itself to support strong selection claims; across many trials false discoveries become likely. This diagnostic was explicitly not treated as an empirical ICARUS false-positive rate.
+
+## Batch 12 — dataset provenance
+State: SOURCE_VERIFIED.
+`csv_access.py` can discover parent/child roots with overlapping physical scope.
+`unzip_batches.py` flattens archive paths to basename and is structurally first-write-wins on collisions.
+
+Correction:
+Source repository documentation says the six current candidate ZIPs contain 177 CSVs with zero filename overlap.
+Therefore current collision was not established for those six ZIPs; collision logic remains a structural future risk.
+
+## Batch 13 — model artifact identity
+State: SOURCE_VERIFIED.
+Artifact path:
+`run/trainers/{sym}_{family}_{slot}.json`
+
+Exact timeframe and dataset identity are absent.
+Different timeframes in one family can collide semantically.
+Candidate audit can gate on `Path.is_file()` rather than artifact semantic identity.
+
+Required artifact binding:
+- symbol
+- exact timeframe
+- chart mechanism
+- dataset hash
+- source manifest hash
+- feature/label/temporal contract hashes
+- split identity
+- model/calibration config
+- code commit
+- seed
+- qualification status
+
+## Batch 14 — exact timeframe + row integrity
+State: SOURCE_VERIFIED.
+Source-data precision rules:
+- 60 and 61 are distinct clocks
+- 1 / 1 2 / 1 3 are export variants, dedupe by hash
+- 1M means monthly, not one minute
+
+Trainer findings:
+- duplicate timestamps preserved
+- rows sorted, hiding source-order inversions
+- no conflict rejection
+- missing/malformed OHLC can fall back to close
+- no strict OHLC geometry validation
+- exact granularity not independently verified
+
+Feed/trainer divergence:
+Feed parser keeps last row per duplicate timestamp.
+Trainer preserves duplicates.
+Same physical CSV can therefore acquire different semantics by subsystem.
+
+## Closure DATA
+State: CONTRACT_FROZEN.
+Required DatasetManifest:
+- raw SHA-256
+- canonical rows SHA-256
+- source provenance
+- exact declared/detected chart identity
+- row counts
+- duplicate/conflict counts
+- source-order inversions
+- OHLC violations
+- first/last timestamp
+- elapsed-time distribution
+- integrity pass
+- execution_authorized=False
+
+Clock invariant:
+`t[i+1] > t[i]`
+
+OHLC:
+`high >= max(open, close)`
+`low <= min(open, close)`
+`high >= low`
+
+## Closure TIME
+State: CONTRACT_FROZEN.
+TemporalSample fields:
+- bar_open_time
+- feature_available_time
+- decision_time
+- label_start_time
+- label_available_time
+
+Governing rule:
+`max(feature_available_times) <= decision_time < label_available_time`
+
+For completed clock bars:
+`feature_available_time = bar_close_time`
+
+For Renko/range/tick:
+Do not infer completion from a nominal duration. Missing completion time => unresolved/fail closed.
+
+Event rule:
+Scheduled metadata requires schedule_known_at <= decision_time.
+Realized/surprise information requires result_available_at <= decision_time.
+
+Purged split:
+All labels in the earlier block must resolve before the next block begins.
+
+## Closure BASELINE
+State: CONTRACT_FROZEN.
+Hierarchy:
+NULL -> LOGISTIC -> XGB
+
+Primary metric:
+log-loss.
+
+Also report:
+- Brier
+- sign accuracy
+- class rate
+- mean predicted probability
+- calibration diagnostics
+
+Null predictor:
+Training-only positive class prior.
+
+`DeltaLL_logit = LL_null - LL_logistic`
+`DeltaLL_xgb = LL_logistic - LL_xgb`
+
+Holdout trains nothing.
+
+## Closure XGB
+State: CONTRACT_FROZEN; IMPLEMENTATION_CURRENTLY_MISSING.
+Current `xgb_slot.py` raises NotImplementedError.
+
+Frozen initial parameters:
+- objective=binary:logistic
+- tree_method=hist
+- max_depth=4
+- eta=.05
+- subsample=.8
+- colsample_bytree=.8
+- min_child_weight=8
+- lambda=1
+- n_estimators=400
+- early_stopping_rounds=40
+- eval_metric=logloss
+- seed=7
+
+Required:
+- validation-only early stopping
+- exact library version recorded
+- untouched holdout
+- pre-holdout calibration
+- raw + calibrated metrics
+- paired per-observation loss comparison
+- model serialization/reload equivalence
+- semantic artifact verifier
+
+## Closure ECONOMICS
+State: CONTRACT_FROZEN.
+Current emulator supports:
+- multiplier
+- tick size
+- commission
+- slippage ticks
+- next-bar-open fills
+- stops/limits
+- netting/reversal
+- pyramiding
+- partial exits
+- assumed OHLC intrabar path
+- equity/drawdown metrics
+
+Does not establish:
+- queue
+- real spread
+- market depth
+- impact
+- actual tick path
+- broker/exchange latency
+
+Therefore:
+bar-emulator profitability != executable edge.
+
+Required stress matrix:
+base, +1 tick, +2, +4, latency variants, combined adverse scenario.
+
+Capacity remains unqualified without depth/liquidity evidence.
+
+## Closure ROBUSTNESS
+State: CONTRACT_FROZEN.
+Includes:
+- prespecified regimes
+- cross-asset transfer
+- negative transfer
+- local parameter perturbation
+- seed sensitivity
+- OOD
+- risk-coverage/selective prediction
+- confidence inversion
+- calibration drift
+- corruption monotonicity
+- trial ledger
+- ablation
+- tail behavior
+- failure clustering
+
+## SOURCE federation expansion
+State: CONTRACT_FROZEN + LIVE_ADAPTER_SMOKE_TESTS_EXECUTED.
+
+New source states:
+- OK
+- AUTH_FAILED
+- ENTITLEMENT_BLOCKED
+- RATE_LIMITED
+- NETWORK_FAILED
+- NO_OBSERVATION
+- STALE
+- SOURCE_TIME_UNKNOWN
+- SEMANTIC_MISMATCH
+- MALFORMED_PAYLOAD
+
+Instrument semantics must distinguish:
+- XAU spot vs GC vs MGC
+- BTC/USD spot vs BTCUSDT perpetual vs BTC futures
+- QQQ vs NQ
+- last vs mark vs bid vs ask
+- total session volume vs bar volume vs trade size
+
+Observed provider/tool states in this chat:
+- StackerScan returned current gold/silver spot observations.
+- Bybit returned BTCUSDT price and funding.
+- FMP returned U.S. Treasury curve and BTCUSD quote in the invoked calls.
+- Twelve Data returned BTC/USD quote.
+- DataBlue/Google Finance returned BTC-USD data.
+- Massive crypto last-trade call was entitlement-blocked.
+- U.S. Gold Bureau calls were blocked by network/IP authorization.
+- Scite later hit its monthly MCP quota.
+- Blockscout session worked for Ethereum latest block metadata.
+- Runway connection was authenticated but media capabilities were irrelevant to predictive authority.
+- Figma is a design/support capability, not a market evidence source.
+- Cheat Database is unrelated and receives zero signal authority.
+
+## Schwab integration audit
+State: SOURCE_VERIFIED.
+Good:
+- data-only design
+- order writes locked
+- per-symbol errors isolated
+- errors surfaced in poll result
+
+P0 temporal/semantic gaps:
+- quote CSV timestamp uses local `time.time()` ingestion time
+- source quote event timestamp is not preserved
+- fallback sequence lastPrice -> mark -> ask -> bid loses price-kind semantics
+- chosen value is written as synthetic O=H=L=C
+- `totalVolume` is written into generic `volume`
+
+Important contamination check:
+`csv_access.py` does not automatically scan `history/schwab/execution/`.
+Therefore no current automatic trainer contamination path was established.
+But manual training on an arbitrary compatible CSV remains possible, so schema gating is still required.
+
+Frozen rule:
+Quote snapshots must be a distinct evidence schema and cannot enter an OHLC trainer without an explicit qualified transform.
+
+
+# Frozen Architecture
+
+## Global invariant
+`execution_authorized=false`
+
+## Chain
+SOURCE -> DATA -> TIME -> BASELINE -> XGB -> ECONOMICS -> ROBUSTNESS
+
+## Authority rule
+For any critical upstream failure:
+`downstream_authority = 0`
+
+## Evidence objects
+
+### ProviderObservation
+- provider
+- provider_role
+- instrument identity
+- event/source time
+- received time
+- available time
+- value + units
+- source timestamp
+- auth/entitlement state
+- semantic identity hash
+- raw payload hash
+- execution_authorized=False
+
+### InstrumentIdentity
+- root symbol
+- venue
+- security type
+- contract month
+- quote currency
+- settlement type
+- multiplier
+- tick size
+
+### Evidence schemas
+- OHLC_BAR
+- QUOTE_SNAPSHOT
+- ORDERBOOK_SNAPSHOT
+- EVENT_RELEASE
+- MACRO_OBSERVATION
+- FUNDAMENTAL_SNAPSHOT
+- BLOCKCHAIN_STATE
+
+### QuoteSnapshot
+Must retain:
+- last_price
+- mark_price
+- bid_price
+- ask_price
+- price_kind
+- total_volume semantic type
+- source_event_time if known
+- received_at
+- available_at
+- payload hash
+
+No synthetic OHLC interpretation is allowed merely because a CSV has open/high/low/close columns.
+
+## Canonical timestamp parser
+One shared parser must replace duplicated trainer/feed/event heuristics.
+
+Numeric unit candidates:
+- seconds
+- milliseconds
+- microseconds
+- nanoseconds
+
+Only an unambiguous candidate inside the valid epoch range qualifies.
+Retain:
+- raw value
+- normalized epoch seconds
+- detected unit
+- timezone basis
+
+String/ISO support must be shared by every subsystem.
+
+## Exact chart identity
+Family and exact chart identity are distinct.
+
+Examples:
+- `clock_hours::3600`
+- `clock_hours::3660`
+
+`1M` must not silently lowercase to `1m`.
+Until monthly support exists, uppercase `1M` should fail closed as unsupported monthly identity.
+
+## Duplicate policy
+Same timestamp + identical complete empirical evidence:
+- audit
+- collapse to one canonical observation
+
+Same timestamp + any empirically relevant conflict:
+- hard reject
+
+Relevant fields include OHLC, volume and trainer feature columns such as TIDE.
+
+## Provider federation
+Many providers do not become majority vote.
+
+First prove:
+1. instrument semantic compatibility
+2. timestamp/freshness compatibility
+3. market-state comparability
+
+Then compute disagreement/dispersion.
+
+Provider disagreement can only reduce authority, never increase it.
+
+## Staleness
+Where source_event_time is known:
+`staleness = received_at - source_event_time`
+
+Conservative feature availability:
+`available_at >= received_at`
+
+Staleness increases => authority cap cannot increase.
+
+
+# Dependency-Ordered Implementation Plan
+
+## Phase 1 — Canonical evidence/time primitives
+Create focused modules under an evidence namespace:
+- timestamps.py
+- identity.py
+- schemas.py / integrity.py
+
+TDD first:
+- epoch seconds/ms/us/ns normalize to same instant
+- invalid/ambiguous numeric timestamps reject
+- ISO semantics match trainer/feed/event
+- timezone basis retained
+
+## Phase 2 — Dataset manifest
+Implement:
+- raw file hash
+- canonical row hash
+- source row index
+- duplicate grouping
+- conflict detection
+- source-order inversion
+- OHLC geometry
+- exact observed interval stats
+- declared/detected identity match
+
+Trainer must refuse a failed manifest.
+
+## Phase 3 — Evidence schema gating
+Distinguish:
+- OHLC bar
+- quote snapshot
+- order book
+- macro/event
+- blockchain state
+
+Trainer expecting OHLC must reject quote snapshots.
+
+## Phase 4 — Temporal availability
+Add:
+- event_time
+- source publication time when known
+- received_at
+- available_at
+- decision_time
+- label_available_time
+
+No future feature availability.
+
+## Phase 5 — Event semantics
+Replace single event `ts` with:
+- scheduled_for
+- schedule_known_at
+- result_available_at
+
+Scheduled-only and realized fields have separate eligibility.
+
+## Phase 6 — Purged splits
+Chronological 60/20/20 remains, but purge using label availability times rather than row count heuristics.
+
+## Phase 7 — Candidate strict lead-lag
+Separate:
+- contemporaneous agreement (k=0)
+- true predictive lead (candidate available before future execution outcome)
+
+Add maximum candidate staleness.
+
+## Phase 8 — Clean baselines
+Null -> logistic.
+Probability metrics:
+- log-loss
+- Brier
+- calibration
+- class balance
+
+## Phase 9 — XGB Slot 1
+Implement frozen params only.
+No hyperparameter search.
+Validation-only early stopping.
+Pre-holdout calibration.
+Holdout once.
+
+## Phase 10 — Semantic artifact verifier
+Verify contents, not existence:
+- experiment hash
+- dataset hash
+- exact timeframe
+- contracts
+- split
+- code commit
+- dependency versions
+- qualification status
+
+## Phase 11 — Economics
+Frozen decision rule.
+Stress costs/latency/slippage.
+No unsupported capacity claims.
+
+## Phase 12 — Robustness
+Regimes, transfer, perturbation, seeds, OOD, selective prediction, calibration drift, corruption monotonicity, ablation, tails.
+
+## Phase 13 — Authority aggregator
+Any critical fail => authority 0.
+No research result implies execution authorization.
+
+
+# Complete TDD / Regression Test Catalog
+
+## Canonical timestamp
+- test_epoch_seconds_normalize
+- test_epoch_milliseconds_normalize_to_same_second
+- test_epoch_microseconds_normalize_to_same_second
+- test_epoch_nanoseconds_normalize_to_same_second
+- test_out_of_range_numeric_timestamp_rejected
+- test_ambiguous_numeric_timestamp_rejected
+- test_iso_timestamp_normalizes_same_in_feed_and_trainer
+- test_naive_timestamp_records_timezone_basis
+- test_trainer_and_event_parser_share_timestamp_semantics
+
+## Chart identity
+- test_lowercase_1m_is_one_minute
+- test_uppercase_1M_is_not_one_minute
+- test_unsupported_monthly_chart_fails_closed
+- test_60m_exact_identity_is_3600_seconds
+- test_61m_exact_identity_is_3660_seconds
+- test_61m_does_not_snap_to_60m_for_dataset_identity
+
+## Row integrity
+- test_identical_timestamp_duplicate_is_audited_and_collapsed
+- test_conflicting_timestamp_duplicate_rejects_dataset
+- test_duplicate_equivalence_includes_tide_values
+- test_source_order_inversion_recorded_before_sort
+- test_final_training_rows_have_strictly_increasing_time
+- test_high_below_open_rejected
+- test_high_below_close_rejected
+- test_low_above_open_rejected
+- test_low_above_close_rejected
+- test_high_below_low_rejected
+- test_manifest_hash_is_deterministic
+- test_same_bytes_same_manifest_identity
+- test_different_bytes_different_dataset_identity
+- test_trainer_refuses_failed_manifest
+- test_trainer_report_contains_manifest_hash
+- test_csv_discovery_does_not_return_same_resolved_file_twice
+
+## Source/provider state
+- test_auth_failure_is_not_missing_data
+- test_entitlement_failure_is_not_missing_data
+- test_network_failure_is_distinct
+- test_rate_limit_is_distinct
+- test_unavailable_provider_cannot_contribute_feature
+- test_provider_failure_cannot_increase_authority
+- test_provider_payload_hash_is_deterministic
+
+## Instrument identity
+- test_spot_gold_does_not_equal_gc_future
+- test_gc_does_not_equal_mgc
+- test_btcusd_spot_does_not_equal_btcusdt_perpetual
+- test_qqq_does_not_equal_nq
+- test_cross_source_comparison_requires_compatible_identity
+
+## Quote snapshot semantics
+- test_quote_snapshot_cannot_enter_ohlc_trainer
+- test_received_time_is_not_source_event_time
+- test_unknown_source_time_is_explicit
+- test_available_time_is_no_earlier_than_received_time
+- test_last_price_preserves_last_semantics
+- test_mark_fallback_is_labeled_mark
+- test_bid_fallback_is_labeled_bid
+- test_ask_fallback_is_labeled_ask
+- test_total_volume_is_not_bar_volume
+- test_cumulative_volume_reset_is_not_negative_bar_volume
+- test_stale_observation_reduces_authority
+
+## TIME kernel
+- completed_current_bar_feature_not_available_at_bar_open
+- feature_available_at_or_before_decision_passes
+- future_event_rejected
+- scheduled_event_requires_known_at
+- realized_surprise_requires_result_available_at
+- label_available_time_is_next_bar_close
+- train_label_crossing_validation_start_is_purged
+- validation_label_crossing_holdout_start_is_purged
+- same_interval_candidate_return_cannot_qualify_predictive_lead
+- closed_candidate_bar_before_execution_decision_can_qualify
+- candidate_bar_closing_after_execution_decision_is_rejected
+- renko_without_completion_time_is_unresolved
+- range_without_completion_time_is_unresolved
+- tick_without_completion_time_is_unresolved
+
+## Baseline/model
+- null_prior_fit_on_train_only
+- logistic_fit_on_train_only
+- holdout_never_passed_to_fit
+- holdout_never_passed_to_calibrator
+- logloss_uses_clipped_probabilities
+- model_metrics_deterministic
+- xgb_uses_validation_only_for_early_stopping
+- xgb_records_best_iteration
+- serialized_model_reload_predictions_match
+- wrong_dataset_artifact_rejected
+- wrong_timeframe_artifact_rejected
+- wrong_contract_artifact_rejected
+- malformed_artifact_rejected
+- nonqualified_artifact_rejected
+
+## Calibration
+- isotonic_undersampling_is_explicit
+- calibrator_fitted_pre_holdout_only
+- raw_and_calibrated_results_preserved_separately
+
+## Economics/robustness
+- cost_stress_cannot_improve_fill_mechanically
+- unsupported_capacity_never_qualifies
+- intrabar_path_sensitivity_is_reported
+- failed_experiment_remains_in_trial_ledger
+- seed_challengers_do_not_replace_preregistered_seed_silently
+- corruption_cannot_increase_authority
+- OOD_cannot_increase_authority
+- confidence_inversion_blocks_selective_authority
+
+IMPORTANT:
+These tests are a designed catalog. They are NOT claimed to have been run in the current read-only repo session.
+Earlier AEGIS extraction batches had separate tests actually reported passing at the time (11/11 and 12/12 respectively).
+
+
+# Provider / Capability Audit
+
+## Market-data / evidence roles
+
+### StackerScan
+Observed: successful gold/silver spot response in current loop.
+Role: secondary metals spot/reference evidence.
+Do not equate spot with GC/MGC futures.
+
+### Bybit
+Observed: BTCUSDT perpetual price and funding.
+Role: crypto exchange/perpetual microstructure/reference.
+Do not equate with BTC/USD spot or CME BTC futures.
+
+### FMP
+Observed in invoked calls:
+- U.S. Treasury curve
+- BTCUSD quote
+Role: macro and secondary market reference where endpoint entitlement permits.
+Earlier some commodity/economic endpoint combinations were plan-gated; endpoint availability must be tracked individually.
+
+### Twelve Data
+Observed: authenticated and BTC/USD quote response.
+Role: secondary spot/market-data reference.
+
+### DataBlue / Google Finance
+Observed: BTC-USD result and raw result artifacts retained in this bundle.
+Role: tertiary reference/sanity-check source.
+Not execution-price authority.
+
+### Massive
+Observed: crypto last-trade endpoint not entitled.
+State: ENTITLEMENT_BLOCKED for that endpoint in this environment.
+
+### U.S. Gold Bureau
+Observed: network/IP authorization rejection.
+State: AUTH_FAILED/NETWORK_POLICY_BLOCKED in this environment.
+
+### Scite
+Earlier successful literature calls were used to support backtest-overfitting/calibration methodology.
+Later call hit monthly MCP usage limit.
+State in latest call: RATE_LIMITED.
+No failed-call result was treated as evidence.
+
+### Blockscout
+Observed: Ethereum latest block metadata in current session.
+Role: blockchain-state provenance/context for supported EVM ecosystems.
+Not a direct price/trade signal.
+
+### Zacks
+Observed: equity research/trending ticker data.
+Role: equity/fundamental research context.
+Not execution-price authority.
+
+## Non-signal capabilities
+
+### Runway
+Authenticated.
+Role: media/visual communication only.
+Predictive authority: zero.
+
+### Figma
+Connected support/design capability.
+Role: UI/design documentation only.
+Predictive authority: zero.
+
+### Cheat Database
+Available but unrelated.
+Predictive authority: zero.
+
+### Marketing tooling
+May provide useful causal/decision-quality methodology analogies.
+Not a trading market-data source.
+No marketing metric is allowed into the predictive feature set merely because the plugin is available.
+
+
+# Current Repository Evidence Snapshot
+
+Canonical repo: `reppiks490/Icarus`
+Latest observed commit:
+`007e70189945b8e112904cf92b2b1a12e43792d6` — Create instruction.txt — 2026-09-22T23:26:55Z.
+
+No newer commit was found in the latest check.
+
+## Current important files
+
+### `icarus_engine/trainers/dataset.py`
+Observed current behavior:
+- CSV DictReader
+- requires time+close only
+- silently skips unparsable time/close rows
+- numeric timestamp > 10_000_000_000 divides once by 1000
+- missing O/H/L may fall back to close
+- sorts rows by timestamp
+- preserves duplicate timestamps
+- no strict OHLC geometry validation
+- no source row-order provenance
+- no exact timeframe detection
+- labels next close-close sign
+- drops flat labels
+- feature row stores only `ts`, not availability/label resolution times
+
+### `icarus_engine/feeds/bars.py`
+Observed:
+- canonical bar timestamp documented as bar OPEN
+- parser supports numeric/ISO forms but has different timestamp heuristics from trainer
+- duplicate timestamps become last-write-wins in dict
+- detect_granularity snaps to common timeframes
+- 3660 seconds not in common list, creating 61m->60m risk
+- `recent_ex` treats completion as open+granularity for clock bars
+
+### `icarus_engine/events/calendar.py`
+Observed:
+- event object has a single `ts`
+- `window_hits()` allows future event timestamps within its post window relative to the bar timestamp
+- no schedule-known vs result-available split
+
+### `icarus_engine/spec.py`
+Observed:
+- 60/20/20 chronological
+- XGB frozen params
+- CALIBRATE=isotonic
+- artifact path keyed only by symbol/family/slot
+- exact timeframe/dataset absent
+
+### `icarus_engine/trainers/xgb_slot.py`
+Observed:
+- imports XGBoost if present
+- otherwise blocked dependency response
+- then raises NotImplementedError
+- text still says isotonic on holdout only
+
+### `icarus_engine/audit/run.py`
+Observed:
+- candidate `_asof` uses cand.ts <= exec.ts
+- same-interval candidate and execution returns can be compared
+- no max candidate staleness gate
+- `require_xgb` can rely on artifact file existence
+
+### `icarus_engine/csv_access.py`
+Observed roots:
+- history/unzipped
+- nested execution/candidates
+- history/drop/candidates
+- sibling multi-level-csv
+Does not automatically include history/schwab/execution.
+
+### Schwab plant
+Observed:
+- GET-only market-data intent
+- order writes locked
+- per-symbol error isolation
+- quote poller uses ingestion `time.time()` for CSV time
+- fallback last -> mark -> ask -> bid
+- writes chosen quote as O=H=L=C
+- writes totalVolume to generic volume
+
+## Source-data repo rules imported into design
+- 60 and 61 distinct
+- 1M monthly, not one-minute
+- 1 / 1 2 / 1 3 export variants hash-dedup
+- candidate current six ZIPs documented as 177 CSVs, zero filename overlap
+
+
+# Verification Ledger
+
+## Actually executed / observed in this lane
+- AEGIS extraction batch 01 tests: earlier run reported 11/11 passing.
+- AEGIS extraction batch 02 tests: earlier run reported 12/12 passing.
+- GitHub repository files and commits were read through the connector.
+- Latest repo commit checked and remained 007e701... as of the latest loop.
+- External adapter smoke tests were actually called:
+  - StackerScan
+  - Bybit
+  - FMP
+  - Twelve Data
+  - DataBlue
+  - Massive endpoint discovery/call
+  - Gold Bureau
+  - Blockscout
+  - Zacks
+  - Runway connection
+  - Figma identity/access context
+  - Scite (successful earlier; quota failure later)
+- Provider failure/entitlement/rate-limit behavior was observed through tool responses.
+
+## Designed but NOT executed against a writable current repo
+- SOURCE federation implementation
+- canonical timestamp module
+- DatasetManifest v2
+- chart identity fix
+- 1M/1m fix
+- 60m/61m exact identity fix
+- duplicate conflict hard-fail
+- OHLC geometry hard-fail
+- quote-snapshot schema
+- source/received/available timestamps
+- event availability refactor
+- purged split implementation
+- strict candidate lead-lag refactor
+- null/logistic metrics upgrade
+- XGB implementation
+- pre-holdout calibration
+- semantic artifact verifier
+- economic stress harness
+- robustness harness
+
+## Explicitly not claimed
+- No current-repo test suite was run from this chat.
+- No repository files were modified by this chat.
+- No model was trained here.
+- No performance number was invented.
+- No strategy was declared profitable or execution-ready.
+- No execution authorization was granted.
+
+
+# Next Loop — Unified TIME Kernel
+
+Goal:
+Collapse staleness, bar completion, event publication, candidate availability, label resolution, and split purging into one temporal contract.
+
+## Core record
+
+TemporalEvidence:
+- observation_id
+- source_event_time (optional)
+- received_at
+- available_at
+- decision_time
+- outcome_start_time
+- outcome_available_at
+- schema
+- instrument_identity
+- provenance hash
+
+Hard invariant:
+`available_at <= decision_time < outcome_available_at`
+
+If any required time cannot be established:
+`TEMPORAL_AVAILABILITY_UNRESOLVED`
+
+## Clock bars
+- bar-open time is not feature availability for full OHLC.
+- full-bar feature availability = bar completion/close time.
+
+## Irregular bars
+Renko/range/tick:
+- no nominal close-duration inference
+- explicit completion time required
+- otherwise unresolved
+
+## Event data
+- scheduled_for
+- schedule_known_at
+- result_available_at
+- received_at
+
+Calendar metadata may be known before event.
+Actual/surprise cannot be used before result availability and receipt.
+
+## Provider staleness
+If source time exists:
+`staleness = received_at - source_event_time`
+
+Add max age by evidence class.
+No stale forward-fill without explicit age gate.
+
+## Candidate data
+Require:
+`candidate.available_at <= execution.decision_time`
+
+Separate:
+- k=0 contemporaneous descriptive relationship
+- k>0 predictive lead
+
+## Labels
+Next-bar close-close label resolves only when the next bar completes.
+
+## Splits
+Purge by outcome/label availability time, not by one-row rule.
+
+## Next deterministic tests
+- stale_asof_candidate_rejected
+- source_time_unknown_cannot_claim_latency_edge
+- received_after_decision_rejected
+- full_ohlc_not_available_at_bar_open
+- event_actual_before_result_available_rejected
+- event_result_received_after_decision_rejected
+- train_label_crossing_validation_boundary_purged
+- validation_label_crossing_holdout_boundary_purged
+- renko_missing_completion_time_unresolved
+
+
+# TIME Kernel Continuation Findings
+
+This file was added after the initial archive package was generated, as requested by the user to continue work after packaging.
+
+## Repository state
+Latest observed `reppiks490/Icarus` commit remains:
+`007e70189945b8e112904cf92b2b1a12e43792d6` (2026-09-22).
+
+No newer repo change was observed during this continuation.
+
+## Bar completion evidence loss — P0
+`icarus_engine.pine.timeframe.Bar` stores:
+- ts (bar OPEN)
+- OHLCV
+
+It does not store:
+- nominal/effective bar close time
+- actual completion time
+- time ICARUS observed the bar as closed
+
+`Aggregator` internally knows `_end()` and can close bars in multiple ways:
+1. when a sub-bar ends at the bucket boundary,
+2. when the first sub-bar of a new bucket causes the previous bucket to close,
+3. via `flush_if_stale(now_ts, grace)` after wall-clock time passes the expected end.
+
+Therefore these times are distinct:
+- bar_open_time
+- nominal/effective_close_time
+- observed_complete_at / feature_available_time
+
+The current `Bar` object loses this distinction once `_close()` returns a Bar.
+
+This is a P0 temporal issue because completed OHLC features cannot safely use bar OPEN time as their availability time.
+
+### Required fix
+Add temporal metadata outside or alongside raw market `Bar`:
+- open_time
+- effective_close_time
+- completed_at
+- available_at
+
+Do not mutate a raw price bar into an execution-authority object without provenance.
+
+For clock bars:
+`available_at >= completed_at >= effective_close_time`
+
+When a bar closes late because a boundary sub-bar was missing, `completed_at` may be later than nominal close.
+
+For session-truncated bars, `end_fn` can make close time differ from `open + nominal_duration`.
+
+## Irregular bars
+Families declare:
+- renko -> brick
+- range -> range
+- tick -> tick
+
+Their trainer labels are next event/bar direction, but the current common row format carries only `ts`.
+
+Do not infer completion time from a duration for:
+- Renko
+- range bars
+- tick bars
+
+Missing explicit completion/availability timestamp:
+`TEMPORAL_AVAILABILITY_UNRESOLVED`
+
+## FOMC fallback timing defect — P0
+Current `KIND_HOUR_UTC["fomc"] = 18` and `seed_events()` assigns all FOMC decisions at 18:00 UTC.
+
+Official 2026 Federal Reserve statements show:
+- Jan 28, 2026 released at 2:00 p.m. EST = 19:00 UTC
+- summer/September releases at 2:00 p.m. EDT = 18:00 UTC
+
+Therefore fixed 18:00 UTC makes winter FOMC fallback events one hour early.
+
+Required:
+Store release time in America/New_York or explicit timezone-aware datetime and convert per event date.
+Do not encode U.S. Eastern economic events using one constant UTC hour across DST.
+
+## CPI / PPI / NFP / PCE / GDP timing defect — P0
+Current event fallback table uses whole UTC hours such as 12 for several U.S. releases.
+
+Official BLS and BEA schedules use 8:30 a.m. Eastern for key releases including:
+- CPI
+- Employment Situation
+- Personal Income and Outlays / PCE
+- many GDP releases
+
+Therefore the current fallback:
+- loses the :30 minute
+- ignores DST
+- can be wrong by 30 to 90 minutes depending on date
+
+Required EventObservation fields:
+- scheduled_for timezone-aware timestamp
+- schedule_known_at
+- result_available_at
+- received_at
+- provider/source
+- revision/version identity
+
+If only a date is known and exact release time is not sourced:
+do not invent one.
+
+## Candidate staleness
+Current `_asof(exec_ts, cand)` finds the latest candidate timestamp <= execution timestamp.
+There is no max-age gate.
+
+Required:
+`age = decision_time - candidate.available_at`
+Reject when `age > max_staleness_for_schema`.
+
+Forward-fill may remain descriptive but cannot silently qualify predictive lead.
+
+## Split purging
+Current `walk_slices()` is row-count based.
+Required:
+After chronological split boundaries are selected, purge observations whose outcome/label availability crosses the next boundary.
+
+Example:
+training sample legal only if:
+`label_available_time < validation_start_decision_time`
+
+validation sample legal only if:
+`label_available_time < holdout_start_decision_time`
+
+## New TIME TDD tests
+- clock_bar_open_time_is_not_full_bar_feature_time
+- aggregator_exact_boundary_records_completed_at
+- aggregator_next_bucket_close_records_late_completed_at
+- aggregator_flush_if_stale_records_actual_completed_at
+- session_truncated_bar_uses_effective_end_fn
+- irregular_bar_without_completion_time_unresolved
+- fomc_winter_release_not_hardcoded_18utc
+- fomc_summer_release_converts_eastern_correctly
+- cpi_0830_eastern_preserves_30_minutes
+- nfp_0830_eastern_preserves_30_minutes
+- pce_0830_eastern_preserves_30_minutes
+- candidate_asof_exceeding_max_age_rejected
+- train_label_crossing_validation_boundary_purged
+- validation_label_crossing_holdout_boundary_purged
+
+## Status
+SOURCE_VERIFIED + SPECIFIED_NOT_RUN.
+
+No repository mutation or current test pass is claimed.
+`execution_authorized=false`

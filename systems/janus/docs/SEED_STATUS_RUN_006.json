@@ -1,0 +1,16 @@
+{
+  "active_normalization_overlays": 0,
+  "candidates": 4,
+  "components": 7,
+  "contradictions": 0,
+  "current_facts": 4,
+  "facts": 5,
+  "normalization_decisions": 0,
+  "proof_bundles": 0,
+  "quarantined_temporal_conflicts": 1,
+  "snapshots": 0,
+  "state_digest": "c5365be18c9c8cd4322e2659c15cdf181393e5ae71cccb88405a5462f2c09e7e",
+  "temporal_conflicts": 1,
+  "temporal_normalization_proposals": 0,
+  "verified_normalization_overlays": 0
+}

@@ -1,0 +1,8 @@
+{
+  "version":"0.6.0",
+  "source_order":["authorized_developer_api","canonical_rss","canonical_public_post","authorized_inbox","search_index"],
+  "rss_pattern":"https://<publication>.substack.com/feed",
+  "developer_api_supported_as_external_authorized_source":true,
+  "provenance_fields":["author","publication","canonical_url","published_time","updated_time","retrieved_time","outbound_citations","access_state"],
+  "deduplication":"canonical_url+publication+content_fingerprint"
+}

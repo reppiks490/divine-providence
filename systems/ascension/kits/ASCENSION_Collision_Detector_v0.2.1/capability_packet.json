@@ -1,0 +1,151 @@
+{
+  "capability_id": "ascension.collision-detector",
+  "name": "Collision Detector",
+  "version": "0.2.1",
+  "cycle_id": "ascension-cycle-006",
+  "lifecycle_status": "CANDIDATE",
+  "problem": "v0.2 had a cycle-detection defect and shipped a placeholder module rather than the implementation exercised during notebook tests.",
+  "hypothesis": "A path-preserving DFS cycle detector, unified direct/transitive analysis, and clean-package verification will eliminate the known defect and reduce packaging drift without granting ASCENSION authority over sibling systems.",
+  "beneficiaries": [
+    "ASCENSION Evaluator Mesh",
+    "Boundary & Dependency Mapper",
+    "optional external consumers"
+  ],
+  "authority_exclusions": [
+    "No sibling state mutation",
+    "No ownership reassignment",
+    "No automatic remediation",
+    "No automatic adoption"
+  ],
+  "dependencies": [
+    "Python standard library",
+    "Explicit system manifests",
+    "Explicit dependency adjacency map"
+  ],
+  "interfaces": [
+    {
+      "name": "analyze_ecosystem",
+      "interface_version": "0.2.1",
+      "required_inputs": [
+        "manifest mapping",
+        "dependency adjacency mapping",
+        "optional severity policy"
+      ],
+      "emitted_outputs": [
+        "safe",
+        "collision_free",
+        "boundary_gate",
+        "non_interference_gate",
+        "structured findings with paths"
+      ],
+      "assumptions": [
+        "manifests are syntactically valid and truthful",
+        "policy severity values are explicit"
+      ],
+      "invariants": [
+        "read-only inputs",
+        "critical findings cannot produce safe=true",
+        "no sibling-system mutation"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "type": "TDD_RED",
+      "result": "Initial regression suite failed with ModuleNotFoundError before production module existed."
+    },
+    {
+      "type": "TDD_GREEN",
+      "result": "Focused regression suite passed 7/7 after implementation."
+    },
+    {
+      "type": "adversarial_local",
+      "result": "Full suite passed 13/13, including 500 random graph cycle-oracle comparisons and 300 injected critical transitive collisions."
+    },
+    {
+      "type": "continuity_audit",
+      "result": "v0.2 packaged module confirmed placeholder-only; v0.2.1 corrects artifact/runtime mismatch."
+    }
+  ],
+  "evaluation_vector": {
+    "correctness": 0.93,
+    "reproducibility": 0.96,
+    "transferability": 0.84,
+    "integration_cost": 0.22,
+    "latency_cost_burden": 0.18,
+    "observability": 0.94,
+    "rollback_safety": 1.0,
+    "non_interference": 1.0,
+    "evidence_quality": 0.78,
+    "reuse_breadth": 0.9
+  },
+  "acceptance_tests": [
+    "detects dependency cycle with path",
+    "detects multihop mutation collision and preserves path",
+    "diamond DAG is not cycle",
+    "inputs are not mutated"
+  ],
+  "negative_tests": [
+    "missing manifest warning policy",
+    "missing manifest blocking policy",
+    "interface version conflict",
+    "uncoordinated shared state"
+  ],
+  "regression_tests": [
+    "500 random graphs match independent cycle oracle",
+    "300 transitive collisions fail safe",
+    "clean-package execution"
+  ],
+  "failure_modes": [
+    "Undeclared or dishonest manifest facts remain invisible",
+    "Semantic conflicts outside the manifest vocabulary may be missed",
+    "First-path transitive evidence does not enumerate every possible path",
+    "Large dense graphs may need scaling optimizations"
+  ],
+  "rollback": {
+    "method": "Remove optional detector package; it performs no external writes or sibling mutations."
+  },
+  "observability": {
+    "structured_reason_codes": true,
+    "path_preserving_findings": true,
+    "severity_policy_visible": true,
+    "clean_package_test": true
+  },
+  "compatibility": {
+    "mode": "optional read-only adapter",
+    "sibling_changes_required": false,
+    "backward_note": "v0.2.1 supersedes defective v0.2 package; no external adoption is claimed"
+  },
+  "artifacts": [
+    "collision_detector_v0_2_1.py",
+    "test_collision_detector.py",
+    "test_adversarial.py",
+    "test_report.json",
+    "capability_packet.json",
+    "capability_ledger.json",
+    "experience_capsule.json",
+    "hindsight_audit.json",
+    "README.md"
+  ],
+  "revalidation_conditions": [
+    "manifest schema changes",
+    "dependency policy changes",
+    "new collision class",
+    "false positive/negative",
+    "performance threshold exceeded",
+    "real sibling manifests introduced"
+  ],
+  "hard_gates": {
+    "Evidence": "PARTIAL",
+    "Reproduction": "PASS",
+    "Boundary": "PASS",
+    "Non-Interference": "PASS",
+    "Rollback": "PASS",
+    "Observability": "PASS",
+    "Contract": "PASS",
+    "Transfer": "PASS",
+    "Regression": "PASS"
+  },
+  "promotion_decision": "Remain CANDIDATE because Evidence Gate lacks validation against authenticated real sibling manifests.",
+  "next_experiment": "Authenticated manifest/trust adapter and real multi-system contract fixtures; then feed findings into Evaluator Fabric Boundary/Non-Interference gates."
+}

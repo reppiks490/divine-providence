@@ -1,0 +1,38 @@
+{
+  "registry_version": "0.3.0",
+  "adapter_contract": "challenger_forge.core.BaseComponentAdapter",
+  "executable_now": [
+    {
+      "component_id": "OGE-STRUCT-PIVOT-001",
+      "adapter": "ConfirmedPivotAdapter",
+      "status": "TESTING_CAUSAL"
+    },
+    {
+      "component_id": "NEGCTRL-LEAKY-PIVOT-001",
+      "adapter": "LeakyBackdatedPivotAdapter",
+      "status": "NEGATIVE_CONTROL"
+    },
+    {
+      "component_id": "OGE-RISK-ATR-001",
+      "adapter": "ATRRiskAdapter",
+      "status": "TESTING_CAUSAL"
+    },
+    {
+      "component_id": "OGE-MACRO-DXY-001",
+      "adapter": "DXYMacroPressureAdapter",
+      "status": "TESTING_CAUSAL"
+    }
+  ],
+  "formalized_pending_adapter": [
+    "BTCM-REGIME-ICHI-001",
+    "BTCM-STRENGTH-ADX-001",
+    "BTCM-ENTRY-PULLBACK-001",
+    "BTCM-EXIT-COMPOSITE-001",
+    "NQCM-VOL-MASTER-001",
+    "NQCM-FACTOR-001",
+    "NQCM-LIQ-SWEEP-001",
+    "NQCM-KNN-001",
+    "NQCM-ENTRY-GATE-001"
+  ],
+  "promotion_rule": "executable adapter + causal audit + corpus-bound OOS tests required before any PROMOTE_SHADOW decision"
+}

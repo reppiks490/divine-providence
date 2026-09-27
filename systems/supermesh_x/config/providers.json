@@ -1,0 +1,21 @@
+{
+  "providers": [
+    {"name":"native-web","capabilities":["research.search","research.deep"],"priority":90},
+    {"name":"datablue","capabilities":["research.search","research.crawl","research.extract","data.web"],"priority":85},
+    {"name":"tavily","capabilities":["research.search","research.extract","data.web"],"priority":82,"optional":true},
+    {"name":"firecrawl","capabilities":["research.search","research.crawl","research.extract","data.web"],"priority":82,"optional":true},
+    {"name":"parallel-search","capabilities":["research.search","research.extract"],"priority":80,"optional":true},
+    {"name":"exa","capabilities":["research.search","research.academic","code.search","market.context"],"priority":81,"optional":true},
+    {"name":"consensus","capabilities":["research.academic"],"priority":88,"optional":true},
+    {"name":"scite","capabilities":["research.academic","research.citations"],"priority":88,"optional":true},
+    {"name":"twelve-data","capabilities":["market.quote","market.ohlcv","market.fundamentals","market.news","market.reference"],"priority":90},
+    {"name":"tickerlayer","capabilities":["market.quote","market.ohlcv","market.sessions","market.rates"],"priority":88},
+    {"name":"zacks","capabilities":["market.fundamentals","market.research","market.news"],"priority":89},
+    {"name":"factorweave","capabilities":["market.factors","market.regime","market.analogues","market.labels"],"priority":91},
+    {"name":"coingecko","capabilities":["crypto.market","crypto.news"],"priority":90},
+    {"name":"blockscout","capabilities":["chain.address","chain.transaction","chain.token","chain.contract"],"priority":92},
+    {"name":"exoscope","capabilities":["crypto.visualization"],"priority":80},
+    {"name":"omgskills","capabilities":["skills.discover"],"priority":85},
+    {"name":"nvidia-skills","capabilities":["skills.discover","gpu.nvidia"],"priority":86}
+  ]
+}

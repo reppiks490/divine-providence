@@ -1,0 +1,54 @@
+{
+  "system": "AEGIS Challenger Forge",
+  "checkpoint": "008",
+  "created_at_utc": "2026-09-25T23:50:46.204521+00:00",
+  "status": "REGIME_OOD_TOURNAMENT_HARDENED_NOT_READY_TO_COMMIT",
+  "supersedes": "Checkpoint 007",
+  "verified": [
+    "Regime-conditioned NQ validation completed with final holdout untouched.",
+    "Incumbent NORMAL-volatility pocket rejected as specialist because session-block CI crosses zero and adjusted p=1.0.",
+    "Deterministic randomized-direction negative controls integrated.",
+    "Tournament decision engine requires fold stability, positive CI lower bound and multiple-testing significance.",
+    "Cluster/session bootstrap utility added.",
+    "Partial-fill/latency stress ladder added.",
+    "PIT factor/correlation adapter added with future-availability rejection and multicollinearity warning.",
+    "BTC MASTER adapters added: ADX trend strength, causal Ichimoku regime, EMA pullback, composite exit.",
+    "Nested bar-aligned metadata is now recursively sliced during prefix replay; PIT factor causality test passes."
+  ],
+  "hard_gates": [
+    "NQ final 1,263-row holdout remains untouched.",
+    "No subgroup/specialist retention unless same statistical gates as general candidates are met.",
+    "No tuning against latency/regime result cells.",
+    "Random negative controls must stay in every future tournament.",
+    "No live-trading authority."
+  ],
+  "component_delta": [
+    "NQCM-FACTOR-001 executable PIT adapter",
+    "BTCM-STRENGTH-ADX-001 executable",
+    "BTCM-REGIME-ICHI-001 executable causal representation",
+    "BTCM-ENTRY-PULLBACK-001 executable",
+    "BTCM-EXIT-COMPOSITE-001 executable",
+    "negative-control signal generator",
+    "tournament decision engine"
+  ],
+  "current_decisions": {
+    "NQCM-LIQ-SWEEP-001": "QUARANTINE",
+    "NQCM-LIQ-SWEEP-001@NORMAL": "QUARANTINE_NOT_SPECIALIST",
+    "EXT-SESSION-VWAP-VOL-SWEEP-001": "QUARANTINE_OVERFIT_RISK"
+  },
+  "next": [
+    "Bind PIT factor adapter to real NQ cross-asset data using timestamp-safe sources.",
+    "Bind KNN OOD to real NQ development features and measure abstention by fold/regime.",
+    "Run BTC MASTER adapters on a larger BTC corpus than the current 600-bar seed.",
+    "Add horizon-disagreement and circular-evidence firewall tests.",
+    "Add parameter-plateau sweeps without selecting on validation.",
+    "Continue external candidate discovery and evidence grading."
+  ],
+  "verification": {
+    "unit_tests_passed": 31,
+    "unit_tests_failed": 0,
+    "nested_metadata_prefix_slicing_fixed": true,
+    "packaging_import_defect_fixed": true,
+    "test_output": "test_output_v008.txt"
+  }
+}

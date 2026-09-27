@@ -1,0 +1,23 @@
+{
+  "cycle_id": "ascension-cycle-006",
+  "entries": [
+    {
+      "capability_id": "ascension.evaluator-fabric",
+      "version": "0.2.0",
+      "status": "CANDIDATE",
+      "change": "No code change this cycle; trust adapter remains next evaluator dependency."
+    },
+    {
+      "capability_id": "ascension.collision-detector",
+      "version": "0.2.0",
+      "status": "SUPERSEDED_DEFECTIVE_CANDIDATE",
+      "change": "Cycle test failure plus packaged placeholder implementation discovered by continuity audit."
+    },
+    {
+      "capability_id": "ascension.collision-detector",
+      "version": "0.2.1",
+      "status": "CANDIDATE",
+      "change": "Executable module, cycle fix, path evidence, policy severity, adversarial oracle tests, clean-package verification."
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "registry_version":"0.3.0",
+  "providers":[
+    {
+      "name":"example-search-provider",
+      "capabilities":["research.search","research.fetch"],
+      "runtime_targets":["chatgpt","codex","claude"],
+      "transports":["mcp_http","rest"],
+      "auth_modes":["oauth2","api_key"],
+      "trust_class":"enterprise",
+      "dynamic":true
+    }
+  ]
+}

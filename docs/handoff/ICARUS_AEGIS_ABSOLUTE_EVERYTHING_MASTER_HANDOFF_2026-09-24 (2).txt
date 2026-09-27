@@ -1,0 +1,973 @@
+
+
+# ICARUS / AEGIS — ABSOLUTE EVERYTHING PACKAGE
+
+Generated: 2026-09-24 (Chicago workstream)
+
+This archive is a best-effort consolidation of **everything recoverable from the ICARUS / AEGIS / HELIOS / Agent-Reach / control-cycle workstream available to this session**.
+
+It intentionally separates three classes of material:
+
+1. **Repository-native work with concrete CI/test evidence** recovered from prior work.
+2. **Assistant-authored architecture, research, assurance, implementation plans, handoffs, worklogs, UI artifacts, and extraction packages.**
+3. **Earlier user/source inputs that were worked on**, preserved for continuity but not falsely represented as newly authored by the assistant.
+
+## Critical evidence boundary
+
+Do not treat every file in this archive as implemented production code.
+
+The strongest recovered repository-native implementation evidence is recorded in:
+- `00_MASTER_INDEX/VERIFIED_BUILT_AND_TESTED_WORK.md`
+
+The broad AEGIS architecture/specification material remains partly design / assurance / implementation-planning work unless a repository-native artifact and fresh test record prove otherwise.
+
+No file in this package authorizes live execution. The standing invariant remains:
+
+`execution_authorized=false`
+
+Other standing constraints:
+- no synthetic bars represented as empirical market evidence
+- no invented ICARUS trainer slots/features
+- no Pulse rewrite
+- fail-closed qualification
+- deterministic canonical serialization/replay where applicable
+- tamper-evident provenance/audit
+- strict temporal integrity
+- uncertainty cannot increase authority
+
+
+---
+
+# VERIFIED / REPOSITORY-NATIVE BUILT AND TESTED WORK
+
+This section records the strongest repository-native implementation evidence recovered in the source archive.
+
+## PR #17 — Control-plane / subsystem handoff
+- Repository: `reppiks490/Icarus`
+- Branch: `chatgpt/icarus-control-plane-handoff-20260924`
+- Head: `eab72065f7d388532330034725df4e14c397840c`
+- Base: `main`
+- Status in recovered record: open draft
+- Purpose: durable architecture/runbook/handoff material for the control plane.
+
+## PR #18 — Fail-closed ICARUS control-plane receipt verifier
+- Branch: `chatgpt/icarus-control-plane-runtime-20260924`
+- Head: `76569e1962e721b0f4dc973df21358f40c31ce81`
+- Base: `chatgpt/icarus-control-plane-handoff-20260924`
+- GitHub Actions run: `36065421222`
+- Recovered workflow conclusion: `SUCCESS`
+- Linux engine job: `SUCCESS`
+- Windows engine job: `SUCCESS`
+- Linux ran full `python -m pytest tests_engine -q`
+- Windows ran focused plant/bars/doctor pytest set
+- `icarus-control --help`, plant setup, and engine doctor smoke steps succeeded.
+
+Recovered repository-native implementation:
+- `icarus_control/__init__.py`
+- `icarus_control/__main__.py`
+- `icarus_control/canonical.py`
+- `icarus_control/cli.py`
+- `icarus_control/validation.py`
+- `tests_engine/test_control_plane.py`
+- versioned `icarus-control-v1`
+- versioned `icarus-pipeline-v1`
+- runtime design/spec and implementation plan
+- CI invocation repair
+
+Recovered test coverage includes:
+- deterministic canonical JSON and array-order preservation
+- non-finite number rejection
+- duplicate JSON-key rejection
+- receipt-digest self-exclusion
+- valid S1→S5 structural chain
+- missing-stage fail-closed behavior
+- mixed-policy rejection
+- policy-epoch mismatch
+- mixed baseline revision
+- broken predecessor digest
+- post-creation tamper detection
+- `execution_authorized` cannot be enabled
+- mandatory S4 oracle provenance
+- oracle-independence promotion restrictions
+- S5 semantic blocker cannot be overridden by structural cleanliness
+- no ADVANCED result without valid promotion path
+- maturity ceilings
+- duplicate-origin de-duplication
+- unknown oracle enum fail-closed
+- deterministic repo snapshot ordering
+- empty lineage blocks promotion
+- dependency cycle blocks promotion
+- missing prerequisite blocks promotion
+- material open conflict blocks promotion
+- resolved conflicts require reasons
+- repeated evidence IDs collapse to one origin
+- missing lineage parent fails closed
+- lineage cycle fails closed
+
+## PR #19 — Point-in-time market-data vintage integrity
+- Branch: `chatgpt/icarus-data-vintage-20260924`
+- Head: `e05c122f7a8e5501d98251c7449cbe7ce3ec6dda`
+- Base: `chatgpt/icarus-control-plane-runtime-20260924`
+- GitHub Actions run: `36065966446`
+- Recovered workflow conclusion: `SUCCESS`
+- Linux engine job: `SUCCESS`
+- Windows engine job: `SUCCESS`
+
+Recovered implementation adds:
+- `icarus_engine/feeds/vintage.py`
+- append-only market-data observation provenance
+- ingest-batch identity
+- source SHA-256
+- observed-time semantics distinct from event time
+- `tests_engine/test_data_vintage.py`
+- plant/drop integration changes
+
+Explicit recovered test:
+- `test_ingest_creates_append_only_market_data_observation_ledger`
+
+## Important boundary
+
+CI success proves the configured branch workflow completed successfully.
+It does **not** by itself prove every scientific, market, release-assurance, profitability, robustness, or execution claim.
+
+It also does not authorize merge, deployment, publication, or trading.
+
+
+---
+
+# REPOSITORY / HANDOFF HISTORY
+
+Canonical repository recovered from the workstream:
+- `reppiks490/Icarus`
+
+Important pinned/reported revisions and branches recovered across the workstream:
+- canonical main at one assurance checkpoint: `007e70189945b8e112904cf92b2b1a12e43792d6`
+- assurance archive branch: `icarus/assurance-archive-20260924`
+- assurance archive head last recorded in recovery snapshot: `6f999dfae391382be6e9cb52d568b2dc3410ac1e`
+- draft PR #25 was reported for the assurance archive
+- integration handoff branch reported elsewhere in prior work: `icarus/integration-handoff-20260924-1829`
+- draft PR #24 was reported for that integration handoff
+- PR #17, #18, #19 details are preserved in `VERIFIED_BUILT_AND_TESTED_WORK.md`
+
+Related repositories/revisions recovered:
+- `reppiks490/Icarus-engine` — `f9e71c5dc1ca7035745ed6d4fb5e0d001248f8ad`
+- `reppiks490/aion-parallax-research` — `12a7cb8ef99e84ce50b766db0aea1592b3906f80`
+- `reppiks490/daedalus-research-os` — `74ad94149b02ddd3f69d535ee5fdc00c1fdbe096`
+- `reppiks490/icarus-owner-actions` — `cf9947b340e6138b14551dfe34f83a21973bdb4a`
+- `reppiks490/icarus-causal-router` — `d95a53c70b04349fbef42c0a9dc35de87ca72f40`
+- `reppiks490/icarus-csv-evidence-lab` — `d6a5868e3f3202ef82579aca40b83cb3f8a4b491`
+
+Observed branches preserved in recovery metadata include:
+- `chatgpt/icarus-control-plane-handoff-20260924`
+- `chatgpt/icarus-control-plane-runtime-20260924`
+- `chatgpt/icarus-data-vintage-20260924`
+- `codex/aion-parallax-handoff`
+- `codex/exotic-research-loop`
+- `icarus/integration-handoff-20260924-1829`
+- `icarus/masterbuild-handoff-2026-09-24`
+- `icarus-empirical-qualification-handoff-20260924`
+- `icarus-handoff-2026-09-24`
+- `icarus-loop-integration-2026-09-24`
+- `integration/chatgpt-icarus-fabric-2026-09-24`
+- `integration/icarus-capability-fabric-20260924`
+
+Where a branch/PR is listed as “reported,” this archive preserves the historical report but does not claim it was freshly re-queried during this packaging pass.
+
+
+---
+
+# CURRENT SYSTEM / ASSURANCE STATUS
+
+## Strongest recovered Stage-5 disposition
+- `CYCLE_OUTCOME=INCOMPLETE_PIPELINE`
+- `POLICY_CHAIN_STATUS=MIXED_POLICY`
+- `SNAPSHOT_CHAIN_STATUS=UNVERIFIED`
+- `HANDOFF_CHAIN_STATUS=UNVERIFIED`
+- `VERIFICATION_ORACLE_STATUS=UNVERIFIED`
+- `RELEASE_STATUS=NOT_QUALIFIED`
+- `execution_authorized=false`
+
+The corresponding `stage5_final_receipt.json` is included inside the expanded recovery snapshot.
+
+## AEGIS assurance baseline
+Thirty failure classes are preserved in:
+- `20_EXPANDED_RECOVERY_SNAPSHOT/00_MASTER_INDEX/AEGIS_ASSURANCE_BASELINE_001_030.md`
+
+The later red-team work explicitly covers:
+- numerical threshold brittleness
+- checkpoint/recovery equivalence
+- semantic identity / artifact substitution
+- control-plane/configuration authority
+- validator monoculture
+- specification drift
+- resource exhaustion / graceful degradation
+- multi-timeframe aggregation leakage
+- market-data revision integrity
+- feature-availability/computational-latency leakage
+- training-serving skew
+- multiple-comparison / research-selection multiplicity
+
+## Highest-value recovered implementation backlog
+1. Finding 029 — offline/online feature parity
+2. Finding 026 — causal multi-timeframe parity
+3. Finding 030 — research-process multiplicity
+4. Finding 020 — checkpoint/recovery equivalence
+5. Finding 023 — independent oracle / mutation program
+
+This is the best continuation order preserved by the repository-native recovery package.
+
+
+---
+
+# AUTOMATION / LOOP STATE SNAPSHOT
+
+This package was produced while the project had active scheduled control work.
+
+## Active at packaging time
+### ICARUS Assurance Loop
+- enabled
+- hourly
+- purpose: select the highest-value unresolved executable assurance gap, prioritize durable S1→S5 control-plane substrate and repository-addressable evidence, preserve all fail-closed invariants, and stop at the smallest decisive blocker when no material delta is possible.
+
+### ICARUS Unified Control Cycle
+- enabled
+- hourly, on the hour
+- single-execution S1→S5 control cycle
+- preserves one in-memory policy/snapshot/evidence/claim/dependency/conflict chain across all five stages
+- policy: `icarus-control-v1`
+- handoff schema: `icarus-pipeline-v1`
+- execution remains unauthorized
+- includes single-flight/overlap guard, time-budget guard, cross-cycle continuity gate, immutable snapshot rule, evidence/claim lineage, maturity ladder, S1 evidence convergence, S2 deterministic subsystem rotation, S3 empirical research, S4 repair/architecture forge, S5 verification/release assurance.
+
+## Earlier specialized loops preserved but disabled by later consolidation
+- 1/5 ICARUS Evidence Convergence
+- 2/5 ICARUS Subsystem Rotation
+- 3/5 ICARUS Agent Reach Edge Research
+- 4/5 ICARUS Repair & Architecture Forge
+- 5/5 ICARUS Verification & Release
+- ICARUS Implementation Extraction Loop
+- ICARUS Release Cohesion Loop
+- HELIOS Audit Loop
+
+The two older AEGIS builder/red-team automation slots were later repurposed into specialized staged jobs; their AEGIS architecture/red-team prompts remain preserved in the handoff files.
+
+
+---
+
+# LIBRARY ITEMS NOT COPIED AS RAW BYTES
+
+The following project/library files were visible by metadata but the file service did not authorize raw-byte materialization into this working container.
+
+They are therefore named here explicitly so a later project-aware Codex session can retrieve them from Library/Project context instead of assuming they were lost.
+
+## ICARUS REVAMPED source artifacts
+- `THE_PULSE_OF_ICARUS_X_AGENT_REACH_ultracoded_CME_MINI_NQ1!_2026-09-15_2cb11.xlsx`
+  - Library file ID: `file_000000001e308211801de7562ec9c7f0`
+  - recorded size: 175,281 bytes
+- `THE_PULSE_OF_ICARUS_X_AGENT_REACH_ultracoded_CME_MINI_NQ1!_2026-09-15_2cb11(1).xlsx`
+  - Library file ID: `file_000000008e688211bc772d52cecaebc4`
+  - recorded size: 175,281 bytes
+- `THE_PULSE_OF_ICARUS_X_AGENT_REACH_ultracoded_CME_MINI_NQ1!_2026-09-15_2cb11(2).xlsx`
+  - Library file ID: `file_00000000a2c081f4b92fd99442c14198`
+  - recorded size: 175,281 bytes
+- `ICARUS_REGULAR_CANDLE_STANDARD_OHLC_ENHANCED_2026-09-15.pine`
+  - Library file ID: `file_00000000960c81f58a1d623765f6a8d3`
+  - recorded size: 37,454 bytes
+  - a text-materialized copy **is** included in this archive as:
+    `10_RAW_RECOVERED_ARTIFACTS/ICARUS_REGULAR_CANDLE_STANDARD_OHLC_ENHANCED_2026-09-15.txt`
+- `/ICARUS REVAMPED?/Pasted text.txt`
+  - Library file ID: `file_00000000f120820c9ef6c135fc635efe`
+  - recorded size: 176,040 bytes
+  - a text-materialized extraction **is** included as:
+    `10_RAW_RECOVERED_ARTIFACTS/ICARUS_REVAMPED_Pasted_text_extracted.txt`
+
+The three `.xlsx` files could not be materialized as raw or extracted-text files in this packaging session.
+
+
+---
+
+# CONTINUE FROM HERE — MASTERBUILD NEXT WORK
+
+Use this order unless fresher repository evidence invalidates it:
+
+## 1. Finding 029 — Offline/online feature parity
+Build a versioned `FeatureContract` that binds:
+- feature ID/name
+- semantic meaning
+- source identity/vintage
+- event / observed / ready / decision times
+- units
+- sign convention
+- dtype / precision
+- ordering
+- missingness and imputation policy
+- normalization/clipping parameters
+- aggregation/calendar/roll semantics
+- preprocessing code identity
+- implementation/runtime identity
+- dependency lineage
+
+Required proof:
+- batch vs incremental parity on the same causal stream
+- training/backtest/shadow/active path identity
+- order/units/sign/missingness mismatch detection
+- target/future-derived ancestry rejection
+- serving change invalidates unproven compatibility
+- staleness/knowledge-time remains visible
+- shadow result cannot transfer to a materially different active path
+
+## 2. Finding 026 — Causal multi-timeframe parity
+Explicit PARTIAL vs FINAL higher-timeframe semantics.
+No future extrema or confirmation may leak into a lower-timeframe decision.
+Require future-tail mutation invariance and live-incremental vs causal-replay equivalence.
+
+## 3. Finding 030 — Research multiplicity
+Make every tested variant / asset / timeframe / session / feature / target / metric / cost model part of a durable research-attempt lineage.
+An exposed holdout cannot become untouched again.
+Parallel-agent search increases search exposure; it is not independent validation.
+
+## 4. Finding 020 — Checkpoint/recovery equivalence
+Restarts must be observationally invisible.
+Persist or exactly reconstruct every qualification-relevant causal state.
+Duplicate redelivery must be idempotent.
+Torn global checkpoints must fail closed.
+
+## 5. Finding 023 — Independent oracle / mutation program
+Separate regression oracles from independent correctness oracles.
+Track ancestry among validators.
+Use mutation/fault injection on critical semantics.
+Validator cloning cannot manufacture evidence.
+
+## Standing rule
+Implement → attack → regress → qualify → map evidence → repeat.
+
+Do not add a new theoretical layer unless implementation exposes a genuinely new failure class.
+
+
+---
+
+# AEGIS Assurance Baseline — Findings 001–030
+
+This is the consolidated failure-class baseline recovered from the ICARUS/AEGIS work.
+It is an assurance specification, not a claim that every control has been implemented.
+
+Hard constraints carried forward:
+- execution_authorized=false
+- no synthetic bars represented as empirical evidence
+- no invented ICARUS trainer slots/features
+- no Pulse rewrite
+- fail-closed qualification
+- deterministic canonical serialization/replay where applicable
+- tamper-evident provenance/audit
+- strict temporal integrity
+- uncertainty cannot increase authority
+
+001 Information-Time Leakage — bind publish/observed/ingest/revision/knowledge cutoffs; future data cannot alter prior decisions.
+002 Correlated Expert Evidence — dependency-adjust confidence; cloned/shared-ancestry experts cannot manufacture authority.
+003 Calibration Operational Mismatch — calibration scoped by regime/horizon/instrument/config/vintage; stale/OOD fails closed.
+004 Execution-Cost Blindness — prediction is not realizability; stress costs/latency/fills and preserve intrabar ambiguity.
+005 Fault Propagation / Semantic Integrity — descendants inherit ancestor validity/provenance; invalid ancestry cannot be laundered.
+006 Replay Nondeterminism — bind ordering, numeric contracts, randomness, caches, environment and dependencies.
+007 Audit Completeness / Alternate-History Resistance — chained/checkpointed commitments must expose omissions, forks and substitutions.
+008 Adaptation Governance — shift→degraded/OOD→proposal→shadow→independent qualification→promotion; no inherited authority.
+009 Research-Process Overfitting — distinguish model OOS, research OOS and untouched lockbox; repeated exposure is selection.
+010 Common Drivers / False Influence Graph — association, conditional prediction and causal claims are distinct.
+011 Schema-Valid Semantic Split-Brain — distinguish NONE/UNKNOWN/REJECTED/ABSTAINED; confidence binds claim/horizon/context.
+012 Fail-Closed Composition — mandatory dependencies explicit; no survivor renormalization or fallback laundering.
+013 Evidence Double Spending — lineage is transitive; transforms/agents/summaries do not create independent origins.
+014 Label / Target Integrity — immutable target contracts for horizon, ambiguity, censoring, overlap, roll/revision and knowledge time.
+015 Objective / Proxy Gaming — versioned objective contract + hard constraints; no universal score may trade away integrity.
+016 Population / Selection Integrity — declare eligible population and exclusion flow; survivor populations cannot silently substitute.
+017 Policy-Induced Data — observation/selection/labeling policy is provenance; information deficit cannot raise authority.
+018 Market-Time / Calendar Integrity — canonical exchange/session/trading-date/calendar/roll identity; ambiguity fails closed.
+019 Numerical Stability / Threshold Topology — reproducible is not robust; expose margin/uncertainty and threshold cascades.
+020 Checkpoint / Recovery Equivalence — restart must be observationally equivalent; qualification state survives or fails closed.
+021 Provenance Identity Collision / Artifact Substitution — authenticate semantic objects, not naked hashes/paths.
+022 Control-Plane Integrity / Configuration Authority — anything that changes authority is authority-bearing and versioned.
+023 Validator Monoculture / Correlated Test Oracles — measure oracle independence; use negative/property/mutation checks.
+024 Specification Drift / Requirement Erosion — trace requirement→architecture→implementation→validation→active runtime.
+025 Resource Exhaustion / Graceful Degradation — lose speed/coverage/availability before semantics; loss cannot raise confidence.
+026 Multi-Timeframe Aggregation Leakage / Aliasing — partial/final HTF semantics; future confirmation cannot leak backward.
+027 Market-Data Revision / Vendor-Correction Integrity — point-in-time and final-revised are distinct identities/vintages.
+028 Feature Availability / Computational-Latency Leakage — evidence must be computable before deadline, including tail/stress latency.
+029 Training-Serving Skew / Offline-Online Feature Parity — deploy the feature system qualified, not merely matching column names.
+030 Multiple Comparisons / Research Selection Multiplicity — qualify the search process; preserve candidate/exposure lineage.
+
+Discovery-loop transition:
+implement → attack → regress → qualify → map evidence → repeat
+
+Only add a new theoretical finding when implementation exposes a genuinely new failure class.
+
+
+---
+
+# ICARUS / AEGIS Work Package
+
+This package captures the substantive work produced in this conversation thread.
+
+## Scope
+
+Included:
+- AEGIS Red-Team Findings 019–030
+- Stage 5/5 ICARUS Verification & Release Assurance work
+- Current blockers, invariants, test requirements, and remediation
+- Final Stage-5 execution receipt
+
+Preserved hard constraints throughout:
+- execution_authorized=false
+- no synthetic bars as empirical evidence
+- no invented ICARUS trainer slots/features
+- no Pulse rewrite
+- fail-closed qualification
+- deterministic canonical serialization/replay
+- immutable/tamper-evident audit
+- strict temporal integrity
+- uncertainty cannot increase authority
+
+---
+
+# AEGIS Red-Team Findings
+
+## Finding 019 — Numerical Stability / Threshold Topology / Structural Brittleness
+
+Core problem:
+Deterministic replay does not imply numerical stability. Tiny legitimate perturbations such as one tick, one nanosecond, one quantization unit, or a tiny volatility/calibration change can cross empirical thresholds and cascade through regime classification, expert selection, calibration, cost models, and qualification.
+
+Master invariant:
+> AEGIS must distinguish a decision that is reproducible from one that is robust. A deterministic cliff is still a cliff.
+
+Key requirements:
+- Classify thresholds as HARD_CONTRACT, EMPIRICAL_GATE, BUCKET_BOUNDARY, RANKING_CUTOFF, or STATE_TRANSITION.
+- Hard safety boundaries remain absolute and fail closed.
+- Empirical thresholds record margin and uncertainty.
+- Near-boundary uncertainty cannot increase authority.
+- Small admissible perturbations causing material authority changes must be marked unstable/degraded unless the boundary is semantically hard.
+- Threshold cascades must be traceable.
+- Quantization/rounding participates in replay semantics.
+- Near-tie ranking must expose instability.
+- Regime chatter must be detected; hysteresis only if explicit, versioned, and validated.
+- Historical decision margins must remain immutable/versioned.
+
+Representative tests:
+- test_empirical_threshold_has_declared_margin_semantics
+- test_near_boundary_uncertainty_cannot_increase_authority
+- test_one_tick_perturbation_does_not_unexplainedly_jump_authority
+- test_regime_threshold_chatter_detected
+- test_top_k_near_tie_exposes_instability
+- test_calibration_bucket_edge_not_hidden
+- test_quantization_rule_bound_to_replay_manifest
+- test_threshold_cascade_traceable
+- test_hard_safety_gate_not_softened_by_stability_logic
+
+What remains unproven:
+Local robustness does not imply global robustness or correctness. Genuine economic discontinuities can exist and should be exposed rather than indiscriminately smoothed.
+
+---
+
+## Finding 020 — Checkpoint / Recovery Equivalence
+
+Core problem:
+Replay from genesis may be deterministic while checkpoint restore, crash recovery, worker migration, rolling-window restoration, or partial-state recovery produces a different future trajectory.
+
+Master invariant:
+> A restart must be observationally invisible to the qualification system.
+
+Key requirements:
+- Restored execution must be behaviorally equivalent to uninterrupted execution.
+- All qualification-relevant causal state must be checkpointed or exactly reconstructable.
+- Global checkpoints must represent causally consistent cuts across components.
+- Duplicate redelivery must be idempotent.
+- Crash/ack ordering must not silently lose events.
+- Pending joins, labels, timeouts, hysteresis, calibration, and dependency state must survive recovery.
+- Recovery must preserve the original knowledge cutoff.
+- Loss of dependency/calibration/cost/regime/integrity state cannot increase authority.
+- Cross-version restore requires exact compatibility, verified migration, full replay, or fail-closed rejection.
+- Crash-point fuzzing should verify transaction boundaries.
+
+Representative tests:
+- test_uninterrupted_equals_checkpoint_restore
+- test_hidden_rolling_state_survives_restore
+- test_hysteresis_state_survives_restart
+- test_duplicate_redelivery_is_idempotent
+- test_torn_global_checkpoint_rejected
+- test_pending_labels_restore_at_original_knowledge_cutoff
+- test_dependency_state_loss_cannot_increase_authority
+- test_version_crossing_requires_verified_migration
+- test_crash_point_fuzzing_preserves_canonical_result
+
+---
+
+## Finding 021 — Provenance Identity Collision / Artifact Substitution
+
+Core problem:
+A valid cryptographic hash can authenticate the wrong semantic object. Hash equality alone does not prove semantic identity.
+
+Master invariant:
+> AEGIS must authenticate semantic objects, not merely byte strings.
+
+Key requirements:
+- Bind artifact type and semantic role to identity.
+- Mutable locators (paths, URLs, “latest” tags) cannot substitute for content identity.
+- Canonicalization algorithm/version participates in identity.
+- Semantic contracts and behaviorally relevant dependencies participate in identity.
+- Dataset identity preserves ordering and multiplicity when semantically meaningful.
+- Hash algorithms are explicitly identified.
+- Signatures bind context, not just a naked digest.
+- Audit commitments must prevent valid-segment transplantation.
+- Behaviorally relevant semantic mutation must change identity unless explicit compatibility is proven.
+
+Representative tests:
+- test_mutable_locator_not_treated_as_content_identity
+- test_artifact_type_is_domain_separated
+- test_semantic_role_is_bound_to_identity
+- test_canonicalization_version_is_bound
+- test_dependency_substitution_changes_identity
+- test_dataset_order_semantics_are_preserved
+- test_duplicate_evidence_changes_dataset_identity
+- test_signature_cannot_be_replayed_into_wrong_context
+- test_audit_segment_cannot_be_spliced_across_ledgers
+- test_semantic_mutation_changes_artifact_identity
+
+---
+
+## Finding 022 — Control-Plane Integrity / Configuration Authority
+
+Core problem:
+Every data-plane safeguard can remain intact while a valid configuration silently changes which protections are enforced.
+
+Master invariant:
+> Anything capable of changing authority is itself an authority-bearing artifact.
+
+Key requirements:
+- Distinguish OPERATIONAL, SCIENTIFIC, AUTHORITY-CRITICAL, and IMMUTABLE-INVARIANT configuration.
+- Mandatory gates cannot be downgraded through ordinary runtime config.
+- UNKNOWN/timeout/integrity failure cannot be configured into ordinary success.
+- Threshold, tolerance, cost, session, or dependency-policy changes invalidate incompatible prior qualification.
+- Resolved defaults, environment variables, CLI flags, and feature flags affecting semantics belong in configuration identity.
+- Mixed-configuration distributed components must fail closed.
+- Authority-policy rollback must be detectable.
+- Candidate promotion is an auditable authority transition.
+- Debug/test bypasses cannot produce ordinary qualified artifacts.
+- Core ICARUS invariants are not runtime toggles.
+
+Representative tests:
+- test_mandatory_gate_cannot_be_runtime_downgraded
+- test_unknown_cannot_be_configured_as_success
+- test_threshold_change_changes_experiment_identity
+- test_model_qualification_bound_to_configuration
+- test_environment_variable_semantics_are_manifested
+- test_debug_mode_artifact_cannot_be_promoted
+- test_mixed_configuration_workers_fail_closed
+- test_authority_policy_rollback_detected
+- test_promotion_is_audited_authority_transition
+
+---
+
+## Finding 023 — Validator Monoculture / Correlated Test Oracles
+
+Core problem:
+A system can pass thousands of tests because implementation and validator share the same bug, code, fixture, library, data, or assumption.
+
+Master invariant:
+> AEGIS must measure independence of validation, not merely quantity of validation.
+
+Key requirements:
+- Validation evidence records shared code, data, fixture, and assumption ancestry.
+- Agreement among validators sharing critical ancestry is not independent corroboration.
+- Regression oracles remain distinct from independent correctness oracles.
+- Golden outputs record the implementation/version that generated them.
+- Test count and code coverage do not independently increase authority.
+- Critical semantics should undergo mutation testing.
+- Repeatedly exposed fixtures participate in research-exposure accounting.
+- Synthetic fixtures can validate software properties but cannot masquerade as empirical market evidence.
+- Multi-agent agreement is dependency-adjusted when inputs/assumptions are shared.
+- Validator cloning cannot manufacture independent evidence.
+
+Representative tests:
+- test_oracle_does_not_call_subject_under_test
+- test_shared_library_ancestry_is_exposed
+- test_generated_golden_file_is_classified_as_regression
+- test_code_independence_not_confused_with_assumption_independence
+- test_execution_simulator_has_independent_validation
+- test_replay_determinism_not_treated_as_correctness
+- test_critical_semantic_mutations_are_killed
+- test_validator_cloning_cannot_increase_epistemic_authority
+
+---
+
+## Finding 024 — Specification Drift / Requirement Erosion
+
+Core problem:
+Refactors, migrations, agent handoffs, and successive reinterpretations can preserve local correctness while silently weakening the original ICARUS contract.
+
+Master invariant:
+> A requirement is not preserved unless its enforcement can be traced through the current authoritative runtime path.
+
+Key requirements:
+- Stable versioned identity for every immutable/authority-critical requirement.
+- Requirement → architecture → implementation → validation → runtime evidence traceability.
+- Documentation alone cannot satisfy enforcement.
+- Tests on deprecated/unreachable paths do not count for the current authoritative path.
+- Deleting/replacing enforcement code triggers trace reconciliation.
+- Requirement conflicts remain explicit.
+- Requirement versions participate in qualification/replay provenance.
+- Hard invariants cannot be weakened into mutable defaults.
+- Negative requirements require explicit rejection tests.
+- Temporary exceptions are scoped, audited, expiring, and qualification-visible.
+- Orphaned critical requirements fail qualification.
+
+Representative tests:
+- test_every_immutable_requirement_has_active_enforcement
+- test_every_critical_requirement_has_validation_evidence
+- test_deleted_enforcement_requires_replacement_trace
+- test_authoritative_runtime_path_executes_required_gate
+- test_requirement_version_bound_to_qualification
+- test_hard_invariant_cannot_become_configurable_default
+- test_negative_requirements_have_rejection_tests
+- test_orphaned_requirement_detected
+- test_requirement_mutant_is_killed
+
+---
+
+## Finding 025 — Resource Exhaustion / Graceful-Degradation Integrity
+
+Core problem:
+Overload can force silent shortcuts that drop evidence, disable validation, reorder events, truncate audit, relax staleness, or increase authority.
+
+Master invariant:
+> AEGIS may lose speed, coverage, or availability under overload—but never earn confidence from the loss.
+
+Key requirements:
+- Resource loss reduces throughput/coverage before weakening mandatory semantics.
+- Missing/timed-out qualification evidence cannot increase authority.
+- Queue overflow, shedding, retry, timeout policies are explicit/versioned/audited.
+- Mandatory validators cannot be silently disabled.
+- Audit backpressure cannot permit ordinary qualification without required durable audit.
+- Resource-driven exclusion participates in population/policy provenance.
+- Backlogged historical evaluation preserves original knowledge cutoff.
+- Batching/catch-up preserves canonical order.
+- Load degradation cannot relax join/staleness/calendar/lineage/dependency requirements without explicit requalification.
+- Fallback defaults cannot masquerade as observed evidence.
+- Stress-correlated missingness must be exposed.
+
+Representative tests:
+- test_resource_loss_cannot_increase_authority
+- test_mandatory_validator_not_shed_under_load
+- test_audit_backpressure_blocks_or_degrades_qualification
+- test_queue_overflow_policy_is_semantic_and_audited
+- test_survivor_renormalization_cannot_raise_authority
+- test_backlog_processing_preserves_original_knowledge_cutoff
+- test_circuit_breaker_returns_unknown_not_valid_default
+- test_retry_idempotency_prevents_duplicate_evidence
+- test_stress_correlated_missingness_is_reported
+
+---
+
+## Finding 026 — Multi-Timeframe Aggregation Leakage / Aliasing
+
+Core problem:
+Higher-timeframe values can leak future information into lower-timeframe decisions through finalized bars, resampling conventions, partial-bar mismatch, or structural confirmation.
+
+Master invariant:
+> A higher-timeframe feature may summarize the past, but it may never summarize the future of the current decision.
+
+Key requirements:
+- HTF aggregates consumed by a decision contain only observations available by its knowledge cutoff.
+- PARTIAL and FINAL aggregates have distinct semantics.
+- Partial aggregates expose as-of time.
+- Finalized aggregates are not visible before finalization.
+- Derived HTF indicators inherit maximum input knowledge time.
+- Aggregation anchors, closure/labels, session rules, and missing-data semantics are explicit/versioned.
+- Generic nearest-time joins cannot override causal alignment.
+- Different timeframes derived from overlapping data are not independent evidence.
+- DST/early-close/session/roll semantics derive from canonical market-time contracts.
+- Pivots/swings/FVG/breakouts requiring future confirmation distinguish event time from knowledge time.
+- Future-tail mutation cannot alter prior decisions.
+- Live incremental and historical causal replay must be equivalent.
+
+Representative tests:
+- test_finalized_htf_bar_not_visible_before_close
+- test_partial_htf_value_reconstructed_as_of_decision_time
+- test_future_tail_mutation_cannot_change_prior_decision
+- test_htf_high_low_do_not_leak_future_extrema
+- test_resample_boundary_semantics_are_explicit
+- test_asof_join_never_selects_future_aggregate
+- test_multitimeframe_agreement_dependency_adjusted
+- test_pivot_location_time_not_confused_with_knowledge_time
+- test_live_incremental_equals_historical_causal_replay
+
+---
+
+## Finding 027 — Market-Data Revision / Vendor-Correction Integrity
+
+Core problem:
+Historical research can use corrected/backfilled/revised information that was not available to ICARUS in real time.
+
+Master invariant:
+> AEGIS must never let hindsight correction masquerade as contemporaneous knowledge.
+
+Key requirements:
+- Historical event time does not imply historical observability.
+- Original observations and later revisions retain distinct identities/publication times.
+- Historical decisions consume only revisions published by their knowledge cutoff.
+- POINT_IN_TIME and FINAL_REVISED datasets have distinct identities.
+- Late trades, corrections, cancels, busts, and backfills are not retroactively treated as contemporaneously known.
+- Derived features inherit revision/vintage provenance.
+- Calibration, realizability, labels, and population analysis record data vintage.
+- Qualification-critical research uses immutable dataset snapshots or equivalent revision manifests.
+- Unknown revision history makes PIT replay UNVERIFIED rather than guessed.
+- Continuous-contract adjustment/roll revisions retain explicit vintage semantics.
+
+Representative tests:
+- test_future_revision_cannot_change_prior_decision
+- test_event_time_not_confused_with_revision_publish_time
+- test_cancelled_trade_preserved_in_point_in_time_replay
+- test_late_trade_enters_only_after_first_observed_time
+- test_volume_backfill_not_visible_before_revision
+- test_dataset_snapshot_is_immutable
+- test_point_in_time_and_final_revised_modes_have_distinct_identity
+- test_feature_inherits_revision_semantics_from_inputs
+- test_final_revised_data_cannot_masquerade_as_live_observed_data
+
+---
+
+## Finding 028 — Feature Availability / Computational-Latency Leakage
+
+Core problem:
+Data may be causally available before a decision while the feature/model/calibration/realizability result is not actually computable before the deadline.
+
+Master invariant:
+> Evidence is not usable merely because it existed; the qualified decision must have been computable before its deadline.
+
+Key requirements:
+- Separate event time, first-observed time, input-ready time, compute start/finish, and decision deadline.
+- Derived readiness accounts for dependency availability and compute time.
+- End-to-end feasibility uses the dependency critical path.
+- Vectorized historical calculations do not imply zero live latency.
+- Tail latency matters, not just mean latency.
+- Latency is evaluated under market stress, overload, and restart states.
+- Late mandatory evidence becomes LATE/UNKNOWN/DEGRADED and cannot retroactively increase prior authority.
+- Async expert completion/timeout semantics are explicit.
+- Cold/warm/cache paths are distinguished.
+- Required calibration/realizability/audit gates complete before final qualification when mandated.
+- Added computation delay cannot increase authority.
+
+Representative tests:
+- test_data_available_does_not_imply_feature_ready
+- test_final_bar_signal_respects_computation_delay
+- test_derived_feature_ready_time_propagates_from_dependencies
+- test_cross_market_feature_waits_for_last_mandatory_input
+- test_tail_latency_not_replaced_by_mean_latency
+- test_latency_conditioned_on_market_stress
+- test_end_to_end_latency_uses_dependency_critical_path
+- test_late_artifact_cannot_attach_to_earlier_deadline
+- test_added_compute_delay_cannot_increase_authority
+
+---
+
+## Finding 029 — Training-Serving Skew / Offline-Online Feature Parity
+
+Core problem:
+Training, backtesting, shadow mode, and active serving can use nominally identical feature names while differing in implementation, normalization, missingness, vendor source, vintage, units, ordering, precision, or warm-up semantics.
+
+Master invariant:
+> AEGIS must deploy the feature system it qualified—not merely a system with matching column names.
+
+Key requirements:
+- Training/calibration/backtest/shadow/active serving bind to explicit versioned feature contracts.
+- Batch and incremental implementations prove parity on identical causal streams.
+- Feature ordering is bound to identity.
+- Missing-value, imputation, normalization, clipping, categorical handling participate in preprocessing identity.
+- Units, sign conventions, and scale are explicit.
+- Data source, vintage, aggregation, calendar, and contract methodology participate where behaviorally relevant.
+- Serving implementation changes invalidate unproven compatibility.
+- Feature staleness/knowledge time remain visible.
+- Target/future-derived ancestry cannot enter predictive feature vectors.
+- Runtime/library/precision changes affecting behavior participate in compatibility.
+- Shadow qualification does not transfer automatically to materially different active paths.
+
+Representative tests:
+- test_offline_online_feature_parity
+- test_batch_and_incremental_feature_equivalence
+- test_feature_vector_order_bound_to_identity
+- test_missing_feature_cannot_default_to_valid_numeric_value
+- test_normalization_parameters_bound_to_model_bundle
+- test_vendor_source_swap_requires_compatibility_proof
+- test_feature_units_enforced
+- test_sign_convention_bound_to_semantics
+- test_target_descendant_cannot_enter_feature_vector
+- test_shadow_and_active_feature_paths_are_equivalent
+
+---
+
+## Finding 030 — Multiple Comparisons / Research Selection Multiplicity
+
+Core problem:
+Every individual experiment can be clean while the overall search process manufactures impressive winners through repeated testing across instruments, timeframes, sessions, features, targets, metrics, and parameter families.
+
+Master invariant:
+> AEGIS must qualify the process that found the winner, not merely the winner that survived the process.
+
+Key requirements:
+- Qualification accounts for the research/selection process, not just selected-candidate performance.
+- Parameter, asset, timeframe, session, feature, target, regime, metric, and cost-model searches participate in multiplicity provenance.
+- Adaptive human/agent-guided iteration counts as research exposure.
+- Exposed evaluation data can never return to untouched-lockbox status.
+- Candidate dependence is recognized; candidate count is not assumed independent.
+- Failed/rejected candidates remain sufficiently traceable.
+- Strategy renaming/refactoring does not reset research lineage.
+- Multi-agent search breadth is not independent validation.
+- Null-process/adversarial selection tests should be used where scientifically appropriate.
+- Adding redundant/irrelevant candidates cannot increase scientific authority.
+
+Representative tests:
+- test_selected_candidate_records_search_process
+- test_asset_selection_is_recorded_as_multiplicity
+- test_timeframe_selection_is_recorded
+- test_session_selection_is_recorded
+- test_target_selection_is_recorded
+- test_agent_parallel_search_counts_as_research_exposure
+- test_reused_walk_forward_fold_not_treated_as_fresh_oos
+- test_exposed_holdout_cannot_return_to_lockbox_status
+- test_failed_candidates_remain_in_research_lineage
+- test_null_search_does_not_manufacture_qualification
+- test_irrelevant_search_space_expansion_cannot_increase_authority
+- test_clone_candidates_do_not_create_independent_evidence
+
+---
+
+# Stage 5/5 — ICARUS Verification & Release Assurance
+
+## Purpose
+
+Independently attack, integrate, regress, and qualify the cycle's accumulated work without adding new features or redoing upstream research.
+
+Required policy:
+- PIPELINE_POLICY_VERSION = `icarus-control-v1`
+- HANDOFF_SCHEMA_VERSION = `icarus-pipeline-v1`
+
+## Verification result
+
+Final authoritative disposition in this thread:
+
+`CYCLE_OUTCOME=INCOMPLETE_PIPELINE`
+
+Reason:
+The required same-cycle S1→S4 handoff chain could not be reconstructed from the accessible canonical repository.
+
+Fresh read-only verification established:
+- Canonical repository: `reppiks490/Icarus`
+- Observed repository head: `007e70189945b8e112904cf92b2b1a12e43792d6`
+- `state.json` content: `{}`
+- No repository search hits for:
+  - `icarus-pipeline-v1`
+  - `icarus-control-v1`
+  - `TEST_ORACLE_ORIGIN`
+  - `POLICY_CHAIN_STATUS`
+  - `REPO_BASELINE_REVISION`
+  - current-cycle marker `20260924-06`
+- No matching pipeline issues or pull requests
+- Standard Baton state files absent:
+  - `baton-pass.state.json`
+  - `docs/current-state.md`
+  - `docs/next-task.md`
+  - `docs/progress.md`
+  - `docs/agent-handoff.md`
+- `Icarus-engine` was independently confirmed as a stub pointing at `reppiks490/Icarus`
+
+## Corrected control-plane disposition
+
+Because the Stage-5 rules explicitly require missing S1–S4 policy versions/epochs to be treated as mixed policy:
+
+- `POLICY_CHAIN_STATUS=MIXED_POLICY`
+- `POLICY_DRIFT_STATUS=MIXED_POLICY`
+- `DEGRADED_MODE=true`
+
+This corrects the earlier less-strict `UNVERIFIED` treatment.
+
+## Final Stage-5 status
+
+- S1 = MISSING
+- S2 = MISSING
+- S3 = MISSING
+- S4 = MISSING
+- CYCLE_COMPLETENESS = INCOMPLETE
+- SNAPSHOT_CHAIN_STATUS = UNVERIFIED
+- HANDOFF_CHAIN_STATUS = UNVERIFIED
+- EVIDENCE_LINEAGE_STATUS = UNKNOWN
+- INDEPENDENT_EVIDENCE_ORIGIN_COUNT = 0
+- VERIFICATION_ORACLE_STATUS = UNVERIFIED
+- PROMOTION_PATH_VALID = false
+- VERIFIED_CLAIMS = NONE
+- RELEASE_STATUS = NOT_QUALIFIED
+- REGRESSION_STATUS = NOT_RUN_BLOCKED
+- SECURITY_INTEGRITY_STATUS = UNVERIFIED
+- STALL_STATUS = STALLED
+- PIPELINE_DISPOSITION = RETURN_TO_S1
+- NEXT_EXPECTED_STAGE = EVIDENCE_CONVERGENCE
+
+No tests, mutations, or fault injections were claimed as run because the upstream circuit breaker was already decisive.
+
+## Required remediation
+
+S1 must persist a retrievable same-cycle `icarus-pipeline-v1` receipt under `icarus-control-v1` containing:
+- CYCLE_ID
+- policy epoch
+- producer/stage identity
+- immutable REPO_BASELINE_REVISION
+- REPO_SNAPSHOT_SET
+- deterministic digest
+- claim IDs and maturity
+- dependency closure
+- conflict state
+- evidence lineage state
+
+S2–S4 must:
+- preserve the same policy epoch
+- preserve the pinned revision
+- link their digests to the previous stage
+
+S4 must additionally persist:
+- TEST_ORACLE_ORIGIN
+- TEST_ORACLE_DERIVED_FROM
+- ORACLE_INDEPENDENCE_STATUS
+- GOLDEN_VECTOR_PROVENANCE
+- NEGATIVE_CONTROLS
+- MUTATION_OR_FAULT_INJECTION_PLAN
+
+Until this chain exists, Stage 5 cannot lawfully promote any claim to `VERIFIED_FOR_INTEGRATION` or produce `ADVANCED`.
+
+## Plugin/tool routing actually performed in the final Stage-5 continuation
+
+Actually used/read:
+- Superpowers `using-superpowers`
+- Superpowers `verification-before-completion`
+- Baton Pass skill instructions
+- Akinator skill instructions
+- Astral Orchestrator skill instructions
+- Direct read-only GitHub connector
+
+Not fabricated:
+- No Astral child worker was claimed because no Astral callable worker route was exposed.
+- No Baton save-state was claimed because Baton repository state infrastructure was absent and the run remained read-only.
+- No Akinator write workflow was performed.
+- No Enterprise or Orchestrator Lite run was claimed.
+- No tests or mutations were claimed to have run.
+
+---
+
+# Final Stage-5 Machine-Readable Receipt
+
+See `stage5_final_receipt.json` in this archive.
+
+Canonical SHA-256 recorded for the final receipt in-session:
+`20e59b81985e8b0fdc37a8d44baef05e61cbc77971b0adfa7b9c4cc223b6a9ba`
+
+---
+
+# Next Action
+
+Return to S1 / EVIDENCE_CONVERGENCE and repair same-cycle handoff persistence first.
+
+Do not spend additional Stage-5 verification effort until the authoritative policy/snapshot/handoff/oracle chain is retrievable.
+

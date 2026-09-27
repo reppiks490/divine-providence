@@ -1,0 +1,226 @@
+{
+  "capability_id": "ascension.manifest-trust-collision-adapter",
+  "name": "Manifest Trust \u2192 Collision Adapter",
+  "version": "0.4.0",
+  "cycle_id": "ascension-cycle-020",
+  "status": "CANDIDATE",
+  "problem": "Bridge authenticated manifests through strict position-bound transparency evidence into collision analysis without silently accepting downgraded or modified verifier backends.",
+  "hypothesis": "An explicit read-only contract that pins v0.8 inclusion, v0.7 transition/witness semantics, v0.3 collision behavior, policy digests, and dependency source hashes will reduce verifier-substitution and proof-position ambiguity while preserving rollback and non-interference.",
+  "beneficiaries": [
+    "ASCENSION",
+    "optional sibling consumers that explicitly adopt the adapter contract"
+  ],
+  "authority_exclusions": [
+    "No sibling mutation",
+    "No sibling adoption claim",
+    "No signer/root authority",
+    "No semantic-truth claim",
+    "No production execution authority"
+  ],
+  "dependencies": [
+    {
+      "name": "Evaluator Fabric attestation",
+      "version": "0.4",
+      "sha256": "b189d3c21516ee62ee15da764f9bbedd0c036d180a4cb316d81c2426717d238e"
+    },
+    {
+      "name": "Evaluator Fabric inclusion",
+      "version": "0.8",
+      "sha256": "8c40d16061bbc436cf78d3029f6b4d04b507dad8779e3dba74fd6ce51746de4b"
+    },
+    {
+      "name": "Evaluator Fabric transition/witness",
+      "version": "0.7",
+      "sha256": "eb8b4ad9990f8b57530aa88415827a762c6b1ff136996a33fe158ea8a72c33b6"
+    },
+    {
+      "name": "Collision Detector",
+      "version": "0.3",
+      "sha256": "fda90e02b3774219d0b52640e58f35510f5834c1065a2729cb563f1b303f5abb"
+    }
+  ],
+  "interfaces": [
+    {
+      "name": "build_backend_contract",
+      "interface_version": "0.4",
+      "required_inputs": [
+        "trust_policy"
+      ],
+      "emitted_outputs": [
+        "pinned backend contract"
+      ],
+      "assumptions": [
+        "contract is pinned before untrusted policy mutation"
+      ],
+      "invariants": [
+        "read-only",
+        "deterministic"
+      ]
+    },
+    {
+      "name": "normalize_trusted_manifest",
+      "interface_version": "0.4",
+      "required_inputs": [
+        "manifest",
+        "artifact_bytes",
+        "prior_collision_report",
+        "attestations",
+        "trust_policy",
+        "now",
+        "transparency_evidence",
+        "backend_contract"
+      ],
+      "emitted_outputs": [
+        "normalized manifest with provenance or rejection"
+      ],
+      "assumptions": [
+        "configured root/witness keys are authoritative externally"
+      ],
+      "invariants": [
+        "read-only",
+        "fail-closed analysis",
+        "safe_for_siblings=true"
+      ]
+    },
+    {
+      "name": "analyze_trusted_ecosystem",
+      "interface_version": "0.4",
+      "required_inputs": [
+        "items",
+        "dependency_graph"
+      ],
+      "emitted_outputs": [
+        "collision report",
+        "evidence packet"
+      ],
+      "assumptions": [
+        "each accepted item passed normalize_trusted_manifest"
+      ],
+      "invariants": [
+        "no sibling writes",
+        "deterministic evidence packet"
+      ]
+    }
+  ],
+  "evidence": {
+    "cycle_id": "ascension-cycle-020",
+    "focused_tests": {
+      "passed": 28,
+      "failed": 0,
+      "errors": 0
+    },
+    "combined_regression": {
+      "passed": 105,
+      "failed": 0,
+      "errors": 0
+    },
+    "property_v07": {
+      "valid_transitions": 2016,
+      "mutated_proofs_rejected": 1000
+    },
+    "property_v08": {
+      "valid_inclusions": 8256,
+      "mutated_nodes_rejected": 1500,
+      "geometry_attacks_rejected": 1000,
+      "binding_attacks_rejected": 1000,
+      "v06_false_index_relabels_accepted": 42,
+      "v08_false_index_relabels_rejected": 42
+    },
+    "adapter_failure_injection": {
+      "backend_substitutions_rejected": "500/500",
+      "pinned_policy_substitutions_rejected": "500/500",
+      "strict_inclusion_node_mutations_rejected": "500/500",
+      "false_index_relabels_rejected": "500/500",
+      "witness_mutations_rejected": "400/400",
+      "malformed_inputs_fail_closed_safe_for_siblings": "300/300",
+      "dependency_digest_contract_substitutions_rejected": "500/500",
+      "provenance_deletions_detected": "26/26",
+      "total": 3226
+    },
+    "runtime_dependency_file_tamper": {
+      "detected": "4/4"
+    },
+    "deep_research_actually_invoked": false,
+    "real_authenticated_sibling_manifest_validated": false
+  },
+  "evaluation_vector": {
+    "correctness": "strong local/synthetic evidence",
+    "reproducibility": "exact-package verification pending final ZIP freeze",
+    "transferability": "blocked on real authenticated sibling manifest",
+    "integration_cost": "moderate; new inclusion evidence schema",
+    "latency_cost_burden": "low-to-moderate; dependency files are SHA-256 checked per normalization",
+    "observability": "high; contract, policy, evidence, subresult and backend digests",
+    "rollback_safety": "high; v0.3 retained",
+    "non_interference": "high local evidence; read-only/fail-open sibling continuity",
+    "evidence_quality": "high local, absent external transfer",
+    "reuse_breadth": "multi-sibling if explicitly adopted"
+  },
+  "acceptance_tests": [
+    "valid signed manifest passes v0.8 inclusion + v0.7 transition/witness + v0.3 collision",
+    "full manifest preserved",
+    "manifest leaf hash bound in provenance",
+    "runtime dependency hashes match build-time pins"
+  ],
+  "negative_tests": [
+    "missing contract",
+    "v0.6 inclusion downgrade",
+    "transition downgrade",
+    "collision substitution",
+    "inclusion-schema substitution",
+    "policy substitution",
+    "false index relabel",
+    "padded proof",
+    "side-directed v0.6 proof format",
+    "bad signature",
+    "duplicate witness",
+    "identity mismatch",
+    "malformed inputs"
+  ],
+  "regression_tests": [
+    "Adapter v0.3",
+    "Collision v0.3",
+    "Evaluator v0.6/v0.7/v0.8",
+    "v0.7 and v0.8 property matrices"
+  ],
+  "failure_modes": [
+    "External trust-root/witness-key governance may be wrong",
+    "Valid signatures do not prove semantic truth",
+    "Source-file integrity assumes file-backed Python modules",
+    "If adapter source and external package identity are both replaced before verification, internal pins alone are insufficient",
+    "Real sibling transfer not yet tested"
+  ],
+  "rollback": {
+    "adapter": "v0.3",
+    "collision_baseline": "v0.2.1"
+  },
+  "observability": {
+    "manifest_leaf_hash": true,
+    "dependency_source_hashes": true,
+    "upstream_evidence_digests": true,
+    "subresult_digests": true,
+    "evidence_packet_digest": true
+  },
+  "compatibility": {
+    "v0.3": "rollback retained; v0.4 intentionally requires new strict inclusion evidence schema",
+    "collision": "v0.3"
+  },
+  "artifacts": [
+    "manifest_trust_collision_adapter_v0_4.py",
+    "test_adapter_v0_4.py",
+    "failure_injection_v0_4.py",
+    "test_report.json",
+    "capability_packet.json",
+    "capability_ledger.json",
+    "experience_capsule.json",
+    "research_notes.md",
+    "README.md"
+  ],
+  "revalidation_conditions": [
+    "backend source changes",
+    "trust policy changes",
+    "manifest schema changes",
+    "real signed sibling evidence becomes available",
+    "deployment no longer exposes file-backed Python sources"
+  ],
+  "next_experiment": "Run an authoritative signed sibling manifest unchanged through v0.4. If unavailable, publish a read-only sibling manifest conformance contract/fixture validator without assuming sibling authority."
+}

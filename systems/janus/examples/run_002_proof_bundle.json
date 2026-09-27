@@ -1,0 +1,18 @@
+{
+  "authority_exclusions": [
+    "no NEXUS market-time authority change",
+    "no AION/ARGUS/ATHENA/DAEDALUS authority change",
+    "no Icarus production execution change",
+    "no live repository integration claimed"
+  ],
+  "change_id": "janus-run-002-bitemporal-reconstruction",
+  "claims": [
+    "bitemporal facts_as_of query implemented",
+    "explicit valid_to expiration enforced"
+  ],
+  "status": "verified_offline",
+  "verification": {
+    "compileall": "passed",
+    "unittest": "9/9 passed"
+  }
+}

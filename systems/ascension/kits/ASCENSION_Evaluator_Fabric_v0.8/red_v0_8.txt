@@ -1,0 +1,18 @@
+test_evaluator_fabric_v0_8 (unittest.loader._FailedTest.test_evaluator_fabric_v0_8) ... ERROR
+
+======================================================================
+ERROR: test_evaluator_fabric_v0_8 (unittest.loader._FailedTest.test_evaluator_fabric_v0_8)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_evaluator_fabric_v0_8
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/unittest/loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+  File "/mnt/data/ASCENSION_Evaluator_Fabric_v0.8/test_evaluator_fabric_v0_8.py", line 4, in <module>
+    import evaluator_fabric_v0_8 as e
+ModuleNotFoundError: No module named 'evaluator_fabric_v0_8'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

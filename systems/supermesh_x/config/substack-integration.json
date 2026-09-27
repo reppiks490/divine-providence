@@ -1,0 +1,9 @@
+{
+  "version": "0.6.0",
+  "provider": "substack",
+  "acquisition": ["public_rss", "public_post_web", "public_archive_web", "authorized_email_copy_if_available"],
+  "public_rss_pattern": "https://<publication>.substack.com/feed",
+  "normalized_fields": ["publication", "author", "title", "canonical_url", "published_time", "summary", "topics", "mentioned_entities", "mentioned_assets", "source_provenance"],
+  "use_cases": ["longform_research", "market_narrative_tracking", "expert_commentary", "source_discovery", "claim_extraction"],
+  "boundary": "No private subscriber-only content unless the user/runtime is authorized to access it."
+}

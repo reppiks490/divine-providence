@@ -1,0 +1,93 @@
+{
+ "aegis": {
+  "archive": "AEGIS_Challenger_Forge_Checkpoint_009.zip",
+  "archive_sha256": "8199c5758294ae04cf474ae1d4ce9c10c900154ee47281c3c676d310a02c46f8",
+  "files": 68,
+  "identity": "AEGIS Challenger Forge Checkpoint 009"
+ },
+ "aion": {
+  "archive": "ICARUS-AION-MARKET-MEMORY-v0.1.zip",
+  "archive_sha256": "7af272b7c68c6f855a7ddf2758239a79dc69781711946d37e62355b59c41a935",
+  "files": 30,
+  "identity": "AION Market Memory v0.1"
+ },
+ "argus": {
+  "archive": "ARGUS-MICROSTRUCTURE-OS_HANDOFF.zip",
+  "archive_sha256": "0f9209a7764ea06da78ecddaa8409adec0c77af6ae8b29c2389572c13973f37c",
+  "files": 17,
+  "identity": "ARGUS Microstructure OS starter foundation"
+ },
+ "ascension": {
+  "archive": [
+   "ASCENSION_Collision_Detector_v0.2.1.zip",
+   "ASCENSION_Context_Distillation_Engine_v0.1.zip",
+   "ASCENSION_Evaluator_Fabric_v0.8.zip",
+   "ASCENSION_Manifest_Trust_Collision_Adapter_v0.4.zip",
+   "ASCENSION_Sibling_Manifest_Conformance_Kit_v0.1.zip"
+  ],
+  "archive_sha256": [
+   "e71d28d701b9693ce78173c8d0fa603d3ae7fd5ca1bbfdab4dc659d17b0ec9cc",
+   "cd99da4a839cb0504558f3eb0e6b0abc88d858734081ebf93ca352e73772adc9",
+   "d8f4a0dedf27def0f1bde05bc52faa6dd637068c95594b3c6090642b08573cae",
+   "0145bf2ecb3ecd606c9d70b26b671ce397bba17f35dc56da4c691997bbd8e224",
+   "23970729247a64465967611fac44db73ae25e013a0bf43f6b4bd65d06126dbb1"
+  ],
+  "files": 92,
+  "identity": "ASCENSION union: Collision Detector v0.2.1, Context Distillation v0.1, Evaluator Fabric v0.8, Manifest Trust Collision Adapter v0.4, Sibling Manifest Conformance Kit v0.1"
+ },
+ "athena": {
+  "archive": "ATHENA-SUPERVISORY-FABRIC_HANDOFF.zip",
+  "archive_sha256": "47225305132b1ac4fcc2a332e71ef73bb18b56290e921b50e0989381189c51bc",
+  "files": 17,
+  "identity": "ATHENA Supervisory Fabric Phase-0"
+ },
+ "daedalus": {
+  "archive": "ICARUS_CSV_RESEARCH_v1.15_ITER32_2026-09-25.zip",
+  "archive_sha256": "c88b3c679f6f96b758f4ffbd4fbfb0309ad4d37dcc54b789500c1ca1827bb683",
+  "files": 71,
+  "identity": "DAEDALUS Research OS, NEXUS-integrated receiver (superset of 45/45 foundation)"
+ },
+ "infrastructure": {
+  "archive": "infrastructure_supervisory_loop_v49.zip",
+  "archive_sha256": "70b2f13c0a2866e6c35f97301770e6cf1852da21202793dad4913acaa16aab33",
+  "files": 119,
+  "identity": "Infrastructure Supervisory Loop V49"
+ },
+ "janus": {
+  "archive": "JANUS_INFINITY_HANDOFF_RUN_038.zip",
+  "archive_sha256": "91066241ddce634b9650c42d39ee6069d14cf14f8a4875f0a1936929aba2de45",
+  "files": 276,
+  "identity": "JANUS Infinity Run 038"
+ },
+ "nexus": {
+  "archive": "ICARUS_CSV_RESEARCH_v1.15_ITER32_2026-09-25.zip",
+  "archive_sha256": "c88b3c679f6f96b758f4ffbd4fbfb0309ad4d37dcc54b789500c1ca1827bb683",
+  "files": 139,
+  "identity": "NEXUS Adaptive Market Fabric v1.15.0 / iteration 32"
+ },
+ "oracle": {
+  "archive": "ORACLE_CHECKPOINT_C_75_SOL.git.bundle",
+  "archive_sha256": "bc143decee07ec718885a12ebc5c31423f82ea0ede9410e3a3f0755ab7bf6b7c",
+  "files": 55,
+  "identity": "ORACLE Checkpoint C 75% @ 6255339daf80b709357a2ea581b572ebbcef5905 (tag oracle-checkpoint-c-75pct)"
+ },
+ "prometheus": {
+  "archive": [
+   "PROMETHEUS_v0.5_VERIFIED_2026-09-25.bundle",
+   "PROMETHEUS_v0.5_VERIFIED_2026-09-25(1).bundle",
+   "PROMETHEUS_v0.4_VERIFIED_2026-09-25.bundle"
+  ],
+  "archive_sha256": [
+   "1b52791124b1428486835bf46220bd3eae4847d366974bf26a2acc7067544640",
+   "b1aa89eca4532cad2ecdd0b183062a62c6ae2425f466b3c54413fc16dd0f4f5f",
+   "68bca662d2310f2e89bfbbe1b314b9de1d40f56f52d6d0ff5515970ff7759faa"
+  ],
+  "identity": "PROMETHEUS v0.5 unified: merge commit 136563e25ca3325df13ca56672d2c20cbfbe74da = experiment-router 444d978 + attestation-lineage 4746f11 (merge bundle kept outside Git: _analysis/PROMETHEUS_v0.5_UNIFIED_2026-09-26.bundle)"
+ },
+ "supermesh_x": {
+  "archive": "supermesh_x_v3_7_0_cycle7_final(1).zip",
+  "archive_sha256": "85556a3800cd053cf832d29cc61fc39f776e3607019f73a758c712e3c5cf03cd",
+  "files": 358,
+  "identity": "v3.7.0 Cycle 7 FINAL2 (byte-identical to supermesh_x_v3_7_0_cycle7_final2.zip)"
+ }
+}

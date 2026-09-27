@@ -1,0 +1,17 @@
+{
+  "total": 6800,
+  "status": "PASS",
+  "campaigns": {
+    "structural_deletions": 1000,
+    "adapter_deletions": 1000,
+    "digest_corruptions": 750,
+    "identity_substitutions": 750,
+    "backend_substitutions": 500,
+    "receipt_attacks": 500,
+    "secret_injections": 300,
+    "malformed_inputs": 500,
+    "backend_digest_substitutions": 500,
+    "policy_digest_substitutions": 500,
+    "attestation_shape_corruptions": 500
+  }
+}

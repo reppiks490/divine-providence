@@ -1,0 +1,6 @@
+Inherited Run 020 baseline: 77/77 passed with PYTHONPATH=src.
+Run 021 acceptance additions: 4 tests.
+First integrated Run 021 execution: 80/81 passed; signed-receipt regression exposed missing receipt signing/storage in atomic promotion.
+Fix applied: atomic promotion signs (when signer supplied) and appends receipt before backup/promotion.
+Final: 81/81 passed.
+Compile: PYTHONPATH=src python -m compileall -q src tests => passed.

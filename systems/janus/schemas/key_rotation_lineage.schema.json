@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"JANUS Key Rotation Lineage","type":"object","required":["predecessor_key_id","successor_key_id","rotated_at","known_at"],"properties":{"predecessor_key_id":{"type":"string"},"successor_key_id":{"type":"string"},"rotated_at":{"type":"string"},"known_at":{"type":"string"}}}

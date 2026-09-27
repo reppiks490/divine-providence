@@ -1,0 +1,11 @@
+{
+  "branch": null,
+  "commit_sha": null,
+  "dirty": null,
+  "files": {},
+  "format": "janus-live-reconciliation-gate-v1",
+  "gate_digest": "52ca75c4814770998239095b9fff1a7a9407931d74a3b9d8f3e5e5ea180e387a",
+  "ready_to_commit": false,
+  "repo_path": ".",
+  "status": "git_repository_unavailable"
+}

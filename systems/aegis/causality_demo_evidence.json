@@ -1,0 +1,64 @@
+{
+  "confirmed_pivot": {
+    "passed": true,
+    "checked_points": 14,
+    "violations": 0
+  },
+  "leaky_backdated_pivot": {
+    "passed": false,
+    "checked_points": 14,
+    "violations": 5,
+    "first_violations": [
+      {
+        "index": 2,
+        "timestamp": 2,
+        "full": {
+          "kind": "pivot_high",
+          "origin_index": 2,
+          "backdated": true
+        },
+        "prefix": null
+      },
+      {
+        "index": 4,
+        "timestamp": 4,
+        "full": {
+          "kind": "pivot_low",
+          "origin_index": 4,
+          "backdated": true
+        },
+        "prefix": null
+      },
+      {
+        "index": 6,
+        "timestamp": 6,
+        "full": {
+          "kind": "pivot_high",
+          "origin_index": 6,
+          "backdated": true
+        },
+        "prefix": null
+      },
+      {
+        "index": 8,
+        "timestamp": 8,
+        "full": {
+          "kind": "pivot_low",
+          "origin_index": 8,
+          "backdated": true
+        },
+        "prefix": null
+      },
+      {
+        "index": 10,
+        "timestamp": 10,
+        "full": {
+          "kind": "pivot_high",
+          "origin_index": 10,
+          "backdated": true
+        },
+        "prefix": null
+      }
+    ]
+  }
+}

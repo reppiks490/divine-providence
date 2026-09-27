@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Automatic Causal Horizon",
+  "type": "object",
+  "required": ["change_id","proof_chain","normalization_decision_ids","affected_fact_ids","affected_validity_intervals","replay_valid_at","knowledge_transitions","conflict_deltas","blast_radius","exposure","certificate"],
+  "properties": {
+    "change_id": {"type":"string"},
+    "proof_chain": {"type":"array","items":{"type":"string"}},
+    "normalization_decision_ids": {"type":"array","items":{"type":"string"}},
+    "affected_fact_ids": {"type":"array","items":{"type":"string"}},
+    "affected_subjects": {"type":"array","items":{"type":"string"}},
+    "affected_validity_intervals": {"type":"array","items":{"type":"object","required":["decision_id","subject","predicate","start","close_fact_id","successor_fact_id"]}},
+    "replay_valid_at": {"type":"array","items":{"type":"string"}},
+    "knowledge_transitions": {"type":"array","items":{"type":"object","required":["known_at","kind","id","event_status","before_known_at","after_known_at"]}},
+    "conflict_deltas": {"type":"array","items":{"type":"object","required":["transition","valid_at","change","subject","predicate","fact_ids"]}},
+    "blast_radius": {"type":"array","items":{"type":"string"}},
+    "exposure": {"type":"object","required":["score","band","factors","formula"]},
+    "certificate": {"type":"object","required":["kind","digest","deterministic","mutation_applied"]}
+  }
+}

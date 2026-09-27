@@ -1,0 +1,1 @@
+JSON Schema Draft 2020-12: 62/62 PASS

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icarus-aion.local/contracts/observation.schema.json",
+  "title": "AION observation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source_id", "source_event_id", "revision", "kind", "event_ns", "available_ns", "ingested_ns", "evidence_tier", "payload", "plane", "published_ns", "sequence", "quality_flags", "availability_basis"],
+  "properties": {
+    "source_id": {"type": "string", "minLength": 1, "maxLength": 160},
+    "source_event_id": {"type": "string", "minLength": 1, "maxLength": 160},
+    "revision": {"type": "integer", "minimum": 1},
+    "kind": {"enum": ["bar", "schedule", "macro", "trade", "book_snapshot", "book_delta", "context"]},
+    "event_ns": {"type": "integer", "minimum": 0},
+    "available_ns": {"type": "integer", "minimum": 0},
+    "ingested_ns": {"type": "integer", "minimum": 0},
+    "evidence_tier": {"type": "integer", "enum": [1, 2, 3, 4]},
+    "payload": {"type": "object"},
+    "plane": {"enum": ["research", "shadow", "production_observation"]},
+    "published_ns": {"type": ["integer", "null"], "minimum": 0},
+    "sequence": {"type": ["integer", "null"], "minimum": 0},
+    "quality_flags": {"type": "array", "items": {"type": "string", "maxLength": 80}},
+    "availability_basis": {"enum": ["observed_receipt", "attested_release", "verified_bar_close", "synthetic"]}
+  }
+}

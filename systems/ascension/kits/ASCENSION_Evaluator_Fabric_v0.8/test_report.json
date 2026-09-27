@@ -1,0 +1,46 @@
+{
+  "red": {
+    "status": "observed",
+    "evidence": "ModuleNotFoundError before evaluator_fabric_v0_8.py existed"
+  },
+  "focused": {
+    "tests": 19,
+    "failures": 0,
+    "errors": 0
+  },
+  "regression": {
+    "v0_6_plus_v0_7_plus_v0_8_tests": 46,
+    "failures": 0,
+    "errors": 0
+  },
+  "property": {
+    "valid_inclusions": 8256,
+    "tree_sizes": "1..128",
+    "max_proof_nodes": 7,
+    "mutated_nodes_rejected": 1500,
+    "geometry_attacks_rejected": 1000,
+    "binding_attacks_rejected": 1000
+  },
+  "hostile": {
+    "proof_order_attacks_rejected": 500,
+    "bad_node_lengths_rejected": 500,
+    "malformed_top_level_fail_closed": 500
+  },
+  "comparison": {
+    "v0_6_false_index_relabels_accepted": 42,
+    "v0_8_false_index_relabels_rejected": 42,
+    "probe_tree_size": 7
+  },
+  "rfc_alignment": {
+    "official_rfc_9162_checked": true,
+    "leaf_prefix": "0x00",
+    "node_prefix": "0x01",
+    "example_indices": {
+      "0": 3,
+      "3": 3,
+      "4": 3,
+      "6": 2
+    }
+  },
+  "clean_package_verification": "Performed only after final ZIP creation; authoritative result and SHA-256 are recorded in external ASCENSION_STATE_CAPSULE_v019.md. Package bytes are not mutated afterward."
+}

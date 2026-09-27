@@ -1,0 +1,7 @@
+test_dependency_artifact_hashes_are_pinned (test_adapter_v0_4.AdapterV04.test_dependency_artifact_hashes_are_pinned) ... ok
+test_runtime_dependency_integrity_clean (test_adapter_v0_4.AdapterV04.test_runtime_dependency_integrity_clean) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.009s
+
+OK

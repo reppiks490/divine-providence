@@ -1,0 +1,23 @@
+{
+  "version": "0.7.0",
+  "default_private_to_public": "deny",
+  "private_source_classes": [
+    "user_authorized_private",
+    "private_email",
+    "private_financial"
+  ],
+  "permitted_internal_uses": [
+    "local_normalization",
+    "private_evidence_graph",
+    "portfolio_overlay",
+    "private_event_fusion",
+    "user_requested_summary"
+  ],
+  "public_egress_requires": [
+    "explicit_transform",
+    "allowlisted_fields",
+    "no_raw_body",
+    "no_account_identifiers",
+    "no_private_attachment_content"
+  ]
+}

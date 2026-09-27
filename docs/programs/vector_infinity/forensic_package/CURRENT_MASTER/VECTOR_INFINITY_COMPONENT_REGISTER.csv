@@ -1,0 +1,18 @@
+component,purpose,status,notes
+Adaptive Trend Intelligence Loop,Top-level advisory intelligence fabric,Designed/iterated,No execution authority; fail-open.
+Trend Genome,Structured trend state representation,Designed,"Direction, strength, persistence, maturity, acceleration, structure, participation, uncertainty, etc."
+Mixture-of-Experts Fabric,Population of complementary trend experts,Designed,Shared primitives + specialized experts.
+Expert Competence Tensor,Context-conditioned expert reliability map,Synthetic support,Includes uncertainty/support/calibration/drift/OOD/allowed_authority.
+Router Safety Auditor,Independent control plane for router choices,Synthetic support,Should not share all features/objectives with router.
+Trend Failure Atlas,Memory of trend failure modes,Designed,"False breakouts, failed continuation, exhaustion, shocks, sweeps, etc."
+Cross-Horizon Temporal Propagation Graph (CHTPG),Probabilistic horizon-to-horizon transition model,Synthetic support,Temporal firewall prevents LTF overwrite of HTF state.
+Propagation Drift Sentinel,Detects obsolete propagation relationships,Synthetic support,MMD-style synthetic validation.
+Evidence Conservation Engine,Dependency-adjusted confidence accounting,Synthetic support,Redundant evidence receives near-zero marginal credit.
+Dynamic Evidence Lineage Graph (DELG),Tracks evidence ancestry/provenance,Synthetic support,Clone/derivative/correlated-novel/independent-novel.
+Information Novelty Score,Marginal information contribution concept,Synthetic support,Condition on already-admitted evidence.
+Latent Common-Cause Resolver (LCCR),Probabilistic hidden-driver grouping,Synthetic constraint evidence,Soft conservation; preserve idiosyncratic residual.
+Causal Confidence Firewall,Separates predictive dependence from causal identification,Designed,Allows causal_status=UNIDENTIFIED.
+Dependency Graph Drift Controller (DGDC),Versions/quarantines/recalls dependency graphs,Synthetic support,ACTIVE→WATCH→QUARANTINED→RECALLED/CHALLENGER→...
+TrendIntelligencePacket,Versioned external interface,Designed,"Auditable confidence, provenance, graph/version/TTL/uncertainty."
+Champion/Challenger Promotion Gate,Prevents silent adaptive overwrite,Designed,Domain-bounded promotion only after multi-axis validation.
+Checkpoint/Resume Contract,State persistence requirements,Synthetic support,Must include more than model weights.

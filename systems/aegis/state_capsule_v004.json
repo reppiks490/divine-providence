@@ -1,0 +1,74 @@
+{
+  "system": "AEGIS Challenger Forge",
+  "checkpoint": "004",
+  "created_at_utc": "2026-09-25T23:24:26.933601+00:00",
+  "status": "EXECUTABLE_CAUSALITY_AND_EVIDENCE_HARNESS_NOT_READY_TO_COMMIT",
+  "supersedes": "Checkpoint 003",
+  "built": [
+    "Base component adapter contract",
+    "Prefix-invariance causality auditor",
+    "Confirmed causal pivot adapter",
+    "Deliberately leaky/backdated pivot negative control",
+    "ATR risk adapter",
+    "DXY macro-pressure adapter",
+    "Chronological purged/embargo partition planner",
+    "Deterministic academic evidence grader with hard caps and review/performance separation"
+  ],
+  "verification": {
+    "unittest_returncode": 0,
+    "tests_output_file": "test_output.txt",
+    "confirmed_pivot_prefix_invariance_passed": true,
+    "leaky_pivot_detected": true,
+    "leaky_pivot_violation_count": 5,
+    "all_unittests_returncode": 0,
+    "expected_total_tests": 8
+  },
+  "partitions": {
+    "BTCUSD": "development partitions assigned; final 96/600 bars untouched",
+    "NQ_continuous": "development partitions assigned; final 57/408 bars untouched; corpus too small for final model selection"
+  },
+  "hard_gates": [
+    "No live-trading authority",
+    "No final-holdout access during development",
+    "No pivot signal may be timestamped before confirmation",
+    "No candidate promotion from synthetic causality tests alone"
+  ],
+  "next": [
+    "Implement remaining nine component adapters",
+    "Add event-time availability metadata and enforce it in causality audits",
+    "Implement NQ liquidity-sweep incumbent and independent session-VWAP/volume-sweep challenger",
+    "Run first development-partition shadow comparison only",
+    "Add transaction-cost/slippage/latency stress harness",
+    "Add repeated walk-forward and multiple-testing accounting"
+  ],
+  "evidence_delta": [
+    {
+      "family": "HMM_regime_switching",
+      "grade": "C",
+      "score": 4,
+      "vetoes": [
+        "no_explicit_transaction_cost_model"
+      ]
+    },
+    {
+      "family": "jump_model_regime_switching",
+      "grade": "A",
+      "score": 11,
+      "vetoes": []
+    },
+    {
+      "family": "partial_cointegration_stat_arb",
+      "grade": "A",
+      "score": 11,
+      "vetoes": []
+    },
+    {
+      "family": "pairs_trading_taxonomy",
+      "grade": "TAXONOMY_REVIEW",
+      "score": 0,
+      "vetoes": [
+        "review_not_direct_performance_evidence"
+      ]
+    }
+  ]
+}

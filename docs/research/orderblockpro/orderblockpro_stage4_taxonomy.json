@@ -1,0 +1,67 @@
+{
+  "stage": 4,
+  "batch_unique_images": 8,
+  "new_explicit_terms": [
+    {
+      "term": "MINI-MONSTA TRIPLE BLOCKS",
+      "confirmed_on_image": true,
+      "market": "ES",
+      "date": "2026-09-12",
+      "visual_role": "stacked lower green block cluster near VWAP/POWERLINE"
+    },
+    {
+      "term": "MONSTA-MINI FORTRESSES",
+      "confirmed_on_image": true,
+      "market": "ES",
+      "date": "2026-08-29",
+      "visual_role": "large lower blue buy-side Fortress configuration"
+    },
+    {
+      "term": "MONSTA-MINI BLOCKS",
+      "confirmed_on_image": true,
+      "market": "ES",
+      "date": "2026-08-29",
+      "visual_role": "stacked lower green/light-green block configuration near POC"
+    },
+    {
+      "term": "SUPER MINIS",
+      "confirmed_on_image": false,
+      "source": "uploaded filename only",
+      "status": "pending direct source confirmation"
+    }
+  ],
+  "taxonomy_model": {
+    "context": [
+      "VWAP",
+      "POC",
+      "VALUE HIGH",
+      "VALUE LOW",
+      "NYSE OPEN",
+      "PREV DAY HIGH/LOW",
+      "CLOSE",
+      "POWERLINE",
+      "KEY LEVEL",
+      "numbered bands"
+    ],
+    "primitives": [
+      "Major Order Blocks/Icebergs",
+      "Minor Liquidity Levels",
+      "Nano-Blocks/Price Rips",
+      "Fortresses/Mini Icebergs"
+    ],
+    "composites": [
+      "Monsta-Mini Blocks",
+      "Monsta-Mini Fortresses",
+      "Mini-Monsta Triple Blocks",
+      "possible Super-Mini family"
+    ],
+    "behaviors": [
+      "penetration",
+      "acceptance/rejection",
+      "base/stall",
+      "expansion",
+      "zone-to-zone travel",
+      "serial continuation"
+    ]
+  }
+}

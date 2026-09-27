@@ -1,0 +1,59 @@
+providers:
+  native-web:
+    capabilities: [research.search, research.deep]
+  datablue:
+    capabilities: [research.search, research.crawl, research.extract, data.web, media.youtube.metadata]
+  tavily:
+    optional: true
+    capabilities: [research.search, research.extract, data.web]
+  firecrawl:
+    optional: true
+    capabilities: [research.search, research.crawl, research.extract, data.web]
+  parallel-search:
+    optional: true
+    capabilities: [research.search, research.extract]
+  exa:
+    optional: true
+    capabilities: [research.search, research.academic, code.search, market.context]
+  consensus:
+    optional: true
+    capabilities: [research.academic]
+  scite:
+    optional: true
+    capabilities: [research.academic, research.citations]
+  twelve-data:
+    capabilities: [market.quote, market.ohlcv, market.fundamentals, market.news, market.reference]
+  tickerlayer:
+    capabilities: [market.quote, market.ohlcv, market.sessions, market.rates]
+  zacks:
+    capabilities: [market.fundamentals, market.research, market.news]
+  factorweave:
+    capabilities: [market.factors, market.regime, market.analogues, market.labels]
+  coingecko:
+    capabilities: [crypto.market, crypto.news]
+  blockscout:
+    capabilities: [chain.address, chain.transaction, chain.token, chain.contract]
+  exoscope:
+    capabilities: [crypto.visualization]
+  economist-graphs:
+    capabilities: [macro.specialized]
+  heytraders:
+    capabilities: [market.chart, market.backtest, market.paper]
+  nvidia-skills:
+    capabilities: [skills.discover, gpu.nvidia]
+  omgskills:
+    capabilities: [skills.discover]
+  youtube-conversation:
+    capabilities: [media.youtube.transcript]
+  codex-coordinator:
+    capabilities: [code.coordinate]
+  baton-pass:
+    capabilities: [code.handoff]
+  founder-pulse:
+    capabilities: [repo.issue.analytics]
+  superpowers:
+    capabilities: [code.plan, code.tdd, code.debug, code.review, code.verify]
+  astral-orchestrator:
+    capabilities: [code.orchestrate]
+  akinator:
+    capabilities: [repo.knowledge]

@@ -1,0 +1,31 @@
+{
+  "version": "0.7.0",
+  "id": "finances",
+  "source_class": "user_authorized_private",
+  "capabilities": [
+    "finance.accounts",
+    "finance.transactions",
+    "finance.watchlist",
+    "portfolio.holdings",
+    "portfolio.allocation",
+    "portfolio.event_impact",
+    "portfolio.sync_state"
+  ],
+  "read_surfaces": [
+    "linked_accounts",
+    "transactions",
+    "holdings",
+    "allocation",
+    "watchlist",
+    "sync_state"
+  ],
+  "write_surfaces": [
+    "watchlist_mutation",
+    "financial_memory",
+    "account_resync",
+    "account_linking"
+  ],
+  "write_policy": "explicit_user_intent_required",
+  "raw_financial_data_public_export": false,
+  "derived_feature_export": "allowlisted_only"
+}

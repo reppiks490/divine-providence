@@ -1,0 +1,7 @@
+JANUS ∞ Run 014 verification
+Baseline Run 013: 54/54 tests PASS (PYTHONPATH=src)
+Run 014 RED: 4 tests failed on missing signing/sync APIs
+Final Run 014: 58/58 tests PASS
+Python compilation: PASS
+Seed digest: bf7298ae5d40fb00348cc7a85195efa6722ca983fe8b1ba531f428ce20e04bab
+Live repository parity: UNVERIFIED

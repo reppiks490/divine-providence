@@ -1,0 +1,25 @@
+{
+  "experiment_id": "ACF-NQ-PIT-QQQ-001",
+  "nq_corpus_id": "ACF-NQ-CONT-MASSIVE-VOLROLL-1H-20250902-20260925-v007",
+  "factor_corpus_id": "ACF-QQQ-MASSIVE-1H-20250902-20260714-v009",
+  "factor_provider": "Massive",
+  "factor_symbol": "QQQ",
+  "factor_rows": 3455,
+  "factor_payload_sha256": "b0e432b3c604552c0393d0c1e06b5d489a8ae90aa2ca3021f721edbdf6ef7fa6",
+  "factor_first_ms": 1756800000000,
+  "factor_last_ms": 1784044800000,
+  "availability_rule": "QQQ bar starting t is not usable until t+1h; joined only to NQ bars whose start equals t+1h",
+  "forward_fill": false,
+  "nq_development_rows": 5051,
+  "matched_rows": 3066,
+  "coverage": 0.6070085131657098,
+  "lagged_factor_vs_nq_current_return_corr": 0.030100782381190842,
+  "same_sign_rate": 0.505218525766471,
+  "decision": "RETAIN_CONTEXT_FEATURE_ONLY",
+  "alpha_status": "NO_STANDALONE_EDGE_EVIDENCE",
+  "entitlement_notes": [
+    "Massive VIX hourly history not entitled",
+    "TickerLayer QQQ/SPY hourly history not entitled",
+    "DXY/TNX excluded until identity+coverage proven"
+  ]
+}

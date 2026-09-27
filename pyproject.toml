@@ -1,0 +1,37 @@
+[project]
+name = "divine-providence"
+version = "1.0.0"
+description = "ICARUS system-of-systems master build: twelve isolated subsystems, cross-system contract checks, and the icarus-engine MCP server."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+# Union of the subsystems' runtime imports (see docs/DEPENDENCIES.md); verified with the pinned-below versions.
+dependencies = [
+    "mcp>=1.8",
+    "numpy>=2.0,<3",
+    "pandas>=2.2,<3",
+    "scipy>=1.13",
+    "scikit-learn>=1.5",
+    "joblib>=1.4",
+    "cryptography>=46.0.0,<47",
+    "PyYAML>=6.0",
+    "pytest>=8.0",
+]
+
+[project.optional-dependencies]
+parquet = ["pyarrow>=15"]
+
+[project.scripts]
+dp = "divine_providence.cli:main"
+icarus-engine-mcp = "divine_providence.mcp_server:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -p no:cacheprovider"

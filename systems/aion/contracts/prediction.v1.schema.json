@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icarus-aion.local/contracts/prediction.v1.schema.json",
+  "title": "AION immutable prediction v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "decision_ns", "horizon_ns", "model_id", "symbol", "forecast", "confidence", "abstain", "frame_hash", "reason_codes", "evidence_hashes", "plane", "execution_authorized"],
+  "properties": {
+    "schema": {"const": 1},
+    "decision_ns": {"type": "integer", "minimum": 0},
+    "horizon_ns": {"type": "integer", "minimum": 1},
+    "model_id": {"type": "string", "minLength": 1},
+    "symbol": {"type": "string", "minLength": 1},
+    "forecast": {"type": ["number", "null"]},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "abstain": {"type": "boolean"},
+    "frame_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "reason_codes": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "evidence_hashes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "plane": {"enum": ["research", "shadow"]},
+    "execution_authorized": {"const": false}
+  }
+}

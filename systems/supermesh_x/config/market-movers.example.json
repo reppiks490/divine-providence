@@ -1,0 +1,28 @@
+{
+  "version":"0.3.0",
+  "public_only":true,
+  "entities":[
+    {
+      "id":"donald_trump",
+      "name":"Donald Trump",
+      "channels":["public_social","official_statements","speeches","press"],
+      "topics":["trade","tariffs","fiscal","regulation","geopolitics","technology","energy","crypto"],
+      "asset_exposure":["NQ","ES","YM","RTY","VIX","VXN","DXY","TNX","BTC","GOLD","OIL","SEMIS"]
+    },
+    {
+      "id":"elon_musk",
+      "name":"Elon Musk",
+      "channels":["x","official_company","video","press"],
+      "topics":["tesla","ai","space","crypto","technology"],
+      "asset_exposure":["TSLA","NQ","QQQ","BTC","DOGE","AI","SPACE"]
+    }
+  ],
+  "dynamic_roles":[
+    "central_bank_leadership",
+    "treasury_and_economic_officials",
+    "mega_cap_technology_leadership",
+    "semiconductor_leadership",
+    "energy_leadership",
+    "crypto_ecosystem_leadership"
+  ]
+}

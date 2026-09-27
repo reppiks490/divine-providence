@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prometheus-evolution-loop"
+version = "0.5.0"
+description = "Research-only autonomous systems evolution loop for the Icarus ecosystem"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[project.scripts]
+prometheus-loop = "prometheus_loop.cli:main"

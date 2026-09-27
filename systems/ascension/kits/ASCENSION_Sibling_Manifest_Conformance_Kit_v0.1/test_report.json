@@ -1,0 +1,38 @@
+{
+  "cycle_id": "ascension-cycle-021",
+  "red": {
+    "valid": true,
+    "evidence": "ModuleNotFoundError before sibling_manifest_conformance_v0_1 implementation"
+  },
+  "focused_suite": {
+    "tests": 32,
+    "failures": 0,
+    "errors": 0
+  },
+  "failure_injection": {
+    "total": 6800,
+    "status": "PASS",
+    "campaigns": {
+      "structural_deletions": 1000,
+      "adapter_deletions": 1000,
+      "digest_corruptions": 750,
+      "identity_substitutions": 750,
+      "backend_substitutions": 500,
+      "receipt_attacks": 500,
+      "secret_injections": 300,
+      "malformed_inputs": 500,
+      "backend_digest_substitutions": 500,
+      "policy_digest_substitutions": 500,
+      "attestation_shape_corruptions": 500
+    }
+  },
+  "compile": "PASS",
+  "exact_zip_clean_extraction": "RECORDED_EXTERNALLY_IN_STATE_CAPSULE_v021",
+  "preliminary_zip_clean_extraction": {
+    "focused_suite": "32/32 PASS",
+    "failure_injection": "6800/6800 PASS",
+    "compile": "PASS",
+    "packaged_cache_files": "NONE",
+    "note": "Exact final ZIP verification is recorded in the external State Capsule v021 to avoid mutating the frozen archive after hashing."
+  }
+}

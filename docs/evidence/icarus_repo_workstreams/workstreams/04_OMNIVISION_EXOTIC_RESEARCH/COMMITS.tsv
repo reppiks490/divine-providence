@@ -1,0 +1,74 @@
+617f9f6e503ed94f152b3071ab9b23e677e21627	2026-09-23T23:01:47-05:00	Codex: initialize durable adaptive research loop state
+98fefe2c0599cd3a552225d689f5697a8720726f	2026-09-23T23:02:32-05:00	Codex: add research-only world-state inference kernel
+1a3f6dad3c42e3c8615f91ce4034bb89d88536d1	2026-09-23T23:02:34-05:00	Codex: test world-state temporal and uncertainty invariants
+864fe293dc534013043bbc392134b66f37da4004	2026-09-23T23:02:49-05:00	Codex: checkpoint OMNIVISION world-state kernel
+b93dccbaf758cfdf8ce5dea04ca7a64a1ecbc91d	2026-09-23T23:04:16-05:00	Codex: require plugin activation at every loop cycle
+82e327582b44660049de527c220cf6f871840365	2026-09-23T23:05:32-05:00	Codex: document OMNIVISION federated research mesh design
+0e69483b50d603c8ea904a91173da3ca76abf858	2026-09-23T23:05:48-05:00	Codex: checkpoint OMNIVISION design review gate
+2dc81e7b46974a7b1b7aed158a3a117672b228da	2026-09-23T23:08:59-05:00	Codex: add OMNIVISION foundation implementation plan
+c15abf14baa1ea3808d93be5462c08e7d7209e55	2026-09-23T23:09:35-05:00	Codex: remove implementation-plan placeholders
+e29f7c2af5fb331a5bf39004f27b33d3ff78ddb2	2026-09-23T23:09:52-05:00	Codex: checkpoint OMNIVISION implementation plan gate
+80d8e96096c234af6a75ccd80a3467aaaf36abe5	2026-09-23T23:16:04-05:00	Codex: prefer highest-scrutiny subagent execution
+f51dc797d722354259d4240e6e40f99c747110ce	2026-09-23T23:17:08-05:00	Codex: add failing OMNIVISION contract tests
+54c220c0d5c1bf0cfa0295682e071c3de57f13f3	2026-09-23T23:17:29-05:00	Codex: initialize OMNIVISION package
+643d5a1c07b59eeea1cbd9a2172d6f69785e21c3	2026-09-23T23:18:48-05:00	Codex: implement OMNIVISION world-event contract
+e5eb66e771384456d201a2b8ab2b96c15c1c3f71	2026-09-23T23:19:52-05:00	Codex: add failing advisory world-state tests
+7af362756dbaf22b0d0ffa72a0e150b2d5d9d503	2026-09-23T23:20:06-05:00	Codex: add failing OMNIVISION ledger bridge tests
+bebc37cca7bea806d9a3b102e4cc6549c865c2a0	2026-09-23T23:20:27-05:00	Codex: accept strict immutable world-state evidence
+efbdb5034002c6537f743faa25929c698da9bf3a	2026-09-23T23:20:34-05:00	Codex: bridge immutable advisory evidence into OMNIVISION
+bb583b0be5423db1487214179085f804f1e4f148	2026-09-23T23:21:04-05:00	Codex: add failing OMNIVISION hypothesis tests
+ddf48bd3595448c72be3376e9fc9060157ac72cc	2026-09-23T23:21:21-05:00	Codex: implement OMNIVISION hypothesis forge
+dcf16776dd38e9176979fa3e905284ffbf1c7e96	2026-09-23T23:21:41-05:00	Codex: add failing OMNIVISION novelty tests
+2344c00ebb73738f485706d38e677e5e92ebb84c	2026-09-23T23:21:56-05:00	Codex: implement bounded OMNIVISION novelty screening
+6c0f73d8bf08d2136d8a186c54d57ff0391c87bf	2026-09-23T23:22:19-05:00	Codex: add failing OMNIVISION falsification tests
+298cf8966004747e41caf7365733e2ab93d1bc31	2026-09-23T23:22:41-05:00	Codex: implement point-in-time OMNIVISION falsification
+8d62481b99f323146c5a26785b5b2909893637c2	2026-09-23T23:22:59-05:00	Codex: add failing OMNIVISION candidate tests
+e1369e0d1a73efaf4cb2bd938f6a54bb8f7a8101	2026-09-23T23:23:09-05:00	Codex: implement OMNIVISION research candidate artifact
+f20e88c7f757d895ab88ad385b35e2264be050ca	2026-09-23T23:23:35-05:00	Codex: preserve immutable evidence IDs in world-state inference
+03f56c9a4fab18fc91dee07cf8be458f993a02fd	2026-09-23T23:24:09-05:00	Codex: fix contract encoding and preserve ledger evidence IDs
+f2cd7500dba5551deafa13429b2b067fab6a58af	2026-09-23T23:24:16-05:00	Codex: assert ledger evidence identity survives projection
+0d1af9b79eb0cbad03b4a46129d5ce75e9b04f6c	2026-09-23T23:24:57-05:00	Codex: add OMNIVISION end-to-end integration proof
+5deaeadc1692d4f3f1ecfcd51286a6b1dc501676	2026-09-23T23:26:14-05:00	Codex: preserve per-source state during latent inference
+0bed6e43a9a2ab2e45b13739b583fcd5c89e7aa6	2026-09-23T23:26:23-05:00	Codex: test multi-source latent inference
+f8d8ce641b71e5f564b53c91e02ed50ca2a58b4e	2026-09-23T23:26:35-05:00	Codex: construct evidence-bound observations directly in tests
+f01424e3a72cd580c8985448fba5c675382dd440	2026-09-23T23:27:29-05:00	Codex: checkpoint OMNIVISION foundation implementation
+d863e277a1010821de30934d7eb4e950a6050b41	2026-09-24T17:16:15-05:00	Codex: specify OMNIVISION epistemic control plane v2
+8babcb642ce14722a24862f77f20fe8f67269d54	2026-09-24T17:17:17-05:00	Codex: checkpoint OMNIVISION epistemic-control-plane v2 spec
+c923eb5b8aa01268495dad77fc2d120ed00a52ff	2026-09-24T17:45:54-05:00	Codex: plan OMNIVISION v2 Stage 0 verification gate
+8d0df07c92f6dc77af91fada5e712827ad42de55	2026-09-24T17:46:17-05:00	Codex: remove Stage 0 plan placeholders
+d18b6a360ae55cfc30b44cafc2412d3e92647b0b	2026-09-24T17:46:40-05:00	Codex: checkpoint OMNIVISION v2 Stage 0 plan gate
+1a3812799c97aae97ca4dd057385aeb71b1cde99	2026-09-24T17:53:34-05:00	Codex: add read-only OMNIVISION Stage 0 CI matrix
+522ab213a00bf281f5b5b95a800daf615381cbe9	2026-09-24T17:54:20-05:00	Codex: add Stage 0 temporal leakage regressions
+5f568f04f8d847fcdb923428cd6479d67a6cdf85	2026-09-24T17:55:32-05:00	Codex: enforce receipt-aware OMNIVISION availability
+542bd0c7aeb0173e4de03dfe4055c9b1deac187c	2026-09-24T17:56:20-05:00	Codex: align OMNIVISION availability contract test
+84fedabb7e06bd67b9cd74801866387e95d3c4bb	2026-09-24T17:57:25-05:00	Codex: add forward-fold independence regressions
+aa68dda8d134b7a1b634600647f508cb3cc4a472	2026-09-24T17:58:13-05:00	Codex: make OMNIVISION forward folds independent
+9ab347a489997541f7a1e476dc10e826e818e1ab	2026-09-24T18:00:40-05:00	Codex: fix icarus-plant CI root argument ordering
+97a5b8dc874092786c571712b30af739b8e21209	2026-09-24T18:01:05-05:00	Codex: lock OMNIVISION research execution boundaries
+002abe4eb7ceddbbe823c958e2bb1ffc13be0b48	2026-09-24T18:01:38-05:00	Codex: strengthen OMNIVISION contradiction provenance proof
+4e3d69d9c6fd7bd0fd109d683d977d1c97098681	2026-09-24T18:03:11-05:00	Codex: add Windows console encoding regression
+e80c6f8df3ca686c20db54a95dfa6ff6b95efdf6	2026-09-24T18:04:19-05:00	Codex: make plant setup output Windows-console safe
+16ee5f772d172815d495cea11010e6d29d8f4cc7	2026-09-24T18:04:48-05:00	Codex: harden Stage 0 boundary and performance CI
+ffde283884e662a01c14acf505379d705a9313bc	2026-09-24T18:06:25-05:00	Codex: add subsecond OMNIVISION availability regression
+511814e1d4f4a2527abaa3b6e3472a66df666281	2026-09-24T18:07:12-05:00	Codex: prevent subsecond OMNIVISION availability leakage
+211d34e2a91c02ac4ad43e2ea91f0a73ab6881b1	2026-09-24T18:10:36-05:00	Codex: finalize OMNIVISION v2 Stage 0 audit
+6ac6c119d4774578c078a5f4c24aadeac11101d6	2026-09-24T18:11:05-05:00	Codex: checkpoint OMNIVISION v2 Stage 0 GO
+9f3c792d44fd9142e0b98676224dfe50d740db3b	2026-09-24T18:19:56-05:00	Codex: plan OMNIVISION v2 Stage 1 control plane
+758306f2d491edaa76cddb84117b444ba184d301	2026-09-24T18:36:44-05:00	Codex: plan OMNIVISION v2 Stage 1 trust substrate
+889835af15a3ba2811ca1b8ff32c0e34f5a44696	2026-09-24T18:36:53-05:00	Codex: clean Stage 1 plan self-review markers
+09b3681f551bc47f7a57494906733e8f9fd7df31	2026-09-24T18:37:18-05:00	Codex: checkpoint OMNIVISION v2 Stage 1 plan gate
+2c77f1681d196c875c73ca3ab7b9c701da8790a1	2026-09-24T18:39:44-05:00	Codex: add RED tests for source capability contract
+849c2885efb389978e1246765470f5415c683c4e	2026-09-24T18:40:47-05:00	Codex: add immutable OMNIVISION source capability contract
+6c70d06c05a962a65b86a05a7e01dc4446b66978	2026-09-24T18:41:09-05:00	Codex: add RED tests for historical capability registry
+81f26d8b89c6ea697c0c428f7bea587b34a4c243	2026-09-24T18:41:47-05:00	Codex: add historical OMNIVISION capability registry
+def264cfb55baf376193d010b09339e76301fdee	2026-09-24T18:42:08-05:00	Codex: add RED tests for semantic admission firewall
+2da1c25b32e9d9d236bb1f041f5468d73c1fb973	2026-09-24T18:42:28-05:00	Codex: add OMNIVISION semantic admission firewall
+bc078047761eb9e630eecb1d03f927eab44e17d8	2026-09-24T18:42:57-05:00	Codex: add RED tests for explicit provenance DAG
+e7ec4e1d657fbc0335d5fcc90a9350e72d0278fd	2026-09-24T18:43:38-05:00	Codex: add explicit OMNIVISION provenance DAG
+737ac8ef7c2439b04d2e9e0dbc1f019bfb876f0d	2026-09-24T18:44:01-05:00	Codex: add RED tests for immutable trial contract
+0a434918eb99abb645ff447fdfffb894f2840226	2026-09-24T18:44:29-05:00	Codex: add immutable OMNIVISION trial contract
+f5e0c3afe40cbdb2ec23728cbe65e1a5cebe827a	2026-09-24T18:44:54-05:00	Codex: add RED tests for search-aware trial ledger
+0e1ceac853807f67fcdec5830de316bd41c6b9f6	2026-09-24T18:45:20-05:00	Codex: preserve OMNIVISION hidden research search history
+d7567905b46d59220abcb7004c9e8cdf37c34497	2026-09-24T18:45:52-05:00	Codex: add RED Stage 1 trust-substrate integration tests
+455a2f4fdf15f30f49b04fab2a505a6f64b25c7e	2026-09-24T18:46:03-05:00	Codex: integrate OMNIVISION Stage 1 trust substrate
+67ebb00a51596553ef5d0652b42e6fa756e50d42	2026-09-24T18:46:21-05:00	Codex: extend OMNIVISION CI through Stage 1

@@ -1,0 +1,96 @@
+{
+  "experiment_id": "ACF-BTC-MASTER-REAL-001",
+  "corpus_id": "ACF-BTCUSD-TICKERLAYER-1H-20240101-20260925-v009",
+  "holdout_touched": false,
+  "folds": [
+    [
+      8024,
+      10523
+    ],
+    [
+      10524,
+      13023
+    ],
+    [
+      13024,
+      15523
+    ],
+    [
+      15524,
+      18023
+    ]
+  ],
+  "primary_generic_round_trip_cost_bps": 5,
+  "cost_ladder_bps": [
+    2,
+    5,
+    10
+  ],
+  "cost_note": "generic stress assumptions, not venue-specific fees",
+  "ood": {
+    "lookback": 120,
+    "k": 5,
+    "threshold": 3.0,
+    "development_abstain_rate": 0.012119622245540399
+  },
+  "results": {
+    "ichimoku_directional": {
+      "fold_avg_net_bps": [
+        -6.138552149731155,
+        -5.5704786924422045,
+        -5.311782203964502,
+        -6.922968859181545
+      ],
+      "pooled_5bps_ood_gated": {
+        "n": 6170,
+        "days": 414,
+        "mean": -6.119428975748134,
+        "ci95": [
+          -7.294889156575466,
+          -4.956622522328683
+        ],
+        "adjusted_p": 0.000999666777740753
+      },
+      "decision": "QUARANTINE_DIRECTIONAL_USE_RETAIN_REGIME_FEATURE"
+    },
+    "ichimoku_plus_adx": {
+      "fold_avg_net_bps": [
+        -5.937627348940816,
+        -5.315957561040458,
+        -4.956595319469311,
+        -6.725436777137884
+      ],
+      "pooled_5bps_ood_gated": {
+        "n": 4893,
+        "days": 413,
+        "mean": -5.835920980812164,
+        "ci95": [
+          -7.194806410243557,
+          -4.4495447069284495
+        ],
+        "adjusted_p": 0.000999666777740753
+      },
+      "decision": "QUARANTINE_COMBINED_ALPHA"
+    },
+    "ema_pullback": {
+      "fold_avg_net_bps": [
+        -4.24321905170663,
+        -5.120727377775336,
+        -4.765295626899654,
+        -6.024609579768413
+      ],
+      "pooled_5bps_ood_gated": {
+        "n": 6440,
+        "days": 416,
+        "mean": -5.027287345983077,
+        "ci95": [
+          -6.0370876908427435,
+          -4.066157112891887
+        ],
+        "adjusted_p": 0.000999666777740753
+      },
+      "decision": "QUARANTINE_ALPHA"
+    }
+  },
+  "interpretation": "All three directional uses are negative in every development fold. Low p-values indicate statistically persistent negative expectancy, not positive edge. Do not tune against these losses or inspect holdout."
+}

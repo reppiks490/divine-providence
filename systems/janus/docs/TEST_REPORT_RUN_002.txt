@@ -1,0 +1,14 @@
+test_as_known_at_prevents_hindsight (tests.test_janus.JanusTests.test_as_known_at_prevents_hindsight) ... ok
+test_bitemporal_as_of_respects_validity_and_knowledge (tests.test_janus.JanusTests.test_bitemporal_as_of_respects_validity_and_knowledge) ... ok
+test_current_facts_excludes_explicitly_expired_fact (tests.test_janus.JanusTests.test_current_facts_excludes_explicitly_expired_fact) ... ok
+test_handoff_is_deterministically_structured (tests.test_janus.JanusTests.test_handoff_is_deterministically_structured) ... ok
+test_handoff_round_trip_reproduces_state_digest (tests.test_janus.JanusTests.test_handoff_round_trip_reproduces_state_digest) ... ok
+test_historical_supersession_is_not_false_contradiction (tests.test_janus.JanusTests.test_historical_supersession_is_not_false_contradiction) ... ok
+test_priority_prefers_high_leverage_low_cost (tests.test_janus.JanusTests.test_priority_prefers_high_leverage_low_cost) ... ok
+test_same_valid_boundary_conflict_is_detected (tests.test_janus.JanusTests.test_same_valid_boundary_conflict_is_detected) ... ok
+test_snapshot_and_reconcile (tests.test_janus.JanusTests.test_snapshot_and_reconcile) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.018s
+
+OK

@@ -1,0 +1,8 @@
+{
+  "version": "0.6.0",
+  "provider": "forex-factory",
+  "acquisition": ["weekly_json_export", "weekly_csv_export", "weekly_xml_export", "ics_export", "public_calendar_web"],
+  "fields": ["event_time", "currency", "impact", "event", "actual", "forecast", "previous", "revision", "related_stories"],
+  "normalization": ["timezone", "revision_lineage", "actual_vs_forecast_surprise", "impact_level", "event_family"],
+  "use_cases": ["macro_blackout_windows", "event_studies", "cross_asset_context", "trading_session_context", "confounder_detection"]
+}

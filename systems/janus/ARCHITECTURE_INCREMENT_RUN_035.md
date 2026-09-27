@@ -1,0 +1,3 @@
+# JANUS ∞ Run 035 — Compact Portable Acquisition Proof Chain
+
+Run 035 separates proof-carrying acquisition receipts from content-addressed cache bytes. Receipts commit to the exact accepted hash set and remaining closure, chain by predecessor receipt digest, remain deterministic and policy-neutral, and can be verified independently of transport. Resume validates the externally held cache against the prior commitment, rejecting rollback, poison, stale roots, chain splicing, retransmission, and unrequested objects. Fixed-seed randomized interruption schedules prove identical final graph reconstruction across arbitrary batch boundaries. Branch winner selection remains outside JANUS authority.

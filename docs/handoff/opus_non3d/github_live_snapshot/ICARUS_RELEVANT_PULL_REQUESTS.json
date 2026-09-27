@@ -1,0 +1,66 @@
+[
+  {
+    "number": 16,
+    "state": "open",
+    "title": "Add AION research handoff and PARALLAX proposal",
+    "created_at": "2026-09-23T16:29:06Z",
+    "updated_at": "2026-09-23T16:34:05Z",
+    "body": "Purpose: make reviewed AION research snapshot and PARALLAX proposal accessible to agents in canonical Icarus repository.\nScope: three additive files; 30-file source archive with SHA-256/local commit; ten accessible ZIPs across two CSV repos yielded 659 usable entries / 542 byte-distinct contents vs ~800 expected; reconciliation open; research only.\nVerification: AION unit tests 11/11, compileall and ZIP integrity passed; uploaded ZIP SHA-256 matched remote blob; real-data and sibling integration not validated. Four Icarus engine checks failed at existing CLI root-option order defect. ETHUSD restriction retained."
+  },
+  {
+    "number": 17,
+    "state": "open",
+    "title": "ChatGPT: ICARUS control-plane and subsystem handoff",
+    "created_at": "2026-09-24T11:27:15Z",
+    "updated_at": "2026-09-25T01:32:51Z",
+    "body": "Canonicalizes 2026-09-23/24 engineering/research/control-plane work. Master consolidation commit eab72065f7d388532330034725df4e14c397840c. Adds/refreshed MASTER_INTEGRATION_INDEX, INTEGRATION_MANIFEST, CONNECTION_CONTRACTS, EVIDENCE_FINDINGS_LEDGER, PROVIDER_CAPABILITY_SNAPSHOT, NEXT_CONNECTION_SEQUENCE, README, HANDOFF_STATE. Separates main baseline, PR #18 runtime, PR #19 point-in-time layer, OMNIVISION Stage 0 verified / Stage 1 planned, AION/DAEDALUS evidence, unresolved ARGUS/ATHENA/NEXUS/ORACLE identity, provider observations, verified vs reported work, and integration order. Preserves execution_authorized=false and no-live-trading authority."
+  },
+  {
+    "number": 18,
+    "state": "open",
+    "title": "ChatGPT: add fail-closed ICARUS control-plane receipt verifier",
+    "created_at": "2026-09-24T21:56:46Z",
+    "updated_at": "2026-09-24T23:36:39Z",
+    "body": "Implements fail-closed S1->S5 receipt verification without trading-logic change: dependency-free icarus_control, deterministic JSON canonicalization, SHA-256 receipt chain, policy/schema binding, same-cycle epoch/snapshot validation, stage maturity ceilings, evidence-origin dedup, S4 oracle provenance, structural promotion gating, read-only CLI, adversarial tests, separate control-evidence branch model. Global-root CI workaround verified; documented subcommand-local root contract remained open until follow-up."
+  },
+  {
+    "number": 19,
+    "state": "open",
+    "title": "ChatGPT: preserve point-in-time market-data vintages",
+    "created_at": "2026-09-24T22:09:15Z",
+    "updated_at": "2026-09-24T23:36:41Z",
+    "body": "Implements AEGIS Finding 027 provenance layer. Head e05c122f7a8e5501d98251c7449cbe7ce3ec6dda. Actions run 36065964176 success; Linux full and Windows focused tests passed. Implements source SHA-256 identity, point-in-time observation/revision preservation, duplicate-batch idempotence, revision linkage, provenance commit before canonical overwrite, fail-closed ingest on provenance failure. Residual hardening: cryptographic chain/head verification, tamper tests, deterministic as_of reconstruction, stable canonical-history linkage."
+  },
+  {
+    "number": 20,
+    "state": "open",
+    "title": "ICARUS: stage empirical research and S4 architecture loop corpus",
+    "created_at": "2026-09-24T23:34:16Z",
+    "updated_at": "2026-09-25T01:15:06Z",
+    "body": "Stages loop output: ICARUS_LOOP_INDEX, pipeline checkpoint, S3 edge registry, append-only attempt ledger, repository audit findings, provider matrix, S4 curve-research plane spec, corrected implementation plan, architectural rulings, current-loop handoff and inbox protocol. Documentation/handoff only; baseline 007e701...; no strategy/runtime code."
+  },
+  {
+    "number": 21,
+    "state": "open",
+    "title": "integration: ICARUS capability fabric, evidence contracts, and agent handoffs",
+    "created_at": "2026-09-24T23:35:17Z",
+    "updated_at": "2026-09-24T23:35:17Z",
+    "body": "Non-invasive integration package: root integration index, architecture/repo findings, control-plane/S1-S5 assurance design, cross-agent authority/handoff contract, machine-readable repository mesh, JSON Schemas for evidence/control/handoff, reusable handoff template. At validation: branch 10 ahead / 0 behind main; only documentation/integration artifacts; no canonical executable paths modified."
+  },
+  {
+    "number": 25,
+    "state": "open",
+    "title": "docs: consolidate ICARUS / AEGIS assurance archive",
+    "created_at": "2026-09-24T23:40:28Z",
+    "updated_at": "2026-09-24T23:41:03Z",
+    "body": "Documentation/evidence archive: AEGIS Findings 001-030, full dossier/masterbuild handoff, S3 Agent Reach handoff, unified control-cycle handoff text, Stage-5 worklog/receipt, control-plane implementation map, repo/branch registry, provenance/change record, source-transfer manifest. Fresh compare vs main 007e701... showed 15 commits ahead / 0 behind, 14 documentation/assurance files changed, no engine/strategy/execution/Pine/trainer/test code."
+  },
+  {
+    "number": 29,
+    "state": "open",
+    "title": "ChatGPT: accept plant root option after subcommand",
+    "created_at": "2026-09-26T00:20:21Z",
+    "updated_at": "2026-09-26T00:22:08Z",
+    "body": "TDD regression for documented `icarus-plant setup --root DIR`. RED commit d75d19e16aedcbee5302f3de39449c38e3183a1b; Actions 36204478967 failed on Linux/Windows before production code. GREEN commit 3a7da656b5e20a7b8aaa628b2b203d3e2ccaee51; Actions 36204536560 success across Linux full tests, Windows focused suite, icarus-control help, plant setup smoke and engine doctor smoke. Restacked on PR #19; no trading/Pulse/model/feature/authorization changes."
+  }
+]

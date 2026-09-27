@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SuperMesh-X Evidence Record",
+  "type": "object",
+  "required": ["source", "source_class", "retrieved_at", "claim_or_value"],
+  "properties": {
+    "source": {"type": "string"},
+    "source_class": {"type": "string"},
+    "locator": {"type": ["string", "null"]},
+    "retrieved_at": {"type": "string"},
+    "event_time": {"type": ["string", "null"]},
+    "available_time": {"type": ["string", "null"]},
+    "claim_or_value": {},
+    "unit": {"type": ["string", "null"]},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "transformations": {"type": "array", "items": {"type": "string"}},
+    "contradicts": {"type": "array", "items": {"type": "string"}}
+  }
+}

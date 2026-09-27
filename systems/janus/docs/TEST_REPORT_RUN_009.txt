@@ -1,0 +1,42 @@
+test_historical_archive_roundtrip_replays_old_conflict (test_janus.JanusRun008Tests.test_historical_archive_roundtrip_replays_old_conflict) ... ok
+test_proof_provenance_chain_reports_terminal_and_validity (test_janus.JanusRun008Tests.test_proof_provenance_chain_reports_terminal_and_validity) ... ok
+test_proof_provenance_detects_missing_supersession_target (test_janus.JanusRun008Tests.test_proof_provenance_detects_missing_supersession_target) ... ok
+test_proof_provenance_rejects_supersession_cycle (test_janus.JanusRun008Tests.test_proof_provenance_rejects_supersession_cycle) ... ok
+test_proof_impact_graph_rejects_reversed_knowledge_window (test_janus.JanusRun009Tests.test_proof_impact_graph_rejects_reversed_knowledge_window) ... ok
+test_proof_impact_graph_traces_revocation_to_conflict_and_blast_radius (test_janus.JanusRun009Tests.test_proof_impact_graph_traces_revocation_to_conflict_and_blast_radius) ... ok
+test_unified_adjudication_kernel_matches_archive_and_replay (test_janus.JanusRun009Tests.test_unified_adjudication_kernel_matches_archive_and_replay) ... ok
+test_as_known_at_prevents_hindsight (test_janus.JanusTests.test_as_known_at_prevents_hindsight) ... ok
+test_authority_policy_resolves_overlap_and_reports_blast_radius (test_janus.JanusTests.test_authority_policy_resolves_overlap_and_reports_blast_radius) ... ok
+test_authority_policy_survives_handoff_round_trip (test_janus.JanusTests.test_authority_policy_survives_handoff_round_trip) ... ok
+test_bitemporal_as_of_respects_validity_and_knowledge (test_janus.JanusTests.test_bitemporal_as_of_respects_validity_and_knowledge) ... ok
+test_current_facts_excludes_explicitly_expired_fact (test_janus.JanusTests.test_current_facts_excludes_explicitly_expired_fact) ... ok
+test_equal_authority_overlap_remains_quarantined (test_janus.JanusTests.test_equal_authority_overlap_remains_quarantined) ... ok
+test_evidence_policy_breaks_equal_authority_tie_only_when_explicit (test_janus.JanusTests.test_evidence_policy_breaks_equal_authority_tie_only_when_explicit) ... ok
+test_evidence_policy_survives_handoff_round_trip (test_janus.JanusTests.test_evidence_policy_survives_handoff_round_trip) ... ok
+test_facts_as_of_applies_verified_overlay_only_after_decision_known (test_janus.JanusTests.test_facts_as_of_applies_verified_overlay_only_after_decision_known) ... ok
+test_handoff_is_deterministically_structured (test_janus.JanusTests.test_handoff_is_deterministically_structured) ... ok
+test_handoff_round_trip_reproduces_state_digest (test_janus.JanusTests.test_handoff_round_trip_reproduces_state_digest) ... ok
+test_hash_mismatch_blocks_overlay (test_janus.JanusTests.test_hash_mismatch_blocks_overlay) ... ok
+test_historical_supersession_is_not_false_contradiction (test_janus.JanusTests.test_historical_supersession_is_not_false_contradiction) ... ok
+test_missing_evidence_policy_does_not_break_authority_tie (test_janus.JanusTests.test_missing_evidence_policy_does_not_break_authority_tie) ... ok
+test_normalization_approval_creates_immutable_overlay (test_janus.JanusTests.test_normalization_approval_creates_immutable_overlay) ... ok
+test_normalization_ledger_survives_handoff_round_trip (test_janus.JanusTests.test_normalization_ledger_survives_handoff_round_trip) ... ok
+test_normalization_rejection_and_revocation_do_not_apply_overlay (test_janus.JanusTests.test_normalization_rejection_and_revocation_do_not_apply_overlay) ... ok
+test_priority_prefers_high_leverage_low_cost (test_janus.JanusTests.test_priority_prefers_high_leverage_low_cost) ... ok
+test_proof_lifecycle_rejects_conflicting_same_knowledge_boundary (test_janus.JanusTests.test_proof_lifecycle_rejects_conflicting_same_knowledge_boundary) ... ok
+test_proof_lifecycle_rejects_unknown_proof_target (test_janus.JanusTests.test_proof_lifecycle_rejects_unknown_proof_target) ... ok
+test_proof_lifecycle_revocation_is_knowledge_time_aware (test_janus.JanusTests.test_proof_lifecycle_revocation_is_knowledge_time_aware) ... ok
+test_proof_lifecycle_survives_handoff_round_trip (test_janus.JanusTests.test_proof_lifecycle_survives_handoff_round_trip) ... ok
+test_revocation_is_knowledge_time_aware_for_verified_overlay (test_janus.JanusTests.test_revocation_is_knowledge_time_aware_for_verified_overlay) ... ok
+test_same_valid_boundary_conflict_is_detected (test_janus.JanusTests.test_same_valid_boundary_conflict_is_detected) ... ok
+test_snapshot_and_reconcile (test_janus.JanusTests.test_snapshot_and_reconcile) ... ok
+test_temporal_conflict_replay_carries_blast_radius_and_lineage (test_janus.JanusTests.test_temporal_conflict_replay_carries_blast_radius_and_lineage) ... ok
+test_temporal_conflict_replay_tracks_overlay_and_proof_revocation (test_janus.JanusTests.test_temporal_conflict_replay_tracks_overlay_and_proof_revocation) ... ok
+test_temporal_normalization_proposes_but_does_not_mutate (test_janus.JanusTests.test_temporal_normalization_proposes_but_does_not_mutate) ... ok
+test_temporal_overlap_conflict_detected_across_different_valid_from (test_janus.JanusTests.test_temporal_overlap_conflict_detected_across_different_valid_from) ... ok
+test_unbound_proof_reference_cannot_change_reconstructed_truth (test_janus.JanusTests.test_unbound_proof_reference_cannot_change_reconstructed_truth) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 0.065s
+
+OK

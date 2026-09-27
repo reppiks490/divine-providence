@@ -1,0 +1,98 @@
+{
+  "experiment_id": "ACF-EXP-NQ-REGIME-003",
+  "corpus_id": "ACF-NQ-CONT-MASSIVE-VOLROLL-1H-20250902-20260925-v007",
+  "holdout_touched": false,
+  "regime_definition": {
+    "short_window": 12,
+    "long_window": 48,
+    "low_ratio": 0.75,
+    "high_ratio": 1.5
+  },
+  "cost_points": 1.0,
+  "session_block_results": {
+    "incumbent_LOW": {
+      "sessions": 21,
+      "trades": 28,
+      "mean_net": -15.303571428571429,
+      "ci95": [
+        -48.747544642857136,
+        14.875223214285711
+      ],
+      "raw_p": 0.3577284543091382,
+      "bonferroni_p": 1.0
+    },
+    "incumbent_NORMAL": {
+      "sessions": 48,
+      "trades": 71,
+      "mean_net": 2.140845070422535,
+      "ci95": [
+        -19.360958904109587,
+        27.483478260869564
+      ],
+      "raw_p": 0.873625274945011,
+      "bonferroni_p": 1.0,
+      "positive_folds": 3,
+      "total_folds": 4
+    },
+    "incumbent_HIGH": {
+      "sessions": 3,
+      "trades": 4,
+      "mean_net": -16.5,
+      "ci95": [
+        -37.75,
+        28.5
+      ],
+      "raw_p": 0.5052989402119576,
+      "bonferroni_p": 1.0
+    },
+    "challenger_LOW": {
+      "sessions": 6,
+      "trades": 6,
+      "mean_net": -68.29166666666667,
+      "ci95": [
+        -129.29166666666666,
+        -22.458333333333332
+      ],
+      "raw_p": 0.033393321335732855,
+      "bonferroni_p": 0.20035992801439712
+    },
+    "challenger_NORMAL": {
+      "sessions": 13,
+      "trades": 14,
+      "mean_net": -0.23214285714285715,
+      "ci95": [
+        -61.518660714285716,
+        60.060714285714184
+      ],
+      "raw_p": 0.9942011597680463,
+      "bonferroni_p": 1.0
+    },
+    "challenger_HIGH": {
+      "sessions": 1,
+      "trades": 1,
+      "mean_net": -17.75,
+      "ci95": [
+        -17.75,
+        -17.75
+      ],
+      "raw_p": 1.0,
+      "bonferroni_p": 1.0
+    },
+    "random_control_NORMAL": {
+      "sessions": 48,
+      "trades": 71,
+      "mean_net": -9.866197183098592,
+      "ci95": [
+        -33.763870120120124,
+        12.995068241337604
+      ],
+      "raw_p": 0.4453109378124375
+    }
+  },
+  "decisions": {
+    "NQCM-LIQ-SWEEP-001": "QUARANTINE",
+    "NQCM-LIQ-SWEEP-001@NORMAL": "QUARANTINE_NOT_SPECIALIST",
+    "EXT-SESSION-VWAP-VOL-SWEEP-001": "QUARANTINE_OVERFIT_RISK"
+  },
+  "reason": "No regime slice satisfies confidence, multiple-testing, and stability gates."
+}

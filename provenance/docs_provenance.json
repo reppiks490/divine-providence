@@ -1,0 +1,3192 @@
+[
+ {
+  "action": "copied",
+  "path": "docs/programs/ascension/14_H6_META_RESEARCH_SELF_AUDIT_DESIGN_SPEC.md",
+  "sha256": "c4143e64c1b392565d2c1bb7e4f9664305621630b8206df88ea974088b72934f",
+  "source": "14_H6_META_RESEARCH_SELF_AUDIT_DESIGN_SPEC.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/misc/ABSOLUTE_MANIFEST (1).csv",
+  "sha256": "ee9b9fd0641308634868633625de845684cd6b4e428b5aa7c6aff52cb920c28f",
+  "source": "ABSOLUTE_MANIFEST (1).csv"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/ICARUS_AEGIS_Executable_Assurance_Loop_Deep_Research_and_Implementation_Plan.md",
+  "sha256": "d0780502a72cbd7f2dbd7eee8bb1b2b37d0bc91b14c3396662c18143c7b80333",
+  "source": "AEGIS Executable Assurance Loop \u2014 Deep Research and Implementation Plan"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "AEGIS_Challenger_Forge_Checkpoint_001.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "AEGIS_Challenger_Forge_Checkpoint_002.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "AEGIS_Challenger_Forge_Checkpoint_004.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "AEGIS_Challenger_Forge_Checkpoint_006.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "AEGIS_Challenger_Forge_Checkpoint_007.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "AEGIS_Challenger_Forge_Checkpoint_008.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "AEGIS_Challenger_Forge_Checkpoint_009.zip"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "f3b1b21fd911902c0cb2634959733cfc6c171763699f618bc7e4d1ad695a8557",
+  "source": "ARCHITECTURE_INCREMENT_RUN_032.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ARGUS-MICROSTRUCTURE-OS_HANDOFF (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ARGUS-MICROSTRUCTURE-OS_HANDOFF.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ARGUS_MICROSTRUCTURE_BLUEPRINT_AND_INSTRUCTIONS (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_ALL_CURRENT_WORK_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_Collision_Detector_v0.2.1.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_Context_Distillation_Engine_v0.1.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_EVERYTHING_CURRENT_MASTER_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_Evaluator_Fabric_v0.3.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_Evaluator_Fabric_v0.7.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_Evaluator_Fabric_v0.7_FINAL.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_Evaluator_Fabric_v0.8.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_Manifest_Trust_Collision_Adapter_v0.2.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_Manifest_Trust_Collision_Adapter_v0.3.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_Manifest_Trust_Collision_Adapter_v0.4.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/ascension/ASCENSION_STATE_CAPSULE_v016.md",
+  "sha256": "32349df5d6295f7d12b5e99e455e61ad33fbe50d9905bbff34ad034cc234e802",
+  "source": "ASCENSION_STATE_CAPSULE_v016.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/ascension/ASCENSION_STATE_CAPSULE_v017.1.md",
+  "sha256": "27841eb6ced5849e035141d8c1b236bb8a907d4463787dee1c49643fa06b59ed",
+  "source": "ASCENSION_STATE_CAPSULE_v017.1.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/ascension/ASCENSION_STATE_CAPSULE_v017_1.md",
+  "sha256": "7b2380cf8873b7d4b0594d3983d1a1b9452483ec37e961b52c92421999beb6c1",
+  "source": "ASCENSION_STATE_CAPSULE_v017_1.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/ascension/ASCENSION_STATE_CAPSULE_v018.md",
+  "sha256": "0ef174c7464fb34c82e55473cddc7d34b4d8f4b757cee4fb92999e9caa3f0fec",
+  "source": "ASCENSION_STATE_CAPSULE_v018.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/ascension/ASCENSION_STATE_CAPSULE_v019.md",
+  "sha256": "4f65454b81b6d80a94a8d68901686af81932b3b241c5325c0b65944e8923c95d",
+  "source": "ASCENSION_STATE_CAPSULE_v019.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/ascension/ASCENSION_STATE_CAPSULE_v020.md",
+  "sha256": "7430411c8ddf991ffb589c2c1bd017a1345605f8c8f9e0a2ef222cd568cfa151",
+  "source": "ASCENSION_STATE_CAPSULE_v020.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/ascension/ASCENSION_STATE_CAPSULE_v021.md",
+  "sha256": "4c6c46f9eb7d6ea86b59a75079df59f96ae5223acea8340a3b80a9f86cc8b6cf",
+  "source": "ASCENSION_STATE_CAPSULE_v021.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ASCENSION_Sibling_Manifest_Conformance_Kit_v0.1.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/ascension/ASCENSION_v0.2_Capability_Kernel.md",
+  "sha256": "f1195440dbb5eb35199aa271639ad6b8f733f9a2e60798edbb72c83f122f0a2c",
+  "source": "ASCENSION_v0.2_Capability_Kernel.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ATHENA-SUPERVISORY-FABRIC_HANDOFF (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ATHENA-SUPERVISORY-FABRIC_HANDOFF.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ATHENA_BLUEPRINT_AND_INSTRUCTIONS (1).zip"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "4b68f961c2c65b7da273e39fdc9ad3a832f228b88ba8458cc4535b5247ca20ce",
+  "source": "AUTHORITY_HANDOFF_CHECKLIST.md"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/ICARUS_Qualification_Authority-Monotonicity_Verification_Report.md",
+  "sha256": "f0df64157d264de0c1eb94b3f74057a7747591ab37be8c9961f9ba50b94718d7",
+  "source": "Authority-Monotonicity Verification Report"
+ },
+ {
+  "action": "copied",
+  "path": "docs/misc/CHANGELOG.md",
+  "sha256": "81983b24c0353cac0aac7a28dc692d173fb3625bbe42d0ca99f43c7bbffbfe96",
+  "source": "CHANGELOG.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS-RESEARCH-OS_HANDOFF (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS-RESEARCH-OS_HANDOFF.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CHECKPOINT_01_pre_audit.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CHECKPOINT_03_REPAIR_START.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CHECKPOINT_04_PRE_RECONCILE.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CHECKPOINT_05_20PASS (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CHECKPOINT_05_20PASS.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CHECKPOINT_06_SOURCE_POSITION_SAFE.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CHECKPOINT_07_DEV_GATE.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CHECKPOINT_07_REAL_SMOKE_GREEN.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CHECKPOINT_08_FUSION_PROTOCOL.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CHECKPOINT_09_REAL_FUSION_VALIDATED.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_CURRENT_BUILD_FOR_CLAUDE (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_WITH_ATHENA_NEXT_MODEL_HANDOFF (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_WITH_ATHENA_NEXT_MODEL_HANDOFF.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "DAEDALUS_WITH_BLUEPRINT_AND_INSTRUCTIONS (1).zip"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Deep_Research_Integration_Blueprint_for_Five_Hourly_Orchestration_Loops.md",
+  "sha256": "7b3f577dadb789e3595fea3b920082886bd1ce8d16c8636b8e575d756cba9094",
+  "source": "Deep Research Integration Blueprint for Five Hourly Orchestration Loops"
+ },
+ {
+  "action": "excluded_3d_program_out_of_scope",
+  "sha256": "0d0a327c8f50bc04bc484ef9b08e81ffefbaaf4daaf569db39e120acaada4fcc",
+  "source": "Deep Research report"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Deep_Research_Selecting_a_Single_High-Leverage_Improvement_Loop_for_Icarus.md",
+  "sha256": "8bc96fcb0825a029a428f8669b5a3c59d5d1c3483a2d06865c5539b71e3403c3",
+  "source": "Deep Research_ Selecting a Single High-Leverage Improvement Loop for Icarus"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary.md",
+  "sha256": "5e40c9534b56aa5cc8d5d4896a0d546185cc911f88823ef7c163e667b9d5cad5",
+  "source": "Executive Summary"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__2.md",
+  "sha256": "6ecc1068cadb2eb272697edfcf8954e61d4b6742e9c684ea4033a7d257b8c8ba",
+  "source": "Executive Summary (1)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__3.md",
+  "sha256": "52388103122157ea4a28d22d7512c07953cbeb994743a79ff5933cc3aefa497e",
+  "source": "Executive Summary(1)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__4.md",
+  "sha256": "b1fffe8346a9690ac50959d08074d2a48542b405dfdade43072d4e48d6ba208d",
+  "source": "Executive Summary(1) (1)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__5.md",
+  "sha256": "2b1c95cc842c734a7105dea7b63e52ea0d4e8b099062ef8b1ae51f5785f3a0af",
+  "source": "Executive Summary(2)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__6.md",
+  "sha256": "3b546d85fe1f9f9e5b4901697226658e38b7f53156fe70f0ee9f14e93ba47c29",
+  "source": "Executive Summary(2) (1)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__7.md",
+  "sha256": "81d8a9a85fe7646a8d6d68d150d8bd46ae67d77067a0e8002ab2d90ef1f448f7",
+  "source": "Executive Summary(3)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__8.md",
+  "sha256": "5ad9cd69c6bc9bfb20a3319f5d3da9e7ba20baaa06f39937d5eebbbf6eba905e",
+  "source": "Executive Summary(3) (1)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__9.md",
+  "sha256": "f4b53316bcd67f0126ad1df9beaf613c45cd52aa0e95b80be64e7b6601e3f8d8",
+  "source": "Executive Summary(4)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__10.md",
+  "sha256": "2cfb495baad7abc18bdfea284dbeaf3df55c533ae2585a06249abd990a692e25",
+  "source": "Executive Summary(4) (1)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__11.md",
+  "sha256": "dca0e5fa9dcd3e9b666535cb6d7d3f85f2e4a50c0dfdd56106fd2b73c0a6ea81",
+  "source": "Executive Summary(5)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__12.md",
+  "sha256": "150fe77edbd7d1952f2efe96a539d517118df3ab45189709fb8167f6e3d69ab9",
+  "source": "Executive Summary(5) (1)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__13.md",
+  "sha256": "e1595dca1cf70bbc8c3499fca6afda51b0b9bf6fcdd542ee992e27981266eae8",
+  "source": "Executive Summary(6)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__14.md",
+  "sha256": "90132709483fb2ea9e7b554a20cb1d3cfcb2db01aa793bbb494c6189afd477a3",
+  "source": "Executive Summary(6) (1)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Executive_Summary__15.md",
+  "sha256": "242b818079a596dd0c5bc70a3d16e9a0a55c5940833bd3375ec1c4559c3ff3d8",
+  "source": "Executive Summary(7)"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/HELIOS_PRIME_Handoff_Package_for_Builders.md",
+  "sha256": "223adf39d3a8219ca225fa6cdcc72ae8ae7c0246ed642c9acd205dc64b15db8c",
+  "source": "HELIOS PRIME Handoff Package for Builders"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/HELIOS_PRIME_Meta-Research_Self-Audit_Implementation-Grade_Research_and_TDD_Plan.md",
+  "sha256": "b4651fe0cdc9e3b0fd935290fbe17309e997caf271368936a89666b882f35e2f",
+  "source": "HELIOS PRIME Meta-Research & Self-Audit_ Implementation-Grade Research and TDD Plan"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/HELIOS_PRIME_MASTER_SUPERSET_TRANSFER_2026-09-24.md",
+  "sha256": "5f9653a0b68de5b7d613a61d655e7151006b240e09fb9bf8b193d8a2440a0760",
+  "source": "HELIOS_PRIME_MASTER_SUPERSET_TRANSFER_2026-09-24.md"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/AEGIS_ICARUS_Implementation-Ready_Repair_Package_for_Pre-Window_Trade-State_Leakage.md",
+  "sha256": "f6c8c6bc0a9f5f9fa5d424c3d060e5f4468a4a4cbf99c033f809d8d61d51553b",
+  "source": "ICARUS Implementation-Ready Repair Package for Pre-Window Trade-State Leakage"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/ICARUS_Masterbuild_Continuation_and_Research-Hardening_Audit.md",
+  "sha256": "70d25853b704eeae047df1907c37e229d33694fef7e30ca2103390747f0330d5",
+  "source": "ICARUS Masterbuild Continuation and Research-Hardening Audit"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/ICARUS_S4_Curve_Research_Plane_Implementation_and_Empirical_Qualification_Roadmap.md",
+  "sha256": "7a0b870852795b3b0bc8ac432add02d30c9d7bc83d6b548c6d96e97ae15fef2a",
+  "source": "ICARUS S4 Curve Research Plane_ Implementation and Empirical Qualification Roadmap"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/ICARUS_Scientific_Integrity_Report_TIME_Kernel_and_Patch-Ready_SOURCE_DATA_TIME_Implementation.md",
+  "sha256": "98b9f4522811f89d85d064ebda01a29209435c767bef4e20b7b8369dd807ff8a",
+  "source": "ICARUS Scientific Integrity Report_ TIME Kernel and Patch-Ready SOURCE + DATA + TIME Implementation"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/ICARUS_Unified_Five-Stage_Control_Cycle_Research-Backed_Simulation.md",
+  "sha256": "9d4938f3547b12cfa43cfc0605f27fd526b104bb88de839ad67617e4f5add24f",
+  "source": "ICARUS Unified Five-Stage Control Cycle_ Research-Backed Simulation"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS-AION-MARKET-MEMORY-v0.1.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/ICARUS_ABSOLUTELY_EVERYTHING_ALL_IN_ONE_2026-09-24.txt",
+  "sha256": "5d760b06f861834dd00d2ed82acc0af1f183764ed7f21d975595aebdc484ae14",
+  "source": "ICARUS_ABSOLUTELY_EVERYTHING_ALL_IN_ONE_2026-09-24.txt"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_ABSOLUTELY_EVERYTHING_CHAT_ARCHIVE_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_ABSOLUTE_EVERYTHING_PLUS_CONTINUATION_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_ABSOLUTE_EVERYTHING_RECOVERABLE_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_ABSOLUTE_MASTER_TRANSFER_EVERYTHING_2026-09-24_FINAL.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_AEGIS_ABSOLUTE_EVERYTHING_2026-09-24.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/ICARUS_AEGIS_ABSOLUTE_EVERYTHING_MASTER_HANDOFF_2026-09-24 (2).txt",
+  "sha256": "b6e2c80c58ea2e79dc185db78236105bffe6911c898af5d62009053bd406bc04",
+  "source": "ICARUS_AEGIS_ABSOLUTE_EVERYTHING_MASTER_HANDOFF_2026-09-24 (2).txt"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_CHATGPT_COMPLETE_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_COMPLETE_OPUS_MASTER_HANDOFF_2026-09-26.docx"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_COMPLETE_OPUS_MASTER_HANDOFF_DEEP_SCAN_2026-09-26 (1).docx"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/ICARUS_COMPLETE_OPUS_MASTER_HANDOFF_DEEP_SCAN_2026-09-26 (1).txt",
+  "sha256": "9c8bd9b726f5686713d0cd413a2d60a70a1df0d734d26cfb409f5694f497fe5b",
+  "source": "ICARUS_COMPLETE_OPUS_MASTER_HANDOFF_DEEP_SCAN_2026-09-26 (1).txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/ICARUS_COMPLETE_WORK_PRODUCT_2026-09-24.md",
+  "sha256": "2c18df048b7ca89358d056af9dd58fa95e95ff8de8bcf761587468d2e68ec231",
+  "source": "ICARUS_COMPLETE_WORK_PRODUCT_2026-09-24.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_COMPLETE_WORK_PRODUCT_2026-09-24.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/ICARUS_CONTINUATION_LEDGER_2026-09-26.md",
+  "sha256": "b7cd35522a0a3f14c1890279507742a7c88fdbc1ab425c5bb2e6b51314b0e043",
+  "source": "ICARUS_CONTINUATION_LEDGER_2026-09-26.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_CONTINUATION_OUTPUTS_2026-09-26.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260924-20.json",
+  "sha256": "afd0d331e7e8e335ee109e923b1a835a12ab88e350b6a2ddf7ece24a3c0026b9",
+  "source": "ICARUS_CONTROL_STATE_20260924-20.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260924-22.json",
+  "sha256": "8cc1ba70f987b82f2fd9906e8f5075532e5fc67cff3e921d73fbe49b19afe3ee",
+  "source": "ICARUS_CONTROL_STATE_20260924-22.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260924-23.json",
+  "sha256": "be81befb41f4552460b12029810b21e5b96b44ee7d3ee3b5086d5384bd150169",
+  "source": "ICARUS_CONTROL_STATE_20260924-23.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-00.json",
+  "sha256": "9438b689dc30fd7218e06a231d66979299dece9fecfb77fb5188b789cf3fed16",
+  "source": "ICARUS_CONTROL_STATE_20260925-00.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-02.json",
+  "sha256": "14353b08a80ea746687d17ee8c7356e94a62be2928d2bb8a285c602102d99f15",
+  "source": "ICARUS_CONTROL_STATE_20260925-02.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-03.json",
+  "sha256": "b024268043818cf2d5254c53f131a6c46a1a39f0f94d50cc7c683d4764a3de75",
+  "source": "ICARUS_CONTROL_STATE_20260925-03.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-04.json",
+  "sha256": "b6c09495f3147c9dddf4fbf886fd93eb129627ab9d5bc10a2d50d7cd64c7cf8e",
+  "source": "ICARUS_CONTROL_STATE_20260925-04.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-06 (1).json",
+  "sha256": "fd4df7f341b104a062fa4f71c4a19984826129bf25d6a65cb82f5585fc981992",
+  "source": "ICARUS_CONTROL_STATE_20260925-06 (1).json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-06.json",
+  "sha256": "d5da891f1d5198e52de097d484cad891adac6afc2355451e60268612ceeeb3bd",
+  "source": "ICARUS_CONTROL_STATE_20260925-06.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-08.json",
+  "sha256": "98fa73e10668b3206eccbd2f87984569f55e9532dac9654bf99baf3aac5e826f",
+  "source": "ICARUS_CONTROL_STATE_20260925-08.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-09.json",
+  "sha256": "2bc94232afab2e6a37443833378af7f7935f49e5246ccbaf16fd45286be9bc42",
+  "source": "ICARUS_CONTROL_STATE_20260925-09.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-11.json",
+  "sha256": "7352973650656e6cb13ae0776bedfab26db829e02a844e38e262b943701a7f52",
+  "source": "ICARUS_CONTROL_STATE_20260925-11.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-12.json",
+  "sha256": "ca4547009372a05f91a48fde0985091696cd7336ddbd778b2b86c5848ef192d3",
+  "source": "ICARUS_CONTROL_STATE_20260925-12.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-12_REVALIDATION.json",
+  "sha256": "5cdc189a1a2e2a8a6a06ab059a3ab21e6b1a86832adf9ce69139f0cc47f040db",
+  "source": "ICARUS_CONTROL_STATE_20260925-12_REVALIDATION.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-14.json",
+  "sha256": "8d84f8f949376e63db918327a1543d008a114550a0fdfb6443b4d5d44f85e22d",
+  "source": "ICARUS_CONTROL_STATE_20260925-14.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-15.json",
+  "sha256": "1ada82e65279e401d447fda5b3e5d7a98f356db8719dd989c611a4fd167ad950",
+  "source": "ICARUS_CONTROL_STATE_20260925-15.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-17.json",
+  "sha256": "1570b88337f274891663ae154d6aac3721da790073d371d744a8e066585327cf",
+  "source": "ICARUS_CONTROL_STATE_20260925-17.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-18.json",
+  "sha256": "70c95c8419e8dacb65115e0196b9c64f816badda7cca07173fd844a92d61f17f",
+  "source": "ICARUS_CONTROL_STATE_20260925-18.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-19.json",
+  "sha256": "0c3ab00b9bd62ee50800897c25b6fcc8cfc91b0ff16438170e98d9d4a1f30060",
+  "source": "ICARUS_CONTROL_STATE_20260925-19.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-22.json",
+  "sha256": "f745f48511a1f52033b90edaf7dd406b1eea5fe45800a52550cfb1aebb8c56c9",
+  "source": "ICARUS_CONTROL_STATE_20260925-22.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260925-23.json",
+  "sha256": "b5d5db5924472f7c8b3b5a4b86c65777dc738ef74a09ef68751309b0e4ea71bb",
+  "source": "ICARUS_CONTROL_STATE_20260925-23.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-01.json",
+  "sha256": "beb9070408b75e17b59d8cd8f876c908add8ea170971b043c8a94ac76f304a33",
+  "source": "ICARUS_CONTROL_STATE_20260926-01.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-03.json",
+  "sha256": "c0205f35bac97ba53291172e48abf945b19a2ac994f3425d43a33cab6802137c",
+  "source": "ICARUS_CONTROL_STATE_20260926-03.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-04.json",
+  "sha256": "baf9a842a95958b1b1cf232245c4cc658e51481886325b7c0a9aa7a9f4e81af2",
+  "source": "ICARUS_CONTROL_STATE_20260926-04.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-05 (1).json",
+  "sha256": "fc19aad1b9a08bd7515a18399b77e15c97e9fa74660fab9d60681435baf68f42",
+  "source": "ICARUS_CONTROL_STATE_20260926-05 (1).json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-05 (1).json",
+  "sha256": "fc19aad1b9a08bd7515a18399b77e15c97e9fa74660fab9d60681435baf68f42",
+  "source": "ICARUS_CONTROL_STATE_20260926-05.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-06 (1).json",
+  "sha256": "e5545cbf1d48ff6419634369a8c44e6d57170ff910fc03ae4e37de6be6815ced",
+  "source": "ICARUS_CONTROL_STATE_20260926-06 (1).json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-06 (1).json",
+  "sha256": "e5545cbf1d48ff6419634369a8c44e6d57170ff910fc03ae4e37de6be6815ced",
+  "source": "ICARUS_CONTROL_STATE_20260926-06.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-07 (1).json",
+  "sha256": "a73682bbde4e7bb20a8570e0326b2788f54a18c878322037a5d9a1a82d6cfdb6",
+  "source": "ICARUS_CONTROL_STATE_20260926-07 (1).json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-07 (1).json",
+  "sha256": "a73682bbde4e7bb20a8570e0326b2788f54a18c878322037a5d9a1a82d6cfdb6",
+  "source": "ICARUS_CONTROL_STATE_20260926-07.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-08 (1).json",
+  "sha256": "0aac54287861df5ab627e63c517ef9989d1ac258b68797164213de7a949cabba",
+  "source": "ICARUS_CONTROL_STATE_20260926-08 (1).json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-08 (1).json",
+  "sha256": "0aac54287861df5ab627e63c517ef9989d1ac258b68797164213de7a949cabba",
+  "source": "ICARUS_CONTROL_STATE_20260926-08.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-09 (1).json",
+  "sha256": "707b8c82879fbb2485df0634c628be50b2239147c62d7033ae82ecad3c5f1fa6",
+  "source": "ICARUS_CONTROL_STATE_20260926-09 (1).json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/history/control_state/ICARUS_CONTROL_STATE_20260926-09 (1).json",
+  "sha256": "707b8c82879fbb2485df0634c628be50b2239147c62d7033ae82ecad3c5f1fa6",
+  "source": "ICARUS_CONTROL_STATE_20260926-09.json"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_CSV_RESEARCH_ALL_CURRENT_WORK_POST_CONTINUATION_2026-09-24 (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_CSV_RESEARCH_ALL_CURRENT_WORK_POST_CONTINUATION_2026-09-24.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/ICARUS_CSV_RESEARCH_CURRENT_STATE_2026-09-24.md",
+  "sha256": "71e32f26e42bae9a1d2feceff5c8ee5c5d7b1aaba012afa113ecf71ec675ec7c",
+  "source": "ICARUS_CSV_RESEARCH_CURRENT_STATE_2026-09-24.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/ICARUS_CSV_RESEARCH_CURRENT_STATE_v1.11_ITER24.json",
+  "sha256": "82771f5d4c5fc8d30c89da23b18fccb2926e0e150a80fa36cdee6517a4fd8eec",
+  "source": "ICARUS_CSV_RESEARCH_CURRENT_STATE_v1.11_ITER24.json"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_CSV_RESEARCH_v1.11_ITER24_2026-09-25.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_CSV_RESEARCH_v1.11_ITER24_2026-09-25.zip.sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_CSV_RESEARCH_v1.15_ITER32_2026-09-25.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_DUPLICATE_RECEIPT_20260925-15.json",
+  "sha256": "15113a77d9c5f8ae9e8eeb0e58f516090ce46a531488e454880e7ed1a06514cb",
+  "source": "ICARUS_DUPLICATE_RECEIPT_20260925-15.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_DUPLICATE_RECEIPT_20260925-17.json",
+  "sha256": "553ad3200c7d12d7d017cd6d87088c27cf588f987dcc9f74db5e70906f4d527b",
+  "source": "ICARUS_DUPLICATE_RECEIPT_20260925-17.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_DUPLICATE_RECEIPT_20260926-05 (1).json",
+  "sha256": "66f6219536f6506518ff1f848b425abcd6a5f30d7cb4713d6d18005ff8b1b39e",
+  "source": "ICARUS_DUPLICATE_RECEIPT_20260926-05 (1).json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/history/control_state/ICARUS_DUPLICATE_RECEIPT_20260926-05 (1).json",
+  "sha256": "66f6219536f6506518ff1f848b425abcd6a5f30d7cb4713d6d18005ff8b1b39e",
+  "source": "ICARUS_DUPLICATE_RECEIPT_20260926-05.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_DUPLICATE_SUPPRESSION_20260924-23.json",
+  "sha256": "ddaec45c0895b9d0cbdec87f655ead9f94258c0fd0088d36952e4dbed7a69dcc",
+  "source": "ICARUS_DUPLICATE_SUPPRESSION_20260924-23.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/history/control_state/ICARUS_DUPLICATE_SUPPRESSION_20260925-03.json",
+  "sha256": "92b25818dc14787ac8da32dcde9c8cdd83d0b86d39b56f6a34fc88c7e36b4393",
+  "source": "ICARUS_DUPLICATE_SUPPRESSION_20260925-03.json"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_EVERYTHING_RECOVERABLE_2026-09-24 (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_EVERYTHING_RECOVERABLE_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_EVERYTHING_SUPERSET_2026-09-24_UPDATED.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_FULL_PACKAGE.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_INTELLIGENCE_STACK_HANDOFF_BUNDLE (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_MASTER_HANDOFF_2026-09-24_2011CT.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_MASTER_HANDOFF_2026-09-24_2011CT.zip.sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_NEXT_CHAT_COMPLETE_CODE_AND_ARTIFACTS_2026-09-26.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/ICARUS_NEXT_CHAT_READ_FIRST.md",
+  "sha256": "2e61496bde0e4938285ae06c846af7a0b64f73a3e2d39bd45606b282e0cc3af5",
+  "source": "ICARUS_NEXT_CHAT_READ_FIRST.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_NEXUS_ADVANCED_CSV_LOOP_v1.2_2026-09-24 (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_NEXUS_ADVANCED_CSV_LOOP_v1.2_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_NEXUS_ADVANCED_CSV_LOOP_v1_2026-09-23 (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_NEXUS_ADVANCED_CSV_LOOP_v1_2026-09-23.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_NEXUS_ALL_CURRENT_WORK_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_NEXUS_CURRENT_WORK.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_OPUS_MASTER_HANDOFF_DEEP_SCAN_FINAL_2026-09-26.docx"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_OPUS_SUPER_ARCHIVE_2026-09-26.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_OPUS_SUPER_HANDOFF.docx"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_ORACLE_CHECKPOINT_B_50_SOL.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_ORACLE_CHECKPOINT_C_75_SOL_FOR_SOL_EXTRA_HIGH (3).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_ORACLE_CHECKPOINT_C_75_SOL_FOR_SOL_EXTRA_HIGH (4).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_ORACLE_CHECKPOINT_C_75_SOL_FOR_SOL_EXTRA_HIGH.zip (1).sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ICARUS_ORACLE_CHECKPOINT_C_75_SOL_FOR_SOL_EXTRA_HIGH.zip.sha256"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v27.md",
+  "sha256": "03ab742e67c24b0b831f9636775c362998d433485fd9b1696ba26440a1a77ba9",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v27.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v28.md",
+  "sha256": "03d1189b9ab223bbafbd443aa057b35fc204047054818fb3220ed4b0e6c7036e",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v28.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v29.md",
+  "sha256": "5e59141484b496f54fadeca5fd57554aa73c05e3c0c5873abae9208292444e88",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v29.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v30.md",
+  "sha256": "512866224f45ed6c4d39bea423bfd3da517bd30ef5935591cb94197270aa0fd0",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v30.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v31.md",
+  "sha256": "421d448c146db763a351672b89427a5721bc84f2c49be1701f14bf0f69fa2ed4",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v31.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v32.md",
+  "sha256": "d120fe47f5c6777fa95263d6d95f3634869e94922256eddf23c2462695a6caeb",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v32.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v33.md",
+  "sha256": "a6cd192e7ce4300e34c7760c2a90ae877b73b1a14c7fd8aa51c9a50c8098636b",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v33.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v34.md",
+  "sha256": "a0c6c04213c9f8f63d2a45b62d8e7685430beb37d1bbe0ac21d350016c410e8e",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v34.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v35.md",
+  "sha256": "51c1806b93731995f7be0860dc4acfec40229dc8f3377a2cac3fc69162a3fcb6",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v35.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v39.md",
+  "sha256": "ecbaa5d1220f5b614fd36b3d6bb6235ecaedc950548b174adb43d28758a009f4",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v39.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v40.md",
+  "sha256": "04f449ccf03f6bab520b21b81af8f9460cd533aba08355df698deaf672f078d0",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v40.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v41.md",
+  "sha256": "e1670dfb61ff2f22366ab30e605fd2196b6cf834385016e13f6318eacbf18bc8",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v41.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v42.md",
+  "sha256": "8637c97aba93ca9a5d73374bf5912691c0572c1d5cd493469fb0bc70c62346dd",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v42.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v44.md",
+  "sha256": "8e4356a28c10c18a3f8189728ce54b4d0bfeaa5df5d9b9d79d0cae6e2d6925f2",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v44.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v45.md",
+  "sha256": "1f804c0136ecd270068efb4c3487b92cc5b6d5de31b85f80ce5bed28f34af730",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v45.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v46.md",
+  "sha256": "a699a8ba4ae33fca876c5be1550d26ba10b5ec791346ad5ca7038c3505d40960",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v46.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v48.md",
+  "sha256": "a7d50b39395e45606b499422411bb72f11ebcb37ef5d2760c4769c627e21cf4c",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v48.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/infrastructure/INFRASTRUCTURE_STATE_CAPSULE_v49.md",
+  "sha256": "d408e2f50762f159c28b58a93087284706ee38f86ada319b210e4460f7b32f65",
+  "source": "INFRASTRUCTURE_STATE_CAPSULE_v49.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "INFRASTRUCTURE_SUPERVISORY_EVERYTHING_I_HAVE.zip"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Icarus_Central_Orchestration_Checkpoint_04.md",
+  "sha256": "21eee16394b9e4b179c8efc5be0d5d3f98f0dc5154c742fe89dc33570b8b0a54",
+  "source": "Icarus Central Orchestration \u2014 Checkpoint 04"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "Icarus_Central_Orchestration_Current_Work_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_ICARUS_ALL_WORK_COMPLETE.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_BASELINE.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_002 (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_002.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_006.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_007.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_025.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_027.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_028.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_029.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_030.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_032(1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_032.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_037.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "JANUS_INFINITY_HANDOFF_RUN_038.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/janus/JANUS_INFINITY_NEXT_MODEL_PACKET (1).md",
+  "sha256": "f88e451297740b0ec14ec693572d5c93730bcd39a023a0f429907ba8e97a638f",
+  "source": "JANUS_INFINITY_NEXT_MODEL_PACKET (1).md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/janus/JANUS_INFINITY_NEXT_MODEL_PACKET (1).md",
+  "sha256": "f88e451297740b0ec14ec693572d5c93730bcd39a023a0f429907ba8e97a638f",
+  "source": "JANUS_INFINITY_NEXT_MODEL_PACKET.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/KNOWN_INACCESSIBLE_AND_LIMITATIONS (1).md",
+  "sha256": "b8d0dff811997e304ef65f6532aa66000fe4e1074b201a25a00ec7ae98d82c2f",
+  "source": "KNOWN_INACCESSIBLE_AND_LIMITATIONS (1).md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/MASTER_HANDOFF.md",
+  "sha256": "25da06d7bdaec23f0eb0a6c0fe6afa1e4239bba044c0a3e6461a4936895240c8",
+  "source": "MASTER_HANDOFF.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/mobius/MOBIUS_ONE_LOOP_MASTER_HANDOFF.md",
+  "sha256": "7267cef5546584cb9128328ce3d2b3d16624879e54cc550268aca98d6ffc9fc7",
+  "source": "MOBIUS_ONE_LOOP_MASTER_HANDOFF.md"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Master_Loop_Governor_Report.md",
+  "sha256": "e86ece182833cc6b1e67f7d4ab693f7d565e6792098c67bb06438e336d4815d3",
+  "source": "Master Loop Governor Report"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "Mini_MOnster_Fortress.mp4"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Designing_a_Resumable_Dependency-Aware_GitHub_Control_Loop_for_ICARUS_NEXUS.md",
+  "sha256": "6b1d6e4a91501609ccc3dcffc3074c9b69479b37bfd86ff63147b4d7d810a2a9",
+  "source": "NEXUS"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_ADAPTIVE_MARKET_FABRIC_HANDOFF_v0.1 (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_ADAPTIVE_MARKET_FABRIC_HANDOFF_v0.1.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_ADAPTIVE_MARKET_FABRIC_v0.2_SOL_FOR_SOL_EXTRA_HIGH (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_ADAPTIVE_MARKET_FABRIC_v0.2_SOL_FOR_SOL_EXTRA_HIGH.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_ADAPTIVE_MARKET_FABRIC_v0.3_SOL_FOR_SOL_EXTRA_HIGH (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_ADAPTIVE_MARKET_FABRIC_v0.3_SOL_FOR_SOL_EXTRA_HIGH (2).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_ADAPTIVE_MARKET_FABRIC_v0.3_SOL_FOR_SOL_EXTRA_HIGH (3).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_ADAPTIVE_MARKET_FABRIC_v0.3_SOL_FOR_SOL_EXTRA_HIGH.zip (1).sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_ADAPTIVE_MARKET_FABRIC_v0.3_SOL_FOR_SOL_EXTRA_HIGH.zip.sha256"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/nexus/NEXUS_BLUEPRINT_v0.1 (1).md",
+  "sha256": "cfe30e4b1e26a8bb698eeca510c7e40028802704e520cba04124398b94d39bdd",
+  "source": "NEXUS_BLUEPRINT_v0.1 (1).md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/nexus/NEXUS_BLUEPRINT_v0.1 (1).md",
+  "sha256": "cfe30e4b1e26a8bb698eeca510c7e40028802704e520cba04124398b94d39bdd",
+  "source": "NEXUS_BLUEPRINT_v0.1.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/nexus/NEXUS_NEXT_MODEL_HANDOFF_v0.1 (1).md",
+  "sha256": "2bfb583ba35f4b53bdc314dbe4395abe4b5954deb35e49ea89846e1f004eae99",
+  "source": "NEXUS_NEXT_MODEL_HANDOFF_v0.1 (1).md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/nexus/NEXUS_NEXT_MODEL_HANDOFF_v0.1 (1).md",
+  "sha256": "2bfb583ba35f4b53bdc314dbe4395abe4b5954deb35e49ea89846e1f004eae99",
+  "source": "NEXUS_NEXT_MODEL_HANDOFF_v0.1.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_v0.3_SOL.git (1).bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "NEXUS_v0.3_SOL.git.bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "OPUS_NON3D_MASTER_HANDOFF_2026-09-25.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "OPUS_NON3D_MASTER_HANDOFF_2026-09-25.zip.sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ORACLE_CHECKPOINT_C_75_SOL.git (1).bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "ORACLE_CHECKPOINT_C_75_SOL.git.bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "OrderBlockPro_NQ_Futures_MVP_BLOCK_OF_THE_DAY_-_Fri_28_August_2026_2.mp4"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "OrderBlockPro_NQ_Futures_MVP_BLOCK_OF_THE_DAY_-_Mon_31_August_2026_2.mp4"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_ALL_CURRENT_WORK_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_ALL_CURRENT_WORK_2026-09-24_1947.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_ALL_CURRENT_WORK_FRESH_2026-09-24.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/prometheus/PROMETHEUS_CURRENT_STATE_FALLBACK_2026-09-24.md",
+  "sha256": "a8eac5b19621cd9d9a08710847d049396356f114c86d8e0c371c5ffcefe7df9a",
+  "source": "PROMETHEUS_CURRENT_STATE_FALLBACK_2026-09-24.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_DESIGN_CHECKPOINT_2026-09-24.bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_DESIGN_CHECKPOINT_2026-09-24.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/prometheus/PROMETHEUS_DESIGN_SPEC_2026-09-24.md",
+  "sha256": "9804cddf381c4726a1317a26ae52b618bb194a9adb760c13ef48a99dcf4456ec",
+  "source": "PROMETHEUS_DESIGN_SPEC_2026-09-24.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.1_2026-09-24.bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.1_2026-09-24.sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.1_2026-09-24.zip"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "7594a3ab889b30f349c4f02f94d03764a89b8932eb24eeb3c00b8ac6a3018b89",
+  "source": "PROMETHEUS_v0.1_DESIGN_SPEC_2026-09-24.md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "cd797c17c908ab0c9d15f3b487da4859b985e82436b7849635e086af8c3446cc",
+  "source": "PROMETHEUS_v0.1_IMPLEMENTATION_PLAN_2026-09-24.md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "4aff5f3981e53f3bf1fae0e213e23f8593c3bd519b130a2a6b8c5b90aad18129",
+  "source": "PROMETHEUS_v0.2_SIBLING_BINDINGS_IMPLEMENTATION_PLAN_2026-09-24.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.2_SIBLING_BINDINGS_PLAN_2026-09-24.bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.2_SIBLING_BINDINGS_PLAN_2026-09-24.sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.2_SIBLING_BINDINGS_PLAN_2026-09-24.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/prometheus/PROMETHEUS_v0.3_CHECKPOINT_2026-09-25.md",
+  "sha256": "d52dfa4b8f7e6be1d47b539079e69ba818ca791fbc4303219d01221a63d72e3e",
+  "source": "PROMETHEUS_v0.3_CHECKPOINT_2026-09-25.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.3_VERIFIED_2026-09-25.bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.3_VERIFIED_2026-09-25.sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.3_VERIFIED_2026-09-25.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.4_ALL_CURRENT_WORK_2026-09-25.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/prometheus/PROMETHEUS_v0.4_CHECKPOINT_2026-09-25(1).md",
+  "sha256": "356a81c4d7bc74f44da23fabde40cb722a3f5ee15163e0951298c0263dfa3bda",
+  "source": "PROMETHEUS_v0.4_CHECKPOINT_2026-09-25(1).md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/prometheus/PROMETHEUS_v0.4_CHECKPOINT_2026-09-25.md",
+  "sha256": "b88eac6205ee3848a2a0d39cf098967b89dbcf5ae28b2fd6205ad7343d3c4bbe",
+  "source": "PROMETHEUS_v0.4_CHECKPOINT_2026-09-25.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.4_VERIFIED_2026-09-25(1).bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.4_VERIFIED_2026-09-25(1).sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.4_VERIFIED_2026-09-25(1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.4_VERIFIED_2026-09-25.bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.4_VERIFIED_2026-09-25.sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.4_VERIFIED_2026-09-25.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.5_ALL_CURRENT_WORK_2026-09-25.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/prometheus/PROMETHEUS_v0.5_CHECKPOINT_2026-09-25(1).md",
+  "sha256": "15e792249e79c725781cf7fbdc8638e3181fab1b0ea966a55e660598bf77442c",
+  "source": "PROMETHEUS_v0.5_CHECKPOINT_2026-09-25(1).md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/prometheus/PROMETHEUS_v0.5_CHECKPOINT_2026-09-25(1).md",
+  "sha256": "15e792249e79c725781cf7fbdc8638e3181fab1b0ea966a55e660598bf77442c",
+  "source": "PROMETHEUS_v0.5_CHECKPOINT_2026-09-25(2).md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/prometheus/PROMETHEUS_v0.5_CHECKPOINT_2026-09-25.md",
+  "sha256": "5c0e73b3fb0a6ad7efd267cf8fbb65c127ee9eec659bfd9c1838d8491f527ff6",
+  "source": "PROMETHEUS_v0.5_CHECKPOINT_2026-09-25.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/prometheus/PROMETHEUS_v0.5_EXTERNAL_ATTESTATION_LINEAGE_DESIGN_2026-09-25.md",
+  "sha256": "2f7ba6c8368450d0ec3457c0ae10448bf1a7df550e18027bc9782d0ad0a94796",
+  "source": "PROMETHEUS_v0.5_EXTERNAL_ATTESTATION_LINEAGE_DESIGN_2026-09-25.md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "70a57494f9dbcffe8f0cc0df198119b335b016c2d630dadb0e27bc4205394e07",
+  "source": "PROMETHEUS_v0.5_GAP_MAP.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.5_VERIFIED_2026-09-25(1).bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.5_VERIFIED_2026-09-25(1).sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.5_VERIFIED_2026-09-25(1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.5_VERIFIED_2026-09-25(2).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.5_VERIFIED_2026-09-25.bundle"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.5_VERIFIED_2026-09-25.sha256"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "PROMETHEUS_v0.5_VERIFIED_2026-09-25.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/prometheus/PROMETHEUS_v0.6_AUTHORITATIVE_VERIFIER_ADAPTERS_DESIGN_2026-09-25.md",
+  "sha256": "b4a5f51607293c4a313604b04a861b6113ef83808d30990246065e50b31963c5",
+  "source": "PROMETHEUS_v0.6_AUTHORITATIVE_VERIFIER_ADAPTERS_DESIGN_2026-09-25.md"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Personalized_Daily_Five-Story_Morning_Briefing_Service.md",
+  "sha256": "d949b4443297ad4514bdc50c8e689ed770ad86f604812a5a04f8dbe9b660ad31",
+  "source": "Personalized Daily Five-Story Morning Briefing Service"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/README(1).md",
+  "sha256": "3020215e2cbb0f9f00acc0bdc008027b10f1e7c86c77faa606678065078d353b",
+  "source": "README(1).md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "4e96316194536d56e1f1b13400592caa00b082c9ea4327acbf50687560bf730a",
+  "source": "README.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/README_FIRST_OPUS (1).md",
+  "sha256": "e022ed08210303c04ef9dcfb59499d749d3628d54a15e418f234ddaa05c45a64",
+  "source": "README_FIRST_OPUS (1).md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/README_FOR_OPUS.md",
+  "sha256": "0678df50aa407791a6a983a65f7993fcec02656c580b5dbcbad2f921fc2ec2b5",
+  "source": "README_FOR_OPUS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/sol_extra_high/READ_FIRST_SOL_EXTRA_HIGH (1).md",
+  "sha256": "ce95e8f92c4c73af7e2ff72064af460ca4eb41daa2b12ee84bb698c901b2e191",
+  "source": "READ_FIRST_SOL_EXTRA_HIGH (1).md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/handoff/sol_extra_high/READ_FIRST_SOL_EXTRA_HIGH (1).md",
+  "sha256": "ce95e8f92c4c73af7e2ff72064af460ca4eb41daa2b12ee84bb698c901b2e191",
+  "source": "READ_FIRST_SOL_EXTRA_HIGH.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/janus/RUN_032_DURABLE_PERSISTENCE_ADDENDUM.md",
+  "sha256": "50829e6f178cc7e5c643798c1a12c7efed3eb7d86d29887573d11f85421ed7c2",
+  "source": "RUN_032_DURABLE_PERSISTENCE_ADDENDUM.md"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Runtime_Assurance_Report_for_the_Icarus_Hourly_Loops.md",
+  "sha256": "15ea5019d79ba760b34c4d5f740ea72c24507bdc18de41c34ed95b553d6ae735",
+  "source": "Runtime Assurance Report for the Icarus Hourly Loops"
+ },
+ {
+  "action": "copied",
+  "path": "docs/misc/SKILL.md",
+  "sha256": "bf89c37ae20074b3399bb896db03f72754ec0c616657d0219c8166ea17782b98",
+  "source": "SKILL.md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "bc2f550173a54086558d42f886ff37084980c54fd4af5c69ff307999dcb28aa7",
+  "source": "SOL_EXTRA_HIGH_HANDOFF_v0.3 (1).md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "bc2f550173a54086558d42f886ff37084980c54fd4af5c69ff307999dcb28aa7",
+  "source": "SOL_EXTRA_HIGH_HANDOFF_v0.3 (2).md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "bc2f550173a54086558d42f886ff37084980c54fd4af5c69ff307999dcb28aa7",
+  "source": "SOL_EXTRA_HIGH_HANDOFF_v0.3.md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "0eccdf6a2c7ed7f307a94977169452876bbe4635de4a9197f56f142f3158b7e6",
+  "source": "SOL_EXTRA_HIGH_TODO_v0.3 (1).md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "0eccdf6a2c7ed7f307a94977169452876bbe4635de4a9197f56f142f3158b7e6",
+  "source": "SOL_EXTRA_HIGH_TODO_v0.3 (2).md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "0eccdf6a2c7ed7f307a94977169452876bbe4635de4a9197f56f142f3158b7e6",
+  "source": "SOL_EXTRA_HIGH_TODO_v0.3.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/sol_extra_high/START_HERE_SOL_EXTRA_HIGH.md",
+  "sha256": "60423189b328c00dfb03f627eeb230aab9992bbe6f972b93f75c971a796a1130",
+  "source": "START_HERE_SOL_EXTRA_HIGH.md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "d6e2a30dbc2a85dc205962034297f37a3a150cefb511e5cbdd13ac19e092a0ff",
+  "source": "START_HERE_SOL_EXTRA_HIGH_v0.3 (1).md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/handoff/sol_extra_high/START_HERE_SOL_EXTRA_HIGH.md",
+  "sha256": "60423189b328c00dfb03f627eeb230aab9992bbe6f972b93f75c971a796a1130",
+  "source": "START_HERE_SOL_EXTRA_HIGH_v0.3 (2).md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "d6e2a30dbc2a85dc205962034297f37a3a150cefb511e5cbdd13ac19e092a0ff",
+  "source": "START_HERE_SOL_EXTRA_HIGH_v0.3.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/janus/STATE_CAPSULE_RUN_025.md",
+  "sha256": "e9518e2f381b3c9da27717a3e12deb87a443e3212f25c38b32ca186ba44edd40",
+  "source": "STATE_CAPSULE_RUN_025.md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "3aef2aff1f1f57bc91d963fc7c9998b5cf14af074bd7631177bf28477f6efd03",
+  "source": "STATE_CAPSULE_RUN_027.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/janus/STATE_CAPSULE_RUN_028.md",
+  "sha256": "97620f7b0e0ae2250aff2e021dfdce5aff5f261326f866936e5239ee3d2d06fd",
+  "source": "STATE_CAPSULE_RUN_028.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/janus/STATE_CAPSULE_RUN_029.md",
+  "sha256": "2d4326ec189ffa0ee0c0b7718fb11918e695da5ecdc2580b27bf7be5f255716d",
+  "source": "STATE_CAPSULE_RUN_029.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/janus/STATE_CAPSULE_RUN_030.md",
+  "sha256": "fe57881c06f57708cd31209d7d5beb2a89fbd84bd03a41a2db80da1dd8b1abf7",
+  "source": "STATE_CAPSULE_RUN_030.md"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "a91e3dec9802cd1dc4a4546cf8cffc6feb71d53c3a004a2efddd4cce2331e3f0",
+  "source": "STATE_CAPSULE_RUN_032(1).md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/janus/STATE_CAPSULE_RUN_032.md",
+  "sha256": "37934162ea4030d90094f37610343e85d584d3922a44585d3e4a0d3413b8f229",
+  "source": "STATE_CAPSULE_RUN_032.md"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Strategy_Artifact_Management_and_Validation_Pipeline.md",
+  "sha256": "d03a1dfe5ac629215c96db8af8fa2f51b4b8478d268cf2f5cc832147662dc4aa",
+  "source": "Strategy Artifact Management and Validation Pipeline"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/Strengthening_Manifest_Trust_and_Transparency.md",
+  "sha256": "7b43e77ca96aafc142306ccfb67c4d8a121644b8a011150d56d2005deea8b06f",
+  "source": "Strengthening Manifest Trust and Transparency"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/SuperMesh-X_Runtime_Hardening_Autonomous_Infrastructure.md",
+  "sha256": "b1bb4d342f5674a08a8625316cbb0c7ba6404d5c05972abc77c3304849f04742",
+  "source": "SuperMesh-X Runtime Hardening & Autonomous Infrastructure"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v2.3.0.md",
+  "sha256": "5e9a641e3284be328146ee24fff60980731fcb918866749c2a5b3c90d727326c",
+  "source": "SuperMesh-X_STATE_CAPSULE_v2.3.0.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v2.4.0.md",
+  "sha256": "f11b5b8c029a4111262b2d2ad2da92a73d9c7b8bb0185acd737316dba2f9d08d",
+  "source": "SuperMesh-X_STATE_CAPSULE_v2.4.0.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v2.5.0.md",
+  "sha256": "20281b66b70f9a65024ea7dadb047f8bc3543d807afb0d94ffa55e025f483ff3",
+  "source": "SuperMesh-X_STATE_CAPSULE_v2.5.0.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.0.0.md",
+  "sha256": "e5a6d17ad25fa00f63f4d060dd1f8894d613e941af4969dc3378886de09d4b07",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.0.0.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.1.0.md",
+  "sha256": "cf628508743da66810641931131dd6bdaca68d295e1410af0a6da8b2624ce9a7",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.1.0.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.2.0(1).md",
+  "sha256": "251b9428cc72e0be0c69cfa5c83eee5e6dd6aaa41299198ba9eeb212b901bf0f",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.2.0(1).md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.2.0(1).md",
+  "sha256": "251b9428cc72e0be0c69cfa5c83eee5e6dd6aaa41299198ba9eeb212b901bf0f",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.2.0.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.2.0_cycle3.md",
+  "sha256": "811d4770c337c8fd7dd7bb10644aa8aa216e1df9c57d1ef8d1a82ad32e1b2d9e",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.2.0_cycle3.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.3.0.md",
+  "sha256": "1934d887a0e98f564485b81f0e6481312239ba2e32424120172207cac4af2399",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.3.0.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.3.0_cycle1.md",
+  "sha256": "f0327fe339531150554a2faddbf60f8b9c02733d03b4e84fc49b0ffd2f0fb43a",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.3.0_cycle1.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.3.0_cycle3.md",
+  "sha256": "1c40ee16c8c68751fcbabed9025b5e8b7126d155760a1db127fdbc2348130096",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.3.0_cycle3.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.3.0_cycle5.md",
+  "sha256": "e836832bc40b1117fab056de6d343905fde4b6ac55c149933eee7574d97505bb",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.3.0_cycle5.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.3.0.md",
+  "sha256": "1934d887a0e98f564485b81f0e6481312239ba2e32424120172207cac4af2399",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.3.0_drive_readback.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.4.0_cycle4_final.md",
+  "sha256": "996429a38173d8c7e3637348a83841d963477e622120e8ad0e07c6ac570730d7",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.4.0_cycle4_final.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.4.0_cycle4_final2.md",
+  "sha256": "2b3d53fd401cb3f8a7acd94778921b231f30c1a3d24556359f149e52667f510d",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.4.0_cycle4_final2.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.6.0_cycle6.md",
+  "sha256": "232f6f4f48e6e422ed78db25ee212c1ca03d791a946f4e8c8e760bc222e50a40",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.6.0_cycle6.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.6.0_cycle6_final.md",
+  "sha256": "e26de9cfe87a6a25636b367d485db233dcc78d0d6f1777d7ec8fb6e97c03a7c3",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.6.0_cycle6_final.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.7.0_cycle7_final(1).md",
+  "sha256": "c0ea201df0e0e4c8754c18a1f3d7d71a8a93b003b74fc62d8229cff610796caf",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.7.0_cycle7_final(1).md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.7.0_cycle7_final.md",
+  "sha256": "e76208b73210f06760b64bfd8a3b2b3b2c8c2e1d54b9d8c7f10cc5f74301df4f",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.7.0_cycle7_final.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/supermesh_x/SuperMesh-X_STATE_CAPSULE_v3.7.0_cycle7_final2.md",
+  "sha256": "a131ca8e45aedae7cf4e05f5cc4b747ec4f8398e60b584c2bda51f77708d89db",
+  "source": "SuperMesh-X_STATE_CAPSULE_v3.7.0_cycle7_final2.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "SuperMesh-X_v3.3.0_cycle5_VERIFIED.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "VECTOR_INFINITY_CURRENT_WORK.docx"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/VECTOR_INFINITY_CURRENT_WORK.md",
+  "sha256": "dabb4ca680f2cb448703ce0c97192b1960f8755e59316bb442e56b4745261e00",
+  "source": "VECTOR_INFINITY_CURRENT_WORK.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "VECTOR_INFINITY_CURRENT_WORK_BUNDLE_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-21.md",
+  "sha256": "f8e5bd8d031f36940c98bdca9e9cf36277fe0b44ef47b617dbb8cbb43eb648d9",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-21.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-23.md",
+  "sha256": "ac84a3dd29d2add74af8dede3366e492177e1c2dbdd2bce4ea0e187b5e57e35e",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-23.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-24.md",
+  "sha256": "519c5d816bae0f949b30861aecf941deb90b9084584e938fbb7ed245284e3252",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-24.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-25.md",
+  "sha256": "5f150b4b9d734ec7cab30c9ff66f2be12632355102d24bcf53d00c54e4fc10a1",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-25.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-26.md",
+  "sha256": "b56c93537bc88504d97d06f39a9d4d727de50495c29328a8e636d74f151b5eb6",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-26.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-27.md",
+  "sha256": "44edb2b853287b25490fbbebf253717ee76b56d8d4d8c59bce9da26cf207fa10",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-27.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-28.1.md",
+  "sha256": "7ae0a7187e00eac8ad782fc15832c375f1ff611941b34eca83d54b7eeb7afb13",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-28.1.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-29.md",
+  "sha256": "c52ab4509f6d90c51714e5c3c3337353c88c0ca5c9cd6a679de25e2ef24c478b",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-29.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-30.md",
+  "sha256": "af83bc767068fef78bbfb75ff19b8f458990b66258c1fe55d7419f17cb38d000",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-30.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-31.md",
+  "sha256": "7ecd9acf1f397028189c1b2c86fa075022f4b99bc567424ffe7ee01efa213905",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-31.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/state_capsules/vector_infinity/VECTOR_STATE_CAPSULE_v2026.09.25-32.md",
+  "sha256": "3dd627958bdafaa4470a3fc32df6606e72b32071e77e7a0b8b40b295565f0eae",
+  "source": "VECTOR_STATE_CAPSULE_v2026.09.25-32.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/sol_extra_high/WORK_HANDOFF_SOL_EXTRA_HIGH.md",
+  "sha256": "5fd2b0225a7c727f3550e4238928261dabc64c7aea44eac471373a609f4b6dea",
+  "source": "WORK_HANDOFF_SOL_EXTRA_HIGH.md"
+ },
+ {
+  "action": "copied:extracted_deep_research_report",
+  "path": "docs/research/AEGIS_ICARUS_Foreground_Masterbuild_Engineering_Report.md",
+  "sha256": "e1ccc10345e63c6bd846d5b7bb7dcda80d3f71d83cc3667261ce10b11aab06e8",
+  "source": "_ICARUS Foreground Masterbuild Engineering Report"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/ascension/ascension_capability_packet.schema.json",
+  "sha256": "95f314b8e5121fcd3dbce6d78a1f29ecbb8f14c6a1074fa8053c667f648536a7",
+  "source": "ascension_capability_packet.schema.json"
+ },
+ {
+  "action": "excluded_3d_program_out_of_scope",
+  "sha256": "24dac27ad79ee903e9683f6d5c46fe4aebb1686f6f1648d17ee0fd14b9dafb7f",
+  "source": "character3d_masterbuild_v0_8.release-signature.json"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "character3d_masterbuild_v1_4_progress.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "daedalus_checkpoint_02.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "daedalus_checkpoint_03_core_contracts.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "daedalus_checkpoint_04.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "daedalus_checkpoint_repair_start.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "drive_v340_cycle4.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_all_current_work.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v27.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v28.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v29.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v3.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v30.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v31.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v32.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v33.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v34.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v35.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v39.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v40.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v41.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v42.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v44.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v45.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v46.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v48.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "infrastructure_supervisory_loop_v49.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_master_working_reconstruction_v1.md",
+  "sha256": "f58be40e97756a090cd93037099f952a102511b4e3730105a0f51c9181162185",
+  "source": "orderblockpro_master_working_reconstruction_v1.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_stage3_screenshot_evidence.md",
+  "sha256": "c8f79aeb445680b2f1637c76a402989412c8be4989c0435811a7f486fedebf97",
+  "source": "orderblockpro_stage3_screenshot_evidence.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_stage4_named_setup_evidence.md",
+  "sha256": "a505c4ee36f40384c9a30f55d52b6960cb81d71599c521412dc580b17222d7ff",
+  "source": "orderblockpro_stage4_named_setup_evidence.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_stage4_proprietary_pattern_taxonomy.md",
+  "sha256": "19a49ffb64a1e8f5692729c7f47ed7b7e9c86b2ae9be4b7a59a5640203baa131",
+  "source": "orderblockpro_stage4_proprietary_pattern_taxonomy.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_stage4_taxonomy.json",
+  "sha256": "f6f178dfea2025f40c6d6534eb8fe93fc1789a8345a8319809f63afb8a6925af",
+  "source": "orderblockpro_stage4_taxonomy.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_stage5_formal_evidence_model.md",
+  "sha256": "6b6a6ef985de1ee200ad61335d6923a860470832d92db30ca75a092dd9bcc605",
+  "source": "orderblockpro_stage5_formal_evidence_model.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_stage5_reaction_failure_target_hierarchy.md",
+  "sha256": "a808dbedccce7bbfacab266397f175f5bcc0bd4976916558fae0b36fc6c87a2d",
+  "source": "orderblockpro_stage5_reaction_failure_target_hierarchy.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_stage6_event_dataset.csv",
+  "sha256": "308d67d76d66d6bf2a4dae65e4c1644f8ce84074748dd626eebff5dc7910f847",
+  "source": "orderblockpro_stage6_event_dataset.csv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_stage7_duplicate_provenance_audit.csv",
+  "sha256": "91a18d751161697184a9e89219aadcecd167edce55efca8647c29b18b52b4426",
+  "source": "orderblockpro_stage7_duplicate_provenance_audit.csv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_stage7_duplicate_provenance_audit.md",
+  "sha256": "9810bd6dc9657da5225e350d3ee2830e221cdd976f04c828f3f711b942018baa",
+  "source": "orderblockpro_stage7_duplicate_provenance_audit.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_video_analysis_stage1.md",
+  "sha256": "8485cd98eab6dbe6f0a2ee44292708d639ed32afcaabdefd44181d7937c31227",
+  "source": "orderblockpro_video_analysis_stage1.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_video_analysis_stage2_visual_synthesis.md",
+  "sha256": "10911affa16446c9a9574d0ae6faab3bd02c78f8f5142bae93bc7a94d5e28c8d",
+  "source": "orderblockpro_video_analysis_stage2_visual_synthesis.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/research/orderblockpro/orderblockpro_video_manifest_stage1.json",
+  "sha256": "ec1074950f9b78e51fea243e224dbaba7da82e7db38aa9e4a1514aa7a6e98597",
+  "source": "orderblockpro_video_manifest_stage1.json"
+ },
+ {
+  "action": "skipped_identical_to_system_file",
+  "sha256": "b1d5f558f4ef3793d896f30f9c507d9c109e6a3da5348289ad1773569be5f416",
+  "source": "research_notes.md"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_current_work_bundle.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_everything_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v0.2.0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v0_2_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v0_3_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v0_4_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v0_5_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v0_6_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v0_7_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v0_8_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v0_9_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v2_3_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v2_4_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v2_5_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_0_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_1_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_2_0(1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_2_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_3_0.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_3_0_cycle4.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_3_0_cycle5.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_3_0_drive_readback.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_4_0_cycle4.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_6_0_cycle6.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_6_0_cycle6_final.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_7_0_cycle7_final(1).zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_7_0_cycle7_final.zip"
+ },
+ {
+  "action": "excluded_binary_or_archive",
+  "source": "supermesh_x_v3_7_0_cycle7_final2.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/00_ORIGINAL_SOURCE_REQUIREMENTS.txt",
+  "sha256": "0e8c3dad17abff12062c8ef54d6db5fb1688a42016cb8b62b11dc72e070967bd",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/00_ORIGINAL_SOURCE_REQUIREMENTS.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/01_PREVIOUS_MASTER_TRANSFER_H1.md",
+  "sha256": "f00adbb205e36899c78f58951afc45af5fa643294af35d60988e1b05a7d1738d",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/01_PREVIOUS_MASTER_TRANSFER_H1.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/02_H2_BELIEF_ENGINE_IMPLEMENTATION_PLAN.md",
+  "sha256": "aa218c34c2c3acd9bd375f285cab2214f5d3b5ec6f6cca0631527c50a151bec4",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/02_H2_BELIEF_ENGINE_IMPLEMENTATION_PLAN.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/03_H3_ROBUST_INTERROGATION_ENGINE_PLAN.md",
+  "sha256": "1c8032985f5425ad43446978352ed79644890beb201348df1aacde78990d726f",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/03_H3_ROBUST_INTERROGATION_ENGINE_PLAN.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/04_H4_SOURCE_ECONOMY_ACQUISITION_MESH_PLAN.md",
+  "sha256": "9b2b2330c08fe844780ad5bc7a0ad7e79c38cd4e22a07f2b0fb63c62e35ee669",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/04_H4_SOURCE_ECONOMY_ACQUISITION_MESH_PLAN.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/05_H5_SIBLING_INTEGRATION_FABRIC_PLAN.md",
+  "sha256": "613f11b43bebfc7140ee12234b567e48ad63b59b24a079332b7d2c31ecd3981a",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/05_H5_SIBLING_INTEGRATION_FABRIC_PLAN.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/06_OMEGA_CAPABILITY_EXPANSION_OVERLAY.md",
+  "sha256": "b51ed3dd4d3b58ef9b0656922aac5995e99aaed24449cf6563fabb2bc3ee5b02",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/06_OMEGA_CAPABILITY_EXPANSION_OVERLAY.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/07_SOURCE_CONFORMANCE_AND_LIVE_FINDINGS.md",
+  "sha256": "068076157b018103c054661fb4a64afd25fdc74dea5b6cf186fd1e1a9f6cb2a4",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/07_SOURCE_CONFORMANCE_AND_LIVE_FINDINGS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/08_VERIFIED_REPOSITORY_INTERFACE_SNAPSHOT.md",
+  "sha256": "3819a799b4d67b176d2d6a25e0d0a78f44a39ca55a790000f3dbcc2ba5a92298",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/08_VERIFIED_REPOSITORY_INTERFACE_SNAPSHOT.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/09_RISK_STATUS_AND_UNFINISHED_LEDGER.md",
+  "sha256": "6e1bf26407af712878bbef52ae47d5061ec05ee41d9d95e09639d3985c52a437",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/09_RISK_STATUS_AND_UNFINISHED_LEDGER.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/10_CONTINUATION_AND_EXECUTION_INSTRUCTIONS.md",
+  "sha256": "5640b0eb18ad520b9bf8fd33145ebd034d1e3cf0518fa8c974904b9c9c823e93",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/10_CONTINUATION_AND_EXECUTION_INSTRUCTIONS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/11_BUILD_AND_TEST_STATUS.md",
+  "sha256": "1808c23d7492beaa1ba4f86eb735996410928c2c2544584e6f63c022ebaa22c5",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/11_BUILD_AND_TEST_STATUS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/12_SOURCE_OF_TRUTH_MANIFEST.json",
+  "sha256": "8b473dd55be3e8bd15b6e5f0cfc2c6afa81e70d90e2094a70179c9edb37509c6",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/12_SOURCE_OF_TRUTH_MANIFEST.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/13_H6_NEXT_STAGE_SEED.md",
+  "sha256": "1a7093d10d1399b52bee81007507ee53211adfe952c310e12b8673a9e6885336",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/13_H6_NEXT_STAGE_SEED.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/ascension/14_H6_META_RESEARCH_SELF_AUDIT_DESIGN_SPEC.md",
+  "sha256": "c4143e64c1b392565d2c1bb7e4f9664305621630b8206df88ea974088b72934f",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/14_H6_META_RESEARCH_SELF_AUDIT_DESIGN_SPEC.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/helios_prime/HELIOS_PRIME_MASTER_SUPERSET_TRANSFER_2026-09-24.md",
+  "sha256": "5f9653a0b68de5b7d613a61d655e7151006b240e09fb9bf8b193d8a2440a0760",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/MASTER_SUPERSET_TRANSFER.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/README_FIRST.md",
+  "sha256": "9e3c4bb700a6860445df5ff26f6a17069f49f3f6ccb1940ca4730df408273b5c",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/README_FIRST.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/helios_prime/superset_transfer/HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/SHA256SUMS.txt",
+  "sha256": "1b52b43f0baeeb15f7e667dfc0cd54c945c8f86792fa357efb7020b3718b2c5f",
+  "source": "HELIOS_PRIME_COMPLETE_SUPERSET_TRANSFER_2026-09-24.zip::HELIOS_PRIME_COMPLETE_TRANSFER_2026-09-24/SHA256SUMS.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/ARCHIVE_INVENTORY.csv",
+  "sha256": "32884defe65a43b35d09f6d171d641ce10ad559a02533d585dc9d76e2889e481",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::ARCHIVE_INVENTORY.csv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/ARCHIVE_MANIFEST.json",
+  "sha256": "1da8497d460b83a65c3777d4560d5f4cc52210235f29e4939c8f35752007d239",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::ARCHIVE_MANIFEST.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/README_FIRST.md",
+  "sha256": "d2854edfa87893ae0ea9fa9b26a026b6288131a661d32bbfac6694362b8affc8",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::README_FIRST.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/RETRIEVAL_AND_IMPLEMENTATION_GAPS.md",
+  "sha256": "4be17162673a1ef6f1535485ed42ee3b08c536e1360e9a074df11853d6e9254a",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::RETRIEVAL_AND_IMPLEMENTATION_GAPS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/SOURCE_PROVENANCE.csv",
+  "sha256": "908364c4bdb7725558127bb5530f12ee51efb2e1a030cf477aca0d06db9b2a32",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::SOURCE_PROVENANCE.csv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/VECTOR_HISTORICAL_PRECURSOR_CONTEXT.md",
+  "sha256": "9dae52f0ef8ef969090e559f62f8bd578cd0f50998dec7a9ca7e21f3bdf3bbf4",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::VECTOR_HISTORICAL_PRECURSOR_CONTEXT.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/VECTOR_INFINITY_MONOLITHIC_FORENSIC_ARCHIVE.md",
+  "sha256": "ac7e324b03c303b951ca3f366b270a38d5f3d2facfc415963abdf230d655d33b",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::VECTOR_INFINITY_MONOLITHIC_FORENSIC_ARCHIVE.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/VECTOR_RESEARCH_METHOD_LEDGER.md",
+  "sha256": "56a96dbc49add7b0504f8f51ef53cf44036c569b3e28f81e14f23cd6ad8af4fc",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::VECTOR_RESEARCH_METHOD_LEDGER.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/VECTOR_TRUTH_CONFLICT_RESOLUTION.md",
+  "sha256": "3bd9a05f8391da18692212e12df0af59cbb42234a599125cf39cdfd447ab1ed9",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::VECTOR_TRUTH_CONFLICT_RESOLUTION.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/PACKAGE_MANIFEST.json",
+  "sha256": "9fae293b261831118e678afbcbdce0fe38832f2a2e47367936d375dc482f3ed4",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::CURRENT_MASTER/PACKAGE_MANIFEST.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/README.md",
+  "sha256": "bf49ccc6d742745165ea06c0b196b4f2bf868aba064c532e7b467816fb474413",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::CURRENT_MASTER/README.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/SHA256SUMS.json",
+  "sha256": "d77ebd304cfee6ad9d0ab973a1abe4d49e7f40b38b75f14781fbaf9bac4a03f2",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::CURRENT_MASTER/SHA256SUMS.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/VECTOR_INFINITY_COMPONENT_REGISTER.csv",
+  "sha256": "7e6f796e3ca32cfb9e4b0fdf1af530802103e135f2ff7793673fc39737dab5bc",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::CURRENT_MASTER/VECTOR_INFINITY_COMPONENT_REGISTER.csv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/VECTOR_INFINITY_EXPERIMENT_LEDGER.csv",
+  "sha256": "369eab1157650f0db0361b78b2a99579ba61235036df9929789819264517028d",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::CURRENT_MASTER/VECTOR_INFINITY_EXPERIMENT_LEDGER.csv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/VECTOR_INFINITY_MACHINE_STATE.json",
+  "sha256": "1901ac7a030b06cddf7c6a91b0f12b5691f78f1cc7218c9e3aaa1909f389cbe3",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::CURRENT_MASTER/VECTOR_INFINITY_MACHINE_STATE.json"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::CURRENT_MASTER/VECTOR_INFINITY_MASTER_HANDOFF.docx"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/VECTOR_INFINITY_MASTER_HANDOFF.md",
+  "sha256": "5b590b4797735818ea919c4fbb8eb92828da0a46c7c0688c75325b0a3dde5a1d",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::CURRENT_MASTER/VECTOR_INFINITY_MASTER_HANDOFF.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/VECTOR_INFINITY_PROMOTION_TESTS.txt",
+  "sha256": "5956a798d97c8fb356304cea3482c164c0b9299a754a1223c217b9c31150d9aa",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::CURRENT_MASTER/VECTOR_INFINITY_PROMOTION_TESTS.txt"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/research/Icarus_Central_Orchestration_Checkpoint_04.md",
+  "sha256": "21eee16394b9e4b179c8efc5be0d5d3f98f0dc5154c742fe89dc33570b8b0a54",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::HISTORICAL_RETRIEVED_ARTIFACTS/ICARUS_CENTRAL_ORCHESTRATION_CHECKPOINT_04_RETRIEVED.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/research/Executive_Summary__4.md",
+  "sha256": "b1fffe8346a9690ac50959d08074d2a48542b405dfdade43072d4e48d6ba208d",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::HISTORICAL_RETRIEVED_ARTIFACTS/VECTOR_CYCLE_1_EXECUTIVE_SUMMARY_RETRIEVED.md"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::PRIOR_DELIVERABLES/VECTOR_INFINITY_CURRENT_WORK.docx"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/vector_infinity/VECTOR_INFINITY_CURRENT_WORK.md",
+  "sha256": "dabb4ca680f2cb448703ce0c97192b1960f8755e59316bb442e56b4745261e00",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::PRIOR_DELIVERABLES/VECTOR_INFINITY_CURRENT_WORK.md"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::PRIOR_DELIVERABLES/VECTOR_INFINITY_CURRENT_WORK_BUNDLE_2026-09-24.zip"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "VECTOR_INFINITY_FORENSIC_EVERYTHING_RETRIEVABLE_2026-09-24.zip::PRIOR_DELIVERABLES/VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/PACKAGE_MANIFEST.json",
+  "sha256": "9fae293b261831118e678afbcbdce0fe38832f2a2e47367936d375dc482f3ed4",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::MASTER/PACKAGE_MANIFEST.json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/README.md",
+  "sha256": "bf49ccc6d742745165ea06c0b196b4f2bf868aba064c532e7b467816fb474413",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::MASTER/README.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/SHA256SUMS.json",
+  "sha256": "d77ebd304cfee6ad9d0ab973a1abe4d49e7f40b38b75f14781fbaf9bac4a03f2",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::MASTER/SHA256SUMS.json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/VECTOR_INFINITY_COMPONENT_REGISTER.csv",
+  "sha256": "7e6f796e3ca32cfb9e4b0fdf1af530802103e135f2ff7793673fc39737dab5bc",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::MASTER/VECTOR_INFINITY_COMPONENT_REGISTER.csv"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/VECTOR_INFINITY_EXPERIMENT_LEDGER.csv",
+  "sha256": "369eab1157650f0db0361b78b2a99579ba61235036df9929789819264517028d",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::MASTER/VECTOR_INFINITY_EXPERIMENT_LEDGER.csv"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/VECTOR_INFINITY_MACHINE_STATE.json",
+  "sha256": "1901ac7a030b06cddf7c6a91b0f12b5691f78f1cc7218c9e3aaa1909f389cbe3",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::MASTER/VECTOR_INFINITY_MACHINE_STATE.json"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::MASTER/VECTOR_INFINITY_MASTER_HANDOFF.docx"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/VECTOR_INFINITY_MASTER_HANDOFF.md",
+  "sha256": "5b590b4797735818ea919c4fbb8eb92828da0a46c7c0688c75325b0a3dde5a1d",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::MASTER/VECTOR_INFINITY_MASTER_HANDOFF.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/vector_infinity/forensic_package/CURRENT_MASTER/VECTOR_INFINITY_PROMOTION_TESTS.txt",
+  "sha256": "5956a798d97c8fb356304cea3482c164c0b9299a754a1223c217b9c31150d9aa",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::MASTER/VECTOR_INFINITY_PROMOTION_TESTS.txt"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::PRIOR_DELIVERABLES/VECTOR_INFINITY_CURRENT_WORK.docx"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/vector_infinity/VECTOR_INFINITY_CURRENT_WORK.md",
+  "sha256": "dabb4ca680f2cb448703ce0c97192b1960f8755e59316bb442e56b4745261e00",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::PRIOR_DELIVERABLES/VECTOR_INFINITY_CURRENT_WORK.md"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "VECTOR_INFINITY_EVERYTHING_COMPLETED_MASTER_PACKAGE_2026-09-24.zip::PRIOR_DELIVERABLES/VECTOR_INFINITY_CURRENT_WORK_BUNDLE_2026-09-24.zip"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/central_orchestration/ICARUS_CENTRAL_ORCHESTRATION_HANDOFF.md",
+  "sha256": "0dfb9f1bb7dbb5f264b3a8a7f2c6e2c41b1bbf5e36e5427e4aa3e11ba82a1102",
+  "source": "Icarus_Central_Orchestration_Current_Work_2026-09-24.zip::ICARUS_CENTRAL_ORCHESTRATION_HANDOFF.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/central_orchestration/orchestration_state.json",
+  "sha256": "b5a26b079cfd33d14469d2c88f3c17690496718deb9bacd93be35fcb45449db3",
+  "source": "Icarus_Central_Orchestration_Current_Work_2026-09-24.zip::orchestration_state.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/central_orchestration/run_capsule.json",
+  "sha256": "ac14af17da32853366b14ce6ab51a00e63fd7b923b6627c7aff45ccc65231300",
+  "source": "Icarus_Central_Orchestration_Current_Work_2026-09-24.zip::run_capsule.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/programs/central_orchestration/SHA256SUMS.txt",
+  "sha256": "041ae7655c0de6337858303a61b85f831baeef0c697d5a88042b72c1d6d3344b",
+  "source": "Icarus_Central_Orchestration_Current_Work_2026-09-24.zip::SHA256SUMS.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_super_archive/ICARUS_EVIDENCE_MANIFEST.json",
+  "sha256": "b0d56c7ea7badf557bf400b486e8c5a4736254fd344289bc86e1ca4b1b096c30",
+  "source": "ICARUS_OPUS_SUPER_ARCHIVE_2026-09-26.zip::ICARUS_EVIDENCE_MANIFEST.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_super_archive/ICARUS_OPUS_MASTER_HANDOFF.md",
+  "sha256": "c19208a8a10fd5b4574449e82ffd2b4c3b114bb8bcd642df740394278db5e067",
+  "source": "ICARUS_OPUS_SUPER_ARCHIVE_2026-09-26.zip::ICARUS_OPUS_MASTER_HANDOFF.md"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_OPUS_SUPER_ARCHIVE_2026-09-26.zip::ICARUS_OPUS_SUPER_HANDOFF.docx"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_super_archive/ICARUS_RECOVERED_TIMELINE.md",
+  "sha256": "c8b82f1b3b2cbf8ec64f829de7884a82fdea90f7ca645a5bcdabdb30b563b877",
+  "source": "ICARUS_OPUS_SUPER_ARCHIVE_2026-09-26.zip::ICARUS_RECOVERED_TIMELINE.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/README_FIRST.txt",
+  "sha256": "7fa7e95bd7c011f189ac4149d1b4bad1eeac882457887b23fc0df2b0f4e58e26",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::README_FIRST.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/SHA256SUMS.txt",
+  "sha256": "bbed45bc52a7e1dde3148e5ac96a5568c9a4b20728be2be3f0986bc1a19c2cc0",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::SHA256SUMS.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/ASTRA_DO_NOT.md",
+  "sha256": "3b629aa5a2169944b0c06650f5a7119f12cc4f5caa9d4ab13849e431cd845da7",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/ASTRA_DO_NOT.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/ASTRA_HANDOFF.md",
+  "sha256": "8e2e80f85e0033df05402d312bbf0ad8704d35c06757c62f811c31e8cff4a68e",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/ASTRA_HANDOFF.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/HANDOFF_LOG.md",
+  "sha256": "3c9dd1017d10499a9aeab6749f81c704e86660e79bf82b5bc490dbd5346c0a2d",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/HANDOFF_LOG.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/MODEL_HANDOFF.md",
+  "sha256": "080c1ca62cc9388f5d61be07afa4421c483d3f514ce396b5be51f93ad5a04ffa",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/MODEL_HANDOFF.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/OVERRIDE.md",
+  "sha256": "d413398537fce2609367b698e61aed9533a942436290d422ef65366fe69467bf",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/OVERRIDE.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/CONNECTION_CONTRACTS.md",
+  "sha256": "504fb74d82c924bccc9d3af51255685e5e39dedc835caf8c78c9e263e3b822a0",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/icarus-control-plane/CONNECTION_CONTRACTS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/EVIDENCE_FINDINGS_LEDGER.md",
+  "sha256": "b61d6148bbcba446493c90c6b8baa0713379762afaa0811bab0b97f3f01933d8",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/icarus-control-plane/EVIDENCE_FINDINGS_LEDGER.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/HANDOFF_STATE.json",
+  "sha256": "eb6a3b594e1783071fd9c78420658a3f274807a45b11ad76c2e2d6c6e7d30ad0",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/icarus-control-plane/HANDOFF_STATE.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/INTEGRATION_MANIFEST.json",
+  "sha256": "ca0e6f36cea1612439454182c85c11f1d9ff2a53575309f996cb82eca811b28b",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/icarus-control-plane/INTEGRATION_MANIFEST.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/MASTER_INTEGRATION_INDEX.md",
+  "sha256": "2dd0c306ea7d9de05fb28c2d759577689c6ec9fc9bc4c07c248a9da6bca3f9c8",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/icarus-control-plane/MASTER_INTEGRATION_INDEX.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/NEXT_CONNECTION_SEQUENCE.md",
+  "sha256": "ec7455d4bed2436d2d910ea52bdc93ef130affbd9ec024ab89c577e541490662",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/icarus-control-plane/NEXT_CONNECTION_SEQUENCE.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/PROVIDER_CAPABILITY_SNAPSHOT.json",
+  "sha256": "c1bc80e1e4510988972bd2dfc5093c18331e2df14de00f7cc066ec91335fa72a",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/icarus-control-plane/PROVIDER_CAPABILITY_SNAPSHOT.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/README.md",
+  "sha256": "af9ea34552971babfbfdcf06daced556ce49ac83ee01ffddaa6998c0b37187db",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/icarus-control-plane/README.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/SUBSYSTEM_ROTATION_FINDINGS.md",
+  "sha256": "8cdebe74d41bee570cf8f68bc9944a09c40f411146c7eebefaf128b108c24529",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/icarus-control-plane/SUBSYSTEM_ROTATION_FINDINGS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/UNIFIED_CYCLE_RUNBOOK.md",
+  "sha256": "765c8f72c8bd34bdf1347429aceb80bc1a59e829ab15577130e171f08d8d38dd",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::handoff/icarus-control-plane/UNIFIED_CYCLE_RUNBOOK.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/metadata/RECENT_REPOSITORY_COMMITS.tsv",
+  "sha256": "3afec496874451a1e0cdfb2d72febaed3135d995da5285358b54c0dca76335b5",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::metadata/RECENT_REPOSITORY_COMMITS.tsv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/metadata/REVISIONS.env",
+  "sha256": "f548131dfa1ef26d12b02bd498cdec9e8c25d00e6221ad6b65b5196328e24dd0",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::metadata/REVISIONS.env"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/01_PR17_HANDOFF/BASE_SHA.txt",
+  "sha256": "feb9898e3f9b7b2290e01003f832e1cdb8a76fb9d093ff1e8388a2128cf7b57e",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/BASE_SHA.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/01_PR17_HANDOFF/CHANGED_FILES.tsv",
+  "sha256": "fc43efa685f4fcfb7ffac057ce252b3dac87ec00a75e781c784333c8c3c34873",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/CHANGED_FILES.tsv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/01_PR17_HANDOFF/COMMITS.tsv",
+  "sha256": "f33143e9d7fd99ca5a9a31ee8cff901941a38616c2a5de7b4f926f8d8182de70",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/COMMITS.tsv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/01_PR17_HANDOFF/FULL.patch",
+  "sha256": "f8b7a5d0efad2954762175942d1df7b21e752475ea29118780b12b6ef8cf0d44",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/FULL.patch"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/01_PR17_HANDOFF/HEAD_SHA.txt",
+  "sha256": "73b1078a5154529704fb1d69ac68c54429f16def7bf1b898c312c0ab5d24128c",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/HEAD_SHA.txt"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/HANDOFF_LOG.md",
+  "sha256": "3c9dd1017d10499a9aeab6749f81c704e86660e79bf82b5bc490dbd5346c0a2d",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/HANDOFF_LOG.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/MODEL_HANDOFF.md",
+  "sha256": "080c1ca62cc9388f5d61be07afa4421c483d3f514ce396b5be51f93ad5a04ffa",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/MODEL_HANDOFF.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/01_PR17_HANDOFF/files/.github/workflows/icarus-full-export.yml",
+  "sha256": "8cc29ee68ba81d929c4bd629c08052628610ca9822855b88ca19682d46aefe6e",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/.github/workflows/icarus-full-export.yml"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/CONNECTION_CONTRACTS.md",
+  "sha256": "504fb74d82c924bccc9d3af51255685e5e39dedc835caf8c78c9e263e3b822a0",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/icarus-control-plane/CONNECTION_CONTRACTS.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/EVIDENCE_FINDINGS_LEDGER.md",
+  "sha256": "b61d6148bbcba446493c90c6b8baa0713379762afaa0811bab0b97f3f01933d8",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/icarus-control-plane/EVIDENCE_FINDINGS_LEDGER.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/HANDOFF_STATE.json",
+  "sha256": "eb6a3b594e1783071fd9c78420658a3f274807a45b11ad76c2e2d6c6e7d30ad0",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/icarus-control-plane/HANDOFF_STATE.json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/INTEGRATION_MANIFEST.json",
+  "sha256": "ca0e6f36cea1612439454182c85c11f1d9ff2a53575309f996cb82eca811b28b",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/icarus-control-plane/INTEGRATION_MANIFEST.json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/MASTER_INTEGRATION_INDEX.md",
+  "sha256": "2dd0c306ea7d9de05fb28c2d759577689c6ec9fc9bc4c07c248a9da6bca3f9c8",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/icarus-control-plane/MASTER_INTEGRATION_INDEX.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/NEXT_CONNECTION_SEQUENCE.md",
+  "sha256": "ec7455d4bed2436d2d910ea52bdc93ef130affbd9ec024ab89c577e541490662",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/icarus-control-plane/NEXT_CONNECTION_SEQUENCE.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/PROVIDER_CAPABILITY_SNAPSHOT.json",
+  "sha256": "c1bc80e1e4510988972bd2dfc5093c18331e2df14de00f7cc066ec91335fa72a",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/icarus-control-plane/PROVIDER_CAPABILITY_SNAPSHOT.json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/README.md",
+  "sha256": "af9ea34552971babfbfdcf06daced556ce49ac83ee01ffddaa6998c0b37187db",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/icarus-control-plane/README.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/SUBSYSTEM_ROTATION_FINDINGS.md",
+  "sha256": "8cdebe74d41bee570cf8f68bc9944a09c40f411146c7eebefaf128b108c24529",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/icarus-control-plane/SUBSYSTEM_ROTATION_FINDINGS.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/handoff/icarus-control-plane/UNIFIED_CYCLE_RUNBOOK.md",
+  "sha256": "765c8f72c8bd34bdf1347429aceb80bc1a59e829ab15577130e171f08d8d38dd",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/icarus-control-plane/UNIFIED_CYCLE_RUNBOOK.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/01_PR17_HANDOFF/files/docs/superpowers/plans/2026-09-24-icarus-control-plane-handoff.md",
+  "sha256": "f6bd6bc6e9c695619083f8eb416498d378b8180114976d3bcfcdb092745618cc",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/01_PR17_HANDOFF/files/docs/superpowers/plans/2026-09-24-icarus-control-plane-handoff.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/BASE_SHA.txt",
+  "sha256": "449f6f4ea8cb540f1a51af980d42b3cbd275cb2ea8f572452bdd93d1034723e0",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/BASE_SHA.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/CHANGED_FILES.tsv",
+  "sha256": "9c69c99e3eee54b02e8e5ac9e68a10b39156c9f217f06ae4b58279e101576e8b",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/CHANGED_FILES.tsv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/COMMITS.tsv",
+  "sha256": "259f365ab865be8b21bccd1463fe36e88c7448041c3604d53afbfdbffef33398",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/COMMITS.tsv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/FULL.patch",
+  "sha256": "8c2ac9e6d97da9037a1779bd87fd7c845a504e1881698a3a4a5c3ea2f39a6924",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/FULL.patch"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/HEAD_SHA.txt",
+  "sha256": "27fc52f383d59a8244fccfd8fbd0e122a7b82f078f6836adb8aa9f7cff209460",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/HEAD_SHA.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/HANDOFF_LOG.md",
+  "sha256": "69d54f339950adaab34323b8ab265c70295862fdfcfff7ccf6124a40d934045c",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/HANDOFF_LOG.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/MODEL_HANDOFF.md",
+  "sha256": "934d8ea55e2413ebf22935c0f2c1c471dd8f1cb56c8da2976bcea914bf83e326",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/MODEL_HANDOFF.md"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/pyproject.toml"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/README.md",
+  "sha256": "ecbeb50f27f93b4c03795df6846603a6133ff6b80ba950d2fb9a3ad2492c30bf",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/README.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/.github/workflows/test.yml",
+  "sha256": "978fc380d5034625dcade255217680f670b90990b0b313103b66fc4dd9bab6c1",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/.github/workflows/test.yml"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/AEGIS_IMPLEMENTATION_MATRIX.md",
+  "sha256": "6e912f3bcacf4b7396cdc06529c873d3f4b3f2da54389557e714203919d433ef",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/AEGIS_IMPLEMENTATION_MATRIX.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/HANDOFF_STATE.json",
+  "sha256": "69eadc5d8ffb3f7f8caede3c678160a7e36f31b3c1cab201a2859aed48c71da5",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/HANDOFF_STATE.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/README.md",
+  "sha256": "c7091c359842bcd2b21498798da7dd85a95d52ce58fefd226a05f25eaf6a45d5",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/README.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/UNIFIED_CYCLE_RUNBOOK.md",
+  "sha256": "47f717da3f4e8df074eeed4f21c74cef74a06edf802c008494c451be6d7dcc7c",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/UNIFIED_CYCLE_RUNBOOK.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/contracts/icarus-control-v1.json",
+  "sha256": "51ca1892f12b1660db16e8c1be601603f70ea9a93575bed4d4b828055057b080",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/contracts/icarus-control-v1.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/contracts/icarus-pipeline-v1.json",
+  "sha256": "e55abe2be202a9106956fc75995655d362f53ccb62563faa0dc102abe254dbf4",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/docs/icarus-control-plane/contracts/icarus-pipeline-v1.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/docs/superpowers/plans/2026-09-24-icarus-control-plane-handoff.md",
+  "sha256": "f662dd8ef591bbc0ff51465dd615257347fc3813490cb84c5ed4ce58745911d9",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/docs/superpowers/plans/2026-09-24-icarus-control-plane-handoff.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/docs/superpowers/plans/2026-09-24-icarus-control-plane-runtime.md",
+  "sha256": "2f56df89b7909ead30dab494794fb84459f194845366ce618e20028a88aa4780",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/docs/superpowers/plans/2026-09-24-icarus-control-plane-runtime.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/files/docs/superpowers/specs/2026-09-24-icarus-control-plane-runtime-design.md",
+  "sha256": "6792fd03d6800e5367f851c679b904d9e2867cda0e19676fcab05cf2c5844f36",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/docs/superpowers/specs/2026-09-24-icarus-control-plane-runtime-design.md"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/icarus_control/canonical.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/icarus_control/cli.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/icarus_control/validation.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/icarus_control/__init__.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/icarus_control/__main__.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/icarus_plant/cli.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/02_PR18_CONTROL_RUNTIME/files/tests_engine/test_control_plane.py"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/workstreams/02_PR18_CONTROL_RUNTIME/HEAD_SHA.txt",
+  "sha256": "27fc52f383d59a8244fccfd8fbd0e122a7b82f078f6836adb8aa9f7cff209460",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/03_PR19_DATA_VINTAGE/BASE_SHA.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/03_PR19_DATA_VINTAGE/CHANGED_FILES.tsv",
+  "sha256": "4c97ac98195d8e0c34e9a664ff5e8980223f0c9b335baaa6f6984f6a9b650df7",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/03_PR19_DATA_VINTAGE/CHANGED_FILES.tsv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/03_PR19_DATA_VINTAGE/COMMITS.tsv",
+  "sha256": "3318b4cf32b4dd5dc22d8b55a811fe82336c38cc1c8d0c3bbe0716bf8f55bf29",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/03_PR19_DATA_VINTAGE/COMMITS.tsv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/03_PR19_DATA_VINTAGE/FULL.patch",
+  "sha256": "e71d6118848a2a715399506ee54f5af76cca59d8bf8b53667c0bd08c8e719928",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/03_PR19_DATA_VINTAGE/FULL.patch"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/03_PR19_DATA_VINTAGE/HEAD_SHA.txt",
+  "sha256": "99efc91b7c5340518822fc209e1b99e3402db5d2e8778358f1a5a4bde81cd82d",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/03_PR19_DATA_VINTAGE/HEAD_SHA.txt"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/03_PR19_DATA_VINTAGE/files/icarus_engine/feeds/vintage.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/03_PR19_DATA_VINTAGE/files/icarus_plant/drop.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/03_PR19_DATA_VINTAGE/files/tests_engine/test_data_vintage.py"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/evidence/icarus_repo_workstreams/workstreams/01_PR17_HANDOFF/BASE_SHA.txt",
+  "sha256": "feb9898e3f9b7b2290e01003f832e1cdb8a76fb9d093ff1e8388a2128cf7b57e",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/BASE_SHA.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/CHANGED_FILES.tsv",
+  "sha256": "06921e98bd67729c38ea154f8722fb2eed4e1938347c676c891274e616c198ed",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/CHANGED_FILES.tsv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/COMMITS.tsv",
+  "sha256": "aaa1b95857958ffff53e8a072d05d8a6a84e6c114b7f8ed9eba7ced8ff7e6758",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/COMMITS.tsv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/FULL.patch",
+  "sha256": "675756abc59e76d11a2b7c48037ce75fa642dc42a583b22aa13dd733bf009e9d",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/FULL.patch"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/HEAD_SHA.txt",
+  "sha256": "8bb4d3db0ccea0ef0dfed2f558673c07eb9584c267d4bee3f4d9df7280430d5e",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/HEAD_SHA.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/.github/workflows/omnivision-stage0.yml",
+  "sha256": "879a5111e47a841bf35107e78684fdada8b22a888f97a2b8fa458683ff4c3957",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/.github/workflows/omnivision-stage0.yml"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/.github/workflows/test.yml",
+  "sha256": "ac2ba1dec9c6c9aaed28348dbd6bcd4fbea356f510bcd751875226d595c3d552",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/.github/workflows/test.yml"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/.icarus_loop/state.json",
+  "sha256": "4e4bba7143130b6cf588af1a2d99c20652381afc701711f187b540228d960edb",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/.icarus_loop/state.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/audits/2026-09-24-omnivision-v2-stage0-audit.md",
+  "sha256": "e1dbeaec533c8a84ee0fd76d217ccc1d1fa055dd4006a66f5e01812f3627e2a2",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/audits/2026-09-24-omnivision-v2-stage0-audit.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/plans/2026-09-23-omnivision-foundation-implementation.md",
+  "sha256": "2efe6339da19c61bbcd639c140f20aebf0a1556171f7cddf572277ad0fc5a2c3",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/plans/2026-09-23-omnivision-foundation-implementation.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/plans/2026-09-24-omnivision-v2-stage0-verification-audit-remediation.md",
+  "sha256": "75fa178aa1b0e934f1ccee911fca5a29a43b56164e559a049f5dbb63a2bef244",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/plans/2026-09-24-omnivision-v2-stage0-verification-audit-remediation.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/plans/2026-09-24-omnivision-v2-stage1-control-plane.md",
+  "sha256": "a910ec0c8da1586b752e6456975fa5442c9e7ffcf1cab0cddb07cc60b6923c43",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/plans/2026-09-24-omnivision-v2-stage1-control-plane.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/plans/2026-09-24-omnivision-v2-stage1-trust-substrate.md",
+  "sha256": "a7c32776fbd7f698aee97986a19401751ed80d7173d9ad7795cd6157ce4b1d51",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/plans/2026-09-24-omnivision-v2-stage1-trust-substrate.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/specs/2026-09-23-omnivision-federated-research-mesh-design.md",
+  "sha256": "c9898a5108dac7c548e7aed23fc8a9f84b2ba94b78dbf6a2e1b2d44a79fac16b",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/specs/2026-09-23-omnivision-federated-research-mesh-design.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/evidence/icarus_repo_workstreams/workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/specs/2026-09-24-omnivision-epistemic-control-plane-v2-design.md",
+  "sha256": "d3d00834fcf962935b778a3894ecbe3947708a5b0d812be5a645e349644e3c35",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/docs/superpowers/specs/2026-09-24-omnivision-epistemic-control-plane-v2-design.md"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/advisory.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/world_state.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/admissibility.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/candidates.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/capabilities.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/contracts.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/falsification.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/hypotheses.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/ledger_bridge.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/novelty.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/provenance.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/trials.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_engine/omnivision/__init__.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/icarus_plant/guide.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_advisory.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_admissibility.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_bridge.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_candidates.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_capabilities.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_contracts.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_falsification.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_hypotheses.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_integration.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_novelty.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_provenance.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_stage0_boundaries.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_stage0_temporal.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_stage1_integration.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_omnivision_trials.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_plant.py"
+ },
+ {
+  "action": "excluded_binary",
+  "source": "ICARUS_EVERYTHING_2026-09-24.zip/tgz/home/runner/work/Icarus/Icarus/ICARUS_EVERYTHING_2026-09-24::workstreams/04_OMNIVISION_EXOTIC_RESEARCH/files/tests_engine/test_world_state.py"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/control_and_state/AUTOMATION_CONTROL_STATE.md",
+  "sha256": "b193ffbbd48fe92185a4bf79b6ac3e62002473cd84271b5c5b09c7a9de0c95cb",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26/control_and_state::AUTOMATION_CONTROL_STATE.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/control_and_state/CHAT_DERIVED_WORKSTREAM_LEDGER.md",
+  "sha256": "35b923398168e9618a30784de913e6a4ba513108b093faa0b32a7c1882fc5d85",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26/control_and_state::CHAT_DERIVED_WORKSTREAM_LEDGER.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/github_live_snapshot/ICARUS_RELEVANT_PULL_REQUESTS.json",
+  "sha256": "939c835f62bc8fe543256bb9c1edc11878ae2fc78dad5e45541e15866633c829",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26/github_live_snapshot::ICARUS_RELEVANT_PULL_REQUESTS.json"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/github_live_snapshot/README_GITHUB_SNAPSHOT.md",
+  "sha256": "f0618bcc41d9214727daf5172b98c394288a6d4cb801b41eefeca9a3afd75bcd",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26/github_live_snapshot::README_GITHUB_SNAPSHOT.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/github_live_snapshot/REPOSITORY_SNAPSHOT.json",
+  "sha256": "8c3743b1b9ba78778773fcec418d7e762396fee6805efdd34d684acc536a50cd",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26/github_live_snapshot::REPOSITORY_SNAPSHOT.json"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/handoff/README_FIRST_OPUS (1).md",
+  "sha256": "e022ed08210303c04ef9dcfb59499d749d3628d54a15e418f234ddaa05c45a64",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26::README_FIRST_OPUS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/EXCLUSIONS_AND_QUARANTINE.md",
+  "sha256": "b6544bcf8b6607a0d9ff5d1a6d3777cdadd2c7794ffa001cbb19c4ce01b8b08b",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26::EXCLUSIONS_AND_QUARANTINE.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/handoff/KNOWN_INACCESSIBLE_AND_LIMITATIONS (1).md",
+  "sha256": "b8d0dff811997e304ef65f6532aa66000fe4e1074b201a25a00ec7ae98d82c2f",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26::KNOWN_INACCESSIBLE_AND_LIMITATIONS.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/misc/ABSOLUTE_MANIFEST (1).csv",
+  "sha256": "ee9b9fd0641308634868633625de845684cd6b4e428b5aa7c6aff52cb920c28f",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26::ABSOLUTE_MANIFEST.csv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/artifact_corpus/trading/pine_and_backtest_sources_text_recovery/186_ICARUS_REGULAR_CANDLE_STANDARD_OHLC_ENHANCED_2026-09-15.pine",
+  "sha256": "a8b3e748f90c8018d248d862849dc81988eb76b86d4920069111e270d617b801",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26/artifact_corpus/trading::pine_and_backtest_sources_text_recovery/186_ICARUS_REGULAR_CANDLE_STANDARD_OHLC_ENHANCED_2026-09-15.pine"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/artifact_corpus/trading/pine_and_backtest_sources_text_recovery/188_ICARUS_REVAMPED_Pasted_text.txt",
+  "sha256": "088d1a80d097781df6cd9ed189eaaa10dc2318c3136a6532a83598e525832248",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26/artifact_corpus/trading::pine_and_backtest_sources_text_recovery/188_ICARUS_REVAMPED_Pasted_text.txt"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/artifact_corpus/trading/rate_omni_mythos/195_rate_omni_mythos_conversation_archive.md",
+  "sha256": "b88a886c9c1c67004c796921fc58161616eb92110e8bd39bbae0dcb253011215",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26/artifact_corpus/trading::rate_omni_mythos/195_rate_omni_mythos_conversation_archive.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/programs/ascension/14_H6_META_RESEARCH_SELF_AUDIT_DESIGN_SPEC.md",
+  "sha256": "c4143e64c1b392565d2c1bb7e4f9664305621630b8206df88ea974088b72934f",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26/artifact_corpus/other_generated::157_14_H6_META_RESEARCH_SELF_AUDIT_DESIGN_SPEC.md"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/handoff/README_FOR_OPUS.md",
+  "sha256": "0678df50aa407791a6a983a65f7993fcec02656c580b5dbcbad2f921fc2ec2b5",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26::artifact_corpus/README_FOR_OPUS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/artifact_corpus/UNAVAILABLE_ORIGINALS.md",
+  "sha256": "7b9ece9c9cecb59ecb8fcbe712a8348f2d37ac8444a4bb7d42ca29c883894019",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26::artifact_corpus/UNAVAILABLE_ORIGINALS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/opus_non3d/artifact_corpus/MANIFEST.csv",
+  "sha256": "f1b4fc7dc5c1144c867d181dfba394445438afb4beab40f6ec4c1071f9a1cd4e",
+  "source": "OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26 (1).zip/OPUS_NON3D_ABSOLUTE_HANDOFF_2026-09-26::artifact_corpus/MANIFEST.csv"
+ },
+ {
+  "action": "skipped_duplicate",
+  "duplicate_of": "docs/handoff/ICARUS_NEXT_CHAT_READ_FIRST.md",
+  "sha256": "2e61496bde0e4938285ae06c846af7a0b64f73a3e2d39bd45606b282e0cc3af5",
+  "source": "ICARUS_NEXT_CHAT_COMPLETE_CODE_AND_ARTIFACTS_2026-09-26.zip/ICARUS_NEXT_CHAT_TRANSFER::README_NEXT_CHAT_FIRST.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/next_chat_transfer/MISSING_OR_UNPERSISTED_ARTIFACTS.md",
+  "sha256": "5aec6c922b32f893315781d8b4e669baaa08b364be79498a0554da1b7bbf98dc",
+  "source": "ICARUS_NEXT_CHAT_COMPLETE_CODE_AND_ARTIFACTS_2026-09-26.zip/ICARUS_NEXT_CHAT_TRANSFER::MISSING_OR_UNPERSISTED_ARTIFACTS.md"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/next_chat_transfer/ARTIFACT_MANIFEST.tsv",
+  "sha256": "2625e4bae63548614a7a088dff4ebe1d39d1e0b8ccc5edb1675be987f6a71c2a",
+  "source": "ICARUS_NEXT_CHAT_COMPLETE_CODE_AND_ARTIFACTS_2026-09-26.zip/ICARUS_NEXT_CHAT_TRANSFER::ARTIFACT_MANIFEST.tsv"
+ },
+ {
+  "action": "copied",
+  "path": "docs/handoff/next_chat_transfer/SHA256SUMS.txt",
+  "sha256": "d0beee88752ae902f89f5b04438564362c29eb0062a13ac7700f52a50ce723af",
+  "source": "ICARUS_NEXT_CHAT_COMPLETE_CODE_AND_ARTIFACTS_2026-09-26.zip/ICARUS_NEXT_CHAT_TRANSFER::SHA256SUMS.txt"
+ }
+]

@@ -1,0 +1,23 @@
+{
+  "version": "0.6.0",
+  "provider": "interactive-brokers",
+  "connection_modes": {
+    "retail_web": "client_portal_gateway",
+    "tws_or_gateway": "tws_api",
+    "institutional": "oauth_web_api"
+  },
+  "read_capabilities": [
+    "account_balances",
+    "portfolio",
+    "positions",
+    "trades",
+    "contract_lookup",
+    "market_data",
+    "market_depth",
+    "market_scanners"
+  ],
+  "write_capabilities": ["place_order", "modify_order", "cancel_order"],
+  "write_policy": "explicit_confirmation_required",
+  "default_mode": "read_only",
+  "secrets_policy": "never_store_credentials_in_package"
+}

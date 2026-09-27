@@ -1,0 +1,123 @@
+{
+  "capability_id": "ascension.context-distillation-engine",
+  "name": "Context Distillation Engine",
+  "version": "0.1.0",
+  "cycle_id": "ascension-cycle-context-001",
+  "status": "SHADOW",
+  "problem": "Cross-agent context compression can silently discard provenance, authority boundaries, contradictions, dependencies, confidence, decisions, or revalidation triggers.",
+  "hypothesis": "A provenance-preserving structured distillation packet plus explicit loss audit can compress coordination context without silently deleting governance-critical facts.",
+  "beneficiaries": [
+    "ASCENSION",
+    "optional multi-agent handoffs"
+  ],
+  "authority_exclusions": [
+    "No sibling mutation",
+    "No autonomous adoption",
+    "No replacement of source records"
+  ],
+  "dependencies": [
+    "Explicit structured source records"
+  ],
+  "interfaces": [
+    {
+      "name": "distill",
+      "interface_version": "0.1",
+      "required_inputs": [
+        "source records"
+      ],
+      "emitted_outputs": [
+        "context packet"
+      ],
+      "assumptions": [
+        "source records contain governance-critical fields"
+      ],
+      "invariants": [
+        "read-only",
+        "contradictions preserved rather than resolved"
+      ]
+    },
+    {
+      "name": "audit_loss",
+      "interface_version": "0.1",
+      "required_inputs": [
+        "source records",
+        "context packet"
+      ],
+      "emitted_outputs": [
+        "loss report"
+      ],
+      "assumptions": [],
+      "invariants": [
+        "missing critical information fails audit"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "type": "local deterministic package tests",
+      "result": "11/11 passed",
+      "deletion_attacks": 500
+    }
+  ],
+  "evaluation_vector": {
+    "correctness": 1.0,
+    "reproducibility": 0.95,
+    "transferability": 0.72,
+    "integration_cost": 0.18,
+    "latency_cost_burden": 0.1,
+    "observability": 0.95,
+    "rollback_safety": 1.0,
+    "non_interference": 1.0,
+    "evidence_quality": 0.62,
+    "reuse_breadth": 0.92
+  },
+  "acceptance_tests": [
+    "deterministic output",
+    "loss audit clean",
+    "opposing contradiction retained"
+  ],
+  "negative_tests": [
+    "dropped authority_boundaries detected",
+    "dropped contradictions detected",
+    "dropped provenance detected",
+    "dropped dependencies detected",
+    "dropped revalidation detected"
+  ],
+  "regression_tests": [
+    "500 critical-field deletion attacks detected",
+    "input immutable"
+  ],
+  "failure_modes": [
+    "Unstructured source prose requires a parser not implemented in v0.1",
+    "Semantic equivalence/paraphrase loss not measured",
+    "Compression ratio not yet optimized",
+    "Source truthfulness not established"
+  ],
+  "rollback": {
+    "method": "Discard optional distilled packet and use original records"
+  },
+  "observability": {
+    "losses_by_field": true,
+    "source_attribution": true
+  },
+  "compatibility": {
+    "mode": "optional read-only packet",
+    "sibling_changes_required": false
+  },
+  "artifacts": [
+    "context_distillation.py",
+    "test_context_distillation.py",
+    "test_report.json",
+    "capability_packet.json",
+    "capability_ledger.json",
+    "experience_capsule.json"
+  ],
+  "revalidation": {
+    "trigger": [
+      "schema change",
+      "new critical field",
+      "semantic-loss false negative"
+    ]
+  },
+  "next_experiment": "Add semantic-equivalence tests, token-budget optimization, contradiction clustering, and reconstructability scoring."
+}

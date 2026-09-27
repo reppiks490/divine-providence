@@ -1,0 +1,7 @@
+........................................................................ [ 84%]
+.............                                                            [100%]
+85 passed in 0.39s
+compileall: PASS
+Run 021 inherited baseline before mutation: 81/81 PASS
+Run 022 RED: 4 new tests failed before APIs/receipt fields existed
+Run 022 GREEN: 85/85 PASS

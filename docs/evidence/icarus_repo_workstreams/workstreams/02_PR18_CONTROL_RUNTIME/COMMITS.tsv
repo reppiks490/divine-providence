@@ -1,0 +1,38 @@
+4ef2b6632e8e5da3a95f11d088033c561907c830	2026-09-24T16:50:23-05:00	ChatGPT: design repo-native ICARUS control-plane verifier
+58981367142e79b84e81726d2f63c01bbb61d7d9	2026-09-24T16:50:25-05:00	ChatGPT: plan ICARUS control-plane verifier
+824bafcee92efe673a7dc8c7eb4b563134bf5a38	2026-09-24T16:51:05-05:00	ChatGPT: add ICARUS control policy v1 contract
+1216dda001055c9aa8c924ab479b384573359852	2026-09-24T16:51:17-05:00	ChatGPT: add ICARUS pipeline receipt v1 contract
+fba31a8d0e8d93656b1196aa4a8d6cf92b8981e7	2026-09-24T16:51:55-05:00	ChatGPT: add ICARUS control package
+a562e1a9468b55e0ea0c195ac78cf7b1a2478792	2026-09-24T16:51:57-05:00	ChatGPT: add deterministic ICARUS receipt canonicalization
+d46ab75868c354c0922ac0e4834c37cace183f2f	2026-09-24T16:53:08-05:00	ChatGPT: implement fail-closed ICARUS receipt chain validation
+b8d1417f092c4b09f6b900d95d96caec6fd23d04	2026-09-24T16:53:21-05:00	ChatGPT: add read-only ICARUS control verifier CLI
+a033efb2e842ecfeca0bd04c9957091defa2b237	2026-09-24T16:54:12-05:00	ChatGPT: add adversarial ICARUS control-plane tests
+853d77987dd26ff7646b83a08e0d6c2ab2c2d5b0	2026-09-24T16:54:38-05:00	ChatGPT: add ICARUS control module entry point
+4aa639d263d3b08c8d6aa085d1cf83dc785ea9f9	2026-09-24T16:54:39-05:00	ChatGPT: expose read-only icarus-control CLI
+a18cbf1096c017227a7812d4af61fc7da440dfdb	2026-09-24T16:54:41-05:00	ChatGPT: repair plant CI root argument order
+7554207b84e860ca7ec3ecdf9a76dc9326efd42e	2026-09-24T16:55:08-05:00	ChatGPT: tighten snapshot and evidence-lineage validation
+c44a9ff15114ebfcd1a7d0b18a8d6df76e8a0200	2026-09-24T16:55:18-05:00	ChatGPT: cover deterministic snapshots and unknown lineage
+48f147037a22e59d696754f62c2b7626fda8adf9	2026-09-24T16:55:55-05:00	ChatGPT: document repo-native control receipt verifier
+a62f8df18a85f376fab9eaea06ebc9d595b01373	2026-09-24T16:55:57-05:00	ChatGPT: define durable receipt transport in cycle runbook
+d244eda10558a26f04219aa70782f90dd70a9a7f	2026-09-24T16:55:59-05:00	ChatGPT: record control verifier handoff state
+816fbf430a20511e351577a54afc0554414ce13c	2026-09-24T16:56:23-05:00	ChatGPT: document icarus-control assurance CLI
+fa484f5044a77a7b8535fde6e11c7f613dc45448	2026-09-24T16:56:25-05:00	ChatGPT: hand off control verifier runtime
+0a94534ca67b9aa7ad11ee685ac48486c53d470e	2026-09-24T16:56:27-05:00	ChatGPT: log control-plane runtime implementation
+219739e36247f817fd46e25b252e623b102fa609	2026-09-24T16:56:28-05:00	ChatGPT: record Task 8 implementation status
+de658daa72acf9c7586d2b98647a46e6eeadc1bc	2026-09-24T16:58:12-05:00	ChatGPT: harden S4 oracle and S5 promotion semantics
+83e3505fed1ed1501e3c1d84d65efd123f2557c6	2026-09-24T16:58:14-05:00	ChatGPT: make plant CLI output UTF-8 safe on Windows
+c2bf18abcf3c58350ec1b6203e0d262641adf8b1	2026-09-24T16:58:25-05:00	ChatGPT: test fail-closed S5 promotion semantics
+cb846a03cf93a17e845aa4f94d5b45bc15aa412b	2026-09-24T17:00:31-05:00	ChatGPT: map AEGIS findings 019-030 to repo controls
+7ddc90fd0aaa4589fb9d4fef1ad466581638876e	2026-09-24T17:00:58-05:00	ChatGPT: link AEGIS implementation matrix
+380a5bee4266354cceedd9a31ad61ba0067c1e50	2026-09-24T17:01:00-05:00	ChatGPT: record green control verifier CI evidence
+d30a97711b9a860e47bc4792fa4a087a3189c06f	2026-09-24T17:01:02-05:00	ChatGPT: record control verifier CI evidence
+e9a1f975e4da6688bacbd3d24703b46b06318f94	2026-09-24T17:01:04-05:00	ChatGPT: update Task 8 verification evidence
+5e0496bf0e5bf8a94d48389911cc502191307318	2026-09-24T17:02:09-05:00	ChatGPT: add claim and conflict closure contracts
+9f70eabb702df0d2aecd3395c6c4e406a6e142ce	2026-09-24T17:03:13-05:00	ChatGPT: enforce claim dependencies and material conflict closure
+1f520da58f18cbac8a1c2429b15dc69218c10c54	2026-09-24T17:03:37-05:00	ChatGPT: test dependency and conflict authority gates
+0e198d071d8eeafed9d8081c2ba913b3b1ad52f5	2026-09-24T17:04:01-05:00	ChatGPT: validate evidence lineage DAG and collapse duplicate IDs
+5d0619617eb5b2820e6001872805644c2e1bfa79	2026-09-24T17:04:17-05:00	ChatGPT: test lineage collapse and DAG failures
+8de405ffdb4790e5cb8b6f73fa8817613e93a80b	2026-09-24T17:05:12-05:00	ChatGPT: document dependency conflict and lineage gates
+042835f11843bf1673970fe2e81ffbd7539c3731	2026-09-24T17:05:14-05:00	ChatGPT: harden control verifier design contract
+4c28b44766e5d8e41ee660fcef0eee96b7f4d581	2026-09-24T17:05:16-05:00	ChatGPT: extend control verifier test plan
+76569e1962e721b0f4dc973df21358f40c31ce81	2026-09-24T17:05:18-05:00	ChatGPT: log authority graph hardening

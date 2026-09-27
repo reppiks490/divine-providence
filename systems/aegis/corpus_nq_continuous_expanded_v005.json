@@ -1,0 +1,41 @@
+{
+  "corpus_id": "ACF-NQ-CONT-MASSIVE-VOLROLL-1H-20250902-20260925-v005",
+  "provider": "Massive",
+  "instrument": "CME E-mini Nasdaq-100 continuous research series",
+  "contracts": [
+    "NQZ5",
+    "NQH6",
+    "NQM6",
+    "NQU6",
+    "NQZ6"
+  ],
+  "roll_rule": "first session_end_date where next quarterly contract daily summed 1h volume exceeds front contract",
+  "rolls": [
+    {
+      "front": "NQZ5",
+      "back": "NQH6",
+      "session_end_date": "2025-12-15"
+    },
+    {
+      "front": "NQH6",
+      "back": "NQM6",
+      "session_end_date": "2026-03-16"
+    },
+    {
+      "front": "NQM6",
+      "back": "NQU6",
+      "session_end_date": "2026-06-15"
+    },
+    {
+      "front": "NQU6",
+      "back": "NQZ6",
+      "session_end_date": "2026-09-14"
+    }
+  ],
+  "row_count": 6314,
+  "bar_type": "standard_time_OHLCV",
+  "timeframe": "1h",
+  "back_adjustment": "none",
+  "status": "VALIDATED_BASIC_ROLL_LOGIC_NEEDS_PAYLOAD_HASH_EXPORT",
+  "warning": "research-only continuous series; execution must remain contract-aware"
+}

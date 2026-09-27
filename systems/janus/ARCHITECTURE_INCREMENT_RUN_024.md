@@ -1,0 +1,2 @@
+# JANUS ∞ Run 024 — Promotion Journal + Clock-Skew Policy + Recovery Certificates
+Run 024 adds a durable promotion journal around the fenced, leased atomic joint synchronization path. Promotions are `prepared` before authoritative promotion and resolved `committed` or `aborted`; recovery emits a content-addressed certificate. Lease expiration uses an explicit bounded clock-skew policy. Existing receipt-head/fencing/concurrency guards remain authoritative. Ownership boundaries are unchanged.

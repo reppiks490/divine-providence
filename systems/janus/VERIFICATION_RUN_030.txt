@@ -1,0 +1,12 @@
+JANUS ∞ Run 030 verification
+Parent baseline: Run 029 = 108/108 tests passed before mutation.
+TDD RED: 3/3 Run 030 tests failed because the new certificate, permission-probe, and reconciliation-gate APIs were absent.
+Focused GREEN: 3/3 Run 030 tests passed after minimal implementation.
+Review RED: a clean Git repo with no explicit expected hashes incorrectly qualified as reconciled; the storage-state certificate lacked an explicit forensic root-link digest.
+Review GREEN: expected hashes are now mandatory; certificate now binds forensic_root_link_digest and enforces root-link session/recovery/receipt/quarantine consistency.
+Final pre-package full suite: 111/111 passed.
+compileall: PASS.
+JSON schemas: 49/49 parsed and Draft 2020-12 meta-schema validated.
+Actual workspace live reconciliation gate: ready_to_commit=false; status=git_repository_unavailable; gate_digest=cfdf4b7f6df7055b176893cc1e88ce2d34e0b6dfa863bacb4cd9c50e50d752c0.
+Actual permission fault probe: classification=kernel_write_denied; errno=13/EACCES; probe_digest=dc00e4810051a4993e1554e93b493b97ebf01eff711d21a0f11a479836e531df.
+No live Git commit or adoption claim.

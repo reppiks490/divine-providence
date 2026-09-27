@@ -1,0 +1,43 @@
+{
+  "system": "AEGIS Challenger Forge",
+  "checkpoint": "007",
+  "created_at_utc": "2026-09-25T23:44:41.849081+00:00",
+  "status": "ROBUSTNESS_LAYER_ACTIVE_NOT_READY_TO_COMMIT",
+  "supersedes": "Checkpoint 006",
+  "verified": [
+    "Expanded NQ 6,314-row corpus now has a complete canonical payload SHA-256 and manifest SHA-256.",
+    "Four fixed purged walk-forward validation folds evaluated without touching final holdout.",
+    "Bootstrap confidence intervals, sign-flip tests and a multiple-testing ledger added.",
+    "Causal volatility-regime adapter implemented.",
+    "Causal KNN-distance OOD/abstention adapter implemented.",
+    "Full unit-test suite rerun."
+  ],
+  "nq_corpus": {
+    "corpus_id": "ACF-NQ-CONT-MASSIVE-VOLROLL-1H-20250902-20260925-v007",
+    "payload_sha256": "cf63ce4c0f4556308429cff037dc38fab60610f469f4e95197b04eb93516a7df",
+    "manifest_sha256": "e4b6f65a2ef43c474de94fbc7abb69ebd9b2c8808d4cf8bdad3f8966863ded3a",
+    "row_count": 6314,
+    "holdout_rows": 1263,
+    "holdout_status": "UNTOUCHED"
+  },
+  "liquidity_decisions": {
+    "NQCM-LIQ-SWEEP-001": "QUARANTINE",
+    "EXT-SESSION-VWAP-VOL-SWEEP-001": "QUARANTINE_OVERFIT_RISK"
+  },
+  "test_returncode": 0,
+  "hard_gates": [
+    "No live-trading authority.",
+    "Do not inspect final 1,263-row NQ holdout during development.",
+    "Do not tune liquidity thresholds to current validation losses.",
+    "Any regime-conditioned analysis must use predeclared regime definitions.",
+    "KNN/OOD thresholds cannot be selected on final holdout."
+  ],
+  "next": [
+    "Bind regime and OOD adapters to the expanded NQ development corpus.",
+    "Measure candidate behavior by predeclared LOW/NORMAL/HIGH volatility regimes without threshold tuning.",
+    "Implement NQ factor/correlation adapter with PIT alignment controls.",
+    "Implement BTC Ichimoku/ADX/pullback/composite-exit adapters.",
+    "Add partial-fill and latency stress ladders plus block bootstrap for clustered trades.",
+    "Add deliberately bad/randomized controls to every challenger tournament."
+  ]
+}

@@ -1,0 +1,51 @@
+test_300_history_mutations (test_evaluator_fabric_v0_6.V06.test_300_history_mutations) ... ok
+test_500_inclusion_mutations (test_evaluator_fabric_v0_6.V06.test_500_inclusion_mutations) ... ok
+test_append_only_consistency (test_evaluator_fabric_v0_6.V06.test_append_only_consistency) ... ok
+test_bad_index_rejected (test_evaluator_fabric_v0_6.V06.test_bad_index_rejected) ... ok
+test_consensus_view (test_evaluator_fabric_v0_6.V06.test_consensus_view) ... ok
+test_duplicate_witness_does_not_meet_threshold (test_evaluator_fabric_v0_6.V06.test_duplicate_witness_does_not_meet_threshold) ... ok
+test_rewrite_rejected (test_evaluator_fabric_v0_6.V06.test_rewrite_rejected) ... ok
+test_root_mismatch_rejected (test_evaluator_fabric_v0_6.V06.test_root_mismatch_rejected) ... ok
+test_split_view_detected (test_evaluator_fabric_v0_6.V06.test_split_view_detected) ... ok
+test_tampered_leaf_rejected (test_evaluator_fabric_v0_6.V06.test_tampered_leaf_rejected) ... ok
+test_valid_inclusion (test_evaluator_fabric_v0_6.V06.test_valid_inclusion) ... ok
+test_400_witness_payload_signature_mutations (test_evaluator_fabric_v0_7.V07.test_400_witness_payload_signature_mutations) ... ok
+test_500_compact_proof_mutations (test_evaluator_fabric_v0_7.V07.test_500_compact_proof_mutations) ... ok
+test_bad_signature_and_binding_rejected (test_evaluator_fabric_v0_7.V07.test_bad_signature_and_binding_rejected) ... ok
+test_bad_sizes_rejected (test_evaluator_fabric_v0_7.V07.test_bad_sizes_rejected) ... ok
+test_combined_transition_gate (test_evaluator_fabric_v0_7.V07.test_combined_transition_gate) ... ok
+test_duplicate_witness_not_double_counted (test_evaluator_fabric_v0_7.V07.test_duplicate_witness_not_double_counted) ... ok
+test_equal_size_extension (test_evaluator_fabric_v0_7.V07.test_equal_size_extension) ... ok
+test_inputs_not_mutated (test_evaluator_fabric_v0_7.V07.test_inputs_not_mutated) ... ok
+test_malformed_inputs_fail_closed (test_evaluator_fabric_v0_7.V07.test_malformed_inputs_fail_closed) ... ok
+test_mutated_consistency_node_rejected (test_evaluator_fabric_v0_7.V07.test_mutated_consistency_node_rejected) ... ok
+test_rfc_example_3_to_7 (test_evaluator_fabric_v0_7.V07.test_rfc_example_3_to_7) ... ok
+test_rfc_example_4_to_7 (test_evaluator_fabric_v0_7.V07.test_rfc_example_4_to_7) ... ok
+test_rfc_example_6_to_7 (test_evaluator_fabric_v0_7.V07.test_rfc_example_6_to_7) ... ok
+test_stale_future_and_revoked_rejected (test_evaluator_fabric_v0_7.V07.test_stale_future_and_revoked_rejected) ... ok
+test_valid_signed_witness_threshold (test_evaluator_fabric_v0_7.V07.test_valid_signed_witness_threshold) ... ok
+test_wrong_roots_rejected (test_evaluator_fabric_v0_7.V07.test_wrong_roots_rejected) ... ok
+test_bad_hash_and_path_types_rejected (test_evaluator_fabric_v0_8.V08.test_bad_hash_and_path_types_rejected) ... ok
+test_combined_gate_rejects_bad_inclusion (test_evaluator_fabric_v0_8.V08.test_combined_gate_rejects_bad_inclusion) ... ok
+test_combined_gate_rejects_bad_transition_or_witness (test_evaluator_fabric_v0_8.V08.test_combined_gate_rejects_bad_transition_or_witness) ... ok
+test_combined_transparency_evidence_valid (test_evaluator_fabric_v0_8.V08.test_combined_transparency_evidence_valid) ... ok
+test_expected_length_matches_generator (test_evaluator_fabric_v0_8.V08.test_expected_length_matches_generator) ... ok
+test_false_index_relabel_rejected (test_evaluator_fabric_v0_8.V08.test_false_index_relabel_rejected) ... ok
+test_hash_hex_inputs_supported_but_strict (test_evaluator_fabric_v0_8.V08.test_hash_hex_inputs_supported_but_strict) ... ok
+test_inputs_not_mutated (test_evaluator_fabric_v0_8.V08.test_inputs_not_mutated) ... ok
+test_malformed_combined_inputs_fail_closed (test_evaluator_fabric_v0_8.V08.test_malformed_combined_inputs_fail_closed) ... ok
+test_merkle_leaf_domain_separation (test_evaluator_fabric_v0_8.V08.test_merkle_leaf_domain_separation) ... ok
+test_mutated_node_rejected (test_evaluator_fabric_v0_8.V08.test_mutated_node_rejected) ... ok
+test_out_of_range_and_zero_tree_rejected (test_evaluator_fabric_v0_8.V08.test_out_of_range_and_zero_tree_rejected) ... ok
+test_padded_proof_rejected_by_geometry (test_evaluator_fabric_v0_8.V08.test_padded_proof_rejected_by_geometry) ... ok
+test_rfc_7_leaf_examples (test_evaluator_fabric_v0_8.V08.test_rfc_7_leaf_examples) ... ok
+test_single_leaf_empty_proof (test_evaluator_fabric_v0_8.V08.test_single_leaf_empty_proof) ... ok
+test_truncated_proof_rejected_by_geometry (test_evaluator_fabric_v0_8.V08.test_truncated_proof_rejected_by_geometry) ... ok
+test_uint64_and_type_bounds_rejected (test_evaluator_fabric_v0_8.V08.test_uint64_and_type_bounds_rejected) ... ok
+test_uint64_max_geometry_is_bounded (test_evaluator_fabric_v0_8.V08.test_uint64_max_geometry_is_bounded) ... ok
+test_wrong_leaf_or_root_rejected (test_evaluator_fabric_v0_8.V08.test_wrong_leaf_or_root_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 46 tests in 0.135s
+
+OK

@@ -1,0 +1,19 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"nexus.market-state.v2",
+  "type":"object",
+  "required":["contract","decision_ns","data_plane","production_authorized","factors","topology","quality","ood","lineage"],
+  "properties":{
+    "contract":{"const":"nexus.market-state.v2"},
+    "decision_ns":{"type":"integer"},
+    "data_plane":{"enum":["research","shadow","production"]},
+    "production_authorized":{"const":false},
+    "frame_hash":{"type":["string","null"]},
+    "factors":{"type":"object","additionalProperties":{"type":"number"}},
+    "topology":{"type":"object"},
+    "quality":{"type":"object","additionalProperties":{"type":"number"}},
+    "ood":{"type":"object","additionalProperties":{"type":"number"}},
+    "lineage":{"type":"array","items":{"type":"object"}}
+  },
+  "additionalProperties":true
+}

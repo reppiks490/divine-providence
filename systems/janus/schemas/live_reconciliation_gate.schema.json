@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Live Reconciliation Gate v1",
+  "type": "object",
+  "required": ["format","repo_path","status","ready_to_commit","commit_sha","branch","dirty","files","gate_digest"],
+  "properties": {
+    "format": {"const": "janus-live-reconciliation-gate-v1"},
+    "status": {"enum": ["reconciled","git_repository_unavailable","git_head_unavailable","expected_hashes_required","worktree_dirty","expected_artifact_path_invalid","expected_artifact_missing","expected_artifact_hash_mismatch"]},
+    "ready_to_commit": {"type": "boolean"},
+    "commit_sha": {"type": ["string","null"]},
+    "branch": {"type": ["string","null"]},
+    "dirty": {"type": ["boolean","null"]},
+    "files": {"type": "object"},
+    "gate_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -1,0 +1,39 @@
+
+Spreadsheet runtime warmup failed during python startup
+Traceback (most recent call last):
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/patches/warm_spreadsheet_runtime_on_startup.py", line 26, in warm_spreadsheet_runtime_on_startup
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py", line 785, in warm_spreadsheet_runtime
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py", line 720, in _warm_feature_flows
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py", line 704, in _warm_collaboration_flows
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/generated/interface/models.py", line 32317, in hydrate_crdt_from_proto
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/rpc/remote.py", line 749, in __call__
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/rpc/client.py", line 150, in call
+artifact_tool.rpc.client.RemoteError: hydrateCrdtFromProto requires an empty collaborative document.
+test_atr_adapter_causal (test_adapters.AdapterTests.test_atr_adapter_causal) ... ok
+test_macro_adapter_causal (test_adapters.AdapterTests.test_macro_adapter_causal) ... ok
+test_partitions_keep_final_holdout (test_adapters.AdapterTests.test_partitions_keep_final_holdout) ... ok
+test_backdated_pivot_is_detected (test_causality.CausalityTests.test_backdated_pivot_is_detected) ... ok
+test_confirmed_pivot_is_prefix_invariant (test_causality.CausalityTests.test_confirmed_pivot_is_prefix_invariant) ... ok
+test_no_oos_caps_grade (test_evidence.EvidenceTests.test_no_oos_caps_grade) ... ok
+test_review_cannot_be_direct_performance_evidence (test_evidence.EvidenceTests.test_review_cannot_be_direct_performance_evidence) ... ok
+test_strong_oos_costed_evidence_can_reach_A (test_evidence.EvidenceTests.test_strong_oos_costed_evidence_can_reach_A) ... ok
+test_challenger_causal_and_event_time (test_liquidity.LiquidityTests.test_challenger_causal_and_event_time) ... ERROR
+test_cost_harness_penalizes (test_liquidity.LiquidityTests.test_cost_harness_penalizes) ... ok
+test_incumbent_causal_and_event_time (test_liquidity.LiquidityTests.test_incumbent_causal_and_event_time) ... ok
+
+======================================================================
+ERROR: test_challenger_causal_and_event_time (test_liquidity.LiquidityTests.test_challenger_causal_and_event_time)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/AEGIS_Challenger_Forge_Checkpoint_005/tests/test_liquidity.py", line 36, in test_challenger_causal_and_event_time
+    audit=audit_prefix_invariance(a,ctx,warmup=20)
+  File "/mnt/data/AEGIS_Challenger_Forge_Checkpoint_005/challenger_forge/causality.py", line 35, in audit_prefix_invariance
+    prefix = adapter.run(prefix_ctx)
+  File "/mnt/data/AEGIS_Challenger_Forge_Checkpoint_005/challenger_forge/liquidity.py", line 55, in run
+    raise ValueError("session_id metadata aligned to every bar is required")
+ValueError: session_id metadata aligned to every bar is required
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.014s
+
+FAILED (errors=1)

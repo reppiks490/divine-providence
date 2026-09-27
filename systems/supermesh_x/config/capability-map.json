@@ -1,0 +1,171 @@
+{
+  "research": {
+    "capabilities": [
+      "research.search",
+      "research.deep",
+      "research.crawl",
+      "research.extract",
+      "research.academic",
+      "research.citations"
+    ],
+    "source_classes": [
+      "primary_official",
+      "structured_provider",
+      "scholarly",
+      "public_web",
+      "reputable_news",
+      "code_repository",
+      "community"
+    ]
+  },
+  "finance": {
+    "capabilities": [
+      "market.quote",
+      "market.ohlcv",
+      "market.fundamentals",
+      "market.factors",
+      "market.news",
+      "market.reference",
+      "market.rates",
+      "market.regime",
+      "market.analogues"
+    ],
+    "source_classes": [
+      "structured_provider",
+      "primary_official",
+      "regulatory",
+      "reputable_news"
+    ]
+  },
+  "crypto": {
+    "capabilities": [
+      "crypto.market",
+      "crypto.news",
+      "chain.address",
+      "chain.transaction",
+      "chain.token",
+      "chain.contract",
+      "crypto.visualization"
+    ],
+    "source_classes": [
+      "structured_provider",
+      "primary_official",
+      "public_web",
+      "code_repository"
+    ]
+  },
+  "coding": {
+    "capabilities": [
+      "code.orchestrate",
+      "code.coordinate",
+      "code.plan",
+      "code.tdd",
+      "code.debug",
+      "code.review",
+      "code.verify",
+      "code.handoff",
+      "repo.knowledge",
+      "repo.issue.analytics"
+    ],
+    "source_classes": [
+      "code_repository",
+      "user_authorized_private",
+      "primary_official"
+    ]
+  },
+  "learning": {
+    "capabilities": [
+      "media.youtube.transcript",
+      "study.learn",
+      "research.academic"
+    ],
+    "source_classes": [
+      "primary_official",
+      "scholarly",
+      "public_web",
+      "user_authorized_private"
+    ]
+  },
+  "brokerage": {
+    "capabilities": [
+      "broker.portfolio",
+      "broker.positions",
+      "broker.trades",
+      "broker.marketdata",
+      "broker.orders"
+    ],
+    "source_classes": [
+      "user_authorized_private",
+      "structured_provider"
+    ],
+    "default_authority": "read_only",
+    "write_boundary": "explicit_confirmation_required"
+  },
+  "macro_calendar": {
+    "capabilities": [
+      "market.calendar.macro",
+      "market.macro_events"
+    ],
+    "source_classes": [
+      "structured_provider",
+      "primary_official",
+      "reputable_news"
+    ]
+  },
+  "longform_intelligence": {
+    "capabilities": [
+      "research.newsletters",
+      "research.rss",
+      "research.longform"
+    ],
+    "source_classes": [
+      "public_web",
+      "user_authorized_private",
+      "reputable_news"
+    ]
+  },
+  "integration_fabric": {
+    "capabilities": [
+      "integrations.resolve",
+      "skills.discover",
+      "agent.orchestrate"
+    ],
+    "source_classes": [
+      "structured_provider",
+      "primary_official",
+      "user_authorized_private"
+    ]
+  },
+  "private_intelligence": {
+    "capabilities": [
+      "communications.email.search",
+      "communications.email.thread",
+      "communications.email.attachment",
+      "research.newsletter.private",
+      "alerts.email.market_event",
+      "privacy.private_source_guard"
+    ],
+    "source_classes": [
+      "user_authorized_private",
+      "derived_private_feature"
+    ],
+    "default_authority": "read_only",
+    "egress_policy": "raw_private_to_public_denied"
+  },
+  "portfolio_context": {
+    "capabilities": [
+      "portfolio.holdings",
+      "portfolio.allocation",
+      "portfolio.event_impact",
+      "finance.accounts",
+      "finance.transactions",
+      "finance.watchlist",
+      "portfolio.sync_state"
+    ],
+    "source_classes": [
+      "user_authorized_private"
+    ],
+    "default_authority": "read_only",
+    "write_boundary": "explicit_confirmation_required"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "asset_class": "equity_index_futures",
+  "back_adjustment": "none",
+  "bar_type": "standard_time_bars",
+  "base_timeframe": "1h",
+  "canonical_fields": [
+    "contract",
+    "window_start",
+    "session_end_date",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume"
+  ],
+  "canonical_instrument": "CME E-mini Nasdaq-100 continuous research series",
+  "canonical_payload_sha256": "cf63ce4c0f4556308429cff037dc38fab60610f469f4e95197b04eb93516a7df",
+  "contracts": [
+    "NQZ5",
+    "NQH6",
+    "NQM6",
+    "NQU6",
+    "NQZ6"
+  ],
+  "corpus_id": "ACF-NQ-CONT-MASSIVE-VOLROLL-1H-20250902-20260925-v007",
+  "corpus_id_version": "1.0",
+  "data_kind": "derived_OHLCV",
+  "execution_warning": "research series only; every trade must map to the source contract",
+  "first_window_start_ns": "1756684800000000000",
+  "last_window_start_ns": "1790294400000000000",
+  "manifest_sha256": "e4b6f65a2ef43c474de94fbc7abb69ebd9b2c8808d4cf8bdad3f8966863ded3a",
+  "partitions": {
+    "final_holdout_start_index": 5051,
+    "holdout_rows": 1263,
+    "holdout_status": "UNTOUCHED",
+    "walk_forward_policy": {
+      "embargo_rows": 24,
+      "fold_count": 4,
+      "initial_train_rows": 2000,
+      "purge_rows": 24,
+      "step_rows": 700,
+      "validation_rows": 700
+    }
+  },
+  "point_in_time": {
+    "as_known_at": "2026-09-25",
+    "provider_revision_policy": "not independently verified"
+  },
+  "provider": "Massive",
+  "quality_audit": {
+    "bad_ohlc": 0,
+    "contract_rows": {
+      "NQH6": 1438,
+      "NQM6": 1484,
+      "NQU6": 1480,
+      "NQZ5": 1702,
+      "NQZ6": 210
+    },
+    "duplicate_timestamps": 0,
+    "non_monotonic_timestamps": 0
+  },
+  "quality_status": "VALIDATED_BASIC_INTEGRITY_AND_ROLL_LOGIC",
+  "roll_rule": "first session_end_date where next quarterly contract daily summed 1h volume exceeds front contract",
+  "rolls": [
+    {
+      "back": "NQH6",
+      "front": "NQZ5",
+      "session_end_date": "2025-12-15"
+    },
+    {
+      "back": "NQM6",
+      "front": "NQH6",
+      "session_end_date": "2026-03-16"
+    },
+    {
+      "back": "NQU6",
+      "front": "NQM6",
+      "session_end_date": "2026-06-15"
+    },
+    {
+      "back": "NQZ6",
+      "front": "NQU6",
+      "session_end_date": "2026-09-14"
+    }
+  ],
+  "row_count": 6314,
+  "timezone": "UTC"
+}

@@ -1,0 +1,19 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"JANUS Candidate Improvement",
+  "type":"object",
+  "required":["id","title","impact","centrality","uncertainty_reduction","reusability","failure_pressure","evidence_gap","cost","regression_risk","duplication_risk"],
+  "properties":{
+    "id":{"type":"string"},
+    "title":{"type":"string"},
+    "impact":{"type":"number","minimum":0,"maximum":1},
+    "centrality":{"type":"number","minimum":0,"maximum":1},
+    "uncertainty_reduction":{"type":"number","minimum":0,"maximum":1},
+    "reusability":{"type":"number","minimum":0,"maximum":1},
+    "failure_pressure":{"type":"number","minimum":0,"maximum":1},
+    "evidence_gap":{"type":"number","minimum":0,"maximum":1},
+    "cost":{"type":"number","exclusiveMinimum":0,"maximum":1},
+    "regression_risk":{"type":"number","minimum":0,"maximum":1},
+    "duplication_risk":{"type":"number","minimum":0,"maximum":1}
+  }
+}

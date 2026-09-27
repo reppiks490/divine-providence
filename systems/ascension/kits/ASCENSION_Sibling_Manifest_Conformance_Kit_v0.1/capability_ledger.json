@@ -1,0 +1,10 @@
+{
+  "capabilities": [
+    {
+      "capability_id": "ascension.sibling-manifest-conformance-kit",
+      "version": "0.1.0",
+      "status": "CANDIDATE",
+      "cycle_id": "ascension-cycle-021"
+    }
+  ]
+}

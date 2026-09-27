@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Proof Lifecycle Event",
+  "type": "object",
+  "required": ["event_id", "change_id", "status", "known_at", "actor", "reason"],
+  "properties": {
+    "event_id": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "change_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["proved", "integrated", "revoked", "superseded"]},
+    "known_at": {"type": "string", "minLength": 1},
+    "actor": {"type": "string", "minLength": 1},
+    "reason": {"type": "string"},
+    "superseded_by": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

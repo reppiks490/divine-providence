@@ -1,0 +1,32 @@
+{
+  "version": "0.7.0",
+  "aliases": {
+    "Deep research": "deep-research",
+    "Search": "exa",
+    "Study": "study",
+    "Codex Coordinator": "codex-coordinator",
+    "YouTube Conversation": "youtube-conversation",
+    "Baton Pass": "baton-pass",
+    "Founder Pulse": "founder-pulse",
+    "Superpowers": "superpowers",
+    "Astral Orchestrator": "astral-orchestrator",
+    "Akinator": "akinator",
+    "Hey-Traders! Quant Trading": "hey-traders",
+    "FactorWeave": "factorweave",
+    "TickerLayer": "tickerlayer",
+    "NVIDIA Skills": "nvidia-skills",
+    "omgskills": "omgskills",
+    "The Economist - Graphs": "economist-graphs",
+    "Exum: ExoScope Crypto": "exoscope",
+    "CoinGecko": "coingecko",
+    "Blockscout Blockchain Data": "blockscout",
+    "Zacks Financial Data": "zacks",
+    "DataBlue": "datablue",
+    "Twelve Data": "twelve-data",
+    "Interactive Brokers": "interactive-brokers",
+    "Forex Factory": "forex-factory",
+    "Substack": "substack",
+    "Gmail": "gmail",
+    "Finances": "finances"
+  }
+}

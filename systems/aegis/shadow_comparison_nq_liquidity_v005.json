@@ -1,0 +1,51 @@
+{
+  "experiment_id": "ACF-EXP-NQ-LIQUIDITY-001",
+  "corpus_id": "ACF-NQ-CONT-MASSIVE-VOLROLL-1H-20250902-20260925-v005",
+  "holdout_touched": false,
+  "partition_policy": "60% train, 24-bar purge+embargo, 20% validation, 24-bar purge+embargo, final 20% untouched",
+  "strategies": {
+    "incumbent_liquidity_sweep": {
+      "definition": "20-bar prior high/low sweep with close back through extreme and body ratio >= 0.50",
+      "train": {
+        "trades": 117,
+        "hit_rate_raw": 0.4701,
+        "avg_raw_points": 1.1667,
+        "net_avg_cost_0.5": 0.6667,
+        "net_avg_cost_1.0": 0.1667,
+        "net_avg_cost_2.0": -0.8333
+      },
+      "validation": {
+        "trades": 43,
+        "hit_rate_raw": 0.3953,
+        "avg_raw_points": -8.564,
+        "net_avg_cost_0.5": -9.064,
+        "net_avg_cost_1.0": -9.564,
+        "net_avg_cost_2.0": -10.564
+      },
+      "decision": "QUARANTINE",
+      "reason": "negative validation expectancy; no evidence for promotion"
+    },
+    "challenger_vwap_volume_sweep": {
+      "definition": "same sweep concept plus session-VWAP side, candle direction, and volume >= 0.75x prior-20 average",
+      "train": {
+        "trades": 31,
+        "hit_rate_raw": 0.4839,
+        "avg_raw_points": 26.3629,
+        "net_avg_cost_0.5": 25.8629,
+        "net_avg_cost_1.0": 25.3629,
+        "net_avg_cost_2.0": 24.3629
+      },
+      "validation": {
+        "trades": 9,
+        "hit_rate_raw": 0.4444,
+        "avg_raw_points": -39.5,
+        "net_avg_cost_0.5": -40.0,
+        "net_avg_cost_1.0": -40.5,
+        "net_avg_cost_2.0": -41.5
+      },
+      "decision": "QUARANTINE_OVERFIT_RISK",
+      "reason": "large train/validation sign reversal and very small validation sample"
+    }
+  },
+  "conclusion": "Neither component is promoted. Challenger training performance was not robust to validation."
+}

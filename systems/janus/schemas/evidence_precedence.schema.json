@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Evidence Precedence Policy",
+  "type": "object",
+  "required": ["confidence", "rank"],
+  "properties": {
+    "confidence": {"type": "string", "minLength": 1},
+    "rank": {"type": "integer"}
+  },
+  "additionalProperties": false
+}

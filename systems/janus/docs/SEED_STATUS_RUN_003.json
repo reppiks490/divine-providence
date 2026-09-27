@@ -1,0 +1,12 @@
+{
+  "candidates": 4,
+  "components": 7,
+  "contradictions": 0,
+  "current_facts": 4,
+  "facts": 5,
+  "proof_bundles": 0,
+  "quarantined_temporal_conflicts": 1,
+  "snapshots": 0,
+  "state_digest": "cfec2ddf5765fd9393eaa24982948598adfa901e256bfd5ed38fff3a8aa9865d",
+  "temporal_conflicts": 1
+}

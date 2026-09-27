@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"JANUS Generalized Temporal Truth Delta",
+  "type":"object",
+  "required":["change_id","proof_chain","normalization_decision_ids","truth_deltas","conflict_deltas","blast_radius","certificate"],
+  "properties":{
+    "change_id":{"type":"string"},
+    "proof_chain":{"type":"array","items":{"type":"string"}},
+    "normalization_decision_ids":{"type":"array","items":{"type":"string"}},
+    "truth_deltas":{"type":"array","items":{"type":"object","required":["transition","valid_at","change","subject","predicate","fact_id","before_value","after_value"],"properties":{"change":{"enum":["added","removed","changed"]}}}},
+    "conflict_deltas":{"type":"array"},
+    "blast_radius":{"type":"array","items":{"type":"string"}},
+    "certificate":{"type":"object","required":["kind","digest","truth_delta_count","conflict_delta_count","deterministic","mutation_applied"]}
+  }
+}

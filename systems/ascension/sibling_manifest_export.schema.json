@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openai.invalid/ascension/sibling-manifest-conformance/v0.1",
+  "title": "ASCENSION Sibling Manifest Conformance Export v0.1",
+  "description": "Structural handoff envelope. Conformance does not establish authentication or Transfer.",
+  "type": "object",
+  "required": [
+    "export_version",
+    "sibling_id",
+    "manifest",
+    "artifact",
+    "authority"
+  ],
+  "properties": {
+    "export_version": {
+      "const": "0.1"
+    },
+    "sibling_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "manifest": {
+      "type": "object",
+      "required": [
+        "system_id",
+        "owned_domains",
+        "mutation_rights",
+        "interfaces",
+        "requires",
+        "forbids",
+        "shared_state",
+        "coordination_contracts"
+      ]
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "sha256",
+        "content_ref"
+      ],
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "content_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_b64": {
+          "type": "string"
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": [
+        "owner_system",
+        "attestation",
+        "verification_receipt"
+      ]
+    },
+    "adapter_v0_4_evidence": {
+      "type": "object",
+      "required": [
+        "prior_collision_report",
+        "trust_policy",
+        "attestations",
+        "transparency_evidence",
+        "backend_contract"
+      ]
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

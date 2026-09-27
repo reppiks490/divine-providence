@@ -1,0 +1,853 @@
+{
+  "schema_version": 1,
+  "branch": "codex/exotic-research-loop",
+  "source_of_truth": "github",
+  "last_processed_commit": "889835af15a3ba2811ca1b8ff32c0e34f5a44696",
+  "retrieval_policy": {
+    "mode": "delta_first",
+    "reread_unchanged": false,
+    "priority": [
+      "changed_files",
+      "failing_tests",
+      "unresolved_findings",
+      "affected_dependencies",
+      "validation_evidence"
+    ]
+  },
+  "boundaries": {
+    "execution_authorized": false,
+    "allowed_access": [
+      "public",
+      "licensed",
+      "user_authorized",
+      "connected"
+    ],
+    "forbidden": [
+      "sandbox_escape",
+      "credential_discovery",
+      "access_control_bypass",
+      "stealth_persistence",
+      "unauthorized_access",
+      "fabricated_observations"
+    ]
+  },
+  "active_build": {
+    "codename": "OMNIVISION",
+    "objective": "Build the Epistemic Control Plane v2 trust substrate so future cross-domain expansion is governed by versioned source capability, semantic admissibility, explicit provenance, invalidation, and complete research-search accounting.",
+    "phase": "v2_stage1_plan_review_gate",
+    "status": "awaiting_user_plan_review",
+    "spec": "docs/superpowers/specs/2026-09-24-omnivision-epistemic-control-plane-v2-design.md",
+    "stage0_audit": "docs/audits/2026-09-24-omnivision-v2-stage0-audit.md",
+    "stage1_plan": "docs/superpowers/plans/2026-09-24-omnivision-v2-stage1-trust-substrate.md"
+  },
+  "unresolved": [
+    "user review/approval of the Stage 1 trust-substrate plan is required before product-code implementation",
+    "implement SourceCapability contract and append-only historical SourceCapabilityRegistry with TDD",
+    "implement deterministic Semantic Relevance Firewall with TDD",
+    "implement explicit ProvenanceDAG with shared-upstream detection and recursive invalidation with TDD",
+    "implement immutable TrialRecord and append-only TrialLedger with hidden-search family accounting with TDD",
+    "run Python 3.10-3.13 OMNIVISION matrix plus full tests_engine and Stage 1 18-lane audit",
+    "only a verified GO_STAGE2_PLAN permits Stage 2 planning; no live external adapter may be wired in Stage 1"
+  ],
+  "evidence": [
+    {
+      "kind": "repo",
+      "fact": "Icarus-engine is a stub; implementation lives in reppiks490/Icarus",
+      "commit": "f9e71c5dc1ca7035745ed6d4fb5e0d001248f8ad"
+    },
+    {
+      "kind": "constraint",
+      "fact": "Existing owner-hard policy keeps execution_authorized false and forbids Pulse rewrite",
+      "path": "ASTRA_DO_NOT.md"
+    },
+    {
+      "kind": "capability",
+      "fact": "Existing advisory ledger already enforces source allowlists, timing, provenance, and immutable evidence",
+      "path": "icarus_engine/advisory.py"
+    },
+    {
+      "kind": "research_method",
+      "fact": "Deflated Sharpe Ratio explicitly addresses selection bias, backtest overfitting, and non-normality; v2 trial accounting must preserve the search process.",
+      "doi": "10.3905/jpm.2014.40.5.094"
+    },
+    {
+      "kind": "research_method",
+      "fact": "Adaptive conformal inference provides a principled basis for recalibrating uncertainty under distribution shift; v2 treats this as a design principle, not a mandatory implementation.",
+      "doi": "10.48550/arXiv.2106.00170"
+    },
+    {
+      "kind": "lineage_standard",
+      "fact": "OpenLineage v1.53.0 models Run, Job, Dataset identities and explicit/extensible lineage facets; v2 adopts compatible lineage concepts without requiring the dependency.",
+      "source": "OpenLineage official documentation"
+    },
+    {
+      "kind": "capability_probe",
+      "fact": "2026-09-24 FMP Treasury endpoint returned dated curves; capability timing must preserve date/maturity semantics separately from receipt time.",
+      "source": "FMP"
+    },
+    {
+      "kind": "capability_probe",
+      "fact": "Bybit BTCUSDT public spot endpoint returned market data with an explicit possible-delay/incompleteness disclaimer; public access does not imply evidentiary certainty.",
+      "source": "Bybit"
+    },
+    {
+      "kind": "capability_probe",
+      "fact": "StackerScan XAU/XAG response exposed both UTC asOf and market date, requiring distinct source-update and session-date semantics.",
+      "source": "StackerScan"
+    },
+    {
+      "kind": "capability_probe",
+      "fact": "Massive futures endpoint documentation distinguishes window_start from session_end_date and exposes bars/trades/snapshots as different products.",
+      "source": "Massive"
+    },
+    {
+      "kind": "capability_probe",
+      "fact": "Twelve Data reported authenticated state; authentication and entitlement are dynamic capability state.",
+      "source": "Twelve Data"
+    },
+    {
+      "kind": "capability_probe",
+      "fact": "Blockscout required session unlock, reported finite free-session budget, and announced a future API-key requirement, motivating versioned auth/quota/review-after metadata.",
+      "source": "Blockscout"
+    },
+    {
+      "kind": "capability_probe",
+      "fact": "DataBlue catalog exposes endpoint credit weights, supporting explicit acquisition-cost metadata before research-budget allocation.",
+      "source": "DataBlue"
+    },
+    {
+      "kind": "capability_probe",
+      "fact": "Scite returned monthly MCP quota exhaustion in this cycle; quota exhaustion is capability health state and must not be conflated with evidentiary quality.",
+      "source": "Scite"
+    }
+  ],
+  "tests": [
+    {
+      "scope": "OMNIVISION Stage 0 GitHub Actions matrix",
+      "status": "passed",
+      "commit": "511814e1d4f4a2527abaa3b6e3472a66df666281",
+      "run_id": 36071102061,
+      "evidence": [
+        "Python 3.10 compile + focused regressions + full tests_engine passed",
+        "Python 3.11 compile + focused regressions + full tests_engine + --durations=20 passed",
+        "Python 3.12 compile + focused regressions + full tests_engine passed",
+        "Python 3.13 compile + focused regressions + full tests_engine passed"
+      ]
+    },
+    {
+      "scope": "native repository tests workflow",
+      "status": "passed",
+      "commit": "511814e1d4f4a2527abaa3b6e3472a66df666281",
+      "run_id": 36071102460,
+      "evidence": [
+        "Linux engine job passed",
+        "Windows engine job passed"
+      ]
+    }
+  ],
+  "benchmarks": [
+    {
+      "kind": "pytest_durations",
+      "runtime": "Python 3.11 GitHub Actions",
+      "run_id": 36071102061,
+      "result": "passed",
+      "slowest": "tests_engine/test_futures.py::test_backtest_routes_end_to_end — 1.35s",
+      "omnivision_in_slowest_20": false
+    }
+  ],
+  "checkpoints": [
+    {
+      "commit": "1a3f6dad3c42e3c8615f91ce4034bb89d88536d1",
+      "summary": "Added research-only world-state graph with as-of filtering, explicit latent inference, contradiction detection, gap mapping, and unit tests.",
+      "next": "Integrate with advisory evidence schema and add source/domain adapter contracts; run tests in an execution environment."
+    },
+    {
+      "commit": "82e327582b44660049de527c220cf6f871840365",
+      "summary": "Committed user-approved OMNIVISION Federated Research Mesh written design spec and passed self-review for placeholders, required boundaries, and core sections.",
+      "plugins": [
+        {
+          "name": "superpowers/using-superpowers",
+          "contribution": "enforced skill-first process"
+        },
+        {
+          "name": "superpowers/brainstorming",
+          "contribution": "architectural design and approval gates"
+        },
+        {
+          "name": "astral-orchestrator",
+          "contribution": "kept primary ownership/routing discipline; no child launch needed at spec stage"
+        },
+        {
+          "name": "akinator/everything",
+          "contribution": "persisted architecture and knowledge delta in repository"
+        },
+        {
+          "name": "baton-pass",
+          "contribution": "maintained delta-first resumable state"
+        }
+      ],
+      "verification": {
+        "spec_self_review": "passed",
+        "placeholders": 0,
+        "ci": "not_applicable_to_document_only_cycle"
+      },
+      "next": "Await user review of written spec; after approval invoke Superpowers writing-plans before implementation."
+    },
+    {
+      "commit": "c15abf14baa1ea3808d93be5462c08e7d7209e55",
+      "summary": "Spec approved by user via 'continue'. Wrote and self-reviewed the OMNIVISION foundation implementation plan with 8 TDD tasks and removed all non-syntactic placeholders.",
+      "plan": "docs/superpowers/plans/2026-09-23-omnivision-foundation-implementation.md",
+      "plugins": [
+        {
+          "name": "superpowers/using-superpowers",
+          "contribution": "re-activated cycle process discipline"
+        },
+        {
+          "name": "superpowers/brainstorming",
+          "contribution": "confirmed architectural gate progression from approved spec"
+        },
+        {
+          "name": "superpowers/writing-plans",
+          "contribution": "produced detailed TDD implementation plan and self-review"
+        },
+        {
+          "name": "astral-orchestrator",
+          "contribution": "maintained Orbit routing discipline; no child launch required during planning"
+        },
+        {
+          "name": "akinator/everything",
+          "contribution": "kept design/plan/checkpoint knowledge in repository"
+        },
+        {
+          "name": "baton-pass",
+          "contribution": "preserved delta-only resumable state"
+        }
+      ],
+      "verification": {
+        "plan_self_review": "passed",
+        "task_count": 8,
+        "placeholder_scan": "passed",
+        "ci": "not_applicable_to_document_only_cycle"
+      },
+      "next": "User reviews plan and selects Subagent-driven or Native execution. Then activate plugins for the next cycle and implement task-by-task."
+    },
+    {
+      "summary": "User selected the higher-cost/higher-scrutiny execution path as the standing default.",
+      "plugins": [
+        {
+          "name": "superpowers/using-superpowers",
+          "contribution": "enforced skill-first execution policy"
+        },
+        {
+          "name": "astral-orchestrator",
+          "contribution": "preserved higher-scrutiny orchestration preference"
+        },
+        {
+          "name": "akinator/everything",
+          "contribution": "persisted execution-method decision in repository state"
+        },
+        {
+          "name": "baton-pass",
+          "contribution": "made the preference resumable across sessions"
+        }
+      ],
+      "next": "Execute the OMNIVISION foundation plan using subagent-driven development when the next implementation cycle starts."
+    },
+    {
+      "commit": "f8d8ce641b71e5f564b53c91e02ed50ca2a58b4e",
+      "summary": "Implemented OMNIVISION foundation: strict world-event contract, immutable AdvisoryLedger world_state support, ledger bridge, evidence-native world-state inference, falsifiable hypotheses, novelty screen, timestamp-safe placebo/walk-forward falsification, research-only candidate builder, and end-to-end integration tests.",
+      "review_findings_fixed": [
+        "contracts.py initially stored literal backslash-n escapes; rewritten as valid multiline Python",
+        "projected observations initially lost immutable AdvisoryLedger event_id; added evidence_id propagation",
+        "world-state latest selection initially collapsed multiple sources for the same entity/variable; changed to per-source state so disagreement remains inside latent inference"
+      ],
+      "verification": {
+        "branch_compare": "ahead of main by 30 commits, behind by 0 at review time",
+        "forbidden_execution_paths_changed": false,
+        "omnivision_execution_authorized_true_scan": false,
+        "omnivision_network_client_scan": false,
+        "omnivision_process_shell_scan": false,
+        "placeholder_scan": false,
+        "runtime_tests": "not run — no execution surface or associated GitHub Actions workflow",
+        "github_actions_runs_for_latest_commit": 0
+      },
+      "plugins": [
+        {
+          "name": "superpowers/using-superpowers",
+          "contribution": "re-activated skill-first discipline for the implementation cycle"
+        },
+        {
+          "name": "superpowers/subagent-driven-development",
+          "contribution": "set the required implement-review structure; harness lacked dispatch so the documented rigorous fallback was used"
+        },
+        {
+          "name": "superpowers/test-driven-development",
+          "contribution": "kept tests before implementation for each new foundation module"
+        },
+        {
+          "name": "superpowers/requesting-code-review",
+          "contribution": "drove task and whole-branch review checks"
+        },
+        {
+          "name": "superpowers/verification-before-completion",
+          "contribution": "prevented unexecuted tests from being reported as passed"
+        },
+        {
+          "name": "astral-orchestrator",
+          "contribution": "maintained Orbit-style bounded task routing discipline without falsely claiming unavailable workers"
+        },
+        {
+          "name": "akinator/everything",
+          "contribution": "persisted architecture, rulings, defects, fixes, and verification truth in GitHub"
+        },
+        {
+          "name": "baton-pass",
+          "contribution": "kept delta-only resumable state for the next cycle"
+        }
+      ],
+      "rulings": [
+        "Hypothesis lag/horizon remain 0 in the foundation schema when causal timing is not established; 0 means unspecified, not zero-delay evidence.",
+        "Ledger event IDs, not projected observation hashes, are the canonical evidence IDs carried into hypotheses and candidates.",
+        "Cross-source observations remain separate in latent inference; no source is silently selected as truth."
+      ],
+      "next": "Run runtime verification in an execution-capable surface. If green, begin the next architectural plan for authorized domain adapters, regime intelligence, and adaptive research-budget allocation."
+    },
+    {
+      "commit": "d863e277a1010821de30934d7eb4e950a6050b41",
+      "summary": "Wrote and self-reviewed the OMNIVISION Epistemic Control Plane v2 design after a multi-source capability and methodology evidence sweep. The design adds source-capability state, semantic relevance firewall, provenance DAG, search-aware trial ledger, confidence decomposition, abstention, staleness, negative knowledge, causal discipline, expected-information-gain budgeting, proof-carrying candidates, and recursive invalidation.",
+      "spec": "docs/superpowers/specs/2026-09-24-omnivision-epistemic-control-plane-v2-design.md",
+      "design_decisions": [
+        "No v2 product code may land before runtime verification and remediation of the existing foundation.",
+        "External source availability is versioned capability state, not a permanent assumption.",
+        "Search history and rejected trials are part of evidentiary burden.",
+        "Reachable but semantically irrelevant sources are rejected before normalization.",
+        "Vendor duplication does not count as independent evidence when providers relay the same upstream source.",
+        "Confidence is decomposed and abstention is first-class.",
+        "Invalidated evidence must propagate to downstream candidates via provenance lineage."
+      ],
+      "plugins": [
+        {
+          "name": "agent-reach",
+          "contribution": "used native web/search route for current public standards and research evidence"
+        },
+        {
+          "name": "enterprise-infra-orchestrator",
+          "contribution": "applied evidence-state, source-boundary, LLD and conflict/unknown discipline"
+        },
+        {
+          "name": "astral-orchestrator",
+          "contribution": "Orbit primary ownership/routing discipline; no child launch claimed"
+        },
+        {
+          "name": "akinator/everything",
+          "contribution": "claim-vs-code audit framing and durable knowledge delta/checkpoint"
+        },
+        {
+          "name": "superpowers/brainstorming",
+          "contribution": "architectural gate and written-spec stage"
+        },
+        {
+          "name": "orchestrator-lite-cloud",
+          "contribution": "bounded evidence brief, source scope and stopping boundary executed in Main because Work handoff was declined"
+        },
+        {
+          "name": "U.S. Gold Bureau Metal Spots",
+          "contribution": "provider-policy failure exposed need for explicit blocked-source health state"
+        },
+        {
+          "name": "StackerScan",
+          "contribution": "working metals feed validated a healthy read-only source profile"
+        },
+        {
+          "name": "The Fly Market Intelligence",
+          "contribution": "rate-limit then successful market brief informed retry/rate-limit capability states"
+        },
+        {
+          "name": "Marketing Swarm causal-attribution",
+          "contribution": "causal estimand/confounder/identification hierarchy incorporated into causal-claim gate"
+        },
+        {
+          "name": "Marketing Swarm decision-quality-gate",
+          "contribution": "evidence/causal/risk/reversibility gate concepts applied to promotion design"
+        },
+        {
+          "name": "Scite",
+          "contribution": "verified DSR and adaptive conformal research; later account quota exhaustion itself became source-health evidence"
+        },
+        {
+          "name": "Bybit",
+          "contribution": "public crypto source capability and venue/market-type metadata evidence"
+        },
+        {
+          "name": "FMP",
+          "contribution": "macro/rates point-in-time source capability evidence"
+        },
+        {
+          "name": "Cheat Database",
+          "contribution": "deliberate semantically irrelevant negative control for relevance firewall"
+        },
+        {
+          "name": "Massive",
+          "contribution": "futures reference/bars/quotes/trades endpoint separation informed adapter typing"
+        },
+        {
+          "name": "treg",
+          "contribution": "cost/reliability/input-compatibility source selection discipline"
+        },
+        {
+          "name": "Bigdata.com",
+          "contribution": "aggregated timestamped cross-asset product informed aggregator-vs-primary epistemic roles"
+        },
+        {
+          "name": "Twelve Data",
+          "contribution": "authenticated venue/session-aware quote capability evidence"
+        },
+        {
+          "name": "Zacks Financial Data",
+          "contribution": "attention/rank fields informed opinion/attention-vs-observation separation"
+        },
+        {
+          "name": "Blockscout Blockchain Data",
+          "contribution": "session/version/auth-change behavior informed capability expiry and review-after metadata"
+        },
+        {
+          "name": "DataBlue",
+          "contribution": "stable news API schema informed query provenance and news-adapter contract"
+        },
+        {
+          "name": "Stock Market Summary",
+          "contribution": "reinforced current/delayed/session/source-priority labeling"
+        }
+      ],
+      "verification": {
+        "spec_self_review": "passed",
+        "placeholder_scan": "passed",
+        "required_section_scan": "passed",
+        "forbidden_execution_state": "invariant remains false; the only literal execution_authorized=true appears in a negative invariant test requirement",
+        "runtime_tests": "not applicable to document-only cycle; existing foundation runtime verification remains an open hard gate"
+      },
+      "next": "User reviews the written v2 spec. After explicit approval, invoke Superpowers writing-plans. The implementation plan must begin with Stage 0 runtime verification/audit/remediation before any v2 feature code."
+    },
+    {
+      "commit": "8d0df07c92f6dc77af91fada5e712827ad42de55",
+      "summary": "Written v2 spec approved via user 'continue'. Created and self-reviewed the OMNIVISION v2 Stage 0 verification/audit/remediation plan. The plan deliberately blocks all Stage 1 feature work until runtime tests, temporal/provenance/statistical audits, execution-separation checks, the 16-lane audit matrix, and an independent whole-branch review produce a GO verdict.",
+      "plan": "docs/superpowers/plans/2026-09-24-omnivision-v2-stage0-verification-audit-remediation.md",
+      "audit_hypotheses": [
+        {
+          "id": "S0-TIME-001",
+          "status": "unverified_until_tested",
+          "hypothesis": "published evidence projected after ledger receipt may currently carry published_at rather than receipt-aware availability"
+        },
+        {
+          "id": "S0-STAT-001",
+          "status": "unverified_until_tested",
+          "hypothesis": "current walk_forward_correlation appears to use cumulative as-of folds rather than non-overlapping forward evaluation intervals"
+        }
+      ],
+      "plugins": [
+        {
+          "name": "superpowers/using-superpowers",
+          "contribution": "enforced skill-first plan-stage process"
+        },
+        {
+          "name": "superpowers/writing-plans",
+          "contribution": "decomposed the approved v2 architecture into an executable Stage 0-only TDD/audit plan"
+        },
+        {
+          "name": "astral-orchestrator",
+          "contribution": "preserved Orbit ownership/review discipline for later execution; no child launch claimed during planning"
+        },
+        {
+          "name": "akinator/everything",
+          "contribution": "added claim-vs-code audit framing, blast radius, assumptions, and knowledge delta by path"
+        },
+        {
+          "name": "baton-pass",
+          "contribution": "kept the plan/checkpoint delta-first and resumable from GitHub"
+        }
+      ],
+      "verification": {
+        "plan_self_review": "passed",
+        "task_count": 8,
+        "placeholder_scan": "passed",
+        "spec_coverage": "passed for Stage 0 scope",
+        "type_consistency": "passed",
+        "runtime_tests": "not run — planning cycle only"
+      },
+      "execution_method": {
+        "preserved_user_choice": "subagent-driven / highest-scrutiny when supported",
+        "fallback": "most rigorous native execution if independent workers are unavailable; capability limitation must be recorded"
+      },
+      "next": "User reviews the Stage 0 plan. After approval, begin a new cycle with Superpowers subagent-driven-development, TDD, systematic-debugging as needed, code review, and verification-before-completion. Do not implement Stage 1."
+    },
+    {
+      "commit": "211d34e2a91c02ac4ad43e2ea91f0a73ab6881b1",
+      "summary": "OMNIVISION v2 Stage 0 completed with GO. Test-first audit proved and repaired receipt-vs-publication leakage, subsecond availability truncation, cumulative walk-forward fold reuse, CI CLI ordering, and Windows console encoding. Added executable research/execution boundary tests and stronger contradiction/provenance proof. Final strict Python 3.10-3.13 matrix and native Linux/Windows workflow both passed; no blocking finding remains.",
+      "verdict": "GO",
+      "review_verdict": "SHIP_STAGE0_GO",
+      "reviewer_capability": "No independent child lifecycle tool exposed; approved fresh native fallback used and no child review claimed.",
+      "findings": [
+        {
+          "id": "S0-TIME-001",
+          "status": "FIXED_AND_PASS",
+          "fix_commit": "5f568f04f8d847fcdb923428cd6479d67a6cdf85"
+        },
+        {
+          "id": "S0-TIME-002",
+          "status": "FIXED_AND_PASS",
+          "fix_commit": "511814e1d4f4a2527abaa3b6e3472a66df666281"
+        },
+        {
+          "id": "S0-STAT-001",
+          "status": "FIXED_AND_PASS",
+          "fix_commit": "aa68dda8d134b7a1b634600647f508cb3cc4a472"
+        },
+        {
+          "id": "S0-TEST-001",
+          "status": "FIXED_AND_PASS",
+          "fix_commit": "9ab347a489997541f7a1e476dc10e826e818e1ab"
+        },
+        {
+          "id": "S0-TEST-002",
+          "status": "FIXED_AND_PASS",
+          "fix_commit": "e80c6f8df3ca686c20db54a95dfa6ff6b95efdf6"
+        }
+      ],
+      "runtime_verification": {
+        "omnivision_stage0_run": 36071102061,
+        "native_tests_run": 36071102460,
+        "python_versions": [
+          "3.10",
+          "3.11",
+          "3.12",
+          "3.13"
+        ],
+        "linux": "passed",
+        "windows": "passed",
+        "duration_pass": "passed; slowest 1.35s; no OMNIVISION test in slowest 20"
+      },
+      "plugins": [
+        {
+          "name": "capability-orchestrator",
+          "contribution": "selected the smallest effective plugin/tool set and prevented indiscriminate provider wiring before source-governance gates"
+        },
+        {
+          "name": "adaptive-codex-orchestrator",
+          "contribution": "kept bounded primary execution and high-scrutiny fallback routing"
+        },
+        {
+          "name": "superpowers/using-superpowers",
+          "contribution": "enforced skill-first execution"
+        },
+        {
+          "name": "superpowers/subagent-driven-development",
+          "contribution": "defined high-scrutiny implement/review workflow; harness lacked child lifecycle so documented native fallback was used"
+        },
+        {
+          "name": "superpowers/test-driven-development",
+          "contribution": "required RED proof before temporal/statistical/portability remediations"
+        },
+        {
+          "name": "superpowers/systematic-debugging",
+          "contribution": "isolated root causes from CI symptoms before remediation"
+        },
+        {
+          "name": "superpowers/requesting-code-review",
+          "contribution": "drove final whole-delta review gate"
+        },
+        {
+          "name": "superpowers/verification-before-completion",
+          "contribution": "required fresh CI evidence before GO"
+        },
+        {
+          "name": "astral-orchestrator",
+          "contribution": "preserved primary ownership and no-fabricated-worker discipline"
+        },
+        {
+          "name": "akinator/everything",
+          "contribution": "kept code/tests/audit/state knowledge synchronized"
+        },
+        {
+          "name": "baton-pass",
+          "contribution": "preserved delta-first resumability in GitHub"
+        },
+        {
+          "name": "infra-orchestrator",
+          "contribution": "applied evidence-first troubleshooting to native Linux/Windows CI defects"
+        }
+      ],
+      "execution_authorized": false,
+      "next": "Start a new plugin-activated planning cycle for Stage 1: Source Capability Registry + Provenance DAG + Search-Aware Trial Ledger. Do not wire external providers before that plan and gate."
+    },
+    {
+      "commit": "889835af15a3ba2811ca1b8ff32c0e34f5a44696",
+      "summary": "Independently rechecked the recorded Stage 0 audit against GitHub workflow job states, then wrote and self-reviewed the 40KB/9-task OMNIVISION v2 Stage 1 Trust Substrate plan. The plan expands future source capacity by strengthening the epistemic boundary first: historical source-capability replay, semantic admission, explicit provenance/common-upstream detection, recursive invalidation, immutable trial history, hidden-search accounting, CI, performance guards, and an 18-lane audit. It intentionally wires zero live provider adapters.",
+      "stage0_verification_recheck": {
+        "stage0_workflow_run": 36071102061,
+        "stage0_jobs": {
+          "python_3_10": "success",
+          "python_3_11": "success",
+          "python_3_12": "success",
+          "python_3_13": "success"
+        },
+        "native_workflow_run": 36071102460,
+        "native_jobs": {
+          "linux_engine": "success",
+          "windows_engine": "success"
+        },
+        "conclusion": "Stage 0 GO supported by directly inspected GitHub job states"
+      },
+      "plan": "docs/superpowers/plans/2026-09-24-omnivision-v2-stage1-trust-substrate.md",
+      "plan_verification": {
+        "self_review": "passed",
+        "task_count": 9,
+        "placeholder_scan": "passed",
+        "review_focus_coverage": "passed",
+        "type_consistency": "passed",
+        "runtime_tests": "not run — planning cycle; Stage 0 runtime evidence independently rechecked"
+      },
+      "plugins": [
+        {
+          "name": "capability-orchestrator",
+          "contribution": "selected the smallest effective mix of repository, market-capability, public-standards, and orchestration tools instead of force-using unrelated plugins"
+        },
+        {
+          "name": "adaptive-codex-orchestrator",
+          "contribution": "applied task-local orchestration gate; no worker/subagent lifecycle tool was exposed, so no child worker was claimed"
+        },
+        {
+          "name": "superpowers/using-superpowers",
+          "contribution": "enforced skill-first process"
+        },
+        {
+          "name": "superpowers/brainstorming",
+          "contribution": "confirmed this remains inside the already approved architectural spec and prevented premature Stage 1 implementation"
+        },
+        {
+          "name": "superpowers/writing-plans",
+          "contribution": "produced the detailed TDD Stage 1 trust-substrate implementation plan and review gate"
+        },
+        {
+          "name": "astral-orchestrator",
+          "contribution": "preserved primary-session ownership and bounded routing; no unavailable child route claimed"
+        },
+        {
+          "name": "akinator/everything",
+          "contribution": "synchronized provider evidence, plan, scope boundaries, and durable repository state"
+        },
+        {
+          "name": "baton-pass",
+          "contribution": "kept the cycle delta-first and resumable from GitHub"
+        },
+        {
+          "name": "agent-reach",
+          "contribution": "routed current public evidence checks for OpenLineage and statistical-research foundations"
+        },
+        {
+          "name": "orchestrator-lite-cloud",
+          "contribution": "applied bounded read-heavy evidence scope in the current session after Work handoff was declined"
+        },
+        {
+          "name": "infra-orchestrator",
+          "contribution": "kept CI/provider-state design evidence-aware and fail-closed without making unrelated infrastructure changes"
+        },
+        {
+          "name": "FMP",
+          "contribution": "current dated Treasury capability probe"
+        },
+        {
+          "name": "Bybit",
+          "contribution": "public crypto venue capability probe"
+        },
+        {
+          "name": "StackerScan",
+          "contribution": "timestamp/session metals capability probe"
+        },
+        {
+          "name": "Massive",
+          "contribution": "futures session/timestamp/product-type capability documentation probe"
+        },
+        {
+          "name": "Twelve Data",
+          "contribution": "authentication-state capability probe"
+        },
+        {
+          "name": "Blockscout",
+          "contribution": "session/quota/future-auth capability probe"
+        },
+        {
+          "name": "DataBlue",
+          "contribution": "metered endpoint/credit-weight capability probe"
+        },
+        {
+          "name": "Scite",
+          "contribution": "quota-exhaustion capability-state probe; no new literature result claimed because monthly limit was reached"
+        }
+      ],
+      "deliberately_not_invoked": [
+        {
+          "name": "Runway",
+          "reason": "media generation does not improve Stage 1 trust-substrate correctness"
+        },
+        {
+          "name": "Figma",
+          "reason": "design-file manipulation is unrelated to the approved backend trust-substrate plan"
+        },
+        {
+          "name": "Marketing Swarm",
+          "reason": "no marketing decision is part of Stage 1"
+        },
+        {
+          "name": "Cheat Database",
+          "reason": "already established as the negative-control source class; no repeat probe needed"
+        },
+        {
+          "name": "Zacks Financial Data",
+          "reason": "provider role was already characterized in the approved v2 spec; no new Stage 1 uncertainty required another live call"
+        },
+        {
+          "name": "Bigdata.com",
+          "reason": "aggregator role was already characterized in the approved v2 spec; no new Stage 1 uncertainty required another live call"
+        },
+        {
+          "name": "Trendata Market Intelligence",
+          "reason": "no callable Trendata capability was exposed in this harness for this cycle"
+        }
+      ],
+      "next": "User reviews the Stage 1 plan. After approval, execute it with TDD and the highest-scrutiny native fallback available; stop at GO_STAGE2_PLAN/NO_GO_STAGE1_REMEDIATION."
+    }
+  ],
+  "loop_policy": {
+    "plugin_activation": {
+      "required_each_cycle": true,
+      "minimum_stack": [
+        "superpowers/using-superpowers",
+        "superpowers/brainstorming_when_creative_or_architectural",
+        "astral-orchestrator",
+        "akinator/everything",
+        "baton-pass"
+      ],
+      "optional_when_useful": [
+        "superpowers/systematic-debugging",
+        "superpowers/test-driven-development",
+        "superpowers/requesting-code-review",
+        "superpowers/verification-before-completion",
+        "superpowers/dispatching-parallel-agents",
+        "orchestrator-lite-cloud",
+        "infra-orchestrator"
+      ],
+      "cycle_start_order": [
+        "activate_process_plugins",
+        "load_minimum_github_delta",
+        "select_current_unresolved_goal",
+        "execute_bounded_cycle",
+        "verify",
+        "checkpoint_to_github"
+      ],
+      "evidence_requirement": "record active plugin names and concrete contribution in each cycle checkpoint"
+    },
+    "execution_method": {
+      "default": "subagent-driven",
+      "user_preference": "always choose the higher-compute, higher-scrutiny path when multiple valid execution routes exist",
+      "review_policy": "fresh implementer/reviewer contexts per task when supported, plus whole-branch review before completion",
+      "fallback": "use the most rigorous available native path only when subagent-driven execution is unavailable"
+    }
+  },
+  "execution": {
+    "method_requested": "subagent-driven",
+    "method_used": "most-rigorous-native-fallback",
+    "reason": "this chat harness exposes no subagent/worker dispatch tool; no child-agent execution was claimed",
+    "plan": "docs/superpowers/plans/2026-09-23-omnivision-foundation-implementation.md",
+    "tasks": {
+      "1_contracts": "implemented_unverified",
+      "2_ledger_bridge": "implemented_unverified",
+      "3_hypotheses": "implemented_unverified",
+      "4_novelty": "implemented_unverified",
+      "5_falsification": "implemented_unverified",
+      "6_candidates": "implemented_unverified",
+      "7_integration_proof": "implemented_unverified",
+      "8_checkpoint": "complete"
+    }
+  },
+  "source_capability_evidence": {
+    "observed_date": "2026-09-24",
+    "purpose": "design evidence only; not trading signals",
+    "sources": [
+      {
+        "source": "StackerScan",
+        "state": "healthy",
+        "evidence": "timestamped XAU/XAG USD spot response returned"
+      },
+      {
+        "source": "U.S. Gold Bureau",
+        "state": "blocked_by_source_policy",
+        "evidence": "health and gold spot calls rejected by provider IP allowlist"
+      },
+      {
+        "source": "Bybit",
+        "state": "healthy",
+        "evidence": "public BTCUSDT spot response returned"
+      },
+      {
+        "source": "Twelve Data",
+        "state": "healthy_authenticated",
+        "evidence": "authentication confirmed and QQQ quote returned venue/session/timestamp metadata"
+      },
+      {
+        "source": "FMP",
+        "state": "healthy",
+        "evidence": "dated U.S. Treasury yield-curve observations returned"
+      },
+      {
+        "source": "Massive",
+        "state": "healthy_catalog",
+        "evidence": "futures contracts, OHLC, quotes, trades and snapshot endpoints discovered"
+      },
+      {
+        "source": "Bigdata.com",
+        "state": "healthy",
+        "evidence": "timestamped cross-asset market tearsheet returned with source attribution"
+      },
+      {
+        "source": "The Fly",
+        "state": "rate_limit_recovered",
+        "evidence": "first market brief call was rate-limited; later call succeeded"
+      },
+      {
+        "source": "Zacks",
+        "state": "healthy",
+        "evidence": "trending-attention and Zacks rank fields returned; classified as attention/opinion metadata rather than direct world-state observation"
+      },
+      {
+        "source": "DataBlue",
+        "state": "healthy_catalog",
+        "evidence": "stable Google News API schema returned"
+      },
+      {
+        "source": "Blockscout",
+        "state": "healthy_session_gated",
+        "evidence": "session unlock succeeded and Ethereum chain registry resolved; provider announced future PRO-key requirement"
+      },
+      {
+        "source": "Scite",
+        "state": "quota_exhausted_after_evidence",
+        "evidence": "method literature retrieved; subsequent search hit monthly MCP limit"
+      },
+      {
+        "source": "Cheat Database",
+        "state": "negative_control",
+        "evidence": "reachable unrelated dataset used to define semantic relevance rejection"
+      },
+      {
+        "source": "treg",
+        "state": "instruction_surface_only",
+        "evidence": "skill supplied cost/reliability/input-compatibility routing rules; no direct treg callable surfaced in this chat"
+      },
+      {
+        "source": "Stock Market Summary",
+        "state": "instruction_surface",
+        "evidence": "skill reinforced current-vs-delayed/session/source-priority controls"
+      }
+    ]
+  }
+}

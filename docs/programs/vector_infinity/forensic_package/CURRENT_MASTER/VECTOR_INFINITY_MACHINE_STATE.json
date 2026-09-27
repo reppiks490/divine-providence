@@ -1,0 +1,277 @@
+{
+  "system": "VECTOR \u221e",
+  "snapshot_date": "2026-09-24",
+  "authority_state": "shadow_advisory_offline_synthetic_only",
+  "current_truth_precedence": "Adversarial Router Lab baseline + later synthetic design findings; no current promotion",
+  "repository_implementation_verified": false,
+  "real_icarus_replay_completed": false,
+  "live_advisory_promoted": false,
+  "execution_authority": false,
+  "production_weights_changed": false,
+  "sibling_state_changed": false,
+  "artifact_hash_for_vector_implementation": null,
+  "experiments": [
+    {
+      "id": "EXP-001",
+      "name": "Contextual competence routing baseline",
+      "type": "Synthetic/offline",
+      "result": "Historical synthetic comparison reported ~64.6% for competence-aware routing vs ~58.7% for the champion/general baseline.",
+      "interpretation": "Supports contextual expert selection rather than globally fixed expert trust.",
+      "promotion_status": "NOT ELIGIBLE \u2014 synthetic only",
+      "notes": "Retrieved from prior VECTOR context; exact generator/seed not preserved in current accessible record."
+    },
+    {
+      "id": "EXP-002",
+      "name": "OOD-aware fail-open routing",
+      "type": "Synthetic/adversarial",
+      "result": "50,000 observations; 15% deliberate OOD contamination. Generalist 59.45%; naive specialist router 65.78%; OOD-aware fail-open router 66.36%; all deliberately injected OOD packets rejected in the reported construction.",
+      "interpretation": "OOD should reduce authority and trigger fallback rather than force a nearest-expert choice.",
+      "promotion_status": "BASELINE EVIDENCE ONLY",
+      "notes": "Architecture validation; not market-alpha evidence."
+    },
+    {
+      "id": "EXP-003",
+      "name": "False regime recurrence / deceptive similarity",
+      "type": "Synthetic/adversarial",
+      "result": "4,000-observation deceptive block. Generalist 56.70%; static router 46.35%; dynamic competence-veto router 56.23%; fallback on 96.3% of deceptive observations after shadow outcomes showed incompetence.",
+      "interpretation": "Dormant expert recall requires state similarity AND current competence confirmation.",
+      "promotion_status": "BASELINE EVIDENCE ONLY",
+      "notes": "Prevents superficial regime similarity from restoring authority."
+    },
+    {
+      "id": "EXP-004",
+      "name": "Expert monopolization / concentration audit",
+      "type": "Synthetic/adversarial",
+      "result": "Corrupted router 65.77%; arbitrary routing cap 64.57%; independent safety auditor 67.39%; healthy unbiased router 67.39%; auditor intervened on 18.6%.",
+      "interpretation": "Detect unjustified concentration rather than imposing crude equalization/load balancing.",
+      "promotion_status": "BASELINE EVIDENCE ONLY",
+      "notes": "Supports independent Router Safety Auditor."
+    },
+    {
+      "id": "EXP-005",
+      "name": "Checkpoint/resume determinism",
+      "type": "Synthetic/stateful safety",
+      "result": "Continuous run and process\u2192checkpoint\u2192stop\u2192restore\u2192continue produced exactly matching expert choices and final competence state in the reported test.",
+      "interpretation": "Checkpoint must include learner state, support counters, calibration state, drift state, and version IDs \u2014 not only model weights.",
+      "promotion_status": "BASELINE EVIDENCE ONLY",
+      "notes": "Real runtime persistence still unimplemented."
+    },
+    {
+      "id": "EXP-006",
+      "name": "Malformed/NaN fail-open injections",
+      "type": "Synthetic/safety",
+      "result": "Five malformed/NaN router packet injections all followed fallback behavior without contaminating competence state.",
+      "interpretation": "NaN/schema mismatch/expired TTL/missing context/unknown version/corrupt uncertainty should reject VECTOR contribution while sibling systems continue.",
+      "promotion_status": "BASELINE EVIDENCE ONLY",
+      "notes": "No live consumer adapter yet."
+    },
+    {
+      "id": "EXP-007",
+      "name": "Cross-horizon propagation classification",
+      "type": "Synthetic/chronological holdout",
+      "result": "60,000-step synthetic environment. Treat-every-1m-flip: precision 6.7%, recall 100%, F1 12.6%. \u22652-horizon disagreement: precision 12.4%, recall 76.3%, F1 21.4%. Hand-built hierarchy: precision 22.5%, recall 49.3%, F1 30.9%. Learned propagation classifier: precision 68.1%, recall 66.2%, F1 67.2%, AUROC ~0.964.",
+      "interpretation": "Lower-timeframe disagreement is better represented as a propagation problem than a voting problem.",
+      "promotion_status": "DESIGN EVIDENCE ONLY",
+      "notes": "Synthetic generator intentionally contained learnable transition structure."
+    },
+    {
+      "id": "EXP-008",
+      "name": "Cross-horizon adversarial distribution shift",
+      "type": "Synthetic/adversarial",
+      "result": "After increasing false reversals/noise, shortening genuine lead times, and weakening confirmation: F1 fell from ~0.689 to ~0.221; AUROC fell from ~0.959 to ~0.768.",
+      "interpretation": "Propagation models can become confidently obsolete; drift must decay propagation authority.",
+      "promotion_status": "DESIGN EVIDENCE ONLY",
+      "notes": "Motivated Propagation Drift Sentinel."
+    },
+    {
+      "id": "EXP-009",
+      "name": "Propagation drift sentinel",
+      "type": "Synthetic/drift",
+      "result": "MMD-style rolling monitor: 1/15 normal windows flagged, 27/27 deliberately shifted windows flagged; normal median distance 0.0023 vs shifted 0.0210.",
+      "interpretation": "Cross-horizon distribution change should trigger authority reduction and revalidation.",
+      "promotion_status": "DESIGN EVIDENCE ONLY",
+      "notes": "Threshold was synthetic-calibrated."
+    },
+    {
+      "id": "EXP-010",
+      "name": "Evidence-conservation duplicate attack",
+      "type": "Synthetic/adversarial",
+      "result": "120,000-observation environment with 8 visible observations generated by 3 latent causes. Naive aggregation: 72.34% accuracy, log loss 0.546, Brier 0.183, AUROC 0.796. Dependency-adjusted: 72.78%, 0.544, 0.182, 0.800. Adding 12 exact copies reduced naive accuracy to 68.50% and log loss to 0.592 while dependency-adjusted accuracy stayed ~72.78%; mean probability change ~0.000056.",
+      "interpretation": "Repeated representation of the same information must not manufacture conviction.",
+      "promotion_status": "DESIGN EVIDENCE ONLY",
+      "notes": "Supports Evidence Conservation Engine."
+    },
+    {
+      "id": "EXP-011",
+      "name": "Lineage novelty / 20-clone attack",
+      "type": "Synthetic/adversarial",
+      "result": "60,000 observations; 12 visible signals from 3 latent evidence families. Ordinary voting ~71.74%. After 20 copies of strongest visible signal: ~71.34%. Lineage-conserved aggregation remained ~71.74%. Adding a genuinely new fourth ~70%-reliable family raised conserved aggregation to ~75.36%.",
+      "interpretation": "Clone evidence should add near-zero novelty while genuinely independent useful evidence should be able to move belief.",
+      "promotion_status": "DESIGN EVIDENCE ONLY",
+      "notes": "Supports Dynamic Evidence Lineage Graph and Information Novelty Score."
+    },
+    {
+      "id": "EXP-012",
+      "name": "Hidden common-cause compression",
+      "type": "Synthetic/latent-factor",
+      "result": "80,000 observations; two latent drivers. Conventional logistic learner ~67.08% accuracy, 0.6036 log loss, 0.7343 AUROC. Common-factor compression + separate signal ~66.85%, 0.6053, 0.7317.",
+      "interpretation": "Cleaner latent-factor stories do not automatically improve prediction; use soft conservation that preserves idiosyncratic residual novelty.",
+      "promotion_status": "NEGATIVE/CONSTRAINT EVIDENCE",
+      "notes": "Prevents destructive deduplication."
+    },
+    {
+      "id": "EXP-013",
+      "name": "Dependency-graph staleness",
+      "type": "Synthetic/dynamic system",
+      "result": "30,000-observation, 4-node, 3-regime system. Correct regime-specific graph one-step errors: A ~1.010, B ~1.002, C ~1.011. Keeping stale A graph: B ~1.415, C ~1.113. Using wrong B graph in C: ~1.492.",
+      "interpretation": "A previously valid dependency graph can become actively harmful after structural transition.",
+      "promotion_status": "DESIGN EVIDENCE ONLY",
+      "notes": "Motivated Dependency Graph Drift Controller."
+    }
+  ],
+  "components": [
+    {
+      "name": "Adaptive Trend Intelligence Loop",
+      "purpose": "Top-level advisory intelligence fabric",
+      "status": "Designed/iterated",
+      "notes": "No execution authority; fail-open."
+    },
+    {
+      "name": "Trend Genome",
+      "purpose": "Structured trend state representation",
+      "status": "Designed",
+      "notes": "Direction, strength, persistence, maturity, acceleration, structure, participation, uncertainty, etc."
+    },
+    {
+      "name": "Mixture-of-Experts Fabric",
+      "purpose": "Population of complementary trend experts",
+      "status": "Designed",
+      "notes": "Shared primitives + specialized experts."
+    },
+    {
+      "name": "Expert Competence Tensor",
+      "purpose": "Context-conditioned expert reliability map",
+      "status": "Synthetic support",
+      "notes": "Includes uncertainty/support/calibration/drift/OOD/allowed_authority."
+    },
+    {
+      "name": "Router Safety Auditor",
+      "purpose": "Independent control plane for router choices",
+      "status": "Synthetic support",
+      "notes": "Should not share all features/objectives with router."
+    },
+    {
+      "name": "Trend Failure Atlas",
+      "purpose": "Memory of trend failure modes",
+      "status": "Designed",
+      "notes": "False breakouts, failed continuation, exhaustion, shocks, sweeps, etc."
+    },
+    {
+      "name": "Cross-Horizon Temporal Propagation Graph (CHTPG)",
+      "purpose": "Probabilistic horizon-to-horizon transition model",
+      "status": "Synthetic support",
+      "notes": "Temporal firewall prevents LTF overwrite of HTF state."
+    },
+    {
+      "name": "Propagation Drift Sentinel",
+      "purpose": "Detects obsolete propagation relationships",
+      "status": "Synthetic support",
+      "notes": "MMD-style synthetic validation."
+    },
+    {
+      "name": "Evidence Conservation Engine",
+      "purpose": "Dependency-adjusted confidence accounting",
+      "status": "Synthetic support",
+      "notes": "Redundant evidence receives near-zero marginal credit."
+    },
+    {
+      "name": "Dynamic Evidence Lineage Graph (DELG)",
+      "purpose": "Tracks evidence ancestry/provenance",
+      "status": "Synthetic support",
+      "notes": "Clone/derivative/correlated-novel/independent-novel."
+    },
+    {
+      "name": "Information Novelty Score",
+      "purpose": "Marginal information contribution concept",
+      "status": "Synthetic support",
+      "notes": "Condition on already-admitted evidence."
+    },
+    {
+      "name": "Latent Common-Cause Resolver (LCCR)",
+      "purpose": "Probabilistic hidden-driver grouping",
+      "status": "Synthetic constraint evidence",
+      "notes": "Soft conservation; preserve idiosyncratic residual."
+    },
+    {
+      "name": "Causal Confidence Firewall",
+      "purpose": "Separates predictive dependence from causal identification",
+      "status": "Designed",
+      "notes": "Allows causal_status=UNIDENTIFIED."
+    },
+    {
+      "name": "Dependency Graph Drift Controller (DGDC)",
+      "purpose": "Versions/quarantines/recalls dependency graphs",
+      "status": "Synthetic support",
+      "notes": "ACTIVE\u2192WATCH\u2192QUARANTINED\u2192RECALLED/CHALLENGER\u2192..."
+    },
+    {
+      "name": "TrendIntelligencePacket",
+      "purpose": "Versioned external interface",
+      "status": "Designed",
+      "notes": "Auditable confidence, provenance, graph/version/TTL/uncertainty."
+    },
+    {
+      "name": "Champion/Challenger Promotion Gate",
+      "purpose": "Prevents silent adaptive overwrite",
+      "status": "Designed",
+      "notes": "Domain-bounded promotion only after multi-axis validation."
+    },
+    {
+      "name": "Checkpoint/Resume Contract",
+      "purpose": "State persistence requirements",
+      "status": "Synthetic support",
+      "notes": "Must include more than model weights."
+    }
+  ],
+  "promotion_tests": [
+    "Chronological / walk-forward evaluation",
+    "Leakage and prefix-invariance checks",
+    "Calibration and reliability curves",
+    "Contextual competence and minimum support",
+    "Regime and tail robustness",
+    "OOD detection and abstention",
+    "Router entropy/concentration and independent-auditor checks",
+    "Shadow stability and rollback readiness",
+    "Redundancy injection / signal cloning / source removal",
+    "Transformation and delayed-duplicate attacks",
+    "Propagation-loop and common-shock attacks",
+    "Hidden-common-cause / partial-common-cause / residual-novelty tests",
+    "Dependency shift / edge reversal / leader-follower reversal",
+    "Asynchronous / scale-specific / tail-only graph shifts",
+    "Graph split / merge / false-recurrence / stale-graph replay",
+    "Checkpoint/resume determinism",
+    "Malformed/NaN/schema/TTL/version fail-open behavior",
+    "Real Icarus replay with costs/latency before any production-adjacent authority"
+  ],
+  "risks": [
+    "Meta-overfitting in the router/competence model.",
+    "Sparse competence cells creating false certainty.",
+    "Common-mode failure if the safety auditor is too similar to the primary router.",
+    "Shadow-label latency and delayed outcome attribution.",
+    "Regime aliasing and false recurrence.",
+    "Horizon leakage and developing higher-timeframe bar ambiguity.",
+    "Event double counting and recursive confidence inflation.",
+    "Dependency-model overfitting and stale-graph harm.",
+    "False compression of genuinely independent evidence.",
+    "Nonlinear, lagged, or hidden confounding.",
+    "Tail dependence instability and sparse tail samples.",
+    "Graph churn from over-sensitive change detection.",
+    "Causal language exceeding what observational evidence identifies.",
+    "Computational growth across asset \u00d7 horizon \u00d7 regime \u00d7 graph versions.",
+    "False confidence from cloned/transformed/propagated sources.",
+    "Authority leakage into sibling systems if interface contracts are weakened."
+  ],
+  "next_cycle": "Transition Arbitration & Hysteresis Lab",
+  "next_component": "Transition Arbitration Controller (TAC)",
+  "required_no_trusted_graph_state": true
+}

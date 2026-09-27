@@ -1,0 +1,1 @@
+{'valid_transitions': 2016, 'max_proof_nodes': 7, 'mutated_proofs_rejected': 1000}

@@ -1,0 +1,42 @@
+{
+  "change_id": "JANUS-SEED-ROUNDTRIP-001",
+  "claim": "The reference JANUS implementation can export compact authoritative current state and import it into a fresh twin with an identical state digest.",
+  "scope": [
+    "src/janus_infinity/core.py",
+    "src/janus_infinity/__main__.py",
+    "tests/test_janus.py"
+  ],
+  "precondition_snapshot": "reference-package-before-final-manifest",
+  "postcondition_snapshot": null,
+  "candidate_hash": null,
+  "evidence": [
+    {"kind": "unit_test", "name": "test_handoff_round_trip_reproduces_state_digest"},
+    {"kind": "unit_test", "name": "test_as_known_at_prevents_hindsight"},
+    {"kind": "unit_test", "name": "test_historical_supersession_is_not_false_contradiction"}
+  ],
+  "verification": [
+    {
+      "command": "PYTHONPATH=src python -m unittest discover -s tests -v",
+      "expected": "7 tests pass"
+    }
+  ],
+  "contract_deltas": [],
+  "causal_time_audit": {
+    "bitemporal_fact_fields": ["valid_from", "valid_to", "known_at"],
+    "hindsight_guard_tested": true
+  },
+  "authority_audit": {
+    "janus_authority": "project_twin_reconciliation_handoff",
+    "domain_authority_absorbed": false
+  },
+  "limitations": [
+    "Compact handoff imports authoritative current state, not the complete historical fact ledger.",
+    "Semantic AST/interface reconciliation is specified but not yet implemented in the reference seed.",
+    "No live Icarus repository integration is claimed by this package."
+  ],
+  "rollback": {
+    "method": "Delete the fresh imported twin; source handoff remains immutable.",
+    "destructive": false
+  },
+  "status": "proved"
+}

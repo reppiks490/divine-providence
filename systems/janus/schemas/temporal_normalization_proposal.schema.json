@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JANUS Temporal Normalization Proposal",
+  "type": "object",
+  "required": ["kind", "subject", "predicate", "close_fact_id", "successor_fact_id", "proposed_valid_to", "basis", "mutation_applied", "proof_required"],
+  "properties": {
+    "kind": {"const": "interval_closure_proposal"},
+    "subject": {"type": "string"},
+    "predicate": {"type": "string"},
+    "close_fact_id": {"type": "string"},
+    "successor_fact_id": {"type": "string"},
+    "proposed_valid_to": {"type": "string"},
+    "basis": {"type": "string"},
+    "mutation_applied": {"const": false},
+    "proof_required": {"const": true}
+  },
+  "additionalProperties": false
+}
