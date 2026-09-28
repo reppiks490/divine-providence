@@ -76,6 +76,7 @@ dp mcp                     # serve icarus-engine over stdio
 
 ## Further reading
 
+- [docs/research/PROOF_TO_OUTCOME_NETWORK.md](docs/research/PROOF_TO_OUTCOME_NETWORK.md) — research-only economic event evidence product and first CCTP proof-clock lane
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — dependency map, contracts, authority boundaries
 - [docs/REPAIRS.md](docs/REPAIRS.md) — every defect found and fixed during consolidation
 - [docs/REPO_HYGIENE.md](docs/REPO_HYGIENE.md) — what was excluded from Git and why, LFS guidance, secrets
