@@ -69,3 +69,18 @@ def test_contract_sentinel_rejects_empty_or_wrong_schema_baseline(tmp_path: Path
     assert not bad.verify()
     with pytest.raises(ValueError,match='hash/schema'):
         compare_contract_snapshots(bad,good)
+
+
+def test_contract_sentinel_rejects_noncanonical_boundary_identity(tmp_path:Path):
+    import dataclasses
+    import pytest
+    p=tmp_path/'c.py';p.write_text('X=1\n')
+    with pytest.raises(ValueError,match='trimmed'):
+        ContractDriftSnapshot.capture({(' AION ','contracts'):p})
+    good=ContractDriftSnapshot.capture({('AION','contracts'):p})
+    assert good.verify()
+    bad=dataclasses.replace(good,snapshot_hash='z'*64)
+    assert not bad.verify()
+    row=dataclasses.replace(good.files[0],path='')
+    forged=dataclasses.replace(good,files=(row,))
+    assert not forged.verify()
