@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import re
+import hashlib
+import json
 from collections import Counter
 from datetime import datetime
 from typing import Any, Iterable, Mapping
@@ -80,7 +82,9 @@ def _attestation_evidence_valid(row: Mapping[str, Any]) -> tuple[bool, list[str]
     ):
         errors.append("evidence_source_required")
     evidence_hash = _norm(row.get("evidence_sha256")).lower()
-    if evidence_hash and not _SHA256_RE.fullmatch(evidence_hash):
+    if not evidence_hash:
+        errors.append("evidence_sha256_required")
+    elif not _SHA256_RE.fullmatch(evidence_hash):
         errors.append("evidence_sha256_invalid")
     return not errors, errors
 
@@ -297,7 +301,7 @@ def build_representation_attestation_status(
         })
         status_counts[status] += 1
 
-    return {
+    body = {
         "schema": SCHEMA,
         "input_schema_expected": INPUT_SCHEMA,
         "input_schema_observed": input_schema or None,
@@ -307,9 +311,65 @@ def build_representation_attestation_status(
         "status_counts": dict(sorted(status_counts.items())),
         "resolved_stream_ids": sorted(resolved_ids),
         "streams": statuses,
-        "resolution_rule": "exact stream identity + reviewed evidence source + all causal representation dimensions",
+        "resolution_rule": "exact stream identity + reviewed evidence source/digest + all causal representation dimensions",
         "general_documentation_alone_can_resolve_p0": False,
         "copy_or_sibling_attestation_inheritance_allowed": False,
         "statistical_promotion_performed": False,
         "production_authorized": False,
     }
+    body["status_hash"] = hashlib.sha256(
+        json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    return body
+
+
+def verify_representation_attestation_status(payload: Mapping[str, Any] | None) -> bool:
+    if not isinstance(payload,Mapping) or payload.get("schema") != SCHEMA:
+        return False
+    supplied=_norm(payload.get("status_hash")).lower()
+    if not _SHA256_RE.fullmatch(supplied):
+        return False
+    body=dict(payload);body.pop("status_hash",None)
+    try:
+        expected=hashlib.sha256(
+            json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+        ).hexdigest()
+    except (TypeError,ValueError):
+        return False
+    if supplied != expected or body.get("production_authorized") is not False:
+        return False
+    streams=body.get("streams")
+    if not isinstance(streams,list):
+        return False
+    ids=[]
+    resolved=[]
+    counts=Counter()
+    for row in streams:
+        if not isinstance(row,Mapping):
+            return False
+        sid=_norm(row.get("stream_id"))
+        status=_norm(row.get("status"))
+        if not sid or not status:
+            return False
+        ids.append(sid);counts[status]+=1
+        if status=="RESOLVED_BY_EXACT_STREAM_ATTESTATION":
+            resolved.append(sid)
+            if row.get("production_authorized") is not False:
+                return False
+            if row.get("identity_errors") or row.get("evidence_errors") or row.get("missing_dimensions"):
+                return False
+            if int(row.get("valid_attestation_count") or 0) < 1:
+                return False
+    if len(set(ids)) != len(ids):
+        return False
+    return (
+        type(body.get("p0_stream_count")) is int
+        and body["p0_stream_count"]==len(streams)
+        and type(body.get("resolved_by_attestation_count")) is int
+        and body["resolved_by_attestation_count"]==len(resolved)
+        and type(body.get("remaining_p0_count")) is int
+        and body["remaining_p0_count"]==len(streams)-len(resolved)
+        and sorted(body.get("resolved_stream_ids") or [])==sorted(resolved)
+        and body.get("status_counts")==dict(sorted(counts.items()))
+        and body.get("statistical_promotion_performed") is False
+    )
