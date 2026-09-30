@@ -103,3 +103,45 @@ def test_current_missingness_cannot_bypass_component_cap():
     assert np.isnan(row['value'])
     assert row['confidence']==0.0
     assert row['w:A']==0.0 and row['w:B']==0.0
+
+
+def test_synthetic_definition_rejects_invalid_configuration():
+    import pytest
+    with pytest.raises(ValueError,match='components'):
+        SyntheticTickerDefinition('X',())
+    with pytest.raises(ValueError,match='unique'):
+        SyntheticTickerDefinition('X',('A','A'))
+    with pytest.raises(ValueError,match='unknown method'):
+        SyntheticTickerDefinition('X',('A',),method='magic')
+    with pytest.raises(ValueError,match='window'):
+        SyntheticTickerDefinition('X',('A',),window=2,min_periods=3)
+    with pytest.raises(ValueError,match='rebalance_every'):
+        SyntheticTickerDefinition('X',('A',),rebalance_every=0)
+    with pytest.raises(ValueError,match='clip_z'):
+        SyntheticTickerDefinition('X',('A',),clip_z=float('nan'))
+    with pytest.raises(ValueError,match='infeasible'):
+        SyntheticTickerDefinition('X',('A','B'),max_component_weight=.4)
+
+
+def test_synthetic_log_level_inputs_fail_closed_on_nonpositive_or_infinite_values():
+    import pytest
+    eng=AdaptiveTickerEngine()
+    d=SyntheticTickerDefinition(
+        'NEXUS:STRICT',('A','B'),method='equal',
+        window=10,min_periods=3,rebalance_every=1,
+    )
+    x=_frame(20)
+    x.loc[5,'A']=0.0
+    with pytest.raises(ValueError,match='strictly positive'):
+        eng.build(x,d)
+    y=_frame(20)
+    y.loc[5,'A']=float('inf')
+    with pytest.raises(ValueError,match='infinite'):
+        eng.build(y,d)
+
+
+def test_synthetic_missing_component_column_is_rejected():
+    import pytest
+    d=SyntheticTickerDefinition('X',('A','B'),window=10,min_periods=3)
+    with pytest.raises(ValueError,match='missing synthetic components'):
+        AdaptiveTickerEngine().build(pd.DataFrame({'A':[1.,2.,3.]}),d)
