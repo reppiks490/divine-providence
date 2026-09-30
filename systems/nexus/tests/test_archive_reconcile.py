@@ -60,3 +60,18 @@ def test_documented_candidate_archive_is_regular_candles_not_profile_family(tmp_
     assert claim['construction']=='time_bar'
     assert 'market_profile_fields' in claim['schema_tags']
     assert claim['authoritative'] is False
+
+
+def test_zip_and_plain_catalog_agree_on_invalid_geometry_usability(tmp_path:Path):
+    text='time,open,high,low,close\n100,1,2,0,1\n110,2,1,3,2\n'
+    plain=tmp_path/'plain'; plain.mkdir()
+    (plain/'CME_NQ1!, 1.csv').write_text(text)
+    z=tmp_path/'batch.zip'
+    with zipfile.ZipFile(z,'w') as f:
+        f.writestr('CME_NQ1!, 1.csv',text)
+    pm=CorpusCatalog(plain).build()[0]
+    zm=next(m for m in ZipCorpusCatalog(tmp_path).build() if m.identity.source_path.startswith('batch.zip!'))
+    assert pm.metadata['usable_ohlc_rows']==1
+    assert zm.metadata['usable_ohlc_rows']==1
+    assert pm.metadata['inconsistent_ohlc_rows']==1
+    assert zm.metadata['inconsistent_ohlc_rows']==1
