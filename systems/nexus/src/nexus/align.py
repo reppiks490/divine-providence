@@ -10,11 +10,11 @@ class CausalAligner:
     allowed only when source_sequence is unique. Driver rows remain intact.
     """
     def __init__(self, max_age_ns:int|None=None, allow_exact_matches:bool=True):
-        if max_age_ns is not None and int(max_age_ns) < 0:
-            raise ValueError("max_age_ns must be non-negative or None")
+        if max_age_ns is not None and (type(max_age_ns) is not int or max_age_ns < 0):
+            raise ValueError("max_age_ns must be a non-negative integer or None")
         if type(allow_exact_matches) is not bool:
             raise TypeError("allow_exact_matches must be bool")
-        self.max_age_ns=None if max_age_ns is None else int(max_age_ns)
+        self.max_age_ns=max_age_ns
         self.allow_exact_matches=allow_exact_matches
 
     @staticmethod
@@ -33,6 +33,12 @@ class CausalAligner:
             raise AlignmentError(f"{name}: nonfinite timestamps")
         if not seq.map(lambda x: pd.notna(x) and float(x)==float(x) and abs(float(x))!=float('inf')).all():
             raise AlignmentError(f"{name}: nonfinite source_sequence")
+        if (times<0).any():
+            raise AlignmentError(f"{name}: negative timestamps")
+        if ((times % 1)!=0).any():
+            raise AlignmentError(f"{name}: noninteger timestamps")
+        if ((seq % 1)!=0).any():
+            raise AlignmentError(f"{name}: noninteger source_sequence")
         if (times.diff().dropna()<0).any():
             raise AlignmentError(f"{name}: backward timestamps")
         if (seq<0).any():
