@@ -52,3 +52,15 @@ def test_topology_rejects_invalid_lag_and_step_configuration():
         t.lead_lag_stability(r,step=0)
     with pytest.raises(ValueError,match='step'):
         t.edge_survival(r,step=0)
+
+
+def test_reconciliation_rejects_invalid_logical_hash_and_declared_counts():
+    import pytest
+    bad=_m('bad.csv','a'*64,'not-a-hash')
+    with pytest.raises(ValueError,match='logical_sha256'):
+        reconcile_catalogs([bad],[])
+    good=_m('good.csv','a'*64,'1'*64)
+    with pytest.raises(ValueError,match='declared_usable_entries'):
+        compare_declared_checkpoint(good if False else [good],declared_usable_entries=1.5,declared_rows=1)
+    with pytest.raises(ValueError,match='declared_rows'):
+        compare_declared_checkpoint([good],declared_usable_entries=1,declared_rows=-1)
