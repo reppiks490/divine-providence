@@ -23,3 +23,22 @@ def test_reconcile_compares_content_not_filenames(tmp_path:Path):
     (a/'X, 1.csv').write_text(text);(b/'RENAMED, 1.csv').write_text(text)
     r=reconcile('a',CorpusCatalog(a).build(),'b',CorpusCatalog(b).build())
     assert r.common_byte_hashes==1 and r.left_only_byte_hashes==0 and r.right_only_byte_hashes==0
+
+
+def test_zip_catalog_preserves_representation_and_sampling_claims(tmp_path:Path):
+    z=tmp_path/'multi-chart.zip'
+    text='time,open,high,low,close\n100,1,2,0,1\n110,2,3,1,2\n'
+    with zipfile.ZipFile(z,'w') as f:
+        f.writestr('Renko/CME_MINI_DL_NQ1!, 10R.csv',text)
+        f.writestr('Tick/CME_MINI_DL_NQ1!, 1000T.csv',text.replace('110','111'))
+    ms=[m for m in ZipCorpusCatalog(tmp_path).build() if 'appledouble' not in m.quality_flags]
+    by_claim={m.identity.filename_claim:m for m in ms}
+    renko=by_claim['10R']
+    tick=by_claim['1000T']
+    assert renko.metadata['representation_claim']['family']=='renko'
+    assert renko.metadata['representation_claim']['sampling_domain']=='event_or_profile'
+    assert renko.metadata['representation_hypothesis']['kind']=='event_bar_claim_candidate'
+    assert tick.metadata['representation_claim']['family']=='tick_bars'
+    assert tick.metadata['representation_claim']['sampling_domain']=='event'
+    assert tick.metadata['representation_hypothesis']['kind']=='event_bar_claim_candidate'
+    assert renko.metadata['representation_claim']['authoritative'] is False
