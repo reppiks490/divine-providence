@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+import hashlib
+import json
 from typing import Any, Mapping
 
 from .filename import timeframe_claim_to_ns
@@ -41,7 +43,7 @@ def build_representation_review_triage(review_queue: Mapping[str, Any]) -> dict[
     This is an orchestration artifact only. A shared filename/cadence pattern is not
     authoritative evidence of representation type or timestamp semantics.
     """
-    if "queue_hash" in review_queue and not verify_representation_review_queue_payload(dict(review_queue)):
+    if not verify_representation_review_queue_payload(dict(review_queue)):
         raise ValueError("invalid or tampered representation review queue")
     rows = [r for r in review_queue.get("candidates", []) if isinstance(r, Mapping)]
     p0 = [r for r in rows if str(r.get("priority")) == "P0"]
@@ -85,7 +87,7 @@ def build_representation_review_triage(review_queue: Mapping[str, Any]) -> dict[
         })
 
     cluster_rows.sort(key=lambda x: (-int(x["stream_count"]), x["triage_class"], x["venue"], x["filename_claim"], int(x["observed_cadence_ns"] or 0)))
-    return {
+    body = {
         "schema": SCHEMA,
         "p0_count": len(p0),
         "p2_count": sum(str(r.get("priority")) == "P2" for r in rows),
@@ -98,3 +100,72 @@ def build_representation_review_triage(review_queue: Mapping[str, Any]) -> dict[
         "auto_resolved_count": 0,
         "production_authorized": False,
     }
+    body["triage_hash"]=hashlib.sha256(
+        json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    return body
+
+
+def verify_representation_review_triage(payload: Mapping[str, Any] | None) -> bool:
+    if not isinstance(payload,Mapping) or payload.get("schema") != SCHEMA:
+        return False
+    supplied=payload.get("triage_hash")
+    if not isinstance(supplied,str) or len(supplied)!=64:
+        return False
+    try:
+        int(supplied,16)
+    except ValueError:
+        return False
+    body=dict(payload);body.pop("triage_hash",None)
+    try:
+        expected=hashlib.sha256(
+            json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+        ).hexdigest()
+    except (TypeError,ValueError):
+        return False
+    if supplied!=expected:
+        return False
+    if (
+        body.get("authoritative_resolution_required") is not True
+        or body.get("auto_resolved_count") != 0
+        or body.get("production_authorized") is not False
+    ):
+        return False
+    clusters=body.get("clusters")
+    if not isinstance(clusters,list) or body.get("cluster_count") != len(clusters):
+        return False
+    counts=Counter();stream_total=0;stream_ids=[]
+    for row in clusters:
+        if not isinstance(row,Mapping):
+            return False
+        cls=str(row.get("triage_class") or "")
+        venue=str(row.get("venue") or "")
+        claim=row.get("filename_claim")
+        cadence=row.get("observed_cadence_ns")
+        ids=row.get("stream_ids")
+        symbols=row.get("symbols")
+        count=row.get("stream_count")
+        if (
+            not cls or not venue or not isinstance(ids,list) or not ids
+            or not isinstance(symbols,list) or not symbols
+            or type(count) is not int or count < 1 or count != len(ids)
+            or len(set(ids)) != len(ids)
+            or row.get("authoritative_resolution_required") is not True
+            or row.get("auto_resolved") is not False
+        ):
+            return False
+        if cadence is not None and (type(cadence) is not int or cadence <= 0):
+            return False
+        if claim is not None and not isinstance(claim,str):
+            return False
+        counts[cls]+=count
+        stream_total+=count
+        stream_ids.extend(str(x) for x in ids)
+    if len(set(stream_ids)) != len(stream_ids):
+        return False
+    return (
+        body.get("p0_count") == stream_total
+        and body.get("triage_class_counts") == dict(sorted(counts.items()))
+        and type(body.get("p2_count")) is int
+        and body["p2_count"] >= 0
+    )
