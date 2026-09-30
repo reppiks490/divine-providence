@@ -47,3 +47,15 @@ def test_explicit_duplicate_position_must_be_exact_integer():
         resolve_columns(h,explicit_positions={'close':4.9})
     with pytest.raises(TypeError,match='explicit_positions'):
         resolve_columns(h,explicit_positions=[('close',4)])
+
+
+def test_resolve_columns_rejects_normalized_semantic_key_collisions():
+    h=profile_header(['time','open','high','low','close'])
+    with pytest.raises(ValueError,match='duplicate explicit semantic'):
+        resolve_columns(h,explicit_positions={'Close':4,' close ':4})
+    with pytest.raises(ValueError,match='must be unique'):
+        resolve_columns(h,required=('time','open'),optional=(' Open ',))
+    resolved=resolve_columns(
+        h,required=(' Time ',' OPEN ','HIGH','LOW','CLOSE'),optional=()
+    )
+    assert resolved=={'time':0,'open':1,'high':2,'low':3,'close':4}
