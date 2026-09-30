@@ -249,9 +249,12 @@ class FactorEnsembleEngine:
         valid_vals=vals.where(conf>0)
         denom=conf.where(valid_vals.notna(),0.0).sum(axis=1).replace(0,np.nan)
         out["value"]=(valid_vals*conf).sum(axis=1,min_count=1)/denom
-        out["confidence"]=conf.mean(axis=1).clip(0,1)
-        out["method_disagreement"]=vals.std(axis=1,ddof=0)
-        out["method_range"]=vals.max(axis=1)-vals.min(axis=1)
+        active=(valid_vals.notna() & (conf>0))
+        active_count=active.sum(axis=1)
+        out["confidence"]=conf.where(active).fillna(0.0).mean(axis=1).clip(0,1)
+        out["active_method_count"]=active_count.astype(int)
+        out["method_disagreement"]=vals.where(active).std(axis=1,ddof=0).where(active_count>=2)
+        out["method_range"]=(vals.where(active).max(axis=1)-vals.where(active).min(axis=1)).where(active_count>=2)
         for m in definition.methods:
             out[f"value:{m}"]=vals[m]; out[f"confidence:{m}"]=conf[m]
         # Weight-turnover and weight-direction stability from each method.
