@@ -82,3 +82,11 @@ def test_npy_store_rejects_duplicate_ordering_keys(tmp_path:Path):
     b=BarEvent('s',10,0,1,2,.5,1.5,None,'p2',available_ns=10)
     with pytest.raises(ValueError,match='ordering keys'):
         NpyColumnarBarStore(tmp_path/'dups').write([a,b])
+
+
+def test_npy_store_rejects_out_of_order_input_instead_of_sorting(tmp_path:Path):
+    import pytest
+    late=BarEvent('s',20,1,1,2,.5,1.5,None,'p',available_ns=20)
+    early=BarEvent('s',10,0,1,2,.5,1.5,None,'p',available_ns=10)
+    with pytest.raises(ValueError,match='ordering keys'):
+        NpyColumnarBarStore(tmp_path/'out-of-order').write([late,early])
