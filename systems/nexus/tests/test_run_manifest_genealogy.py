@@ -28,7 +28,7 @@ def test_run_manifest_exports_aion_context_shapes_without_production_authority()
     _,_,_,m=_built()
     s=m.aion_source_spec(); o=m.aion_observation(ingested_ns=25)
     assert s['capabilities']==['context'] and s['source_sha256']==m.manifest_hash
-    assert o['kind']=='context' and o['event_ns']==20 and o['available_ns']==20 and o['ingested_ns']==25
+    assert o['kind']=='context' and o['event_ns']==20 and o['available_ns']==25 and o['ingested_ns']==25
     assert o['payload']['production_authorized'] is False
 
 
@@ -42,3 +42,43 @@ def test_genealogy_nodes_are_deeply_immutable_shapes():
         pass
     else:
         raise AssertionError('genealogy node must be frozen')
+
+
+def test_genealogy_rejects_dangling_dependency():
+    import pytest
+    r=FactorRegistry()
+    r.register(FactorSpec('meta','1',('missing',),'ensemble',dependencies=(('missing','1'),)))
+    with pytest.raises(ValueError,match='missing factor dependencies'):
+        FactorGenealogySnapshot.create(r)
+
+
+def test_registry_cycle_failure_is_atomic():
+    import pytest
+    r=FactorRegistry()
+    r.register(FactorSpec('a','1',('B',),'equal',dependencies=(('b','1'),)))
+    with pytest.raises(ValueError,match='cycle'):
+        r.register(FactorSpec('b','1',('A',),'equal',dependencies=(('a','1'),)))
+    assert ('b','1') in r.missing_dependencies()
+    # Failed registration did not leave b installed.
+    try:
+        r.get('b','1')
+    except KeyError:
+        pass
+    else:
+        raise AssertionError('cycle failure must roll back registry mutation')
+
+
+def test_genealogy_and_run_reject_tampered_derivation():
+    import dataclasses
+    import pytest
+    r,d,g,m=_built()
+    bad=dataclasses.replace(d,derivation_hash='0'*64)
+    with pytest.raises(ValueError,match='invalid derivation'):
+        FactorGenealogySnapshot.create(r,[bad])
+    with pytest.raises(ValueError,match='invalid derivation'):
+        ResearchRunManifest.create(
+            run_id='bad',decision_start_ns=10,decision_end_ns=20,
+            corpus_manifest_hash='c'*64,reviewed_registry_hash='r'*64,
+            genealogy=g,code_version='abc',input_artifacts={},output_artifacts={},
+            derivations=[bad],
+        )
