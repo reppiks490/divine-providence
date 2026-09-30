@@ -100,3 +100,19 @@ def test_clock_rule_rejects_fractional_timing_configuration():
         )
     with pytest.raises(ClockPolicyError,match='reviewed'):
         RepresentationClockRule('x','close',reviewed=1)
+
+
+def test_clock_lattice_rejects_pre_event_availability():
+    import pytest
+    m=manifest()
+    lat=MultiResolutionClockLattice()
+    lat.register(
+        m,"time:close",
+        rule=RepresentationClockRule("time:close","close",reviewed=True),
+    )
+    bad=BarEvent(
+        m.identity.stream_id,100,0,1,2,0,1.5,None,"x",
+        available_ns=99,
+    )
+    with pytest.raises(ClockPolicyError,match="precedes event time"):
+        lat.native_boundaries([bad])
