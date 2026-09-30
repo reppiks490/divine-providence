@@ -75,3 +75,12 @@ def test_integrity_rejects_malformed_manifest_counters():
     b=assess_manifest(negative)
     assert not b.admitted
     assert "invalid_integrity_metadata" in b.blockers
+
+
+def test_clock_lattice_rejects_negative_source_timestamp():
+    import pytest
+    m=manifest()
+    lat=MultiResolutionClockLattice()
+    lat.register(m,'time:1m',rule=RepresentationClockRule('time:1m','close',reviewed=True))
+    with pytest.raises(ClockPolicyError,match='source_timestamp_ns'):
+        lat.visible_ns(m.identity.stream_id,-1)
