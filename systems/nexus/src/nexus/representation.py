@@ -150,9 +150,18 @@ def infer_representation_claim(manifest) -> RepresentationClaim:
     sample = sampling_claim_metadata(
         manifest.identity.filename_claim or manifest.metadata.get("raw_filename_claim")
     )
-    source = str(manifest.metadata.get("archive_member") or manifest.identity.source_path)
-    if "!" in source:
-        source = source.split("!", 1)[1]
+    archive_member = manifest.metadata.get("archive_member")
+    if archive_member:
+        source = str(archive_member)
+    else:
+        source = str(manifest.identity.source_path)
+        # ZIP-native source paths are encoded as "<archive>.zip!<member>".
+        # Never split on a bare "!" because futures symbols legitimately end in "!",
+        # for example NQ1! and ES1!.
+        marker = ".zip!"
+        if marker in source.lower():
+            pos = source.lower().index(marker)
+            source = source[pos + len(marker):]
     norm = re.sub(r"[^a-z0-9]+", " ", source.lower()).strip()
 
     family = "unknown"
