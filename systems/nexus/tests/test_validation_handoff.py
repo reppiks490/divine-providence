@@ -312,3 +312,52 @@ def test_handoff_artifact_is_tamper_evident():
         json.dumps(rehashed,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
     ).hexdigest()
     assert not verify_daedalus_validation_handoff(rehashed)
+
+
+def test_handoff_rejects_unknown_scope_and_rehashed_route_forgery():
+    m=_manifest()
+    base={
+        "candidate_id":"p","family":"return_persistence",
+        "priority":"P1","score":1.0,"scope":[m.identity.stream_id],
+        "rationale":"x","required_next_test":"y",
+    }
+    unknown=dict(base);unknown["scope"]=["missing-stream"]
+    with pytest.raises(ValueError,match="unknown stream_id"):
+        build_daedalus_validation_handoff(
+            [m],[unknown],admitted_ids={m.identity.stream_id},
+            corpus_manifest_hash="c"*64,source_iteration=1,loop_code_version="test",
+        )
+
+    out=build_daedalus_validation_handoff(
+        [m],[base],admitted_ids={m.identity.stream_id},
+        corpus_manifest_hash="c"*64,source_iteration=1,loop_code_version="test",
+    )
+    forged=dict(out); forged.pop("handoff_hash")
+    forged["candidates"]=[dict(forged["candidates"][0])]
+    forged["candidates"][0]["route"]=dict(forged["candidates"][0]["route"])
+    forged["candidates"][0]["route"]["route"]="BLOCKING_DEPENDENCY"
+    forged["route_counts"]={"BLOCKING_DEPENDENCY":1}
+    forged["handoff_hash"]=hashlib.sha256(
+        json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_daedalus_validation_handoff(forged)
+
+
+def test_handoff_verifier_rejects_rehashed_source_evidence_scope_escape():
+    m=_manifest()
+    candidate={
+        "candidate_id":"p","family":"return_persistence",
+        "priority":"P1","score":1.0,"scope":[m.identity.stream_id],
+        "rationale":"x","required_next_test":"y",
+    }
+    out=build_daedalus_validation_handoff(
+        [m],[candidate],admitted_ids={m.identity.stream_id},
+        corpus_manifest_hash="c"*64,source_iteration=1,loop_code_version="test",
+    )
+    forged=json.loads(json.dumps(out))
+    forged.pop("handoff_hash")
+    forged["candidates"][0]["source_evidence"][0]["stream_id"]="other"
+    forged["handoff_hash"]=hashlib.sha256(
+        json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_daedalus_validation_handoff(forged)
