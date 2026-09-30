@@ -164,7 +164,9 @@ class CorpusCatalog:
                 "inconsistent_ohlc_rows":inconsistent_ohlc_rows,
             },
         )
-        from .representation import infer_representation_hypothesis
+        from .representation import infer_representation_claim, infer_representation_hypothesis
+        rep=infer_representation_claim(manifest)
+        manifest.metadata["representation_claim"]=rep.to_dict()
         hyp=infer_representation_hypothesis(manifest)
         manifest.metadata["representation_hypothesis"]={"kind":hyp.kind,"confidence":hyp.confidence,"reasons":list(hyp.reasons),"authoritative":False}
         return manifest
