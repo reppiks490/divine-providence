@@ -128,3 +128,15 @@ def test_stream_identity_requires_real_sha_and_canonicalizes_case():
         StreamIdentity('csv','CME','NQ','1','csv_export','x.csv','not-a-hash')
     with pytest.raises(ValueError,match='source_id'):
         StreamIdentity('','CME','NQ','1','csv_export','x.csv','a'*64)
+
+
+def test_stream_manifest_rejects_invalid_structural_fields():
+    ident=StreamIdentity('csv','CME','NQ','1','csv_export','x.csv','a'*64)
+    with pytest.raises(ValueError,match='row_count'):
+        StreamManifest(ident,-1,[],None,None,None,0.0,0,0,0)
+    with pytest.raises(ValueError,match='cadence_confidence'):
+        StreamManifest(ident,1,['time'],1,1,None,float('nan'),0,0,0)
+    with pytest.raises(ValueError,match='observed_cadence_ns'):
+        StreamManifest(ident,1,['time'],1,1,0,1.0,0,0,0)
+    with pytest.raises(ValueError,match='cannot exceed row_count'):
+        StreamManifest(ident,1,['time'],1,1,1,1.0,2,0,0)
