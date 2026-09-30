@@ -36,9 +36,24 @@ def test_zip_catalog_preserves_representation_and_sampling_claims(tmp_path:Path)
     renko=by_claim['10R']
     tick=by_claim['1000T']
     assert renko.metadata['representation_claim']['family']=='renko'
-    assert renko.metadata['representation_claim']['sampling_domain']=='event_or_profile'
-    assert renko.metadata['representation_hypothesis']['kind']=='event_bar_claim_candidate'
-    assert tick.metadata['representation_claim']['family']=='tick_bars'
+    assert renko.metadata['representation_claim']['sampling_domain']=='event'
+    assert renko.metadata['representation_claim']['construction']=='range'
+    assert renko.metadata['representation_hypothesis']['kind']=='event_representation_candidate'
+    assert tick.metadata['representation_claim']['family']=='unknown'
     assert tick.metadata['representation_claim']['sampling_domain']=='event'
+    assert tick.metadata['representation_claim']['construction']=='tick'
     assert tick.metadata['representation_hypothesis']['kind']=='event_bar_claim_candidate'
     assert renko.metadata['representation_claim']['authoritative'] is False
+
+
+def test_documented_candidate_archive_is_regular_candles_not_profile_family(tmp_path:Path):
+    z=tmp_path/'Csv first 60.zip'
+    text='time,open,high,low,close,MP POC,MP VAH,MP VAL\n100,1,2,0,1,1,2,0\n110,2,3,1,2,2,3,1\n'
+    with zipfile.ZipFile(z,'w') as f:
+        f.writestr('Csv first 60/BATS_AAPL, 1.csv',text)
+    m=next(m for m in ZipCorpusCatalog(tmp_path).build() if m.row_count)
+    claim=m.metadata['representation_claim']
+    assert claim['family']=='regular_candles'
+    assert claim['construction']=='time_bar'
+    assert 'market_profile_fields' in claim['schema_tags']
+    assert claim['authoritative'] is False
