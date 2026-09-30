@@ -53,6 +53,7 @@ def test_documented_regular_archive_proves_view_and_standard_geometry():
         "representation_family": "regular_candles",
         "price_geometry": "standard_ohlc",
         "symbol": "NQ1!",
+        "venue": "CME",
         "observed_cadence_ns": str(20 * 60 * 1_000_000_000),
         "construction": "time_bar",
         "native_setting": "20",
