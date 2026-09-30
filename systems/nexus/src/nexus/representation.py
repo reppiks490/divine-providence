@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 from enum import Enum
 from .contracts import QualityFlag
 from .ingest import BarClockPolicy
@@ -110,6 +111,120 @@ def robust_representation_consensus(symbol: str, event_ns: int, returns: dict[st
     return RepresentationConsensus(symbol,int(event_ns),consensus,disagreement,agreement,len(clean),{k:float(w) for k,w in zip(clean,weights)})
 
 
+
+@dataclass(frozen=True, slots=True)
+class RepresentationClaim:
+    """Non-authoritative chart/sampling identity inferred from explicit source clues."""
+
+    family: str
+    sampling_domain: str
+    construction: str
+    setting: str | None
+    schema_tags: tuple[str, ...]
+    confidence: float
+    reasons: tuple[str, ...]
+    authoritative: bool = False
+
+    def to_dict(self) -> dict:
+        return {
+            "family": self.family,
+            "sampling_domain": self.sampling_domain,
+            "construction": self.construction,
+            "setting": self.setting,
+            "schema_tags": list(self.schema_tags),
+            "confidence": self.confidence,
+            "reasons": list(self.reasons),
+            "authoritative": False,
+        }
+
+
+def infer_representation_claim(manifest) -> RepresentationClaim:
+    """Infer a conservative representation claim without inventing chart semantics.
+
+    Explicit member/path labels may identify HA/Renko/profile families. Filename
+    suffixes identify time/tick/range sampling. Indicator/profile headers are
+    recorded as schema tags only and never silently promoted to chart identity.
+    """
+    from .filename import sampling_claim_metadata
+
+    sample = sampling_claim_metadata(
+        manifest.identity.filename_claim or manifest.metadata.get("raw_filename_claim")
+    )
+    source = str(manifest.metadata.get("archive_member") or manifest.identity.source_path)
+    if "!" in source:
+        source = source.split("!", 1)[1]
+    norm = re.sub(r"[^a-z0-9]+", " ", source.lower()).strip()
+
+    family = "unknown"
+    reasons: list[str] = []
+    confidence = 0.0
+
+    explicit = (
+        (r"\bheikin\s+ashi\b", "heikin_ashi", "explicit_heikin_ashi_label"),
+        (r"\brenko\b", "renko", "explicit_renko_label"),
+        (r"\btime\s+price\s+opportunity\b|\btpo\b", "tpo", "explicit_tpo_label"),
+        (r"\bvolume\s+footprint\b|\bfootprint\b", "volume_footprint", "explicit_footprint_label"),
+        (r"\bsession\s+volume\s+profile\b|\bsvp\b", "session_volume_profile", "explicit_session_volume_profile_label"),
+        (r"\bvolume\s+profile\b", "volume_profile", "explicit_volume_profile_label"),
+        (r"\bcandlestick\b|\bcandles\b|\bregular\s+candles\b", "regular_candles", "explicit_regular_candle_label"),
+    )
+    for pattern, value, reason in explicit:
+        if re.search(pattern, norm):
+            family = value
+            confidence = 0.98
+            reasons.append(reason)
+            break
+
+    if family == "unknown":
+        if sample["construction"] == "tick":
+            family = "tick_bars"
+            confidence = 0.95
+            reasons.append("explicit_tick_suffix")
+        elif sample["construction"] == "range":
+            family = "range_bars"
+            confidence = 0.95
+            reasons.append("explicit_range_suffix")
+        elif sample["sampling_domain"] == "time":
+            family = "time_bars_unspecified"
+            confidence = 0.55
+            reasons.append("time_interval_claim_without_chart_type")
+
+    headers = {str(x).strip().lower() for x in manifest.columns}
+    tags: list[str] = []
+    if {"mp poc", "mp vah", "mp val"} & headers or {"poc", "vah", "val"}.issubset(headers):
+        tags.append("market_profile_fields")
+    if any(
+        ("delta" in h) or ("bid" in h and "ask" in h) or h in {"bid volume", "ask volume"}
+        for h in headers
+    ):
+        tags.append("footprint_fields")
+    if any("volume profile" in h for h in headers):
+        tags.append("volume_profile_fields")
+    if tags:
+        reasons.append("profile_or_orderflow_fields_present")
+        confidence = max(confidence, 0.65)
+
+    sampling_domain = str(sample["sampling_domain"] or "unknown")
+    construction = str(sample["construction"] or "unknown")
+    if family in {"renko", "tpo", "volume_footprint", "session_volume_profile", "volume_profile"}:
+        sampling_domain = "event_or_profile"
+        if construction == "unknown":
+            construction = family
+    elif family == "heikin_ashi" and sampling_domain == "time":
+        construction = "derived_time_bar"
+
+    return RepresentationClaim(
+        family=family,
+        sampling_domain=sampling_domain,
+        construction=construction,
+        setting=sample["setting"],
+        schema_tags=tuple(sorted(set(tags))),
+        confidence=float(confidence),
+        reasons=tuple(reasons or ["insufficient_explicit_representation_evidence"]),
+        authoritative=False,
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class RepresentationHypothesis:
     kind:str
@@ -123,9 +238,21 @@ def infer_representation_hypothesis(manifest)->RepresentationHypothesis:
     This deliberately returns a *hypothesis*. Only a reviewed registry may convert it
     into timestamp/availability authority.
     """
-    from .filename import timeframe_claim_to_ns
+    from .filename import timeframe_claim_to_ns, sampling_claim_metadata
     reasons=[];claim_ns=timeframe_claim_to_ns(manifest.identity.filename_claim);obs=manifest.observed_cadence_ns
     conf=float(manifest.cadence_confidence or 0.0)
+    sampling=sampling_claim_metadata(manifest.identity.filename_claim or manifest.metadata.get("raw_filename_claim"))
+    rep_claim=manifest.metadata.get("representation_claim", {})
+    if sampling.get("construction") in {"tick", "range"}:
+        reasons.append(f"explicit_{sampling['construction']}_sampling_claim")
+        return RepresentationHypothesis("event_bar_claim_candidate",0.95,tuple(reasons),False)
+    if rep_claim.get("family") in {"renko","tpo","volume_footprint","session_volume_profile","volume_profile"}:
+        reasons.append(f"explicit_{rep_claim.get('family')}_representation_claim")
+        return RepresentationHypothesis("event_or_profile_candidate",max(0.8,float(rep_claim.get("confidence",0.0))),tuple(reasons),False)
+    if rep_claim.get("family") == "heikin_ashi":
+        reasons.append("explicit_heikin_ashi_representation_claim")
+        if claim_ns and obs and abs(obs/claim_ns-1.0)<=0.05 and conf>=0.5:
+            return RepresentationHypothesis("derived_time_candidate",min(0.99,0.6+0.4*conf),tuple(reasons),False)
     if 'fractional_time' in manifest.quality_flags:reasons.append('fractional_timestamps')
     if 'repeated_time' in manifest.quality_flags:reasons.append('repeated_timestamps')
     if claim_ns and obs:
