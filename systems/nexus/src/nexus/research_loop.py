@@ -28,7 +28,7 @@ from .corpus_recovery import HistoricalCorpusAnchor, build_corpus_recovery_plan
 
 
 LOOP_SCHEMA = "nexus.advanced-csv-research-loop.v1"
-LOOP_CODE_VERSION = "1.16.0"
+LOOP_CODE_VERSION = "1.17.0"
 
 CORE_ARTIFACT_NAMES = (
     "corpus_manifest.json",
@@ -589,6 +589,9 @@ class AdvancedCSVResearchLoop:
         sampling_domains = Counter(
             str(m.metadata.get("representation_claim", {}).get("sampling_domain", "unknown")) for m in usable
         )
+        sampling_constructions = Counter(
+            str(m.metadata.get("representation_claim", {}).get("construction", "unknown")) for m in usable
+        )
         prior_hash = previous.get("corpus_manifest_hash") if previous else None
         delta = {
             "previous_iteration": previous.get("iteration") if previous else None,
@@ -619,6 +622,7 @@ class AdvancedCSVResearchLoop:
             "filename_claim_counts": dict(sorted(claims.items())),
             "representation_family_counts": dict(sorted(representation_families.items())),
             "sampling_domain_counts": dict(sorted(sampling_domains.items())),
+            "sampling_construction_counts": dict(sorted(sampling_constructions.items())),
             "prior_anchor": asdict(self.config.prior_anchor),
             "owner_expected_min_entries": self.config.min_owner_expected_entries,
             "owner_expected_physical_entries": self.config.owner_expected_physical_entries,
@@ -651,7 +655,8 @@ class AdvancedCSVResearchLoop:
                 "decisions": [asdict(x) for x in universe_decisions],
                 "representation_aggregation_contract": {
                     "raw_representations_are_independent_votes": False,
-                    "within_symbol_rule": "Fuse streams within representation family, then fuse families to one symbol plane, then perform cross-asset weighting.",
+                    "within_symbol_rule": "Fuse streams within sampling construction inside chart family; fuse constructions to chart family; fuse chart families to one symbol plane; then perform cross-asset weighting.",
+                    "orthogonal_identity_axes": ["chart_family", "sampling_domain", "sampling_construction"],
                     "required_engine": "HierarchicalFactorEngine.build_from_manifests",
                     "native_clock_rule": "Tick, range, Renko and other event/profile constructions retain native completion boundaries; never coerce them to fixed minute/hour cadence.",
                     "missing_values_rule": "Missing representation observations remain missing; never replace them with zero merely to create agreement.",
