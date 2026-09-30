@@ -204,17 +204,48 @@ def verify_representation_review_queue_payload(payload) -> bool:
     if not isinstance(candidates,list) or not isinstance(family_counts,list):
         return False
     ids=[]
+    recomputed_families:dict[str,int]={}
     for row in candidates:
         if not isinstance(row,dict):
             return False
         sid=str(row.get("stream_id") or "")
-        if not sid or row.get("authoritative") is not False:
+        symbol=str(row.get("symbol") or "")
+        hypothesis=str(row.get("hypothesis_kind") or "")
+        source_path=row.get("source_path")
+        if (
+            not sid or not symbol or not hypothesis
+            or not isinstance(source_path,str)
+            or row.get("authoritative") is not False
+        ):
             return False
         if row.get("priority") not in {"P0","P1","P2"}:
             return False
         if type(row.get("priority_score")) is not int or row["priority_score"] < 0:
             return False
+        if type(row.get("row_count")) is not int or row["row_count"] <= 0:
+            return False
+        for name in ("cadence_confidence","hypothesis_confidence"):
+            value=row.get(name)
+            if not isinstance(value,(int,float)) or isinstance(value,bool):
+                return False
+            if not math.isfinite(float(value)) or not 0.0 <= float(value) <= 1.0:
+                return False
+        cadence=row.get("observed_cadence_ns")
+        if cadence is not None and (type(cadence) is not int or cadence <= 0):
+            return False
+        fixed=row.get("fixed_interval_candidate_ns")
+        if fixed is not None and (type(fixed) is not int or fixed <= 0):
+            return False
+        if row.get("timestamp_semantics_candidate") != "UNKNOWN_REQUIRES_REVIEW":
+            return False
+        for name in ("quality_flags","review_reasons","evidence_required"):
+            values=row.get(name)
+            if not isinstance(values,(list,tuple)) or any(not isinstance(x,str) or not x for x in values):
+                return False
         ids.append(sid)
+        family=f"{row.get('venue') or '?'}:{symbol}:{hypothesis}:{row.get('filename_claim') or '?'}"
+        recomputed_families[family]=recomputed_families.get(family,0)+1
     if len(set(ids))!=len(ids):
         return False
-    return True
+    expected_families=[[k,v] for k,v in sorted(recomputed_families.items())]
+    return family_counts==expected_families
