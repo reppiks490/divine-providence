@@ -249,6 +249,14 @@ jobs:
             --output-json _o14_audit/O14_REPRESENTATION_PROBE.json \
             --output-csv _o14_audit/O14_REPRESENTATION_PROBE.csv
 
+      - name: Build O14 execution coverage matrix
+        run: |
+          PYTHONPATH=systems/nexus/src python systems/nexus/scripts/o14_coverage_matrix.py \
+            --manifest _o14_audit/O14_STREAM_MANIFEST.csv \
+            --probe _o14_audit/O14_REPRESENTATION_PROBE.csv \
+            --output-json _o14_audit/O14_COVERAGE_MATRIX.json \
+            --output-csv _o14_audit/O14_COVERAGE_MATRIX.csv
+
       - name: Upload O14 audit artifacts
         if: always()
         uses: actions/upload-artifact@v4
