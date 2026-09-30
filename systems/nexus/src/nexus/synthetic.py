@@ -89,12 +89,24 @@ class AdaptiveTickerEngine:
                 last_w=self._weights(hist,definition.method,definition.max_component_weight)
             hist=returns.iloc[max(1,i-definition.window):i]
             mu=hist.mean(); sd=hist.std(ddof=0).replace(0,np.nan)
-            z=((returns.iloc[i]-mu)/sd).clip(-definition.clip_z,definition.clip_z).fillna(0.0)
-            value=float(np.dot(z.to_numpy(),last_w))
-            coverage=float(np.isfinite(returns.iloc[i].to_numpy()).mean())
-            concentration=float(np.max(np.abs(last_w)))
-            confidence=max(0.0,min(1.0,coverage*(1.0-concentration/2.0)))
-            out.append((x.index[i],value,confidence,*last_w))
+            z=((returns.iloc[i]-mu)/sd).clip(-definition.clip_z,definition.clip_z)
+            z_arr=z.to_numpy(dtype=float)
+            finite=np.isfinite(z_arr) & np.isfinite(last_w)
+            coverage=float(finite.mean())
+            effective_w=np.zeros_like(last_w,dtype=float)
+            if finite.any():
+                effective_w[finite]=last_w[finite]
+                den=float(np.sum(np.abs(effective_w)))
+                if den>1e-15:
+                    effective_w/=den
+                    value=float(np.dot(z_arr[finite],effective_w[finite]))
+                    concentration=float(np.max(np.abs(effective_w)))
+                    confidence=max(0.0,min(1.0,coverage*(1.0-concentration/2.0)))
+                else:
+                    value=float("nan"); confidence=0.0
+            else:
+                value=float("nan"); confidence=0.0
+            out.append((x.index[i],value,confidence,*effective_w))
         cols=["time","value","confidence",*[f"w:{c}" for c in definition.components]]
         return pd.DataFrame(out,columns=cols).set_index("time") if out else pd.DataFrame(columns=cols[1:])
 
@@ -126,10 +138,11 @@ class FactorEnsembleEngine:
         vals=pd.DataFrame({m:f.loc[idx,"value"] for m,f in parts.items()},index=idx)
         conf=pd.DataFrame({m:f.loc[idx,"confidence"] for m,f in parts.items()},index=idx)
         out=pd.DataFrame(index=idx)
-        # Confidence-weighted consensus; if all confidences vanish use arithmetic mean.
-        denom=conf.sum(axis=1).replace(0,np.nan)
-        out["value"]=(vals*conf).sum(axis=1)/denom
-        out["value"]=out["value"].fillna(vals.mean(axis=1))
+        # Confidence-weighted consensus. If all methods have zero confidence,
+        # keep the factor value missing rather than fabricating a neutral/mean value.
+        valid_vals=vals.where(conf>0)
+        denom=conf.where(valid_vals.notna(),0.0).sum(axis=1).replace(0,np.nan)
+        out["value"]=(valid_vals*conf).sum(axis=1,min_count=1)/denom
         out["confidence"]=conf.mean(axis=1).clip(0,1)
         out["method_disagreement"]=vals.std(axis=1,ddof=0)
         out["method_range"]=vals.max(axis=1)-vals.min(axis=1)
