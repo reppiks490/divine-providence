@@ -17,15 +17,19 @@ def aion_source_spec(m:StreamManifest)->dict:
     }
 
 def aion_bar_observation(event:BarEvent,*,available_ns:int|None=None,ingested_ns:int|None=None,availability_basis:str|None=None)->dict:
-    """Build AION Observation-compatible bar payload only when availability is explicit.
-
-    Historical CSV bar timestamps are not automatically proof of first-known availability.
-    """
+    """Build AION-compatible bar payload only from explicit causal timing evidence."""
     avail=available_ns if available_ns is not None else event.available_ns
     if avail is None:
         raise ValueError('AION export requires explicit verified/attested/observed availability_ns')
-    ing=ingested_ns if ingested_ns is not None else avail
-    basis=availability_basis or 'observed_receipt'
+    basis=availability_basis or event.availability_basis
+    allowed={'observed_receipt','attested_release','verified_bar_close','reviewed_event_completion','synthetic'}
+    if basis not in allowed:
+        raise ValueError(f'AION export requires an attested availability basis; got {basis!r}')
+    if int(avail)<int(event.event_ns):
+        raise ValueError('AION export rejects available_ns before event_ns')
+    if event.source_timestamp_ns is not None and int(event.event_ns)<int(event.source_timestamp_ns):
+        raise ValueError('AION export rejects event_ns before source_timestamp_ns')
+    ing=max(int(avail),int(ingested_ns if ingested_ns is not None else avail))
     return {
         'source_id':event.stream_id,
         'source_event_id':f'{event.stream_id}:{event.source_sequence}:{event.revision}',
