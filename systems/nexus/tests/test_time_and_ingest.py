@@ -112,3 +112,22 @@ def test_load_ohlcv_nonconservative_mode_keeps_availability_unknown(tmp_path:Pat
     import pytest
     with pytest.raises(TypeError,match="conservative_availability"):
         load_ohlcv(p,conservative_availability=1)
+
+
+def test_causal_bar_features_reject_impossible_geometry_and_do_not_synthesize_partial_tr():
+    import pandas as pd
+    import pytest
+    bad=pd.DataFrame({
+        'open':[1.,2.],'high':[2.,1.],'low':[.5,1.5],'close':[1.5,2.5]
+    })
+    with pytest.raises(ValueError,match='inconsistent bar geometry'):
+        causal_bar_features(bad)
+
+    partial=pd.DataFrame({
+        'open':[1.,2.,3.],
+        'high':[2.,float('nan'),4.],
+        'low':[.5,1.5,2.5],
+        'close':[1.5,2.5,3.5],
+    })
+    out=causal_bar_features(partial)
+    assert pd.isna(out.loc[1,'atr_pct_14'])
