@@ -103,7 +103,7 @@ class SourceHealthTracker:
     never converted into a harmless zero-lag sample.
     """
 
-    _ATTESTED_BASES = {"verified_bar_close", "attested_release"}
+    _ATTESTED_BASES = {"verified_bar_close", "reviewed_event_completion", "attested_release"}
 
     def __init__(self, stream_id: str, *, lag_window: int = 512) -> None:
         if not stream_id:
