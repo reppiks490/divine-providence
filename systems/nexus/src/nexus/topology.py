@@ -15,16 +15,32 @@ class TopologySnapshot:
 
 class RollingTopology:
     def __init__(self, window: int=120, min_periods: int=40, edge_floor: float=0.25, partial_edge_floor:float=0.15, ridge:float=1e-3):
-        if int(min_periods)<2 or int(window)<int(min_periods):
+        if type(window) is not int or type(min_periods) is not int:
+            raise TypeError("window and min_periods must be integers")
+        if min_periods<2 or window<min_periods:
             raise ValueError("require window >= min_periods >= 2")
-        if not (0.0 <= float(edge_floor) <= 1.0):
-            raise ValueError("edge_floor must be in [0,1]")
-        if not (0.0 <= float(partial_edge_floor) <= 1.0):
-            raise ValueError("partial_edge_floor must be in [0,1]")
-        if float(ridge)<=0.0:
-            raise ValueError("ridge must be positive")
-        self.window=int(window); self.min_periods=int(min_periods); self.edge_floor=float(edge_floor)
+        if not np.isfinite(float(edge_floor)) or not (0.0 <= float(edge_floor) <= 1.0):
+            raise ValueError("edge_floor must be finite and in [0,1]")
+        if not np.isfinite(float(partial_edge_floor)) or not (0.0 <= float(partial_edge_floor) <= 1.0):
+            raise ValueError("partial_edge_floor must be finite and in [0,1]")
+        if not np.isfinite(float(ridge)) or float(ridge)<=0.0:
+            raise ValueError("ridge must be finite and positive")
+        self.window=window; self.min_periods=min_periods; self.edge_floor=float(edge_floor)
         self.partial_edge_floor=float(partial_edge_floor); self.ridge=float(ridge)
+
+    @staticmethod
+    def _validated_returns(returns:pd.DataFrame)->pd.DataFrame:
+        if not isinstance(returns,pd.DataFrame):
+            raise TypeError("returns must be a pandas DataFrame")
+        if returns.columns.duplicated().any():
+            raise ValueError("returns columns must be unique")
+        try:
+            out=returns.astype(float)
+        except (TypeError,ValueError) as exc:
+            raise ValueError("returns must be numeric") from exc
+        if np.isinf(out.to_numpy(dtype=float,copy=False)).any():
+            raise ValueError("returns contain infinite values")
+        return out
 
     def _partial(self,hist:pd.DataFrame)->pd.DataFrame:
         cols=list(hist.columns)
@@ -85,6 +101,9 @@ class RollingTopology:
         return tuple(sorted(groups,key=lambda g:(-len(g),g)))
 
     def snapshot(self, returns: pd.DataFrame, at: int | None=None) -> TopologySnapshot:
+        returns=self._validated_returns(returns)
+        if at is not None and (type(at) is not int or at < 0 or at > len(returns)):
+            raise ValueError("at must be an integer in [0, len(returns)] or None")
         hist=returns.iloc[:at] if at is not None else returns
         hist=hist.tail(self.window)
         corr=hist.corr(min_periods=self.min_periods)
@@ -108,6 +127,7 @@ class RollingTopology:
         return TopologySnapshot(ts,corr,centrality,edges,entropy,partial,communities)
 
     def lead_lag(self, returns: pd.DataFrame, max_lag: int=8, min_overlap: int=40) -> pd.DataFrame:
+        returns=self._validated_returns(returns)
         if type(max_lag) is not int or max_lag < 1:
             raise ValueError("max_lag must be a positive integer")
         if type(min_overlap) is not int or min_overlap < 2:
