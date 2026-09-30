@@ -39,8 +39,8 @@ class CausalPCAFactor:
             keys = sorted(current)
             expected = max(len(current), 1)
 
-        score = 0.0
-        explained = 0.0
+        score = math.nan
+        explained = math.nan
         loadings: dict[str, float] = {}
         if len(self.history) >= self.min_obs and len(keys) >= 2:
             X = np.array([[h[k] for k in keys] for h in self.history], dtype=float)
@@ -56,7 +56,7 @@ class CausalPCAFactor:
                 if vec.sum() < 0:
                     vec = -vec
                 total = float((singular * singular).sum())
-                explained = float(singular[0] ** 2 / total) if total > 0 else 0.0
+                explained = float(singular[0] ** 2 / total) if total > 0 else math.nan
                 z = (np.array([current[k] for k in ukeys]) - mu[usable]) / sd[usable]
                 score = float(np.dot(z, vec) / math.sqrt(len(vec)))
                 loadings = {k: float(v) for k, v in zip(ukeys, vec)}
