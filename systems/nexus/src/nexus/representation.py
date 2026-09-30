@@ -139,11 +139,16 @@ class RepresentationClaim:
 
 
 def infer_representation_claim(manifest) -> RepresentationClaim:
-    """Infer a conservative representation claim without inventing chart semantics.
+    """Infer orthogonal chart-family and sampling-construction claims.
 
-    Explicit member/path labels may identify HA/Renko/profile families. Filename
-    suffixes identify time/tick/range sampling. Indicator/profile headers are
-    recorded as schema tags only and never silently promoted to chart identity.
+    family answers what chart/view this is (regular candles, Heikin Ashi,
+    Renko, TPO, footprint, session profile). sampling_domain and construction
+    answer how it is sampled (time, tick, range). These axes must never be
+    collapsed into one label: a tick/range suffix is not evidence that the
+    chart family itself is a tick or range chart family.
+
+    All values remain non-authoritative until reviewed evidence binds them to
+    the exact stream bytes.
     """
     from .filename import sampling_claim_metadata
 
@@ -155,9 +160,6 @@ def infer_representation_claim(manifest) -> RepresentationClaim:
         source = str(archive_member)
     else:
         source = str(manifest.identity.source_path)
-        # ZIP-native source paths are encoded as "<archive>.zip!<member>".
-        # Never split on a bare "!" because futures symbols legitimately end in "!",
-        # for example NQ1! and ES1!.
         marker = ".zip!"
         if marker in source.lower():
             pos = source.lower().index(marker)
@@ -184,19 +186,26 @@ def infer_representation_claim(manifest) -> RepresentationClaim:
             reasons.append(reason)
             break
 
-    if family == "unknown":
-        if sample["construction"] == "tick":
-            family = "tick_bars"
-            confidence = 0.95
-            reasons.append("explicit_tick_suffix")
-        elif sample["construction"] == "range":
-            family = "range_bars"
-            confidence = 0.95
-            reasons.append("explicit_range_suffix")
-        elif sample["sampling_domain"] == "time":
-            family = "time_bars_unspecified"
-            confidence = 0.55
-            reasons.append("time_interval_claim_without_chart_type")
+    archive_name = str(manifest.metadata.get("archive_path") or "").replace("\\", "/").rsplit("/", 1)[-1].lower()
+    documented_regular_archives = {
+        "csv first 60.zip",
+        "first 60 half.zip",
+        "csv 2nd 60.zip",
+        "2nd 60 half.zip",
+        "csv last 57.zip",
+        "last 57 half.zip",
+    }
+    if family == "unknown" and archive_name in documented_regular_archives:
+        family = "regular_candles"
+        confidence = 0.95
+        reasons.append("documented_stock_candle_tide_archive")
+
+    sampling_domain = str(sample["sampling_domain"] or "unknown")
+    construction = str(sample["construction"] or "unknown")
+    if construction in {"tick", "range"}:
+        reasons.append(f"explicit_{construction}_sampling_claim")
+    elif sampling_domain == "time":
+        reasons.append("explicit_time_sampling_claim")
 
     headers = {str(x).strip().lower() for x in manifest.columns}
     tags: list[str] = []
@@ -211,16 +220,6 @@ def infer_representation_claim(manifest) -> RepresentationClaim:
         tags.append("volume_profile_fields")
     if tags:
         reasons.append("profile_or_orderflow_fields_present")
-        confidence = max(confidence, 0.65)
-
-    sampling_domain = str(sample["sampling_domain"] or "unknown")
-    construction = str(sample["construction"] or "unknown")
-    if family in {"renko", "tpo", "volume_footprint", "session_volume_profile", "volume_profile"}:
-        sampling_domain = "event_or_profile"
-        if construction == "unknown":
-            construction = family
-    elif family == "heikin_ashi" and sampling_domain == "time":
-        construction = "derived_time_bar"
 
     return RepresentationClaim(
         family=family,
@@ -242,37 +241,87 @@ class RepresentationHypothesis:
     authoritative:bool=False
 
 def infer_representation_hypothesis(manifest)->RepresentationHypothesis:
-    """Triage representation behavior from data without asserting chart semantics.
-
-    This deliberately returns a *hypothesis*. Only a reviewed registry may convert it
-    into timestamp/availability authority.
-    """
+    """Triage replay semantics without conflating chart family and sampling."""
     from .filename import timeframe_claim_to_ns, sampling_claim_metadata
-    reasons=[];claim_ns=timeframe_claim_to_ns(manifest.identity.filename_claim);obs=manifest.observed_cadence_ns
+
+    reasons=[]
+    claim_ns=timeframe_claim_to_ns(manifest.identity.filename_claim)
+    obs=manifest.observed_cadence_ns
     conf=float(manifest.cadence_confidence or 0.0)
-    sampling=sampling_claim_metadata(manifest.identity.filename_claim or manifest.metadata.get("raw_filename_claim"))
+    sampling=sampling_claim_metadata(
+        manifest.identity.filename_claim or manifest.metadata.get("raw_filename_claim")
+    )
     rep_claim=manifest.metadata.get("representation_claim", {})
-    if sampling.get("construction") in {"tick", "range"}:
-        reasons.append(f"explicit_{sampling['construction']}_sampling_claim")
+    family=str(rep_claim.get("family") or "unknown")
+    construction=str(sampling.get("construction") or "unknown")
+
+    if construction in {"tick", "range"}:
+        reasons.append(f"explicit_{construction}_sampling_claim")
+        if family == "heikin_ashi":
+            reasons.append("explicit_heikin_ashi_representation_claim")
+            return RepresentationHypothesis("derived_event_candidate",0.95,tuple(reasons),False)
+        if family == "renko":
+            reasons.append("explicit_renko_representation_claim")
+            return RepresentationHypothesis("event_representation_candidate",0.98,tuple(reasons),False)
         return RepresentationHypothesis("event_bar_claim_candidate",0.95,tuple(reasons),False)
-    if rep_claim.get("family") in {"renko","tpo","volume_footprint","session_volume_profile","volume_profile"}:
-        reasons.append(f"explicit_{rep_claim.get('family')}_representation_claim")
-        return RepresentationHypothesis("event_or_profile_candidate",max(0.8,float(rep_claim.get("confidence",0.0))),tuple(reasons),False)
-    if rep_claim.get("family") == "heikin_ashi":
+
+    if family == "renko":
+        reasons.append("explicit_renko_representation_claim")
+        return RepresentationHypothesis(
+            "event_representation_candidate",
+            max(0.8,float(rep_claim.get("confidence",0.0))),
+            tuple(reasons),False,
+        )
+
+    if family in {"tpo","volume_footprint","session_volume_profile","volume_profile"}:
+        reasons.append(f"explicit_{family}_representation_claim")
+        return RepresentationHypothesis(
+            "profile_view_candidate",
+            max(0.8,float(rep_claim.get("confidence",0.0))),
+            tuple(reasons),False,
+        )
+
+    if family == "heikin_ashi":
         reasons.append("explicit_heikin_ashi_representation_claim")
-        if claim_ns and obs and abs(obs/claim_ns-1.0)<=0.05 and conf>=0.5:
-            return RepresentationHypothesis("derived_time_candidate",min(0.99,0.6+0.4*conf),tuple(reasons),False)
-    if 'fractional_time' in manifest.quality_flags:reasons.append('fractional_timestamps')
-    if 'repeated_time' in manifest.quality_flags:reasons.append('repeated_timestamps')
+        if claim_ns and obs:
+            ratio=obs/claim_ns
+            if abs(ratio-1.0)<=0.05 and conf>=0.5:
+                return RepresentationHypothesis(
+                    "derived_time_candidate",min(0.99,0.6+0.4*conf),tuple(reasons),False
+                )
+            reasons.append(f"cadence_claim_ratio={ratio:.6g}")
+            return RepresentationHypothesis(
+                "derived_time_mismatch_candidate",min(0.9,0.45+0.3*conf),tuple(reasons),False
+            )
+        return RepresentationHypothesis(
+            "derived_time_candidate",max(0.5,min(0.8,conf)),tuple(reasons),False
+        )
+
+    if 'fractional_time' in manifest.quality_flags:
+        reasons.append('fractional_timestamps')
+    if 'repeated_time' in manifest.quality_flags:
+        reasons.append('repeated_timestamps')
     if claim_ns and obs:
         ratio=obs/claim_ns
         if abs(ratio-1.0)<=0.05 and conf>=0.5:
             reasons.append('observed_cadence_matches_filename_claim')
-            return RepresentationHypothesis('fixed_time_candidate',min(0.99,0.6+0.4*conf),tuple(reasons),False)
+            return RepresentationHypothesis(
+                'fixed_time_candidate',min(0.99,0.6+0.4*conf),tuple(reasons),False
+            )
         reasons.append(f'cadence_claim_ratio={ratio:.6g}')
         if ratio<0.2 or ratio>5.0 or 'fractional_time' in manifest.quality_flags:
-            return RepresentationHypothesis('event_or_transformed_candidate',min(0.99,0.55+0.35*conf),tuple(reasons),False)
-        return RepresentationHypothesis('timeframe_mismatch_candidate',min(0.9,0.45+0.3*conf),tuple(reasons),False)
+            return RepresentationHypothesis(
+                'event_or_transformed_candidate',min(0.99,0.55+0.35*conf),tuple(reasons),False
+            )
+        return RepresentationHypothesis(
+            'timeframe_mismatch_candidate',min(0.9,0.45+0.3*conf),tuple(reasons),False
+        )
     if 'fractional_time' in manifest.quality_flags or 'repeated_time' in manifest.quality_flags:
-        return RepresentationHypothesis('event_or_transformed_candidate',0.6,tuple(reasons),False)
-    return RepresentationHypothesis('unknown',max(0.1,min(0.5,conf)),tuple(reasons or ['insufficient_semantic_evidence']),False)
+        return RepresentationHypothesis(
+            'event_or_transformed_candidate',0.6,tuple(reasons),False
+        )
+    return RepresentationHypothesis(
+        'unknown',max(0.1,min(0.5,conf)),
+        tuple(reasons or ['insufficient_semantic_evidence']),False
+    )
+
