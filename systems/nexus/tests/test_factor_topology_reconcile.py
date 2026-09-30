@@ -30,3 +30,11 @@ def test_corpus_reconciliation_is_hash_first():
     r=reconcile_catalogs(a,b);assert r.common_byte_hashes==1 and r.common_logical_hashes==1
     g=compare_declared_checkpoint(a,declared_usable_entries=626,declared_rows=12_588_290)
     assert g.unresolved_entry_gap==624 and not g.coverage_claim_allowed
+
+
+def test_matching_declared_counts_do_not_authorize_semantic_coverage():
+    a=[_m('a.csv','a'*64,'1'*64)]
+    g=compare_declared_checkpoint(a,declared_usable_entries=1,declared_rows=1)
+    assert g.checkpoint_reconciled is True
+    assert g.coverage_claim_allowed is False
+    assert g.to_dict()['checkpoint_reconciled'] is True
