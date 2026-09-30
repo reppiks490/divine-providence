@@ -19,6 +19,22 @@ class RepresentationClockRule:
     reviewed: bool = False
     notes: str = ""
 
+    def __post_init__(self) -> None:
+        if not self.representation_class:
+            raise ClockPolicyError("representation_class is required")
+        if self.timestamp_semantics not in {"open", "close", "event", "unknown"}:
+            raise ClockPolicyError(f"unknown timestamp_semantics: {self.timestamp_semantics}")
+        if self.cadence_mode not in {"manifest", "variable", "explicit"}:
+            raise ClockPolicyError(f"unknown cadence_mode: {self.cadence_mode}")
+        if int(self.availability_delay_ns) < 0:
+            raise ClockPolicyError("availability_delay_ns must be non-negative")
+        if self.explicit_cadence_ns is not None and int(self.explicit_cadence_ns) <= 0:
+            raise ClockPolicyError("explicit_cadence_ns must be positive or None")
+        if self.cadence_mode == "explicit" and self.explicit_cadence_ns is None:
+            raise ClockPolicyError("explicit cadence_mode requires explicit_cadence_ns")
+        if self.timestamp_semantics == "open" and self.cadence_mode == "variable":
+            raise ClockPolicyError("open-stamped bars cannot use variable cadence")
+
     def visible_ns(self, source_timestamp_ns: int, manifest: StreamManifest) -> int:
         """Return the earliest reviewed visibility instant for a source timestamp.
 
@@ -30,7 +46,7 @@ class RepresentationClockRule:
                 f"representation {self.representation_class!r} is not reviewed; refusing to invent availability"
             )
         t = int(source_timestamp_ns)
-        delay = max(0, int(self.availability_delay_ns))
+        delay = int(self.availability_delay_ns)
         if self.timestamp_semantics == "open":
             if self.cadence_mode == "manifest":
                 cadence = manifest.observed_cadence_ns
@@ -69,7 +85,7 @@ class RepresentationClockRule:
         return BarClockPolicy(
             source_stamp=self.timestamp_semantics,
             cadence_ns=cadence,
-            availability_delay_ns=max(0, int(self.availability_delay_ns)),
+            availability_delay_ns=int(self.availability_delay_ns),
             basis="verified_bar_close",
         )
 
