@@ -88,3 +88,17 @@ def test_ledger_rejects_invalid_identity_and_nonfinite_payload(tmp_path:Path):
         l.tail(-1)
     assert l.count()==0
     l.close()
+
+
+def test_factor_spec_rejects_malformed_identity():
+    import pytest
+    with pytest.raises(ValueError,match='required'):
+        FactorSpec('','1',('A',),'equal')
+    with pytest.raises(ValueError,match='unique'):
+        FactorSpec('x','1',('A','A'),'equal')
+    with pytest.raises(ValueError,match='parameter'):
+        FactorSpec('x','1',('A',),'equal',parameters=(('p',1),('p',2)))
+    with pytest.raises(ValueError,match='finite canonical'):
+        FactorSpec('x','1',('A',),'equal',parameters=(('p',float('nan')),))
+    with pytest.raises(ValueError,match='dependencies'):
+        FactorSpec('x','1',('A',),'equal',dependencies=(('','1'),))
