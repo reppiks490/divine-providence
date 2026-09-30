@@ -24,3 +24,25 @@ def test_prefix_audit_catches_centered_future_leakage():
 def test_availability_audit_rejects_future_visibility_inversion():
     e=BarEvent("s",100,0,1,2,0,1,None,"x",available_ns=90)
     assert audit_event_availability([e])
+
+
+def test_prefix_audit_vacuous_comparison_is_not_a_pass():
+    x=pd.DataFrame({'x':range(8)})
+    audit=audit_prefix_invariance(
+        lambda d: pd.DataFrame({'label':['a']*len(d)},index=d.index),
+        x,
+        cutpoints=(4,8),
+    )
+    assert audit.comparisons==0
+    assert audit.passed is False
+
+
+def test_prefix_audit_rejects_invalid_tolerances_and_limits():
+    import pytest
+    x=pd.DataFrame({'x':[1.0,2.0,3.0]})
+    with pytest.raises(ValueError,match='atol'):
+        audit_prefix_invariance(lambda d:d,x,atol=float('nan'))
+    with pytest.raises(ValueError,match='rtol'):
+        audit_prefix_invariance(lambda d:d,x,rtol=-1)
+    with pytest.raises(ValueError,match='max_violations'):
+        audit_prefix_invariance(lambda d:d,x,max_violations=0)
