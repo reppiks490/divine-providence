@@ -23,6 +23,12 @@ def quality_score(m: StreamManifest) -> float:
     return max(0.0,min(1.0,score))
 
 def dynamic_state_quality(*,base_score:float,age_ns:int,cadence_ns:int|None,missing:bool=False,clock_uncertainty_ns:int=0)->float:
+    if age_ns<0:
+        raise ValueError("age_ns must be non-negative")
+    if clock_uncertainty_ns<0:
+        raise ValueError("clock_uncertainty_ns must be non-negative")
+    if cadence_ns is not None and cadence_ns<=0:
+        raise ValueError("cadence_ns must be positive or None")
     if missing:return 0.0
     q=max(0.0,min(1.0,float(base_score)))
     if cadence_ns and cadence_ns>0:
