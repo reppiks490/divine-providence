@@ -132,6 +132,10 @@ class ReplayBatch:
     events: tuple[BarEvent, ...]
 
     def __post_init__(self):
+        if type(self.visible_ns) is not int or self.visible_ns < 0:
+            raise ValueError("replay-batch visible_ns must be a non-negative integer")
+        if not isinstance(self.events,tuple) or not self.events:
+            raise ValueError("replay batch must contain at least one event")
         if any(e.visible_ns != self.visible_ns for e in self.events):
             raise ValueError("all replay-batch events must share visible_ns")
 
