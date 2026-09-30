@@ -50,3 +50,13 @@ def test_latent_rejects_invalid_coverage_and_event_time():
     f=CausalPCAFactor(window=10,min_obs=3)
     with pytest.raises(ValueError,match='event_ns'):
         f.update(-1,{'a':1.0,'b':2.0})
+
+
+def test_latent_online_clock_must_strictly_increase():
+    import pytest
+    f=CausalPCAFactor(window=10,min_obs=3)
+    f.update(10,{'a':1.0,'b':2.0})
+    with pytest.raises(ValueError,match='strictly increase'):
+        f.update(10,{'a':1.1,'b':2.1})
+    with pytest.raises(ValueError,match='strictly increase'):
+        f.update(9,{'a':1.1,'b':2.1})
