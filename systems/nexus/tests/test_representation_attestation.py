@@ -158,3 +158,14 @@ def test_multiple_valid_attestations_must_agree_but_can_merge_evidence_sources()
     assert set(row["accepted_evidence_sources"])=={
         "vendor-export-settings:screenshot-sha","vendor-contract:sha"
     }
+
+
+def test_duplicate_p0_queue_rows_do_not_inflate_stream_counts():
+    m=_manifest()
+    q=_queue(m)
+    q["candidates"].append(dict(q["candidates"][0]))
+    out=build_representation_attestation_status([m],q,_valid(m))
+    assert out["p0_stream_count"]==1
+    assert out["resolved_by_attestation_count"]==1
+    assert out["remaining_p0_count"]==0
+    assert out["resolved_stream_ids"]==[m.identity.stream_id]
