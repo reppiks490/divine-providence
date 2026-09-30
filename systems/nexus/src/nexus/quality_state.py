@@ -31,4 +31,4 @@ class QualityStateEngine:
         vals=[x.dynamic_quality for x in states.values()];n=len(states);present_n=sum(x.present for x in states.values())
         pattern={"universe":all_ids,"missing":sorted(set(all_ids)-{s for s,x in states.items() if x.present}),"stale":sorted(stale_ids)}
         pid=hashlib.sha256(json.dumps(pattern,sort_keys=True,separators=(",",":")).encode()).hexdigest()[:20]
-        return QualityPlane(packet.decision_ns,states,present_n/n if n else 1.0,sum(vals)/n if n else 1.0,min(vals) if vals else 1.0,n-present_n,len(stale_ids)/n if n else 0.0,uncertain/n if n else 0.0,pid)
+        return QualityPlane(packet.decision_ns,states,present_n/n if n else 0.0,sum(vals)/n if n else 0.0,min(vals) if vals else 0.0,n-present_n,len(stale_ids)/n if n else 0.0,uncertain/n if n else 0.0,pid)
