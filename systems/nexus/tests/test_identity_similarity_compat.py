@@ -96,3 +96,24 @@ def test_near_duplicate_configuration_is_validated():
         NearDuplicateDetector(identical_threshold=1.1)
     with pytest.raises(ValueError,match='corr_threshold'):
         NearDuplicateDetector(corr_threshold=float('nan'))
+
+
+def test_instrument_alias_resolution_is_trimmed_and_case_normalized():
+    r=InstrumentRegistry()
+    spec=InstrumentSpec('nq','NQ','future',venue='CME',aliases=('NASDAQ FUT',))
+    r.register(spec)
+    assert r.resolve(' nq ') is spec
+    assert r.resolve(' nasdaq fut ') is spec
+
+
+def test_instrument_and_reviewed_identity_reject_malformed_contracts():
+    with pytest.raises(ValueError,match='contract_kind'):
+        InstrumentSpec('x','X','future',contract_kind='mystery')
+    with pytest.raises(ValueError,match='execution_role'):
+        InstrumentSpec('x','X','future',execution_role='live')
+    with pytest.raises(ValueError,match='trimmed'):
+        InstrumentSpec(' x ','X','future')
+    with pytest.raises(ValueError,match='stream_id'):
+        IdentityRecord('','NQ','future')
+    with pytest.raises(ValueError,match='timestamp_semantics'):
+        IdentityRecord('s','NQ','future',timestamp_semantics='tomorrow')
