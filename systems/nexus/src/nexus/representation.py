@@ -124,22 +124,46 @@ class RepresentationConsensus:
 def robust_representation_consensus(symbol: str, event_ns: int, returns: dict[str, float]) -> RepresentationConsensus:
     import math
     import numpy as np
-    clean={k:float(v) for k,v in returns.items() if math.isfinite(float(v))}
-    if not clean:
+    if not isinstance(symbol,str) or not symbol.strip() or symbol != symbol.strip():
+        raise ValueError("symbol must be a non-empty trimmed string")
+    if type(event_ns) is not int or event_ns < 0:
+        raise ValueError("event_ns must be a non-negative integer")
+    if not isinstance(returns,dict):
+        raise TypeError("returns must be a dict keyed by representation id")
+
+    clean_items=[]
+    for key,value in returns.items():
+        if not isinstance(key,str) or not key.strip():
+            raise ValueError("representation ids must be non-empty strings")
+        try:
+            fv=float(value)
+        except (TypeError,ValueError) as exc:
+            raise ValueError(f"representation return for {key!r} must be numeric") from exc
+        if math.isfinite(fv):
+            clean_items.append((key,fv))
+    clean_items.sort(key=lambda x:x[0])
+
+    if not clean_items:
         nan=float("nan")
-        return RepresentationConsensus(symbol,int(event_ns),nan,nan,nan,0,{})
-    vals=np.array(list(clean.values()),dtype=float)
+        return RepresentationConsensus(symbol,event_ns,nan,nan,nan,0,{})
+
+    keys=[k for k,_ in clean_items]
+    vals=np.array([v for _,v in clean_items],dtype=float)
     med=float(np.median(vals)); mad=float(np.median(np.abs(vals-med)))
     scale=max(1.4826*mad,1e-12)
     robust_z=np.abs(vals-med)/scale
-    raw=1.0/(1.0+robust_z*robust_z); weights=raw/raw.sum()
+    raw=1.0/(1.0+robust_z*robust_z)
+    weights=raw/raw.sum()
     consensus=float(np.dot(weights,vals))
     disagreement=float(np.sqrt(np.dot(weights,(vals-consensus)**2)))
     if abs(consensus)<1e-15:
         agreement=float(np.mean(np.abs(vals)<scale))
     else:
         agreement=float(np.mean(np.sign(vals)==np.sign(consensus)))
-    return RepresentationConsensus(symbol,int(event_ns),consensus,disagreement,agreement,len(clean),{k:float(w) for k,w in zip(clean,weights)})
+    return RepresentationConsensus(
+        symbol,event_ns,consensus,disagreement,agreement,len(clean_items),
+        {k:float(w) for k,w in zip(keys,weights)}
+    )
 
 
 
