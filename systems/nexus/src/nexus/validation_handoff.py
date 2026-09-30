@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+import hashlib
+import json
 from typing import Any, Iterable, Mapping
 
 from .contracts import StreamManifest
@@ -348,7 +350,7 @@ def build_daedalus_validation_handoff(
             "production_authorized": False,
         })
 
-    return {
+    body = {
         "schema": HANDOFF_SCHEMA,
         "source_iteration": int(source_iteration),
         "loop_code_version": str(loop_code_version),
@@ -369,3 +371,86 @@ def build_daedalus_validation_handoff(
         "protected_holdout_spent": False,
         "production_authorized": False,
     }
+    body["handoff_hash"]=hashlib.sha256(
+        json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    return body
+
+
+def verify_daedalus_validation_handoff(payload: Mapping[str, Any] | None) -> bool:
+    if not isinstance(payload,Mapping) or payload.get("schema") != HANDOFF_SCHEMA:
+        return False
+    supplied=payload.get("handoff_hash")
+    if not isinstance(supplied,str) or len(supplied)!=64:
+        return False
+    try:
+        int(supplied,16)
+    except ValueError:
+        return False
+    body=dict(payload);body.pop("handoff_hash",None)
+    try:
+        expected=hashlib.sha256(
+            json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+        ).hexdigest()
+    except (TypeError,ValueError):
+        return False
+    if supplied!=expected:
+        return False
+    if (
+        type(body.get("source_iteration")) is not int
+        or body["source_iteration"] < 0
+        or not body.get("loop_code_version")
+        or not isinstance(body.get("corpus_manifest_hash"),str)
+        or len(body["corpus_manifest_hash"]) != 64
+        or body.get("statistical_promotion_performed") is not False
+        or body.get("protected_holdout_spent") is not False
+        or body.get("production_authorized") is not False
+    ):
+        return False
+    try:
+        int(body["corpus_manifest_hash"],16)
+    except ValueError:
+        return False
+
+    policy=body.get("discovery_evidence_policy")
+    if not isinstance(policy,Mapping) or (
+        policy.get("full_accessible_history_scanned_before_candidate_selection") is not True
+        or policy.get("current_history_selection_contaminated") is not True
+        or policy.get("pristine_protected_holdout_available_inside_same_scanned_files") is not False
+    ):
+        return False
+
+    rows=body.get("candidates")
+    if not isinstance(rows,list):
+        return False
+    ids=[];families=Counter();routes=Counter()
+    for row in rows:
+        if not isinstance(row,Mapping) or row.get("production_authorized") is not False:
+            return False
+        candidate=row.get("candidate")
+        route=row.get("route")
+        if not isinstance(candidate,Mapping) or not isinstance(route,Mapping):
+            return False
+        cid=str(candidate.get("candidate_id") or "")
+        family=str(candidate.get("family") or "")
+        route_name=str(route.get("route") or "")
+        scope=candidate.get("scope")
+        if not cid or not family or not route_name or not isinstance(scope,list) or not scope:
+            return False
+        if any(not str(x) for x in scope):
+            return False
+        ids.append(cid);families[family]+=1;routes[route_name]+=1
+        if route.get("protected_holdout_eligible_on_current_history") is not False:
+            return False
+        if route.get("confirmatory_validation_allowed_on_current_history") is not False:
+            return False
+        if family in BEHAVIOR_FAMILIES:
+            rule=row.get("clean_confirmation_rule")
+            if not isinstance(rule,Mapping) or rule.get("current_source_history_is_pristine") is not False:
+                return False
+    if len(set(ids))!=len(ids):
+        return False
+    return (
+        body.get("candidate_family_counts")==dict(sorted(families.items()))
+        and body.get("route_counts")==dict(sorted(routes.items()))
+    )
