@@ -60,3 +60,16 @@ def test_reviewed_record_rejects_invalid_policy_types():
         _record(executable=1)
     with pytest.raises(ValueError,match='trimmed'):
         _record(reviewed_by=' reviewer ')
+
+
+def test_reviewed_record_rejects_invalid_semantic_metadata():
+    with pytest.raises(ValueError,match='invalid timezone'):
+        _record(timezone='Mars/Chicago')
+    with pytest.raises(ValueError,match='venue'):
+        _record(venue=' CME ')
+    with pytest.raises(ValueError,match='roll_policy'):
+        _record(roll_policy=' x ')
+    with pytest.raises(ValueError,match='volume_semantics'):
+        _record(volume_semantics='')
+    with pytest.raises(TypeError,match='record'):
+        ReviewedRepresentationRegistry().register(object())
