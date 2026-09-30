@@ -31,7 +31,7 @@ def validate_sibling_contracts(*,aion_root:str|Path,argus_root:str|Path,athena_r
     event=BarEvent(ident.stream_id,100,0,1,2,0.5,1.5,10,'NQ.csv',available_ns=160,availability_basis='verified_bar_close')
     bus=ReplayBus();batch=next(bus.merge_batches({ident.stream_id:[event]},require_available=True));state=next(bus.states_batches([batch]))
     deriv=DerivationRecord.create(product_id='NEXUS:VALIDATION',product_version='3',decision_ns=state.decision_ns,spec_hash='b'*64,input_hashes={'NQ':ident.raw_sha256},code_version='sibling-validation')
-    health=SourceHealthRegistry();health.set_policy(ident.stream_id,SourceSLOPolicy(max_receive_lag_ns_p95=20,max_gap_size=0));health.observe(event,received_ns=170)
+    health=SourceHealthRegistry();health.set_policy(ident.stream_id,SourceSLOPolicy(max_receive_lag_ns_p95=20,max_gap_size=0));health.observe(event,received_ns=state.decision_ns)
     health_plane=health.snapshot(state.decision_ns)
     bundle=SiblingInstantRouter().package(batch=batch,state=state,manifests={ident.stream_id:manifest},factors={'market_state':.25},topology={'entropy':.5},quality={'coverage':1.0},ood={'novelty':.1},ingested_ns=170,factor_derivations=[deriv],source_health=health_plane)
     if bundle.athena.get('source_health',{}).get('plane_hash')!=health_plane.plane_hash: raise ValueError('source-health plane did not survive atomic sibling routing')
