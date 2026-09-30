@@ -17,6 +17,22 @@ class IdentityRecord:
     volume_semantics:str='unknown'
     notes:str=''
 
+    def __post_init__(self) -> None:
+        for name,value in (
+            ("stream_id",self.stream_id),
+            ("canonical_instrument",self.canonical_instrument),
+            ("asset_class",self.asset_class),
+            ("representation_class",self.representation_class),
+        ):
+            if not isinstance(value,str) or not value.strip():
+                raise ValueError(f"{name} must be non-empty")
+        if self.timestamp_semantics not in {
+            "unknown","bar_open","bar_close","event_completion"
+        }:
+            raise ValueError("unsupported timestamp_semantics")
+        if not isinstance(self.executable,bool) or not isinstance(self.continuous_contract,bool):
+            raise TypeError("executable and continuous_contract must be bool")
+
     @property
     def record_hash(self)->str:
         return hashlib.sha256(json.dumps(asdict(self),sort_keys=True,separators=(',',':')).encode()).hexdigest()
