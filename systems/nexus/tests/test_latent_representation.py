@@ -40,3 +40,13 @@ def test_unfitted_latent_state_is_missing_not_neutral_zero():
     assert np.isnan(p.score)
     assert np.isnan(p.explained_variance)
     assert p.loadings=={}
+
+
+def test_latent_rejects_invalid_coverage_and_event_time():
+    import pytest
+    for value in (-0.1,1.1,float('nan'),float('inf')):
+        with pytest.raises(ValueError,match='min_coverage'):
+            CausalPCAFactor(window=10,min_obs=3,min_coverage=value)
+    f=CausalPCAFactor(window=10,min_obs=3)
+    with pytest.raises(ValueError,match='event_ns'):
+        f.update(-1,{'a':1.0,'b':2.0})
