@@ -93,6 +93,27 @@ class DeclaredCheckpointGap:
         return d
 
 
+def _valid_sha256(value:object)->bool:
+    if not isinstance(value,str) or len(value)!=64:
+        return False
+    try:
+        int(value,16)
+    except ValueError:
+        return False
+    return True
+
+
+def _logical_hash(m:StreamManifest)->str|None:
+    value=m.metadata.get("logical_sha256")
+    if value is None:
+        return None
+    if not _valid_sha256(value):
+        raise ValueError(
+            f"invalid logical_sha256 for stream {m.identity.stream_id}"
+        )
+    return str(value).lower()
+
+
 def _usable(ms: Iterable[StreamManifest]) -> list[StreamManifest]:
     return [
         m
@@ -102,16 +123,14 @@ def _usable(ms: Iterable[StreamManifest]) -> list[StreamManifest]:
 
 
 def fingerprint(label: str, ms: list[StreamManifest]) -> CorpusFingerprint:
+    if not isinstance(label,str) or not label.strip():
+        raise ValueError("fingerprint label must be non-empty")
     usable = _usable(ms)
     payload = [m.to_dict() for m in sorted(ms, key=lambda x: x.identity.source_path)]
     h = hashlib.sha256(
-        json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str).encode()
+        json.dumps(payload,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
     ).hexdigest()
-    logical = {
-        m.metadata.get("logical_sha256")
-        for m in usable
-        if m.metadata.get("logical_sha256")
-    }
+    logical = {x for m in usable if (x:=_logical_hash(m)) is not None}
     return CorpusFingerprint(
         label=label,
         physical_entries=len(ms),
@@ -135,16 +154,8 @@ def reconcile(
     ru = _usable(right)
     lh = {m.identity.raw_sha256 for m in lu}
     rh = {m.identity.raw_sha256 for m in ru}
-    ll = {
-        m.metadata.get("logical_sha256")
-        for m in lu
-        if m.metadata.get("logical_sha256")
-    }
-    rl = {
-        m.metadata.get("logical_sha256")
-        for m in ru
-        if m.metadata.get("logical_sha256")
-    }
+    ll = {x for m in lu if (x:=_logical_hash(m)) is not None}
+    rl = {x for m in ru if (x:=_logical_hash(m)) is not None}
     ls = {m.identity.symbol for m in lu}
     rs = {m.identity.symbol for m in ru}
     return CorpusReconciliation(
@@ -168,16 +179,8 @@ def reconcile_catalogs(
     ru = _usable(right)
     lraw = {m.identity.raw_sha256 for m in lu if m.identity.raw_sha256}
     rraw = {m.identity.raw_sha256 for m in ru if m.identity.raw_sha256}
-    llogical = {
-        str(m.metadata["logical_sha256"])
-        for m in lu
-        if m.metadata.get("logical_sha256")
-    }
-    rlogical = {
-        str(m.metadata["logical_sha256"])
-        for m in ru
-        if m.metadata.get("logical_sha256")
-    }
+    llogical = {x for m in lu if (x:=_logical_hash(m)) is not None}
+    rlogical = {x for m in ru if (x:=_logical_hash(m)) is not None}
     lsyms = {m.identity.symbol for m in lu if m.identity.symbol}
     rsyms = {m.identity.symbol for m in ru if m.identity.symbol}
     return CatalogReconciliation(
@@ -209,16 +212,22 @@ def compare_declared_checkpoint(
     a separate reviewed gate.
     """
 
+    for name,value in (
+        ("declared_usable_entries",declared_usable_entries),
+        ("declared_rows",declared_rows),
+    ):
+        if type(value) is not int or value < 0:
+            raise ValueError(f"{name} must be a non-negative integer")
     usable = _usable(manifests)
     actual_entries = len(usable)
     actual_rows = sum(m.row_count for m in usable)
-    entry_gap = max(0, int(declared_usable_entries) - actual_entries)
-    row_gap = max(0, int(declared_rows) - actual_rows)
+    entry_gap = max(0, declared_usable_entries - actual_entries)
+    row_gap = max(0, declared_rows - actual_rows)
     return DeclaredCheckpointGap(
         actual_usable_entries=actual_entries,
         actual_rows=actual_rows,
-        declared_usable_entries=int(declared_usable_entries),
-        declared_rows=int(declared_rows),
+        declared_usable_entries=declared_usable_entries,
+        declared_rows=declared_rows,
         unresolved_entry_gap=entry_gap,
         unresolved_row_gap=row_gap,
         coverage_claim_allowed=False,
