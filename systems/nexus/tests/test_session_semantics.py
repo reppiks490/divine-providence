@@ -68,8 +68,8 @@ def test_bzx_long_rth_only_export_fingerprint_can_resolve_representation_session
     profile, status, reason = _infer_bzx_export_profile(times)
     assert profile is not None
     assert profile.profile_id == "cboe-bzx-rth"
-    assert status == "OBSERVED_EXPORT_RTH_FINGERPRINT_REVIEWED"
-    assert "frozen export" in reason
+    assert status == "OBSERVED_EXPORT_RTH_FINGERPRINT_SUPPORT_ONLY"
+    assert "support evidence only" in reason
 
 
 def test_bzx_out_of_rth_rows_directly_attest_extended_export():
@@ -201,3 +201,32 @@ def test_session_resolution_verifier_rejects_rehashed_impossible_counts():
         json.dumps(broken,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
     ).hexdigest()
     assert not verify_session_gap_resolution(broken)
+
+
+def test_session_time_parser_rejects_nonfinite_negative_and_subnanosecond_values():
+    from nexus.session_semantics import _to_event_ns
+    assert _to_event_ns("100.25") == 100_250_000_000
+    assert _to_event_ns("-1") is None
+    assert _to_event_ns("NaN") is None
+    assert _to_event_ns("Infinity") is None
+    assert _to_event_ns("1.0000000001") is None
+
+
+def test_session_resolution_rejects_stream_collisions_and_duplicate_candidate_ids(tmp_path):
+    import pytest
+    from nexus.contracts import StreamIdentity, StreamManifest
+    from nexus.session_semantics import build_session_gap_resolution
+
+    def m(raw, path):
+        ident=StreamIdentity("src","CME","NQ1!","20",source_path=path,raw_sha256=raw)
+        return StreamManifest(ident,10,["time","open","high","low","close"],1,10,1_200_000_000_000,1.0,0,0,0)
+
+    a=m("a"*64,"a.csv")
+    b=m("b"*64,"b.csv")
+    candidate={"candidate_id":"gap","family":"sampling_gap_sensitivity","scope":[a.identity.stream_id]}
+    with pytest.raises(ValueError,match="stream_id collision"):
+        build_session_gap_resolution(tmp_path,[a,b],[candidate])
+
+    one=m("a"*64,"a.csv")
+    with pytest.raises(ValueError,match="candidate_id"):
+        build_session_gap_resolution(tmp_path,[one],[candidate,dict(candidate)])
