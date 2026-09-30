@@ -38,3 +38,26 @@ def test_streaming_verified_close_does_not_bypass_backward_time_guard(tmp_path:P
     p.write_text('time,open,high,low,close\n100,1,2,0,1\n90,1,2,0,1\n')
     with pytest.raises(BackwardSourceTimeError):
         list(iter_bars_streaming(p,'s',clock_policy=BarClockPolicy(source_stamp='close')))
+
+
+def test_fabric_checkpoint_rejects_invalid_identity_fields(tmp_path:Path):
+    import dataclasses
+    with pytest.raises(ValueError,match='identity fields'):
+        FabricCheckpointManifest.create(
+            decision_ns=-1,catalog_sha256='a'*64,event_store_sha256='b'*64,
+            ledger_head_sha256='c'*64,replay_checkpoint_sha256='d'*64,code_version='1',
+        )
+    with pytest.raises(ValueError,match='identity fields'):
+        FabricCheckpointManifest.create(
+            decision_ns=1,catalog_sha256='bad',event_store_sha256='b'*64,
+            ledger_head_sha256='c'*64,replay_checkpoint_sha256='d'*64,code_version='1',
+        )
+    good=FabricCheckpointManifest.create(
+        decision_ns=1,catalog_sha256='a'*64,event_store_sha256='b'*64,
+        ledger_head_sha256='c'*64,replay_checkpoint_sha256='d'*64,code_version='1',
+    )
+    assert good.verify()
+    bad=dataclasses.replace(good,schema='wrong')
+    assert not bad.verify()
+    with pytest.raises(ValueError,match='refusing'):
+        bad.save(tmp_path/'bad.json')
