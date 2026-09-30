@@ -154,7 +154,7 @@ def probe(root: Path) -> dict:
                 "archive_path": str(candidate.metadata.get("archive_path") or ""),
                 "archive_member": str(candidate.metadata.get("archive_member") or ""),
                 "raw_sha256": candidate.identity.raw_sha256,
-                "proved_family": None,
+                "proved_price_geometry": None,
                 "proof": "blocked_repeated_or_unreadable_timestamps" if crepeats else "no_ohlc_rows",
                 "reference_stream_id": None,
                 "overlap": 0,
@@ -179,16 +179,16 @@ def probe(root: Path) -> dict:
             if best_ha is None or hrecord[:3] > best_ha[:3]:
                 best_ha = hrecord
 
-        proved_family = None
-        proof = "no_transform_proof"
+        proved_price_geometry = None
+        proof = "no_price_geometry_proof"
         chosen = best_standard
         if best_standard and best_standard[0] >= PROOF_SCORE:
-            proved_family = "regular_candles"
-            proof = "overlapping_ohlc_equals_known_standard"
+            proved_price_geometry = "standard_ohlc"
+            proof = "overlapping_ohlc_equals_known_standard_geometry"
             chosen = best_standard
         elif best_ha and best_ha[0] >= PROOF_SCORE:
-            proved_family = "heikin_ashi"
-            proof = "overlapping_ohlc_satisfies_heikin_ashi_transform"
+            proved_price_geometry = "heikin_ashi"
+            proof = "overlapping_ohlc_satisfies_heikin_ashi_geometry"
             chosen = best_ha
         elif best_ha and (best_standard is None or best_ha[0] > best_standard[0]):
             chosen = best_ha
@@ -204,7 +204,7 @@ def probe(root: Path) -> dict:
             "archive_path": str(candidate.metadata.get("archive_path") or ""),
             "archive_member": str(candidate.metadata.get("archive_member") or ""),
             "raw_sha256": candidate.identity.raw_sha256,
-            "proved_family": proved_family,
+            "proved_price_geometry": proved_price_geometry,
             "proof": proof,
             "reference_stream_id": ref.identity.stream_id if ref else None,
             "reference_source_path": ref.identity.source_path if ref else None,
@@ -217,9 +217,9 @@ def probe(root: Path) -> dict:
 
     counts = defaultdict(int)
     for row in output:
-        counts[row["proved_family"] or "unresolved"] += 1
+        counts[row["proved_price_geometry"] or "unresolved"] += 1
     return {
-        "schema": "nexus.o14-representation-probe.v1",
+        "schema": "nexus.o14-representation-probe.v2",
         "known_standard_archive": KNOWN_STANDARD_ARCHIVE,
         "thresholds": {
             "minimum_overlap": MIN_OVERLAP,
@@ -229,9 +229,11 @@ def probe(root: Path) -> dict:
         "counts": dict(sorted(counts.items())),
         "rows": output,
         "limitations": [
-            "Only exact overlapping standard OHLC equality or deterministic Heikin-Ashi OHLC identities create a chart-family proof.",
-            "TPO, footprint, session-volume-profile, Renko and other families remain unresolved unless explicit source evidence identifies them.",
-            "A transform proof does not establish session, timezone, contract-roll, data entitlement or execution authorization.",
+            "Only exact overlapping standard OHLC equality or deterministic Heikin-Ashi identities create a price-geometry proof.",
+            "Standard OHLC geometry does not prove an ordinary-candlestick view: TPO, footprint or profile views can preserve standard OHLC while remaining distinct chart/view families.",
+            "Heikin-Ashi geometry likewise does not prove the absence of an additional footprint/profile view layer.",
+            "This probe never assigns TPO, footprint, session-volume-profile, Renko or other view-family identity without explicit source evidence.",
+            "A geometry proof does not establish session, timezone, contract-roll, data entitlement or execution authorization.",
         ],
         "production_authorized": False,
     }
