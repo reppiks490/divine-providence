@@ -78,7 +78,7 @@ def test_genealogy_and_run_reject_tampered_derivation():
     with pytest.raises(ValueError,match='invalid derivation'):
         ResearchRunManifest.create(
             run_id='bad',decision_start_ns=10,decision_end_ns=20,
-            corpus_manifest_hash='c'*64,reviewed_registry_hash='r'*64,
+            corpus_manifest_hash='c'*64,reviewed_registry_hash='e'*64,
             genealogy=g,code_version='abc',input_artifacts={},output_artifacts={},
             derivations=[bad],
         )
