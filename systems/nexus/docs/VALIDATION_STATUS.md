@@ -55,3 +55,27 @@ AION's prior audit records **626 usable entries / ~12,588,290 rows** across nine
 `pyarrow` is not installed in this environment. The streaming Parquet implementation compiles but is **not runtime-validated here**. NPY and SQLite paths are test-validated. Sol Extra High should validate Parquet replay parity, deterministic manifests and bounded-memory behavior in an Arrow-capable environment before calling that backend production-ready.
 
 These checks prove engineering properties, not predictive edge, profitability, execution quality or live calibration.
+
+## Canonical 2026-09-30 validation update
+
+This section supersedes the earlier partial-corpus statements above.
+
+- NEXUS GitHub Actions: **161/161 passed**.
+- PARALLAX representation inventory tests: green after adopting the same
+  orthogonal chart-family vs sampling-construction semantics.
+- Reproducible O14 ten-archive audit: **10 ZIPs, 659 usable members,
+  13,788,256 logical rows, 542 distinct byte contents**.
+- Independent scanner and NEXUS content-addressed inventory agree exactly on
+  all 542 hashes.
+- DAEDALUS extracted catalog: **803 physical files, same 542 distinct
+  contents**.
+- NEXUS loop contract: **v1.17**, with chart family, sampling domain, and
+  sampling construction represented separately.
+- Native tick/range/event clocks are not coerced to a fixed cadence.
+- Family/sampling-count inflation is blocked by hierarchical fusion before
+  cross-asset weighting.
+
+Still not authorized or claimed: production trading, predictive edge,
+profitability, complete named-contract/roll metadata, micro-contract coverage,
+or automatic resolution of chart families whose original export settings are
+not evidenced.
