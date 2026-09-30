@@ -87,3 +87,38 @@ def test_cross_venue_same_symbol_does_not_fill_named_spot_cell():
         "regular_candles", "standard_ohlc",
     )
     assert status == "MISSING"
+
+
+def test_ha_geometry_requires_recursive_open_identity():
+    probe = _load_script("o14_representation_probe.py")
+    standard = {}
+    heikin = {}
+    prev_ha_open = None
+    prev_ha_close = None
+    for i in range(220):
+        ts = i
+        so = 100.0 + i * 0.1
+        sh = so + 2.0
+        sl = so - 2.0
+        sc = so + 0.5
+        standard[ts] = (so, sh, sl, sc)
+        hc = (so + sh + sl + sc) / 4.0
+        ho = (so + sc) / 2.0 if prev_ha_open is None else (prev_ha_open + prev_ha_close) / 2.0
+        hh = max(sh, ho, hc)
+        hl = min(sl, ho, hc)
+        heikin[ts] = (ho, hh, hl, hc)
+        prev_ha_open, prev_ha_close = ho, hc
+
+    good = probe._compare(standard, heikin)
+    assert good["ha_close_high_low_score"] == 1.0
+    assert good["ha_open_recurrence_score"] == 1.0
+    assert good["ha_score"] == 1.0
+
+    broken = dict(heikin)
+    for ts in range(1, 220):
+        ho, hh, hl, hc = broken[ts]
+        broken[ts] = (ho + 0.25, hh, hl, hc)
+    bad = probe._compare(standard, broken)
+    assert bad["ha_close_high_low_score"] == 1.0
+    assert bad["ha_open_recurrence_score"] < 0.5
+    assert bad["ha_score"] < probe.PROOF_SCORE
