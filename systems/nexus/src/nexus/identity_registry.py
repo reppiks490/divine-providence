@@ -33,6 +33,14 @@ class IdentityRegistry:
     def get(self,stream_id:str)->IdentityRecord|None: return self._records.get(stream_id)
     def require_execution_safe(self,stream_id:str)->IdentityRecord:
         r=self._records.get(stream_id)
-        if r is None or not r.executable or r.timestamp_semantics=='unknown':
+        if (
+            r is None
+            or not r.executable
+            or not r.canonical_instrument
+            or r.timestamp_semantics=='unknown'
+            or r.representation_class=='unknown'
+            or not r.venue
+            or (r.continuous_contract and not r.roll_policy)
+        ):
             raise ValueError(f"stream not reviewed as execution-safe: {stream_id}")
         return r
