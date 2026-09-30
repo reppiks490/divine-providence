@@ -36,7 +36,7 @@ def test_standard_geometry_probe_does_not_assign_regular_view_family():
     assert families.get("a" * 64) is None
     assert geometries["a" * 64] == "standard_ohlc"
     status, _ = mod._status(
-        manifest, families, geometries, "NQ1!", "20",
+        manifest, families, geometries, "NQ1!", "CME", "20",
         "regular_candles", "standard_ohlc",
     )
     assert status == "PRESENT_GEOMETRY_PROVED_VIEW_UNRESOLVED"
@@ -62,3 +62,26 @@ def test_documented_regular_archive_proves_view_and_standard_geometry():
         "regular_candles", "standard_ohlc",
     )
     assert status == "PROVED_PRESENT"
+
+
+def test_cross_venue_same_symbol_does_not_fill_named_spot_cell():
+    mod = _load_script("o14_coverage_matrix.py")
+    rows = [{
+        "raw_sha256": "c" * 64,
+        "archive_path": "Full csv candles only.zip",
+        "source_path": "Full csv candles only.zip!COINBASE_BTCUSD, 20.csv",
+        "byte_duplicate_of": "",
+        "representation_family": "regular_candles",
+        "price_geometry": "standard_ohlc",
+        "symbol": "BTCUSD",
+        "venue": "COINBASE",
+        "observed_cadence_ns": str(20 * 60 * 1_000_000_000),
+        "construction": "time_bar",
+        "native_setting": "20",
+    }]
+    families, geometries = mod._identity_maps(rows, [])
+    status, _ = mod._status(
+        rows, families, geometries, "BTCUSD", "BITSTAMP", "20",
+        "regular_candles", "standard_ohlc",
+    )
+    assert status == "MISSING"
