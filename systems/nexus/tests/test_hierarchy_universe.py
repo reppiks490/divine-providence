@@ -169,3 +169,27 @@ def test_price_geometry_balancing_prevents_geometry_count_bias():
     # Four standard-geometry files collapse to one geometry plane before the
     # single HA geometry plane is fused, so file count cannot dominate.
     assert abs(fused.iloc[0]["NQ"]-0.00525) < 0.002
+
+
+def test_universe_duplicate_choice_is_input_order_independent():
+    # Same logical payload presented under two paths must resolve deterministically,
+    # independent of caller iteration order.
+    a=_m("A","a")
+    a_alt=_m("A","a")
+    a_alt.identity = StreamIdentity(
+        a_alt.identity.source_id,a_alt.identity.venue,a_alt.identity.symbol,
+        a_alt.identity.filename_claim,a_alt.identity.representation,
+        "zzz.csv",a_alt.identity.raw_sha256,
+    )
+    first=build_factor_universe([a_alt,a])
+    second=build_factor_universe([a,a_alt])
+    assert first[0]==second[0]
+    assert [(d.stream_id,d.selected,d.reason) for d in first[1]] == [
+        (d.stream_id,d.selected,d.reason) for d in second[1]
+    ]
+
+
+def test_universe_rejects_negative_symbol_cap():
+    import pytest
+    with pytest.raises(ValueError,match='max_streams_per_symbol'):
+        build_factor_universe([_m("A","a")],max_streams_per_symbol=-1)
