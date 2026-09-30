@@ -870,7 +870,16 @@ def verify_session_gap_resolution(payload: Mapping[str, Any] | None) -> bool:
     rows=body.get("resolutions")
     if not isinstance(rows,list):
         return False
-    ids=[];resolved=0;diagnostics=0
+
+    explained_classes={
+        "EXPLAINED_BY_RECURRING_SESSION_CLOSURE",
+        "EXPLAINED_UNDER_ALL_OFFICIAL_BZX_SESSION_CHOICES",
+    }
+    residual_classes={
+        "RESIDUAL_OPEN_SESSION_GAP",
+        "RESIDUAL_OPEN_SESSION_GAP_UNDER_ALL_BZX_CHOICES",
+    }
+    ids=[];resolved_count=0;diagnostics=0
     for row in rows:
         if not isinstance(row,Mapping):
             return False
@@ -878,32 +887,84 @@ def verify_session_gap_resolution(payload: Mapping[str, Any] | None) -> bool:
         if not cid:
             return False
         ids.append(cid)
+
+        counts={}
         for name in (
             "gap_count","session_explained_gap_count","residual_open_session_gap_count",
             "unsupported_effective_period_gap_count","coarse_calendar_gap_count",
         ):
-            value=row.get(name,0)
+            value=row.get(name)
             if type(value) is not int or value < 0:
                 return False
+            counts[name]=value
+        if any(v>counts["gap_count"] for k,v in counts.items() if k!="gap_count"):
+            return False
+
         is_resolved=row.get("session_semantics_resolved")
         diagnostic=row.get("residual_data_quality_diagnostic_required")
         if type(is_resolved) is not bool or type(diagnostic) is not bool:
             return False
-        if diagnostic and not is_resolved:
+
+        assessments=row.get("gap_assessments")
+        if not isinstance(assessments,list):
             return False
+        computed_explained=computed_residual=computed_unsupported=computed_coarse=0
+        for assessment in assessments:
+            if not isinstance(assessment,Mapping):
+                return False
+            a=assessment.get("previous_event_ns")
+            b=assessment.get("next_event_ns")
+            gap=assessment.get("gap_ns")
+            cls=str(assessment.get("classification") or "")
+            if (
+                type(a) is not int or type(b) is not int or type(gap) is not int
+                or a < 0 or b <= a or gap != b-a or not cls
+            ):
+                return False
+            computed_explained += int(cls in explained_classes)
+            computed_residual += int(cls in residual_classes)
+            computed_unsupported += int(cls=="UNSUPPORTED_PROFILE_EFFECTIVE_PERIOD")
+            computed_coarse += int(cls=="COARSE_BAR_CALENDAR_REVIEW_REQUIRED")
+
+        if (
+            counts["session_explained_gap_count"] != computed_explained
+            or counts["residual_open_session_gap_count"] != computed_residual
+            or counts["unsupported_effective_period_gap_count"] != computed_unsupported
+            or counts["coarse_calendar_gap_count"] != computed_coarse
+        ):
+            return False
+        if len(assessments) > counts["gap_count"]:
+            return False
+        if diagnostic != bool(is_resolved and computed_residual>0):
+            return False
+
         if is_resolved:
-            resolved += 1
-            if not row.get("profile_id") or not row.get("evidence_authority") or not row.get("evidence_summary"):
+            resolved_count += 1
+            if (
+                counts["gap_count"] <= 0
+                or len(assessments) != counts["gap_count"]
+                or computed_unsupported != 0
+                or computed_coarse != 0
+                or not row.get("stream_id")
+                or not row.get("profile_id")
+                or not row.get("evidence_authority")
+                or not row.get("evidence_summary")
+            ):
                 return False
         if diagnostic:
             diagnostics += 1
+
     if len(set(ids)) != len(ids):
         return False
     return (
-        int(body.get("candidate_count",-1)) == len(rows)
-        and int(body.get("session_semantics_resolved_count",-1)) == resolved
-        and int(body.get("residual_diagnostic_count",-1)) == diagnostics
-        and int(body.get("still_session_blocked_count",-1)) == len(rows)-resolved
+        type(body.get("candidate_count")) is int
+        and type(body.get("session_semantics_resolved_count")) is int
+        and type(body.get("residual_diagnostic_count")) is int
+        and type(body.get("still_session_blocked_count")) is int
+        and body["candidate_count"]==len(rows)
+        and body["session_semantics_resolved_count"]==resolved_count
+        and body["residual_diagnostic_count"]==diagnostics
+        and body["still_session_blocked_count"]==len(rows)-resolved_count
     )
 
 
