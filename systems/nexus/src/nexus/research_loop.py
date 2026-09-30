@@ -28,7 +28,7 @@ from .corpus_recovery import HistoricalCorpusAnchor, build_corpus_recovery_plan
 
 
 LOOP_SCHEMA = "nexus.advanced-csv-research-loop.v1"
-LOOP_CODE_VERSION = "1.20.0"
+LOOP_CODE_VERSION = "1.21.0"
 
 CORE_ARTIFACT_NAMES = (
     "corpus_manifest.json",
@@ -769,7 +769,8 @@ class AdvancedCSVResearchLoop:
         # The handoff carries iteration provenance, so its full artifact hash is expected
         # to change each run. Compare a semantic hash that excludes only source_iteration.
         validation_handoff_semantic_hash = _digest({
-            k: v for k, v in validation_handoff.items() if k != "source_iteration"
+            k: v for k, v in validation_handoff.items()
+            if k not in {"source_iteration","handoff_hash"}
         })
         artifacts: dict[str, Any] = {
             "corpus_manifest.json": {"schema": "nexus.corpus-manifest.loop.v1", "corpus_manifest_hash": corpus_manifest_hash, "streams": manifest_payload},
