@@ -13,30 +13,34 @@ class ReplayOrderingError(ReplayContractError):
     pass
 
 class ReplayBus:
-    """Causal deterministic merge with optional batch-atomic same-availability replay."""
-    def merge(self, streams: dict[str, Iterable[BarEvent]], *, require_available: bool=False) -> Iterator[BarEvent]:
+    """Causal deterministic merge with batch-atomic same-availability replay.
+
+    Availability is strict by default. Forensic callers may explicitly pass
+    require_available=False to inspect events whose decision-time visibility is
+    unresolved, but those events are not causal/model-ready.
+    """
+    def merge(self, streams: dict[str, Iterable[BarEvent]], *, require_available: bool=True) -> Iterator[BarEvent]:
         heap=[]; its={k:iter(v) for k,v in streams.items()}; last_keys={}
         def checked(expected_sid:str,event:BarEvent)->BarEvent:
             if event.stream_id != expected_sid:
                 raise ReplayOrderingError(
                     f"stream mapping key {expected_sid!r} does not match event stream_id {event.stream_id!r}"
                 )
-            if require_available:
-                if event.available_ns is None:
-                    raise ReplayAvailabilityError(
-                        f"stream {event.stream_id} sequence {event.source_sequence} has unknown availability"
-                    )
-                if int(event.available_ns) < int(event.event_ns):
-                    raise ReplayAvailabilityError(
-                        f"stream {event.stream_id} sequence {event.source_sequence} is available before its event"
-                    )
-                if (
-                    event.source_timestamp_ns is not None
-                    and int(event.event_ns) < int(event.source_timestamp_ns)
-                ):
-                    raise ReplayAvailabilityError(
-                        f"stream {event.stream_id} sequence {event.source_sequence} event precedes source timestamp"
-                    )
+            if event.available_ns is not None and int(event.available_ns) < int(event.event_ns):
+                raise ReplayAvailabilityError(
+                    f"stream {event.stream_id} sequence {event.source_sequence} is available before its event"
+                )
+            if (
+                event.source_timestamp_ns is not None
+                and int(event.event_ns) < int(event.source_timestamp_ns)
+            ):
+                raise ReplayAvailabilityError(
+                    f"stream {event.stream_id} sequence {event.source_sequence} event precedes source timestamp"
+                )
+            if require_available and event.available_ns is None:
+                raise ReplayAvailabilityError(
+                    f"stream {event.stream_id} sequence {event.source_sequence} has unknown availability"
+                )
             key=event.ordering_key
             previous=last_keys.get(expected_sid)
             if previous is not None and key <= previous:
@@ -56,7 +60,7 @@ class ReplayBus:
                 n=checked(sid,next(its[sid])); heapq.heappush(heap,(n.ordering_key,sid,n))
             except StopIteration: pass
 
-    def merge_batches(self, streams: dict[str, Iterable[BarEvent]], *, require_available: bool=False) -> Iterator[ReplayBatch]:
+    def merge_batches(self, streams: dict[str, Iterable[BarEvent]], *, require_available: bool=True) -> Iterator[ReplayBatch]:
         current_ns=None; bucket=[]
         for event in self.merge(streams, require_available=require_available):
             if current_ns is None: current_ns=event.visible_ns
@@ -118,7 +122,7 @@ class ReplayBus:
         *,
         required_streams: set[str] | None = None,
         max_age_ns: int | None = None,
-        require_available: bool = False,
+        require_available: bool = True,
     ) -> Iterator[ReplayInstant]:
         """Canonical atomic replay path: one batch and exactly one post-batch state.
 
