@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+import hashlib
 from collections import defaultdict, deque
 from dataclasses import dataclass, asdict
 from decimal import Decimal, InvalidOperation
@@ -337,7 +338,7 @@ def build_representation_lineage_resolution(
             zf.close()
 
     rows = [r.to_dict() for r in sorted(resolutions, key=lambda r: r.candidate_id)]
-    return {
+    body = {
         "schema": SCHEMA,
         "candidate_count": len(rows),
         "resolved_count": sum(r["status"] == "SAME_REPRESENTATION_COPY_LINEAGE_RESOLVED" for r in rows),
@@ -346,6 +347,66 @@ def build_representation_lineage_resolution(
         "statistical_fusion_performed": False,
         "production_authorized": False,
     }
+    body["resolution_hash"] = hashlib.sha256(
+        json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    return body
+
+
+def verify_representation_lineage_resolution(payload: Mapping[str, Any] | None) -> bool:
+    if not isinstance(payload,Mapping) or payload.get("schema") != SCHEMA:
+        return False
+    supplied=payload.get("resolution_hash")
+    if not isinstance(supplied,str) or len(supplied)!=64:
+        return False
+    try:
+        int(supplied,16)
+    except ValueError:
+        return False
+    body=dict(payload);body.pop("resolution_hash",None)
+    try:
+        expected=hashlib.sha256(
+            json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+        ).hexdigest()
+    except (TypeError,ValueError):
+        return False
+    if supplied != expected:
+        return False
+    if body.get("production_authorized") is not False or body.get("statistical_fusion_performed") is not False:
+        return False
+    rows=body.get("resolutions")
+    if not isinstance(rows,list):
+        return False
+    ids=[]
+    resolved=0
+    for row in rows:
+        if not isinstance(row,Mapping):
+            return False
+        cid=str(row.get("candidate_id") or "")
+        if not cid:
+            return False
+        ids.append(cid)
+        status=row.get("status")
+        if status == "SAME_REPRESENTATION_COPY_LINEAGE_RESOLVED":
+            resolved += 1
+            if (
+                row.get("canonicalization_allowed") is not True
+                or row.get("fusion_as_independent_views_allowed") is not False
+                or not row.get("canonical_stream_id")
+                or not row.get("canonical_raw_sha256")
+                or int(row.get("unresolved_conflict_count") or 0) != 0
+                or int(row.get("independent_view_count") or 0) != 0
+            ):
+                return False
+        elif status != "UNRESOLVED_REPRESENTATION_IDENTITY":
+            return False
+    if len(set(ids)) != len(ids):
+        return False
+    return (
+        int(body.get("candidate_count",-1)) == len(rows)
+        and int(body.get("resolved_count",-1)) == resolved
+        and int(body.get("unresolved_count",-1)) == len(rows)-resolved
+    )
 
 
 def resolution_by_candidate_id(payload: Mapping[str, Any] | None) -> dict[str, dict[str, Any]]:
