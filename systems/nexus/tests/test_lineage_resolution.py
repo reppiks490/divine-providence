@@ -89,3 +89,35 @@ def test_lineage_resolution_seal_detects_tampering(tmp_path: Path):
     tampered=dict(out)
     tampered["resolved_count"]=999
     assert not verify_representation_lineage_resolution(tampered)
+
+
+def test_empty_scope_cannot_resolve_copy_lineage(tmp_path: Path):
+    candidate={
+        "candidate_id":"missing","family":"representation_family_disagreement",
+        "scope":["not-present"],"priority":"P1","score":1.0,
+        "rationale":"x","required_next_test":"y",
+    }
+    out=build_representation_lineage_resolution(tmp_path,[],[candidate])
+    row=out["resolutions"][0]
+    assert row["status"]=="UNRESOLVED_REPRESENTATION_IDENTITY"
+    assert row["canonical_stream_id"] is None
+    assert verify_representation_lineage_resolution(out)
+
+
+def test_lineage_verifier_rejects_rehashed_impossible_graph(tmp_path: Path):
+    import hashlib,json
+    a=_manifest("a"*64,"a.csv",3)
+    b=_manifest("b"*64,"b.csv",3)
+    with zipfile.ZipFile(tmp_path/"corpus.zip","w") as zf:
+        rows=[[1,1,2,0,1],[2,2,3,1,2],[3,3,4,2,3]]
+        _write(zf,"a.csv",rows);_write(zf,"b.csv",rows)
+    out=build_representation_lineage_resolution(tmp_path,[a,b],[_candidate([a,b])])
+    assert verify_representation_lineage_resolution(out)
+    broken=dict(out); rows=[dict(x) for x in broken["resolutions"]]
+    rows[0]["compatible_component_count"]=2
+    broken["resolutions"]=rows
+    broken.pop("resolution_hash")
+    broken["resolution_hash"]=hashlib.sha256(
+        json.dumps(broken,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_representation_lineage_resolution(broken)
