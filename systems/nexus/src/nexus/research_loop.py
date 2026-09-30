@@ -651,8 +651,8 @@ class AdvancedCSVResearchLoop:
                 "decisions": [asdict(x) for x in universe_decisions],
                 "representation_aggregation_contract": {
                     "raw_representations_are_independent_votes": False,
-                    "within_symbol_rule": "Fuse causally aligned representations to one symbol plane before cross-asset weighting.",
-                    "required_engine": "HierarchicalFactorEngine",
+                    "within_symbol_rule": "Fuse streams within representation family, then fuse families to one symbol plane, then perform cross-asset weighting.",
+                    "required_engine": "HierarchicalFactorEngine.build_from_manifests",
                     "native_clock_rule": "Tick, range, Renko and other event/profile constructions retain native completion boundaries; never coerce them to fixed minute/hour cadence.",
                     "missing_values_rule": "Missing representation observations remain missing; never replace them with zero merely to create agreement.",
                     "duplicate_rule": "Exact/logical duplicates may share compute but never receive additional evidence weight.",
