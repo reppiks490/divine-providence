@@ -316,7 +316,73 @@ class SourceHealthPlane:
             "plane_hash": self.plane_hash,
         }
 
+    @classmethod
+    def from_dict(cls, row: dict) -> "SourceHealthPlane":
+        required = {
+            "decision_ns", "stream_count", "configured_slo_streams",
+            "healthy_streams", "failed_streams", "unknown_slo_streams",
+            "healthy_fraction", "snapshots", "plane_hash",
+        }
+        missing = required - set(row)
+        if missing:
+            raise ValueError(f"source-health plane mapping missing fields: {sorted(missing)}")
+        if not isinstance(row["snapshots"], dict):
+            raise ValueError("source-health snapshots must be a mapping")
+        return cls(
+            decision_ns=int(row["decision_ns"]),
+            stream_count=int(row["stream_count"]),
+            configured_slo_streams=tuple(str(x) for x in row["configured_slo_streams"]),
+            healthy_streams=tuple(str(x) for x in row["healthy_streams"]),
+            failed_streams=tuple(str(x) for x in row["failed_streams"]),
+            unknown_slo_streams=tuple(str(x) for x in row["unknown_slo_streams"]),
+            healthy_fraction=None if row["healthy_fraction"] is None else float(row["healthy_fraction"]),
+            snapshots=dict(row["snapshots"]),
+            plane_hash=str(row["plane_hash"]),
+        )
+
     def verify(self) -> bool:
+        if type(self.decision_ns) is not int or self.decision_ns < 0 or self.stream_count < 0:
+            return False
+        if len(self.plane_hash) != 64:
+            return False
+        try:
+            int(self.plane_hash, 16)
+        except ValueError:
+            return False
+
+        healthy = tuple(sorted(set(self.healthy_streams)))
+        failed = tuple(sorted(set(self.failed_streams)))
+        unknown = tuple(sorted(set(self.unknown_slo_streams)))
+        if healthy != self.healthy_streams or failed != self.failed_streams or unknown != self.unknown_slo_streams:
+            return False
+        if set(healthy) & set(failed) or set(healthy) & set(unknown) or set(failed) & set(unknown):
+            return False
+
+        configured = tuple(sorted(set(healthy + failed)))
+        if configured != self.configured_slo_streams:
+            return False
+        all_ids = set(configured) | set(unknown)
+        if self.stream_count != len(self.snapshots) or all_ids != set(self.snapshots):
+            return False
+
+        for sid, snap in self.snapshots.items():
+            if not isinstance(snap, dict) or str(snap.get("stream_id")) != sid:
+                return False
+            state = snap.get("slo_passed")
+            if sid in healthy and state is not True:
+                return False
+            if sid in failed and state is not False:
+                return False
+            if sid in unknown and state is not None:
+                return False
+
+        expected_fraction = len(healthy) / len(configured) if configured else None
+        if expected_fraction is None:
+            if self.healthy_fraction is not None:
+                return False
+        elif self.healthy_fraction is None or abs(float(self.healthy_fraction) - expected_fraction) > 1e-12:
+            return False
+
         payload = {
             "decision_ns": self.decision_ns,
             "stream_count": self.stream_count,
@@ -327,7 +393,11 @@ class SourceHealthPlane:
             "healthy_fraction": self.healthy_fraction,
             "snapshots": self.snapshots,
         }
-        digest = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+        try:
+            raw = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+        except (TypeError, ValueError):
+            return False
+        digest = hashlib.sha256(raw).hexdigest()
         return digest == self.plane_hash
 
 
