@@ -44,9 +44,13 @@ class ContractDriftSnapshot:
                 relative_to: str | Path | None = None) -> "ContractDriftSnapshot":
         """``relative_to`` records POSIX paths relative to that root, so the snapshot
         carries no machine-specific absolute paths (a path-independent baseline)."""
+        if not boundaries:
+            raise ValueError("contract-drift capture requires at least one boundary")
         root = Path(relative_to).resolve() if relative_to is not None else None
         rows: list[BoundaryFileFingerprint] = []
         for (sibling, role), raw_path in sorted(boundaries.items()):
+            if not str(sibling).strip() or not str(role).strip():
+                raise ValueError("boundary sibling and role must be non-empty")
             path = Path(raw_path)
             if not path.is_file():
                 raise FileNotFoundError(path)
@@ -69,6 +73,22 @@ class ContractDriftSnapshot:
         return cls(body["schema"], tuple(rows), snapshot_hash)
 
     def verify(self) -> bool:
+        if self.schema != "nexus.contract-drift-snapshot.v1" or not self.files:
+            return False
+        keys=set()
+        for row in self.files:
+            key=(row.sibling,row.role)
+            if (
+                not row.sibling or not row.role or key in keys
+                or row.size_bytes < 0
+                or len(row.raw_sha256)!=64 or len(row.ast_sha256)!=64
+            ):
+                return False
+            try:
+                int(row.raw_sha256,16);int(row.ast_sha256,16)
+            except ValueError:
+                return False
+            keys.add(key)
         body = {"schema": self.schema, "files": [r.to_dict() for r in self.files]}
         return self.snapshot_hash == _sha256(json.dumps(body, sort_keys=True, separators=(",", ":")).encode())
 
@@ -132,7 +152,7 @@ class ContractDriftReport:
 
 def compare_contract_snapshots(baseline: ContractDriftSnapshot, current: ContractDriftSnapshot) -> ContractDriftReport:
     if not baseline.verify() or not current.verify():
-        raise ValueError("snapshot hash verification failed")
+        raise ValueError("snapshot hash/schema verification failed")
     old = {(x.sibling, x.role): x for x in baseline.files}
     new = {(x.sibling, x.role): x for x in current.files}
     items: list[ContractDriftItem] = []
