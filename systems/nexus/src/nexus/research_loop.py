@@ -624,7 +624,11 @@ class AdvancedCSVResearchLoop:
             "schema": LOOP_SCHEMA,
             "loop_code_version": LOOP_CODE_VERSION,
             "iteration": iteration,
-            "coverage_claim_allowed": len(usable) >= self.config.prior_anchor.usable_entries and usable_rows >= self.config.prior_anchor.usable_rows,
+            "historical_checkpoint_reconciled": bool(
+                corpus_recovery_plan["acceptance"]["historical_anchor_reconciled"]
+            ),
+            "coverage_claim_allowed": False,
+            "coverage_claim_reason": "Historical count/hash reconciliation does not by itself prove semantic matrix completeness; require reviewed identity/session/contract coverage.",
             "physical_csv_entries": len(manifests),
             "usable_entries": len(usable),
             "usable_rows": usable_rows,
@@ -673,6 +677,9 @@ class AdvancedCSVResearchLoop:
             "factor_universe.json": {
                 "schema": "nexus.factor-universe.loop.v2",
                 "selected_stream_ids": list(selected_universe),
+                "selected_stream_ids_are_independent_components": False,
+                "model_plane_ready": False,
+                "model_plane_blocker": "Raw selected streams require reviewed hierarchical representation fusion before model use.",
                 "decisions": [asdict(x) for x in universe_decisions],
                 "representation_aggregation_contract": {
                     "raw_representations_are_independent_votes": False,
