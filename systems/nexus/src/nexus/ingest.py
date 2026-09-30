@@ -132,7 +132,13 @@ def iter_bars(
             except (IndexError, ValueError):
                 continue
 
-    next_greater = _next_strictly_greater([x[1] for x in parsed])
+    raw_times=[x[1] for x in parsed]
+    for i,(a,b) in enumerate(zip(raw_times,raw_times[1:]),start=1):
+        if b<a:
+            raise BackwardSourceTimeError(
+                f"{path}: source time moved backward at parsed row {i}: {b} < {a}"
+            )
+    next_greater = _next_strictly_greater(raw_times)
     has_any_sealed = any(x is not None for x in next_greater)
     for (seq, raw_ns, vals, vol), next_ns in zip(parsed, next_greater):
         event_ns, available_ns, qflags, basis = clock_policy.resolve(
@@ -192,7 +198,7 @@ def iter_bars_streaming(
     with path.open("r",encoding="utf-8-sig",errors="replace",newline="") as f:
         r=csv.reader(f);header=next(r,[])
         idx=resolve_columns(profile_header(header),explicit_positions=column_positions)
-        pending=[];pending_ts=None
+        pending=[];pending_ts=None;last_raw_ns=None
         for seq,row in enumerate(r):
             try:
                 raw_ns,_=timestamp_to_ns(row[idx["time"]])
@@ -201,6 +207,11 @@ def iter_bars_streaming(
                 vol=_f(row[idx["volume"]]) if "volume" in idx and idx["volume"]<len(row) else None
             except (IndexError,ValueError):
                 continue
+            if last_raw_ns is not None and raw_ns<last_raw_ns:
+                raise BackwardSourceTimeError(
+                    f"{path}: source time moved backward at sequence {seq}: {raw_ns} < {last_raw_ns}"
+                )
+            last_raw_ns=raw_ns
             item=(seq,raw_ns,vals,vol)
             if clock_policy.source_stamp!="conservative_next":
                 yield from emit([item],None);continue
