@@ -30,13 +30,23 @@ class BarClockPolicy:
     basis: str = "unknown"
     extra_quality_flags: tuple[str, ...] = ()
 
+    def __post_init__(self) -> None:
+        if self.source_stamp not in {"open", "close", "conservative_next", "unknown"}:
+            raise ValueError(f"unknown source_stamp policy: {self.source_stamp}")
+        if int(self.availability_delay_ns) < 0:
+            raise ValueError("availability_delay_ns must be non-negative")
+        if self.cadence_ns is not None and int(self.cadence_ns) <= 0:
+            raise ValueError("cadence_ns must be positive or None")
+        if self.source_stamp == "open" and self.cadence_ns is None:
+            raise ValueError("open-stamped bars require positive cadence_ns")
+
     def resolve(
         self,
         source_timestamp_ns: int,
         *,
         next_strictly_later_ns: int | None = None,
     ) -> tuple[int, int | None, tuple[str, ...], str]:
-        delay = max(0, int(self.availability_delay_ns))
+        delay = int(self.availability_delay_ns)
         if self.source_stamp == "open":
             if not self.cadence_ns or self.cadence_ns <= 0:
                 raise ValueError("open-stamped bars require positive cadence_ns")
