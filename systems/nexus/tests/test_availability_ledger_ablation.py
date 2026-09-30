@@ -4,7 +4,7 @@ import pandas as pd
 from nexus.contracts import BarEvent
 from nexus.replay import ReplayBus
 from nexus.ledger import MarketFabricLedger
-from nexus.synthetic import SyntheticTickerDefinition
+from nexus.synthetic import SyntheticTickerDefinition, AdaptiveTickerEngine
 from nexus.ablation import SensorAblationEngine
 from nexus.registry import FactorRegistry, FactorSpec
 
