@@ -20,9 +20,29 @@ class CausalAligner:
     @staticmethod
     def _validate(df:pd.DataFrame,name:str,time_col:str="event_ns"):
         required={time_col,'source_sequence'}
-        if not required.issubset(df.columns): raise AlignmentError(f"{name}: missing {required-set(df.columns)}")
-        if (df[time_col].diff().dropna()<0).any(): raise AlignmentError(f"{name}: backward timestamps")
-        if df.duplicated([time_col,'source_sequence']).any(): raise AlignmentError(f"{name}: duplicate time+sequence identity")
+        if not required.issubset(df.columns):
+            raise AlignmentError(f"{name}: missing {required-set(df.columns)}")
+        if df[time_col].isna().any() or df['source_sequence'].isna().any():
+            raise AlignmentError(f"{name}: null time/sequence identity")
+        try:
+            times=pd.to_numeric(df[time_col],errors='raise')
+            seq=pd.to_numeric(df['source_sequence'],errors='raise')
+        except (TypeError,ValueError) as exc:
+            raise AlignmentError(f"{name}: nonnumeric time/sequence identity") from exc
+        if not times.map(lambda x: pd.notna(x) and float(x)==float(x) and abs(float(x))!=float('inf')).all():
+            raise AlignmentError(f"{name}: nonfinite timestamps")
+        if not seq.map(lambda x: pd.notna(x) and float(x)==float(x) and abs(float(x))!=float('inf')).all():
+            raise AlignmentError(f"{name}: nonfinite source_sequence")
+        if (times.diff().dropna()<0).any():
+            raise AlignmentError(f"{name}: backward timestamps")
+        if (seq<0).any():
+            raise AlignmentError(f"{name}: negative source_sequence")
+        if df.duplicated([time_col,'source_sequence']).any():
+            raise AlignmentError(f"{name}: duplicate time+sequence identity")
+        for _,group in df.assign(__seq=seq).groupby(time_col,sort=False):
+            vals=group['__seq']
+            if len(vals)>1 and (vals.diff().dropna()<=0).any():
+                raise AlignmentError(f"{name}: nonincreasing sequence within repeated timestamp")
 
     def align(self, driver:pd.DataFrame, others:dict[str,pd.DataFrame], value_col:str='close', time_col:str='event_ns') -> pd.DataFrame:
         self._validate(driver,'driver',time_col)
