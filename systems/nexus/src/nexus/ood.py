@@ -19,7 +19,13 @@ class RollingMahalanobisOOD:
     not a calibrated trading probability.
     """
     def __init__(self,window:int=250,min_periods:int=80,ridge:float=1e-3,threshold:float=4.0):
-        self.window=window;self.min_periods=min_periods;self.ridge=ridge;self.threshold=threshold
+        if int(min_periods)<2 or int(window)<int(min_periods):
+            raise ValueError("require window >= min_periods >= 2")
+        if float(ridge)<=0:
+            raise ValueError("ridge must be positive")
+        if float(threshold)<=0:
+            raise ValueError("threshold must be positive")
+        self.window=int(window);self.min_periods=int(min_periods);self.ridge=float(ridge);self.threshold=float(threshold)
 
     def score(self,frame:pd.DataFrame)->pd.DataFrame:
         x=frame.astype(float); rows=[]
@@ -43,7 +49,11 @@ class RollingMahalanobisOOD:
 class KernelShiftSensor:
     """Small deterministic RBF-MMD-style two-window drift sensor."""
     def __init__(self,window:int=80,min_periods:int=40,gamma:float|None=None):
-        self.window=window;self.min_periods=min_periods;self.gamma=gamma
+        if int(min_periods)<2 or int(window)<int(min_periods):
+            raise ValueError("require window >= min_periods >= 2")
+        if gamma is not None and float(gamma)<=0:
+            raise ValueError("gamma must be positive or None")
+        self.window=int(window);self.min_periods=int(min_periods);self.gamma=None if gamma is None else float(gamma)
 
     @staticmethod
     def _rbf(a,b,gamma):
@@ -57,6 +67,6 @@ class KernelShiftSensor:
         if len(a)<self.min_periods or len(b)<self.min_periods:return float("nan")
         z=np.vstack([a,b]); sd=np.std(z,axis=0); sd=np.where(sd>1e-12,sd,1.0)
         a=(a-np.mean(z,axis=0))/sd;b=(b-np.mean(z,axis=0))/sd
-        gamma=self.gamma or 1/max(1,a.shape[1])
+        gamma=self.gamma if self.gamma is not None else 1/max(1,a.shape[1])
         kaa=self._rbf(a,a,gamma);kbb=self._rbf(b,b,gamma);kab=self._rbf(a,b,gamma)
         return float(max(0.0,kaa.mean()+kbb.mean()-2*kab.mean()))
