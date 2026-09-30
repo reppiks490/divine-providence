@@ -55,3 +55,25 @@ AION/PARALLAX documentation from the accessible handoff reports a prior GitHub c
 ## Real-data smoke
 
 `artifacts/real_smoke.json` demonstrates NQ/ES/VIX/DXY/VXN causal alignment, adaptive factor ensemble, rolling topology, novelty and sensor-ablation on actual CSVs. It is engineering evidence only; it does not establish predictive edge.
+
+
+## Full historical reconciliation target
+
+The 238-stream materialized ZIP above is only one archive. The recovered
+PARALLAX reconciliation established the broader historical corpus as:
+
+- 10 source ZIPs
+- 659 usable CSV archive members
+- 13,788,256 logical data records
+- 542 distinct byte-exact contents
+- 803 physical extracted CSV files in the six-root DAEDALUS catalog
+- zero ZIP-only vs extracted-only content hashes at that checkpoint
+
+The difference between 803 physical files and 659 archive members is lineage/
+duplicate physical placement, not 144 new independent market signals.
+
+The corpus is also multi-representation: time bars, tick, range, Renko, Heikin
+Ashi and profile-derived/exported views must remain distinct. They are correlated
+views of underlying markets, not independent votes. NEXUS loop v1.16 therefore
+records representation/sampling claims and requires family-balanced symbol
+fusion before cross-asset modeling.
