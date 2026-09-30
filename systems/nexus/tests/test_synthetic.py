@@ -145,3 +145,34 @@ def test_synthetic_missing_component_column_is_rejected():
     d=SyntheticTickerDefinition('X',('A','B'),window=10,min_periods=3)
     with pytest.raises(ValueError,match='missing synthetic components'):
         AdaptiveTickerEngine().build(pd.DataFrame({'A':[1.,2.,3.]}),d)
+
+
+def test_confidence_coverage_counts_only_active_weighted_components():
+    x=_frame(120)
+    x.loc[:80,'B']=np.nan
+    d=SyntheticTickerDefinition(
+        'NEXUS:ACTIVE-COVERAGE',('A','B'),method='inverse_vol',
+        window=40,min_periods=20,rebalance_every=1
+    )
+    out=AdaptiveTickerEngine().build(x,d)
+    row=out.loc[82]
+    assert row['w:B']==0.0
+    # Only A is actually eligible/weighted, so coverage is one of two inputs.
+    # With concentration 1.0, confidence is 0.5 coverage * 0.5 concentration term.
+    assert abs(row['confidence']-0.25)<1e-12
+
+
+def test_zero_norm_weights_do_not_report_false_directional_stability():
+    from nexus.synthetic import FactorEnsembleEngine, EnsembleDefinition
+    x=_frame(80)
+    # Disjoint history leaves PCA methods without a valid joint fit.
+    x.loc[:49,'B']=np.nan
+    x.loc[50:,'A']=np.nan
+    d=EnsembleDefinition(
+        'NEXUS:STABILITY',('A','B'),methods=('adaptive_pca',),
+        window=30,min_periods=10,rebalance_every=1
+    )
+    out=FactorEnsembleEngine().build(x,d)
+    if len(out):
+        invalid=out['value:adaptive_pca'].isna()
+        assert out.loc[invalid,'weight_stability'].isna().all()
