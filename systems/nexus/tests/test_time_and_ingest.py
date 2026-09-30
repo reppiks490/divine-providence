@@ -91,3 +91,24 @@ def test_causal_bar_features_reject_malformed_volume_text():
     })
     with pytest.raises(ValueError,match='volume feature input must be numeric'):
         causal_bar_features(bad)
+
+
+def test_negative_epoch_is_rejected():
+    import pytest
+    for value in (-1,"-1","-0.5"):
+        with pytest.raises(ValueError,match="negative timestamp"):
+            timestamp_to_ns(value)
+
+
+def test_load_ohlcv_nonconservative_mode_keeps_availability_unknown(tmp_path:Path):
+    from nexus.csvio import load_ohlcv
+    p=tmp_path/"x.csv"
+    p.write_text("time,open,high,low,close\n100,1,2,0,1\n110,2,3,1,2\n")
+    out=load_ohlcv(
+        p,conservative_availability=False,keep_unsealed_terminal=True
+    )
+    assert out["available_ns"].isna().all()
+
+    import pytest
+    with pytest.raises(TypeError,match="conservative_availability"):
+        load_ohlcv(p,conservative_availability=1)
