@@ -3,7 +3,7 @@ import json
 import zipfile
 from pathlib import Path
 
-from nexus.research_loop import AdvancedCSVResearchLoop, AdvancedLoopConfig, CoverageAnchor
+from nexus.research_loop import AdvancedCSVResearchLoop, AdvancedLoopConfig, CoverageAnchor, _digest
 
 
 def _write_zip(path: Path) -> None:
@@ -54,6 +54,8 @@ def test_loop_runs_and_resumes(tmp_path):
     assert s["paths_relative_to_state_dir"] is True
     assert s["latest_iteration_dir"] == "iteration_0002"
     assert s["latest_summary_path"] == "iteration_0002/iteration_summary.json"
+    assert len(s["state_hash"]) == 64
+    assert r2.summary["corpus_manifest_hash"] == r2.corpus_manifest_hash
 
 
 def test_loop_handoff_never_relabels_scanned_history_as_pristine(tmp_path):
@@ -168,3 +170,71 @@ def test_checkpoint_counts_never_auto_authorize_coverage(tmp_path):
     universe = json.loads((state / "iteration_0001" / "factor_universe.json").read_text())
     assert universe["selected_stream_ids_are_independent_components"] is False
     assert universe["model_plane_ready"] is False
+
+
+def _make_completed_loop(tmp_path):
+    archive=tmp_path/"corpus.zip"
+    _write_zip(archive)
+    state=tmp_path/"state"
+    cfg=AdvancedLoopConfig(
+        state_dir=str(state),
+        prior_anchor=CoverageAnchor("test",1,4),
+        min_owner_expected_entries=1,
+        min_returns_for_behavior_candidate=2,
+    )
+    loop=AdvancedCSVResearchLoop(tmp_path,cfg)
+    result=loop.run_once()
+    return loop,result,state
+
+
+def test_loop_resume_rejects_tampered_state_summary_and_artifact(tmp_path):
+    import pytest
+
+    loop,_,state=_make_completed_loop(tmp_path/"state-case")
+    state_path=state/"loop_state.json"
+    body=json.loads(state_path.read_text())
+    body["iteration"]=99
+    state_path.write_text(json.dumps(body))
+    with pytest.raises(RuntimeError,match="state_hash mismatch"):
+        loop.run_once()
+
+    loop,_,state=_make_completed_loop(tmp_path/"summary-case")
+    summary=state/"iteration_0001"/"iteration_summary.json"
+    body=json.loads(summary.read_text())
+    body["usable_rows"]+=1
+    summary.write_text(json.dumps(body))
+    with pytest.raises(RuntimeError,match="summary hash mismatch"):
+        loop.run_once()
+
+    loop,_,state=_make_completed_loop(tmp_path/"artifact-case")
+    artifact=state/"iteration_0001"/"research_queue.json"
+    body=json.loads(artifact.read_text())
+    body["production_authorized"]=True
+    artifact.write_text(json.dumps(body))
+    with pytest.raises(RuntimeError,match="artifact failed hash verification"):
+        loop.run_once()
+
+
+def test_loop_resume_rejects_path_escape_even_with_resealed_state(tmp_path):
+    import pytest
+    loop,_,state=_make_completed_loop(tmp_path)
+    state_path=state/"loop_state.json"
+    body=json.loads(state_path.read_text())
+    body["latest_summary_path"]="../outside.json"
+    body.pop("state_hash",None)
+    body["state_hash"]=_digest(body)
+    state_path.write_text(json.dumps(body))
+    with pytest.raises(RuntimeError,match="escapes state_dir"):
+        loop.run_once()
+
+
+def test_loop_resume_migrates_verified_legacy_unsealed_state(tmp_path):
+    loop,_,state=_make_completed_loop(tmp_path)
+    state_path=state/"loop_state.json"
+    body=json.loads(state_path.read_text())
+    body.pop("state_hash",None)
+    state_path.write_text(json.dumps(body))
+    second=loop.run_once()
+    assert second.iteration==2
+    migrated=json.loads(state_path.read_text())
+    assert len(migrated["state_hash"])==64
