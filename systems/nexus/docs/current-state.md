@@ -52,20 +52,33 @@ the complete verified ten-archive checkpoint: **659 usable CSV members /
 The earlier 238-stream state is now understood as the single
 `Full csv candles only.zip` subset, not the whole accessible corpus.
 
-NEXUS representation handling is now v1.17 and separates:
+NEXUS representation handling is now v1.18 and separates:
 
 1. chart/view family (regular candles, Heikin Ashi, Renko, TPO, footprint,
    session profile, etc. when evidenced);
-2. sampling domain/construction (time, tick, range);
-3. native setting/timeframe;
-4. instrument/symbol/venue identity.
+2. price geometry (standard OHLC, Heikin Ashi, Renko-like, unknown);
+3. sampling domain/construction (time, tick, range);
+4. native setting/timeframe;
+5. instrument/symbol/venue identity.
 
 Representation-sensitive fusion is
 `stream -> sampling construction -> chart family -> symbol -> cross-asset`.
 Unknown chart family or sampling construction fails closed rather than being
-guessed. The latest GitHub Actions baseline is **161/161 passed**.
+guessed. The latest GitHub Actions baseline is **169/169 tests passed**.
 
 Remaining work is evidence reconciliation, not bulk CSV recovery: resolve only
 the genuinely unknown chart-family/export settings, named expiries and roll
 metadata, micro-contract tapes, sessions/entitlements, and missing required
 matrix cells. Production authorization remains false.
+
+
+### 2026-09-30 fourth-pass identity hardening
+
+Price geometry is not treated as chart/view identity. Exact standard-OHLC or
+Heikin-Ashi transform matches can prove geometry, but they cannot by themselves
+distinguish an ordinary candlestick view from a TPO/footprint/profile view that
+preserves that geometry. The canonical representation contract is therefore
+four-axis: **chart/view family, price geometry, sampling domain, sampling
+construction**. Family-specific modeling remains fail-closed without reviewed
+view identity. Current GitHub Actions verification: **169/169 tests passed** and
+`python -m compileall -q src tests scripts` passed.
