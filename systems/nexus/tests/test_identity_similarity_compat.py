@@ -117,3 +117,14 @@ def test_instrument_and_reviewed_identity_reject_malformed_contracts():
         IdentityRecord('','NQ','future')
     with pytest.raises(ValueError,match='timestamp_semantics'):
         IdentityRecord('s','NQ','future',timestamp_semantics='tomorrow')
+
+
+def test_stream_identity_requires_real_sha_and_canonicalizes_case():
+    upper='A'*64
+    ident=StreamIdentity('csv','CME','NQ','1','csv_export','x.csv',upper)
+    assert ident.raw_sha256=='a'*64
+    assert ident.stream_id.endswith('a'*12)
+    with pytest.raises(ValueError,match='raw_sha256'):
+        StreamIdentity('csv','CME','NQ','1','csv_export','x.csv','not-a-hash')
+    with pytest.raises(ValueError,match='source_id'):
+        StreamIdentity('','CME','NQ','1','csv_export','x.csv','a'*64)
