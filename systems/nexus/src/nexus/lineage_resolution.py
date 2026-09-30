@@ -282,8 +282,8 @@ def build_representation_lineage_resolution(
                         unresolved_conflicts += 1
 
             components = _component_count(raw_nodes, compatible_edges)
-            connected = len(raw_nodes) <= 1 or components == 1
-            resolved = connected and unresolved_conflicts == 0
+            connected = len(raw_nodes) == 1 or (len(raw_nodes) > 1 and components == 1)
+            resolved = bool(raw_nodes) and connected and unresolved_conflicts == 0
 
             canonical: StreamManifest | None = None
             if unique:
@@ -377,8 +377,8 @@ def verify_representation_lineage_resolution(payload: Mapping[str, Any] | None) 
     rows=body.get("resolutions")
     if not isinstance(rows,list):
         return False
-    ids=[]
-    resolved=0
+
+    ids=[];resolved_count=0
     for row in rows:
         if not isinstance(row,Mapping):
             return False
@@ -386,26 +386,137 @@ def verify_representation_lineage_resolution(payload: Mapping[str, Any] | None) 
         if not cid:
             return False
         ids.append(cid)
+
+        count_names=(
+            "unique_raw_stream_count","duplicate_alias_count",
+            "compatible_component_count","unresolved_conflict_count",
+            "independent_view_count",
+        )
+        counts={}
+        for name in count_names:
+            value=row.get(name)
+            if type(value) is not int or value < 0:
+                return False
+            counts[name]=value
+
+        if row.get("fusion_as_independent_views_allowed") is not False:
+            return False
+        pairwise=row.get("pairwise_relations")
+        if not isinstance(pairwise,list):
+            return False
+
+        canonical_raw=str(row.get("canonical_raw_sha256") or "")
+        raw_nodes=set()
+        if canonical_raw:
+            if len(canonical_raw)!=64:
+                return False
+            try:
+                int(canonical_raw,16)
+            except ValueError:
+                return False
+            raw_nodes.add(canonical_raw)
+
+        compatible_edges=[]
+        conflict_relations=0
+        seen_pairs=set()
+        for rel in pairwise:
+            if not isinstance(rel,Mapping):
+                return False
+            left_sid=str(rel.get("left_stream_id") or "")
+            right_sid=str(rel.get("right_stream_id") or "")
+            left_raw=str(rel.get("left_raw_sha256") or "")
+            right_raw=str(rel.get("right_raw_sha256") or "")
+            if not left_sid or not right_sid or left_sid==right_sid:
+                return False
+            for digest in (left_raw,right_raw):
+                if len(digest)!=64:
+                    return False
+                try:
+                    int(digest,16)
+                except ValueError:
+                    return False
+            if left_raw==right_raw:
+                return False
+            raw_nodes.update((left_raw,right_raw))
+            pair=tuple(sorted((left_raw,right_raw)))
+            if pair in seen_pairs:
+                return False
+            seen_pairs.add(pair)
+
+            nums={}
+            for name in (
+                "left_rows","right_rows","overlap_rows",
+                "identical_overlap_rows","conflicting_overlap_rows",
+            ):
+                value=rel.get(name)
+                if type(value) is not int or value < 0:
+                    return False
+                nums[name]=value
+            conflicts=rel.get("conflict_event_ns")
+            if not isinstance(conflicts,list) or any(type(x) is not int or x < 0 for x in conflicts):
+                return False
+            if len(conflicts)!=nums["conflicting_overlap_rows"]:
+                return False
+            if nums["overlap_rows"] != nums["identical_overlap_rows"] + nums["conflicting_overlap_rows"]:
+                return False
+            compatible=rel.get("compatible_same_lineage")
+            boundary=rel.get("boundary_revision_only")
+            if type(compatible) is not bool or type(boundary) is not bool:
+                return False
+            relation=str(rel.get("relation") or "")
+            if relation=="OVERLAP_CONFLICT":
+                conflict_relations += 1
+                if compatible:
+                    return False
+            if relation=="DISJOINT" and compatible:
+                return False
+            if compatible:
+                compatible_edges.append((left_raw,right_raw))
+
+        unique=counts["unique_raw_stream_count"]
+        if unique==1 and not raw_nodes and canonical_raw:
+            raw_nodes.add(canonical_raw)
+        if unique != len(raw_nodes):
+            return False
+        if len(pairwise) != unique*(unique-1)//2:
+            return False
+        if counts["unresolved_conflict_count"] != conflict_relations:
+            return False
+
+        components=_component_count(raw_nodes,compatible_edges)
+        if counts["compatible_component_count"] != components:
+            return False
+
         status=row.get("status")
-        if status == "SAME_REPRESENTATION_COPY_LINEAGE_RESOLVED":
-            resolved += 1
+        if status=="SAME_REPRESENTATION_COPY_LINEAGE_RESOLVED":
+            resolved_count += 1
             if (
-                row.get("canonicalization_allowed") is not True
-                or row.get("fusion_as_independent_views_allowed") is not False
+                unique < 1
+                or components != 1
+                or conflict_relations != 0
+                or counts["independent_view_count"] != 0
+                or row.get("canonicalization_allowed") is not True
                 or not row.get("canonical_stream_id")
-                or not row.get("canonical_raw_sha256")
-                or int(row.get("unresolved_conflict_count") or 0) != 0
-                or int(row.get("independent_view_count") or 0) != 0
+                or not canonical_raw
             ):
                 return False
-        elif status != "UNRESOLVED_REPRESENTATION_IDENTITY":
+        elif status=="UNRESOLVED_REPRESENTATION_IDENTITY":
+            if row.get("canonicalization_allowed") is not False:
+                return False
+            if counts["independent_view_count"] != unique:
+                return False
+        else:
             return False
+
     if len(set(ids)) != len(ids):
         return False
     return (
-        int(body.get("candidate_count",-1)) == len(rows)
-        and int(body.get("resolved_count",-1)) == resolved
-        and int(body.get("unresolved_count",-1)) == len(rows)-resolved
+        type(body.get("candidate_count")) is int
+        and type(body.get("resolved_count")) is int
+        and type(body.get("unresolved_count")) is int
+        and body["candidate_count"]==len(rows)
+        and body["resolved_count"]==resolved_count
+        and body["unresolved_count"]==len(rows)-resolved_count
     )
 
 
