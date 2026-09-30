@@ -46,8 +46,9 @@ def test_sibling_route_rejects_health_from_another_decision_time():
     e = BarEvent(m.identity.stream_id, 100, 0, 1,2,.5,1.5,None,'A.csv', available_ns=160, availability_basis='verified_bar_close')
     instant = next(ReplayBus().instants({e.stream_id:[e]}, require_available=True))
     import pytest
+    wrong=SourceHealthRegistry().snapshot(159)
     with pytest.raises(ValueError, match='source_health decision_ns'):
         SiblingInstantRouter().package_instant(
             instant, manifests={e.stream_id:m}, factors={}, topology={}, quality={},
-            source_health={'decision_ns':159},
+            source_health=wrong,
         )
