@@ -34,3 +34,29 @@ def test_registry_detects_tampering_and_reports_unresolved(tmp_path:Path):
     p=tmp_path/'registry.json';reg.save(p);body=json.loads(p.read_text());body['active'][r.stream_id]='999';p.write_text(json.dumps(body))
     with pytest.raises(ValueError,match='hash mismatch'):
         ReviewedRepresentationRegistry.load(p)
+
+
+def test_reviewed_execution_record_is_self_consistent():
+    with pytest.raises(ValueError,match='requires venue'):
+        _record(executable=True)
+    with pytest.raises(ValueError,match='roll_policy'):
+        _record(executable=True,venue='CME',continuous_contract=True)
+    good=_record(
+        executable=True,venue='CME',continuous_contract=True,
+        roll_policy='reviewed-front-roll',
+    )
+    identity=good.identity_record()
+    assert identity.executable is True
+    assert identity.venue=='CME'
+    assert identity.roll_policy=='reviewed-front-roll'
+
+
+def test_reviewed_record_rejects_invalid_policy_types():
+    with pytest.raises(ValueError,match='availability_delay_ns'):
+        _record(availability_delay_ns=-1)
+    with pytest.raises(ValueError,match='fixed_interval_ns'):
+        _record(fixed_interval_ns=1.5)
+    with pytest.raises(TypeError,match='bool'):
+        _record(executable=1)
+    with pytest.raises(ValueError,match='trimmed'):
+        _record(reviewed_by=' reviewer ')
