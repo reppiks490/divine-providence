@@ -47,3 +47,22 @@ def test_strict_aion_adapter_requires_availability():
     assert obs['available_ns']==2 and obs['evidence_tier']==1
     p=market_state_packet(decision_ns=2,factors={},topology={},quality={},lineage=[])
     assert p['contract']=='nexus.market-state.v2' and p['production_authorized'] is False
+
+
+def test_checkpoint_top_level_metadata_is_bound_to_state(tmp_path:Path):
+    import json
+    s=StatePacket(10,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash='abc')
+    cp=ReplayCheckpoint.from_state(s); p=tmp_path/'cp-bind.json'; cp.save(p)
+    raw=json.loads(p.read_text())
+    raw['decision_ns']=11
+    p.write_text(json.dumps(raw))
+    assert not ReplayCheckpoint.load(p).verify()
+    raw=json.loads(cp_path.read_text()) if False else None
+
+
+def test_checkpoint_top_level_frame_hash_tamper_fails(tmp_path:Path):
+    import json
+    s=StatePacket(10,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash='abc')
+    cp=ReplayCheckpoint.from_state(s); p=tmp_path/'cp-frame.json'; cp.save(p)
+    raw=json.loads(p.read_text());raw['frame_hash']='tampered';p.write_text(json.dumps(raw))
+    assert not ReplayCheckpoint.load(p).verify()
