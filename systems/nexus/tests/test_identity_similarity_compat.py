@@ -70,3 +70,29 @@ def test_execution_identity_requires_venue_representation_and_roll_policy():
     )
     r.register(good)
     assert r.require_execution_safe('named')==good
+
+
+def test_near_duplicate_repeated_times_require_sequence_identity():
+    a=pd.DataFrame({
+        'event_ns':[1,1,2],'open':[1.,2.,3.],'high':[2.,3.,4.],
+        'low':[0.,1.,2.],'close':[1.5,2.5,3.5],
+    })
+    b=a.copy()
+    with pytest.raises(ValueError,match='source_sequence'):
+        NearDuplicateDetector(min_overlap=1).compare('a',a,'b',b)
+
+    a['source_sequence']=[0,1,2]
+    b['source_sequence']=[0,1,2]
+    result=NearDuplicateDetector(min_overlap=3).compare('a',a,'b',b)
+    assert result.overlap_rows==3
+    assert result.identical_fraction==1.0
+    assert result.likely_near_duplicate
+
+
+def test_near_duplicate_configuration_is_validated():
+    with pytest.raises(ValueError,match='min_overlap'):
+        NearDuplicateDetector(min_overlap=0)
+    with pytest.raises(ValueError,match='identical_threshold'):
+        NearDuplicateDetector(identical_threshold=1.1)
+    with pytest.raises(ValueError,match='corr_threshold'):
+        NearDuplicateDetector(corr_threshold=float('nan'))
