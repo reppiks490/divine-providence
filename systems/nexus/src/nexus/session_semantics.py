@@ -25,6 +25,8 @@ class DailyWindow:
     end_minute: int
 
     def __post_init__(self) -> None:
+        if type(self.start_minute) is not int or type(self.end_minute) is not int:
+            raise TypeError("daily-window minutes must be integers")
         if not (0 <= self.start_minute <= 1440 and 0 <= self.end_minute <= 1440):
             raise ValueError("daily-window minutes must lie in [0,1440]")
         if self.end_minute <= self.start_minute:
@@ -42,6 +44,49 @@ class SessionProfile:
     effective_start_ns: int | None = None
     effective_end_ns: int | None = None
     holiday_calendar_complete: bool = False
+
+    def __post_init__(self) -> None:
+        for name,value in (
+            ("profile_id",self.profile_id),
+            ("timezone_name",self.timezone_name),
+            ("evidence_authority",self.evidence_authority),
+            ("evidence_summary",self.evidence_summary),
+            ("confidence",self.confidence),
+        ):
+            if not isinstance(value,str) or not value.strip():
+                raise ValueError(f"{name} must be non-empty")
+        try:
+            ZoneInfo(self.timezone_name)
+        except Exception as exc:
+            raise ValueError(f"invalid session timezone: {self.timezone_name}") from exc
+        if type(self.holiday_calendar_complete) is not bool:
+            raise TypeError("holiday_calendar_complete must be bool")
+        for name,value in (
+            ("effective_start_ns",self.effective_start_ns),
+            ("effective_end_ns",self.effective_end_ns),
+        ):
+            if value is not None and (type(value) is not int or value < 0):
+                raise ValueError(f"{name} must be a non-negative integer or None")
+        if (
+            self.effective_start_ns is not None
+            and self.effective_end_ns is not None
+            and self.effective_end_ns < self.effective_start_ns
+        ):
+            raise ValueError("session effective_end_ns cannot precede effective_start_ns")
+        seen=set()
+        for weekday,windows in self.weekly_open_windows:
+            if type(weekday) is not int or not 0 <= weekday <= 6:
+                raise ValueError("session weekdays must be integers in [0,6]")
+            if weekday in seen:
+                raise ValueError("session weekdays must be unique")
+            seen.add(weekday)
+            if not isinstance(windows,tuple) or any(not isinstance(w,DailyWindow) for w in windows):
+                raise TypeError("session windows must be tuples of DailyWindow")
+            prior_end=None
+            for window in windows:
+                if prior_end is not None and window.start_minute < prior_end:
+                    raise ValueError("session windows must be sorted and non-overlapping")
+                prior_end=window.end_minute
 
     @property
     def tz(self) -> ZoneInfo:
