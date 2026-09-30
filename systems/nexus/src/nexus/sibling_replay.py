@@ -128,11 +128,12 @@ class SiblingInstantRouter:
                     raise ValueError("source_health decision_ns mismatch; source-health decision_ns must match the atomic replay instant")
                 health_payload = json.loads(json.dumps(source_health.to_dict(), sort_keys=True, separators=(",", ":"), allow_nan=False))
             else:
-                health_payload = dict(source_health)
-                if "decision_ns" not in health_payload:
-                    raise ValueError("source_health mapping must include decision_ns")
-                if int(health_payload["decision_ns"]) != int(state.decision_ns):
+                plane = SourceHealthPlane.from_dict(dict(source_health))
+                if not plane.verify():
+                    raise ValueError("source_health plane hash/semantic verification failed")
+                if int(plane.decision_ns) != int(state.decision_ns):
                     raise ValueError("source_health decision_ns mismatch; source-health decision_ns must match the atomic replay instant")
+                health_payload = json.loads(json.dumps(plane.to_dict(), sort_keys=True, separators=(",", ":"), allow_nan=False))
 
         event_lineage = [
             {
@@ -219,6 +220,7 @@ class SiblingInstantRouter:
             aion_derivation_observation(
                 d,
                 sequence=(int(derivation_sequence) + i) if derivation is d and d is not None else None,
+                ingested_ns=ingested_ns,
             )
             for i, d in enumerate(derivations)
         ]
