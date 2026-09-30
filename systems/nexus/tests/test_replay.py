@@ -56,3 +56,17 @@ def test_bar_replay_rejects_negative_max_age():
     merged=ReplayBus().merge({'a':[event]})
     with pytest.raises(ValueError,match='max_age_ns'):
         list(ReplayBus().states(merged,max_age_ns=-1))
+
+
+def test_bar_event_rejects_structurally_invalid_identity_and_numbers():
+    import pytest
+    with pytest.raises(ValueError,match='event_ns'):
+        BarEvent('s',-1,0,1,2,0,1,None,'p')
+    with pytest.raises(ValueError,match='source_sequence'):
+        BarEvent('s',1,-1,1,2,0,1,None,'p')
+    with pytest.raises(ValueError,match='revision'):
+        BarEvent('s',1,0,1,2,0,1,None,'p',revision=-1)
+    with pytest.raises(ValueError,match='close'):
+        BarEvent('s',1,0,1,2,0,float('nan'),None,'p')
+    with pytest.raises(ValueError,match='available_ns'):
+        BarEvent('s',1,0,1,2,0,1,None,'p',available_ns=-1)
