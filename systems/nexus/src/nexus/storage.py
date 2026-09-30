@@ -278,11 +278,33 @@ class SQLiteBarStore:
                 None if e.source_timestamp_ns is None else int(e.source_timestamp_ns),e.availability_basis)
 
     def append(self,events:Iterable[BarEvent],*,replace_same_revision:bool=False)->int:
-        sql=("INSERT OR REPLACE" if replace_same_revision else "INSERT")+" INTO bars VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        """Append events without permitting historical identity mutation.
+
+        replace_same_revision=True is retained only as an idempotent replay
+        mode: an existing (stream_id, source_sequence, revision) row must be
+        identical at the SQL-value level. A conflicting payload is rejected.
+        """
         n=0
         with self._connect() as db:
             for e in events:
-                db.execute(sql,self._row(e));n+=1
+                row=self._row(e)
+                if replace_same_revision:
+                    existing=db.execute(
+                        "SELECT * FROM bars WHERE stream_id=? AND source_sequence=? AND revision=?",
+                        (e.stream_id,int(e.source_sequence),int(e.revision)),
+                    ).fetchone()
+                    if existing is not None:
+                        if tuple(existing)!=tuple(row):
+                            raise ValueError(
+                                "conflicting payload for existing stream/sequence/revision identity"
+                            )
+                        n+=1
+                        continue
+                db.execute(
+                    "INSERT INTO bars VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    row,
+                )
+                n+=1
         return n
 
     def iter_stream(self,stream_id:str)->Iterator[BarEvent]:
