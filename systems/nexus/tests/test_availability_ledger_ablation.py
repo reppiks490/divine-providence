@@ -47,3 +47,29 @@ def test_ablation_scores_fragility():
     results=SensorAblationEngine().evaluate(x,d)
     assert {r.removed for r in results}=={'A','B','C'}
     assert all(r.overlap>0 for r in results)
+
+
+def test_ablation_preserves_component_weight_cap():
+    n=140; rng=np.random.default_rng(11)
+    x=pd.DataFrame({
+        'A':100*np.exp(np.cumsum(rng.normal(0,.01,n))),
+        'B':100*np.exp(np.cumsum(rng.normal(0,.01,n))),
+        'C':100*np.exp(np.cumsum(rng.normal(0,.01,n))),
+        'D':100*np.exp(np.cumsum(rng.normal(0,.01,n))),
+    })
+    d=SyntheticTickerDefinition(
+        'NEXUS:CAP',tuple(x.columns),method='equal',
+        window=50,min_periods=25,rebalance_every=5,max_component_weight=.6,
+    )
+    # Removing one of four leaves three components, so the .6 cap remains feasible.
+    results=SensorAblationEngine().evaluate(x,d)
+    assert len(results)==4
+    # Regression target: ablation definitions inherit the cap rather than defaulting to 1.0.
+    for removed in d.components:
+        keep=tuple(c for c in d.components if c!=removed)
+        sub=SyntheticTickerDefinition(
+            d.name+f':minus:{removed}',keep,d.method,d.window,d.min_periods,
+            d.rebalance_every,d.clip_z,d.max_component_weight,
+        )
+        out=AdaptiveTickerEngine().build(x,sub)
+        assert float(out.filter(like='w:').abs().max().max()) <= .6000001
