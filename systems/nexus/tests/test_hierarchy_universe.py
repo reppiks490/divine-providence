@@ -193,3 +193,36 @@ def test_universe_rejects_negative_symbol_cap():
     import pytest
     with pytest.raises(ValueError,match='max_streams_per_symbol'):
         build_factor_universe([_m("A","a")],max_streams_per_symbol=-1)
+
+
+def test_hierarchy_rejects_invalid_quality_and_missing_manifest_identity():
+    import pytest
+    r=pd.DataFrame({'s':[0.01,0.02]})
+    with pytest.raises(ValueError,match='quality weight'):
+        fuse_representations_by_symbol(
+            r,{'s':'NQ'},quality_weights={'s':float('nan')}
+        )
+
+    d=EnsembleDefinition(
+        'H',('NQ',),methods=('equal',),window=2,min_periods=1,rebalance_every=1
+    )
+    with pytest.raises(ValueError,match='representation identity unresolved'):
+        HierarchicalFactorEngine().build_from_manifests(r,[],d)
+
+
+def test_hierarchy_rejects_stream_id_collision_across_distinct_bytes():
+    import pytest
+    a=_m('NQ','a')
+    b=_m('NQ','b')
+    # Explicitly emulate a compact-id collision while preserving distinct raw bytes.
+    object.__setattr__(b.identity,'source_id',a.identity.source_id)
+    object.__setattr__(b.identity,'symbol',a.identity.symbol)
+    object.__setattr__(b.identity,'raw_sha256','a'*12+'b'*52)
+    # raw hash prefix now collides with a.
+    assert b.identity.stream_id==a.identity.stream_id
+    returns=pd.DataFrame({a.identity.stream_id:[.01,.02]})
+    d=EnsembleDefinition(
+        'H',('NQ',),methods=('equal',),window=2,min_periods=1,rebalance_every=1
+    )
+    with pytest.raises(ValueError,match='collision'):
+        HierarchicalFactorEngine().build_from_manifests(returns,[a,b],d)
