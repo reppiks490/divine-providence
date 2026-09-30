@@ -67,12 +67,14 @@ def _compare(
     candidate: dict[int, tuple[float, float, float, float]],
 ) -> dict:
     common = sorted(set(standard).intersection(candidate))
-    denominator = max(1, min(len(standard), len(candidate)))
-    coverage = len(common) / denominator
-    if len(common) < MIN_OVERLAP or coverage < MIN_COVERAGE:
+    candidate_coverage = len(common) / max(1, len(candidate))
+    reference_coverage = len(common) / max(1, len(standard))
+    if len(common) < MIN_OVERLAP or candidate_coverage < MIN_COVERAGE:
         return {
             "overlap": len(common),
-            "coverage": coverage,
+            "coverage": candidate_coverage,
+            "candidate_coverage": candidate_coverage,
+            "reference_coverage": reference_coverage,
             "standard_score": 0.0,
             "ha_close_high_low_score": 0.0,
             "ha_open_recurrence_score": 0.0,
@@ -121,7 +123,9 @@ def _compare(
     ha_open_score = (ha_open_ok / ha_open_total) if ha_open_total else 0.0
     return {
         "overlap": len(common),
-        "coverage": coverage,
+        "coverage": candidate_coverage,
+        "candidate_coverage": candidate_coverage,
+        "reference_coverage": reference_coverage,
         "standard_score": standard_score,
         "ha_close_high_low_score": ha_chl_score,
         "ha_open_recurrence_score": ha_open_score,
@@ -179,6 +183,8 @@ def probe(root: Path) -> dict:
                 "reference_stream_id": None,
                 "overlap": 0,
                 "coverage": 0.0,
+                "candidate_coverage": 0.0,
+                "reference_coverage": 0.0,
                 "standard_score": 0.0,
                 "ha_close_high_low_score": 0.0,
                 "ha_open_recurrence_score": 0.0,
@@ -216,7 +222,8 @@ def probe(root: Path) -> dict:
             chosen = best_ha
 
         scores = chosen[4] if chosen else {
-            "overlap": 0, "coverage": 0.0, "standard_score": 0.0,
+            "overlap": 0, "coverage": 0.0, "candidate_coverage": 0.0,
+            "reference_coverage": 0.0, "standard_score": 0.0,
             "ha_close_high_low_score": 0.0, "ha_open_recurrence_score": 0.0,
             "ha_score": 0.0
         }
@@ -234,6 +241,8 @@ def probe(root: Path) -> dict:
             "reference_source_path": ref.identity.source_path if ref else None,
             "overlap": int(scores["overlap"]),
             "coverage": float(scores["coverage"]),
+            "candidate_coverage": float(scores["candidate_coverage"]),
+            "reference_coverage": float(scores["reference_coverage"]),
             "standard_score": float(scores["standard_score"]),
             "ha_close_high_low_score": float(scores["ha_close_high_low_score"]),
             "ha_open_recurrence_score": float(scores["ha_open_recurrence_score"]),
@@ -245,11 +254,11 @@ def probe(root: Path) -> dict:
     for row in output:
         counts[row["proved_price_geometry"] or "unresolved"] += 1
     return {
-        "schema": "nexus.o14-representation-probe.v3",
+        "schema": "nexus.o14-representation-probe.v4",
         "known_standard_archive": KNOWN_STANDARD_ARCHIVE,
         "thresholds": {
             "minimum_overlap": MIN_OVERLAP,
-            "minimum_coverage": MIN_COVERAGE,
+            "minimum_candidate_coverage": MIN_COVERAGE,
             "proof_score": PROOF_SCORE,
         },
         "counts": dict(sorted(counts.items())),
