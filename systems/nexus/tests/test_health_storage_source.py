@@ -74,3 +74,11 @@ def test_dynamic_quality_rejects_negative_timing_inputs():
         dynamic_state_quality(base_score=1.0,age_ns=0,cadence_ns=10,clock_uncertainty_ns=-1)
     with pytest.raises(ValueError,match='cadence_ns'):
         dynamic_state_quality(base_score=1.0,age_ns=0,cadence_ns=0)
+
+
+def test_npy_store_rejects_duplicate_ordering_keys(tmp_path:Path):
+    import pytest
+    a=BarEvent('s',10,0,1,2,.5,1.5,None,'p',available_ns=10)
+    b=BarEvent('s',10,0,1,2,.5,1.5,None,'p2',available_ns=10)
+    with pytest.raises(ValueError,match='ordering keys'):
+        NpyColumnarBarStore(tmp_path/'dups').write([a,b])
