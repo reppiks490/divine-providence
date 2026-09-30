@@ -10,6 +10,8 @@ def timestamp_to_ns(value: str | int | float) -> tuple[int, bool]:
         d = Decimal(s)
     except InvalidOperation as e:
         raise ValueError(f"invalid timestamp: {value!r}") from e
+    if not d.is_finite():
+        raise ValueError(f"non-finite timestamp: {value!r}")
     fractional = d != d.to_integral_value()
     mag = abs(d)
     if mag < Decimal("1e11"):      # seconds
