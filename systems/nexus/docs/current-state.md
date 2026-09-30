@@ -41,3 +41,31 @@ The paired DAEDALUS receiver currently reports all 13 behavioral candidates as r
 - DAEDALUS receiver: **58/58 tests passed**, static audit passed across **34 source files / 6,022 lines**. It imports **13 development-only behavioral hypotheses**, with **0** session blockers, **0** representation blockers, and **0** protected-holdout-eligible tasks.
 - Retrospective diagnostics remain 8 direction-stable + 5 strong nonstationarity cases, but **all 13 remain `WAITING_NO_NEW_BYTES` for confirmation**. No protected holdout has been spent and no production authorization exists.
 - Canonical machine-readable state: `artifacts/advanced_csv_loop/CURRENT_RESEARCH_STATE.json`.
+
+## Canonical current state — 2026-09-30
+
+The historical archive-count gap is closed. The pinned source repos reproduce
+the complete verified ten-archive checkpoint: **659 usable CSV members /
+13,788,256 logical rows / 542 distinct contents**, reconciled with the
+**803-physical-file / 542-content** DAEDALUS extraction checkpoint.
+
+The earlier 238-stream state is now understood as the single
+`Full csv candles only.zip` subset, not the whole accessible corpus.
+
+NEXUS representation handling is now v1.17 and separates:
+
+1. chart/view family (regular candles, Heikin Ashi, Renko, TPO, footprint,
+   session profile, etc. when evidenced);
+2. sampling domain/construction (time, tick, range);
+3. native setting/timeframe;
+4. instrument/symbol/venue identity.
+
+Representation-sensitive fusion is
+`stream -> sampling construction -> chart family -> symbol -> cross-asset`.
+Unknown chart family or sampling construction fails closed rather than being
+guessed. The latest GitHub Actions baseline is **161/161 passed**.
+
+Remaining work is evidence reconciliation, not bulk CSV recovery: resolve only
+the genuinely unknown chart-family/export settings, named expiries and roll
+metadata, micro-contract tapes, sessions/entitlements, and missing required
+matrix cells. Production authorization remains false.
