@@ -35,7 +35,8 @@ def test_loop_runs_and_resumes(tmp_path):
     assert r1.iteration == 1
     assert r1.summary["usable_entries"] == 1
     assert r1.summary["production_authorized"] is False
-    assert r1.summary["coverage_claim_allowed"] is True
+    assert r1.summary["historical_checkpoint_reconciled"] is True
+    assert r1.summary["coverage_claim_allowed"] is False
     r2 = loop.run_once()
     assert r2.iteration == 2
     assert r2.corpus_manifest_hash == r1.corpus_manifest_hash
