@@ -36,10 +36,12 @@ def test_zip_catalog_preserves_representation_and_sampling_claims(tmp_path:Path)
     renko=by_claim['10R']
     tick=by_claim['1000T']
     assert renko.metadata['representation_claim']['family']=='renko'
+    assert renko.metadata['representation_claim']['price_geometry']=='renko'
     assert renko.metadata['representation_claim']['sampling_domain']=='event'
     assert renko.metadata['representation_claim']['construction']=='range'
     assert renko.metadata['representation_hypothesis']['kind']=='event_representation_candidate'
     assert tick.metadata['representation_claim']['family']=='unknown'
+    assert tick.metadata['representation_claim']['price_geometry']=='unknown'
     assert tick.metadata['representation_claim']['sampling_domain']=='event'
     assert tick.metadata['representation_claim']['construction']=='tick'
     assert tick.metadata['representation_hypothesis']['kind']=='event_bar_claim_candidate'
@@ -54,6 +56,7 @@ def test_documented_candidate_archive_is_regular_candles_not_profile_family(tmp_
     m=next(m for m in ZipCorpusCatalog(tmp_path).build() if m.row_count)
     claim=m.metadata['representation_claim']
     assert claim['family']=='regular_candles'
+    assert claim['price_geometry']=='standard_ohlc'
     assert claim['construction']=='time_bar'
     assert 'market_profile_fields' in claim['schema_tags']
     assert claim['authoritative'] is False
