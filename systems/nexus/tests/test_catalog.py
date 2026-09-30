@@ -23,3 +23,11 @@ def test_infer_cadence_ignores_session_gap():
     assert cadence==60
     assert confidence > .7
     assert repeats==0 and backwards==0
+
+
+def test_parallel_catalog_requires_positive_integer_workers(tmp_path:Path):
+    import pytest
+    c=CorpusCatalog(tmp_path)
+    for workers in (0,-1,2.5):
+        with pytest.raises(ValueError,match='workers'):
+            c.build_parallel(workers=workers)
