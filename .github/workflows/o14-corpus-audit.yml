@@ -7,18 +7,19 @@ on:
       - ".github/workflows/o14-corpus-audit.yml"
       - "systems/nexus/scripts/o14_*.py"
       - "systems/nexus/src/nexus/archive.py"
-      - "systems/nexus/src/nexus/representation.py"
-      - "systems/nexus/src/nexus/filename.py"
-      - "systems/nexus/src/nexus/archive.py"
       - "systems/nexus/src/nexus/catalog.py"
+      - "systems/nexus/src/nexus/contracts.py"
       - "systems/nexus/src/nexus/filename.py"
       - "systems/nexus/src/nexus/representation.py"
       - "systems/nexus/src/nexus/timeutil.py"
-      - "systems/nexus/scripts/o14_representation_probe.py"
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: o14-historical-corpus-audit-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   audit:
