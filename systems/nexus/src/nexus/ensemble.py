@@ -9,6 +9,12 @@ class EnsembleDefinition:
     methods:tuple[str,...]=('adaptive_pca','inverse_vol','equal')
     window:int=120;min_periods:int=40;rebalance_every:int=10;clip_z:float=6.0;max_component_weight:float=1.0
 
+    def __post_init__(self)->None:
+        _CoreEnsembleDefinition(
+            self.name,self.components,self.methods,self.window,self.min_periods,
+            self.rebalance_every,self.clip_z,self.max_component_weight,
+        )
+
 class AdaptiveFactorEnsemble:
     """Compatibility facade for the v2 factor ensemble with stability diagnostics."""
     def build(self,values:pd.DataFrame,definition:EnsembleDefinition)->pd.DataFrame:
