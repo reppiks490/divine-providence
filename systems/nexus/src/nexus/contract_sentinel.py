@@ -49,16 +49,20 @@ class ContractDriftSnapshot:
         root = Path(relative_to).resolve() if relative_to is not None else None
         rows: list[BoundaryFileFingerprint] = []
         for (sibling, role), raw_path in sorted(boundaries.items()):
-            if not str(sibling).strip() or not str(role).strip():
+            sibling=str(sibling)
+            role=str(role)
+            if not sibling.strip() or not role.strip():
                 raise ValueError("boundary sibling and role must be non-empty")
+            if sibling != sibling.strip() or role != role.strip():
+                raise ValueError("boundary sibling and role must be trimmed")
             path = Path(raw_path)
             if not path.is_file():
                 raise FileNotFoundError(path)
             payload = path.read_bytes()
             rows.append(
                 BoundaryFileFingerprint(
-                    sibling=str(sibling),
-                    role=str(role),
+                    sibling=sibling,
+                    role=role,
                     path=str(path.resolve()) if root is None else path.resolve().relative_to(root).as_posix(),
                     raw_sha256=_sha256(payload),
                     ast_sha256=_ast_sha256(path),
@@ -73,14 +77,27 @@ class ContractDriftSnapshot:
         return cls(body["schema"], tuple(rows), snapshot_hash)
 
     def verify(self) -> bool:
-        if self.schema != "nexus.contract-drift-snapshot.v1" or not self.files:
+        if (
+            self.schema != "nexus.contract-drift-snapshot.v1"
+            or not self.files
+            or not isinstance(self.snapshot_hash,str)
+            or len(self.snapshot_hash)!=64
+        ):
+            return False
+        try:
+            int(self.snapshot_hash,16)
+        except ValueError:
             return False
         keys=set()
         for row in self.files:
             key=(row.sibling,row.role)
             if (
-                not row.sibling or not row.role or key in keys
-                or row.size_bytes < 0
+                not row.sibling or not row.role
+                or row.sibling != row.sibling.strip()
+                or row.role != row.role.strip()
+                or not row.path
+                or key in keys
+                or type(row.size_bytes) is not int or row.size_bytes < 0
                 or len(row.raw_sha256)!=64 or len(row.ast_sha256)!=64
             ):
                 return False
