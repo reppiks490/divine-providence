@@ -22,15 +22,17 @@ def test_dynamic_health_tracks_missing_and_stale_without_imputation():
 
 
 def test_npy_columnar_roundtrip_and_tamper_detection(tmp_path:Path):
+    manifest=_m()
+    sid=manifest.identity.stream_id
     events=[
-        BarEvent('s',10,0,1,2,0.5,1.5,None,'p','research',(),10,0,9,'verified_bar_close'),
-        BarEvent('s',20,1,1.5,2.5,1,2,100,'p','research',('x',),20,0,19,'verified_bar_close'),
+        BarEvent(sid,10,0,1,2,0.5,1.5,None,'p','research',(),10,0,9,'verified_bar_close'),
+        BarEvent(sid,20,1,1.5,2.5,1,2,100,'p','research',('x',),20,0,19,'verified_bar_close'),
     ]
-    src=IterableMarketSource(_m(),events)
+    src=IterableMarketSource(manifest,events)
     store=NpyColumnarBarStore(tmp_path/'store')
     m=store.write(src.events())
     assert m.rows==2 and store.verify()
-    out=list(store.iter_stream('s'))
+    out=list(store.iter_stream(sid))
     assert out==events
     # modify one numeric cell on disk; content verification must fail
     import numpy as np
@@ -97,3 +99,36 @@ def test_quality_plane_rejects_negative_clock_uncertainty():
     state=StatePacket(100,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash='f')
     with pytest.raises(ValueError,match='clock_uncertainty_ns'):
         QualityStateEngine().build(state,{'a':_m()},clock_uncertainty_ns={'a':-1})
+
+
+def test_iterable_source_rejects_manifest_stream_mismatch_and_merges_quality():
+    import pytest
+    manifest=_m()
+    manifest.quality_flags=['claim_mismatch']
+    sid=manifest.identity.stream_id
+    good=BarEvent(sid,10,0,1,2,.5,1.5,None,'p',quality_flags=('local',),available_ns=10)
+    out=list(IterableMarketSource(manifest,[good]).events())
+    assert out[0].quality_flags==('local','claim_mismatch')
+
+    bad=BarEvent('wrong',10,0,1,2,.5,1.5,None,'p',available_ns=10)
+    with pytest.raises(ValueError,match='manifest stream_id'):
+        list(IterableMarketSource(manifest,[bad]).events())
+
+
+def test_csv_source_propagates_manifest_quality_flags(tmp_path:Path):
+    from nexus.sources import CSVMarketSource
+    from nexus.ingest import BarClockPolicy
+    p=tmp_path/'x.csv'
+    p.write_text('time,open,high,low,close\n100,1,2,0,1\n')
+    manifest=_m()
+    manifest.identity = StreamIdentity(
+        manifest.identity.source_id,manifest.identity.venue,manifest.identity.symbol,
+        manifest.identity.filename_claim,manifest.identity.representation,
+        str(p),manifest.identity.raw_sha256,
+    )
+    manifest.quality_flags=['claim_mismatch']
+    events=list(CSVMarketSource(
+        manifest,BarClockPolicy(source_stamp='close')
+    ).events())
+    assert len(events)==1
+    assert 'claim_mismatch' in events[0].quality_flags
