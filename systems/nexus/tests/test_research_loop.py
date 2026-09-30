@@ -122,6 +122,6 @@ def test_loop_emits_representation_aggregation_contract(tmp_path):
     universe = json.loads((state / "iteration_0001" / "factor_universe.json").read_text())
     contract = universe["representation_aggregation_contract"]
     assert contract["raw_representations_are_independent_votes"] is False
-    assert contract["required_engine"] == "HierarchicalFactorEngine"
+    assert contract["required_engine"] == "HierarchicalFactorEngine.build_from_manifests"
     assert "native completion boundaries" in contract["native_clock_rule"]
     assert result.summary["production_authorized"] is False
