@@ -127,3 +127,15 @@ def test_build_from_manifests_accepts_authoritative_identity():
     d=EnsembleDefinition("H",("NQ",),methods=("equal",),window=2,min_periods=1,rebalance_every=1)
     result=HierarchicalFactorEngine().build_from_manifests(returns,[m],d)
     assert list(result.symbol_returns.columns)==["NQ"]
+
+
+def test_universe_owner_exclusion_preserves_data_but_blocks_selection():
+    nq=_m("NQ1!","e")
+    eth=_m("ETHUSD","f")
+    selected,decisions=build_factor_universe(
+        [nq,eth],excluded_symbols=("ETHUSD","SOLUSD","MBT1!")
+    )
+    assert nq.identity.stream_id in selected
+    assert eth.identity.stream_id not in selected
+    d=next(x for x in decisions if x.stream_id==eth.identity.stream_id)
+    assert d.reason=="owner_excluded_symbol"
