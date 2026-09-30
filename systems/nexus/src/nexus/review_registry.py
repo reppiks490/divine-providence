@@ -4,6 +4,7 @@ from dataclasses import asdict, dataclass
 import hashlib
 import json
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from .identity_registry import IdentityRecord
 from .representation import RepresentationKind, RepresentationPolicy, TimestampSemantics
@@ -49,6 +50,22 @@ class ReviewedRepresentationRecord:
         ):
             if not isinstance(value,str) or not value.strip() or value != value.strip():
                 raise ValueError(f"{name} must be a non-empty trimmed string")
+        for name,value in (
+            ("venue",self.venue),("timezone",self.timezone),("roll_policy",self.roll_policy)
+        ):
+            if value is not None and (
+                not isinstance(value,str) or not value.strip() or value != value.strip()
+            ):
+                raise ValueError(f"{name} must be a non-empty trimmed string or None")
+        if not isinstance(self.volume_semantics,str) or not self.volume_semantics.strip():
+            raise ValueError("volume_semantics must be a non-empty string")
+        if not isinstance(self.notes,str):
+            raise TypeError("notes must be a string")
+        if self.timezone is not None:
+            try:
+                ZoneInfo(self.timezone)
+            except Exception as exc:
+                raise ValueError(f"invalid timezone: {self.timezone}") from exc
         if not _is_sha256(self.review_evidence_sha256):
             raise ValueError("review_evidence_sha256 must be a SHA-256 digest")
         if type(self.executable) is not bool or type(self.continuous_contract) is not bool:
@@ -128,6 +145,8 @@ class ReviewedRepresentationRegistry:
         self._active:dict[str,str]={}
 
     def register(self,record:ReviewedRepresentationRecord)->str:
+        if not isinstance(record,ReviewedRepresentationRecord):
+            raise TypeError("record must be ReviewedRepresentationRecord")
         old=self._records.get(record.key)
         if old is not None and old.record_hash != record.record_hash:
             raise ValueError(f"immutable reviewed representation conflict: {record.key}")
