@@ -90,6 +90,8 @@ class ReplayBus:
         return hashlib.sha256(raw).hexdigest()
 
     def _packet(self, decision_ns:int, latest:dict[str,BarEvent], required_streams:set[str], max_age_ns:int|None, batch_size:int) -> StatePacket:
+        if max_age_ns is not None and int(max_age_ns) < 0:
+            raise ValueError("max_age_ns must be non-negative or None")
         missing=tuple(sorted(required_streams-set(latest)))
         values={sid:e.close for sid,e in latest.items() if max_age_ns is None or decision_ns-e.event_ns <= max_age_ns}
         ages={sid:max(0,decision_ns-e.event_ns) for sid,e in latest.items() if sid in values}
