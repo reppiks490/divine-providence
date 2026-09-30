@@ -180,11 +180,11 @@ def build_representation_attestation_status(
             status_counts[status] += 1
             continue
 
-        # Multiple attestations for the same exact stream are allowed as an
-        # audit trail, but they may not "vote" around a bad identity. The first
-        # fully valid attestation resolves the stream; otherwise expose all
-        # reasons from the best (fewest-errors) candidate deterministically.
+        # Multiple attestations are an audit trail, never a voting system.
+        # Every fully valid exact-byte review must agree on all dimensions required
+        # for causal replay; contradictory valid reviews keep the stream blocked.
         evaluated: list[tuple[int, Mapping[str, Any], list[str], list[str], list[str]]] = []
+        valid: list[tuple[Mapping[str, Any], dict[str,str]]] = []
         for att in candidates:
             ident_ok, ident_errors = _attestation_identity_valid(att, manifest, source_paths)
             ev_ok, evidence_errors = _attestation_evidence_valid(att)
@@ -196,47 +196,97 @@ def build_representation_attestation_status(
             penalty = len(ident_errors) * 100 + len(evidence_errors) * 10 + len(missing)
             evaluated.append((penalty, att, ident_errors, evidence_errors, missing))
             if ident_ok and ev_ok and not missing:
-                status = "RESOLVED_BY_EXACT_STREAM_ATTESTATION"
-                resolved_ids.append(sid)
+                normalized={
+                    name:(
+                        _norm(dimensions.get(name)).upper()
+                        if name=="timestamp_semantics"
+                        else _norm(dimensions.get(name)).casefold()
+                    )
+                    for name in required
+                }
+                valid.append((att,normalized))
+
+        if valid:
+            signatures={
+                tuple((name,dims[name]) for name in required)
+                for _,dims in valid
+            }
+            if len(signatures)>1:
+                status="BLOCKED_ATTESTATION_CONFLICT"
                 statuses.append({
-                    "stream_id": sid,
-                    "source_path": manifest.identity.source_path,
-                    "raw_sha256": manifest.identity.raw_sha256,
-                    "status": status,
-                    "identity_errors": [],
-                    "evidence_errors": [],
-                    "missing_dimensions": [],
-                    "required_dimensions": list(required),
-                    "attestation_count": len(candidates),
-                    "accepted_evidence_sources": sorted(str(x) for x in (att.get("evidence_sources") or []) if _known(x)),
-                    "reviewed_by": _norm(att.get("reviewed_by")) or None,
-                    "reviewed_at": _norm(att.get("reviewed_at")) or None,
-                    "production_authorized": False,
+                    "stream_id":sid,
+                    "source_path":manifest.identity.source_path,
+                    "raw_sha256":manifest.identity.raw_sha256,
+                    "status":status,
+                    "identity_errors":[],
+                    "evidence_errors":["contradictory_valid_attestations"],
+                    "missing_dimensions":[],
+                    "required_dimensions":list(required),
+                    "attestation_count":len(candidates),
+                    "valid_attestation_count":len(valid),
+                    "production_authorized":False,
                 })
-                status_counts[status] += 1
-                break
-        else:
-            evaluated.sort(key=lambda x: (x[0], repr(sorted(x[1].items()))))
-            _, _, ident_errors, evidence_errors, missing = evaluated[0]
-            if ident_errors:
-                status = "REJECTED_ATTESTATION_IDENTITY_MISMATCH"
-            elif evidence_errors:
-                status = "BLOCKED_ATTESTATION_EVIDENCE_INCOMPLETE"
-            else:
-                status = "BLOCKED_ATTESTATION_DIMENSIONS_INCOMPLETE"
+                status_counts[status]+=1
+                continue
+
+            valid.sort(key=lambda x:(
+                _norm(x[0].get("reviewed_at")),
+                _norm(x[0].get("reviewed_by")),
+                repr(sorted(x[0].items())),
+            ))
+            att,normalized=valid[-1]
+            dimensions=att.get("dimensions")
+            status="RESOLVED_BY_EXACT_STREAM_ATTESTATION"
+            resolved_ids.append(sid)
             statuses.append({
-                "stream_id": sid,
-                "source_path": manifest.identity.source_path,
-                "raw_sha256": manifest.identity.raw_sha256,
-                "status": status,
-                "identity_errors": sorted(ident_errors),
-                "evidence_errors": sorted(evidence_errors),
-                "missing_dimensions": sorted(missing),
-                "required_dimensions": list(required),
-                "attestation_count": len(candidates),
-                "production_authorized": False,
+                "stream_id":sid,
+                "source_path":manifest.identity.source_path,
+                "raw_sha256":manifest.identity.raw_sha256,
+                "status":status,
+                "identity_errors":[],
+                "evidence_errors":[],
+                "missing_dimensions":[],
+                "required_dimensions":list(required),
+                "attestation_count":len(candidates),
+                "valid_attestation_count":len(valid),
+                "accepted_evidence_sources":sorted({
+                    str(x).strip()
+                    for valid_att,_ in valid
+                    for x in (valid_att.get("evidence_sources") or [])
+                    if isinstance(x,str) and _known(x)
+                }),
+                "accepted_dimensions":{
+                    name:_norm(dimensions.get(name)) for name in required
+                },
+                "reviewed_by":_norm(att.get("reviewed_by")) or None,
+                "reviewed_at":_norm(att.get("reviewed_at")) or None,
+                "production_authorized":False,
             })
-            status_counts[status] += 1
+            status_counts[status]+=1
+            continue
+
+        evaluated.sort(key=lambda x: (x[0], repr(sorted(x[1].items()))))
+        _, _, ident_errors, evidence_errors, missing = evaluated[0]
+        if ident_errors:
+            status = "REJECTED_ATTESTATION_IDENTITY_MISMATCH"
+        elif evidence_errors:
+            status = "BLOCKED_ATTESTATION_EVIDENCE_INCOMPLETE"
+        else:
+            status = "BLOCKED_ATTESTATION_DIMENSIONS_INCOMPLETE"
+        statuses.append({
+            "stream_id": sid,
+            "source_path": manifest.identity.source_path,
+            "raw_sha256": manifest.identity.raw_sha256,
+            "status": status,
+            "identity_errors": sorted(ident_errors),
+            "evidence_errors": sorted(evidence_errors),
+            "missing_dimensions": sorted(missing),
+            "required_dimensions": list(required),
+            "attestation_count": len(candidates),
+            "valid_attestation_count": 0,
+            "production_authorized": False,
+        })
+        status_counts[status] += 1
 
     return {
         "schema": SCHEMA,
