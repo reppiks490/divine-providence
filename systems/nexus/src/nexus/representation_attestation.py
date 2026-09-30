@@ -105,7 +105,16 @@ def build_representation_attestation_status(
     for m in sorted(manifests,key=lambda x:(x.identity.stream_id,x.identity.source_path)):
         manifests_by_id.setdefault(m.identity.stream_id,[]).append(m)
     rows = [r for r in review_queue.get("candidates", []) if isinstance(r, Mapping)]
-    p0 = [r for r in rows if str(r.get("priority")) == "P0"]
+    p0_by_stream: dict[str, Mapping[str, Any]] = {}
+    for row in sorted(
+        (r for r in rows if str(r.get("priority")) == "P0"),
+        key=lambda r: (_norm(r.get("stream_id")), _norm(r.get("source_path"))),
+    ):
+        sid=_norm(row.get("stream_id"))
+        if not sid:
+            continue
+        p0_by_stream.setdefault(sid,row)
+    p0 = list(p0_by_stream.values())
 
     payload = attestations if isinstance(attestations, Mapping) else {}
     input_schema = _norm(payload.get("schema")) if payload else ""
