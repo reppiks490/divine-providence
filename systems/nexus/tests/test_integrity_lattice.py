@@ -63,3 +63,15 @@ def test_clock_rule_rejects_invalid_configuration():
         RepresentationClockRule('x','open','variable',reviewed=True)
     with pytest.raises(ClockPolicyError,match='timestamp_semantics'):
         RepresentationClockRule('x','future',reviewed=True)
+
+
+def test_integrity_rejects_malformed_manifest_counters():
+    bad=manifest(metadata={"usable_ohlc_rows":101})
+    a=assess_manifest(bad)
+    assert not a.admitted
+    assert "invalid_integrity_metadata" in a.blockers
+
+    negative=manifest(metadata={"usable_ohlc_rows":99,"nonnumeric_ohlc_rows":-1})
+    b=assess_manifest(negative)
+    assert not b.admitted
+    assert "invalid_integrity_metadata" in b.blockers
