@@ -6,6 +6,25 @@ import json
 from typing import Mapping
 
 
+def _is_sha256(value: str) -> bool:
+    if not isinstance(value,str) or len(value)!=64:
+        return False
+    try:
+        int(value,16)
+    except ValueError:
+        return False
+    return True
+
+
+def _canonical_json(value) -> bytes:
+    return json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",",":"),
+        allow_nan=False,
+    ).encode()
+
+
 @dataclass(frozen=True, slots=True)
 class DerivationRecord:
     product_id: str
@@ -45,19 +64,79 @@ class DerivationRecord:
         code_version: str,
         parameters: Mapping | None = None,
     ) -> "DerivationRecord":
-        inputs=tuple(sorted((str(k),str(v)) for k,v in input_hashes.items()))
-        params=json.dumps(parameters or {},sort_keys=True,separators=(",",":"),default=str).encode()
+        if not isinstance(product_id,str) or not product_id.strip():
+            raise ValueError("product_id is required")
+        if not isinstance(product_version,str) or not product_version.strip():
+            raise ValueError("product_version is required")
+        if type(decision_ns) is not int or decision_ns < 0:
+            raise ValueError("decision_ns must be a non-negative integer")
+        if not _is_sha256(spec_hash):
+            raise ValueError("spec_hash must be a SHA-256 hex digest")
+        if not isinstance(code_version,str) or not code_version.strip():
+            raise ValueError("code_version is required")
+        if not isinstance(input_hashes,Mapping):
+            raise TypeError("input_hashes must be a mapping")
+
+        normalized=[]
+        for key,value in input_hashes.items():
+            key=str(key).strip()
+            value=str(value)
+            if not key:
+                raise ValueError("input hash names must be non-empty")
+            if not _is_sha256(value):
+                raise ValueError(f"input hash for {key!r} must be a SHA-256 hex digest")
+            normalized.append((key,value))
+        inputs=tuple(sorted(normalized))
+        if len({k for k,_ in inputs}) != len(inputs):
+            raise ValueError("input hash names must be unique")
+
+        try:
+            params=_canonical_json(parameters or {})
+        except (TypeError,ValueError) as exc:
+            raise ValueError("parameters must be finite canonical JSON data") from exc
         ph=hashlib.sha256(params).hexdigest()
-        payload=cls._payload(product_id=product_id,product_version=product_version,decision_ns=decision_ns,
-            spec_hash=spec_hash,input_hashes=inputs,code_version=code_version,parameters_hash=ph)
-        dh=hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(",",":")).encode()).hexdigest()
-        return cls(product_id,product_version,int(decision_ns),spec_hash,inputs,code_version,ph,dh)
+        payload=cls._payload(
+            product_id=product_id.strip(),
+            product_version=product_version.strip(),
+            decision_ns=decision_ns,
+            spec_hash=spec_hash,
+            input_hashes=inputs,
+            code_version=code_version.strip(),
+            parameters_hash=ph,
+        )
+        dh=hashlib.sha256(_canonical_json(payload)).hexdigest()
+        return cls(
+            product_id.strip(),product_version.strip(),decision_ns,spec_hash,
+            inputs,code_version.strip(),ph,dh
+        )
 
     def verify(self) -> bool:
-        payload=self._payload(product_id=self.product_id,product_version=self.product_version,
-            decision_ns=self.decision_ns,spec_hash=self.spec_hash,input_hashes=self.input_hashes,
-            code_version=self.code_version,parameters_hash=self.parameters_hash)
-        return hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(",",":")).encode()).hexdigest()==self.derivation_hash
+        if (
+            not self.product_id
+            or not self.product_version
+            or type(self.decision_ns) is not int
+            or self.decision_ns < 0
+            or not _is_sha256(self.spec_hash)
+            or not self.code_version
+            or not _is_sha256(self.parameters_hash)
+            or not _is_sha256(self.derivation_hash)
+            or tuple(sorted(self.input_hashes)) != self.input_hashes
+            or len({k for k,_ in self.input_hashes}) != len(self.input_hashes)
+            or any(not k or not _is_sha256(v) for k,v in self.input_hashes)
+        ):
+            return False
+        payload=self._payload(
+            product_id=self.product_id,
+            product_version=self.product_version,
+            decision_ns=self.decision_ns,
+            spec_hash=self.spec_hash,
+            input_hashes=self.input_hashes,
+            code_version=self.code_version,
+            parameters_hash=self.parameters_hash,
+        )
+        return hashlib.sha256(_canonical_json(payload)).hexdigest()==self.derivation_hash
 
     def to_dict(self)->dict:
-        d=asdict(self);d["input_hashes"]=[list(x) for x in self.input_hashes];return d
+        d=asdict(self)
+        d["input_hashes"]=[list(x) for x in self.input_hashes]
+        return d
