@@ -19,15 +19,32 @@ class RollingTopology:
         self.partial_edge_floor=partial_edge_floor; self.ridge=ridge
 
     def _partial(self,hist:pd.DataFrame)->pd.DataFrame:
-        z=hist.dropna(how="all").copy(); cols=list(z.columns)
-        if len(cols)<2 or len(z)<self.min_periods:return pd.DataFrame(0.0,index=cols,columns=cols)
-        z=(z-z.mean())/z.std(ddof=0).replace(0,np.nan); z=z.fillna(0.0)
+        cols=list(hist.columns)
+        out=pd.DataFrame(np.nan,index=cols,columns=cols,dtype=float)
+        for col in cols:
+            out.loc[col,col]=1.0
+        if len(cols)<2:
+            return out
+
+        # Partial correlation requires joint observations. Missing values are
+        # never replaced with zero z-scores because that fabricates covariance.
+        complete=hist.loc[:,cols].dropna(how="any")
+        if len(complete)<self.min_periods:
+            return out
+        sd=complete.std(ddof=0)
+        usable=[col for col in cols if np.isfinite(sd[col]) and float(sd[col])>1e-12]
+        if len(usable)<2:
+            return out
+        z=(complete[usable]-complete[usable].mean())/complete[usable].std(ddof=0)
         cov=np.cov(z.to_numpy(float),rowvar=False)
-        cov=np.atleast_2d(cov)+np.eye(len(cols))*self.ridge
+        if not np.isfinite(cov).all():
+            return out
+        cov=np.atleast_2d(cov)+np.eye(len(usable))*self.ridge
         precision=np.linalg.pinv(cov)
         d=np.sqrt(np.maximum(np.diag(precision),1e-12))
         p=-precision/np.outer(d,d); np.fill_diagonal(p,1.0)
-        return pd.DataFrame(p,index=cols,columns=cols)
+        out.loc[usable,usable]=p
+        return out
 
     def _communities(self,partial:pd.DataFrame)->tuple[tuple[str,...],...]:
         cols=list(partial.columns); adj={c:set() for c in cols}
@@ -49,14 +66,17 @@ class RollingTopology:
     def snapshot(self, returns: pd.DataFrame, at: int | None=None) -> TopologySnapshot:
         hist=returns.iloc[:at] if at is not None else returns
         hist=hist.tail(self.window)
-        corr=hist.corr(min_periods=self.min_periods).fillna(0.0)
-        syms=list(corr.columns); centrality={s:0.0 for s in syms}; edges=[]
+        corr=hist.corr(min_periods=self.min_periods)
+        syms=list(corr.columns); centrality={s:0.0 for s in syms}; observed={s:0 for s in syms}; edges=[]
         for i,a in enumerate(syms):
             for b in syms[i+1:]:
                 w=float(corr.loc[a,b])
+                if not np.isfinite(w):
+                    continue
+                observed[a]+=1; observed[b]+=1
                 if abs(w)>=self.edge_floor:
                     edges.append((a,b,w)); centrality[a]+=abs(w); centrality[b]+=abs(w)
-        denom=max(1,len(syms)-1); centrality={k:v/denom for k,v in centrality.items()}
+        centrality={k:(v/observed[k] if observed[k] else 0.0) for k,v in centrality.items()}
         vals=np.array([abs(w) for _,_,w in edges],dtype=float)
         if vals.size and vals.sum()>0:
             p=vals/vals.sum(); entropy=float(-(p*np.log(p+1e-12)).sum()/np.log(max(2,len(p))))
