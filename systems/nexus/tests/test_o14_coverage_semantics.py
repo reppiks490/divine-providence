@@ -23,6 +23,7 @@ def test_standard_geometry_probe_does_not_assign_regular_view_family():
         "representation_family": "unknown",
         "price_geometry": "unknown",
         "symbol": "NQ1!",
+        "venue": "CME",
         "observed_cadence_ns": str(20 * 60 * 1_000_000_000),
         "construction": "time_bar",
         "native_setting": "20",
@@ -58,7 +59,7 @@ def test_documented_regular_archive_proves_view_and_standard_geometry():
     }]
     families, geometries = mod._identity_maps(manifest, [])
     status, _ = mod._status(
-        manifest, families, geometries, "NQ1!", "20",
+        manifest, families, geometries, "NQ1!", "CME", "20",
         "regular_candles", "standard_ohlc",
     )
     assert status == "PROVED_PRESENT"
