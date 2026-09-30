@@ -24,3 +24,17 @@ def test_streamwise_columnar_and_fabric_checkpoint(tmp_path:Path):
     state=StatePacket(100,{'s':1.0},{'s':0},(),{'s':0},{'s':str(p)},frame_hash='f');cp=ReplayCheckpoint.from_state(state)
     f=FabricCheckpointManifest.create(decision_ns=100,catalog_sha256='a'*64,event_store_sha256=sm.content_sha256,ledger_head_sha256=head,replay_checkpoint_sha256=cp.checkpoint_hash,code_version='0.2.0')
     q=tmp_path/'fabric.json';f.save(q);assert FabricCheckpointManifest.load(q).verify();led.close()
+
+
+def test_buffered_rejects_backward_time_too(tmp_path:Path):
+    p=tmp_path/'backward.csv'
+    p.write_text('time,open,high,low,close\n100,1,2,0,1\n90,1,2,0,1\n110,1,2,0,1\n')
+    with pytest.raises(BackwardSourceTimeError):
+        list(iter_bars(p,'s'))
+
+
+def test_streaming_verified_close_does_not_bypass_backward_time_guard(tmp_path:Path):
+    p=tmp_path/'backward-close.csv'
+    p.write_text('time,open,high,low,close\n100,1,2,0,1\n90,1,2,0,1\n')
+    with pytest.raises(BackwardSourceTimeError):
+        list(iter_bars_streaming(p,'s',clock_policy=BarClockPolicy(source_stamp='close')))
