@@ -105,6 +105,8 @@ class NpyColumnarBarStore:
         manifests=[]
         for sid in sorted(grouped):
             evs=sorted(grouped[sid],key=lambda e:e.ordering_key)
+            if any(b.ordering_key<=a.ordering_key for a,b in zip(evs,evs[1:])):
+                raise ValueError(f"stream {sid!r} contains duplicate/nonincreasing ordering keys")
             arrays=self._arrays(evs); part=_safe_partition(sid); d=self.root/part; d.mkdir(parents=True,exist_ok=True)
             for name,arr in arrays.items(): np.save(d/f"{name}.npy",arr,allow_pickle=False)
             digest=_digest_arrays(arrays)
@@ -123,7 +125,10 @@ class NpyColumnarBarStore:
         for sid in sorted(streams):
             evs=list(streams[sid])
             if any(e.stream_id!=sid for e in evs):raise ValueError(f"stream mapping key {sid!r} does not match event stream_id")
-            evs.sort(key=lambda e:e.ordering_key);arrays=self._arrays(evs);part=_safe_partition(sid);d=self.root/part;d.mkdir(parents=True,exist_ok=True)
+            evs.sort(key=lambda e:e.ordering_key)
+            if any(b.ordering_key<=a.ordering_key for a,b in zip(evs,evs[1:])):
+                raise ValueError(f"stream {sid!r} contains duplicate/nonincreasing ordering keys")
+            arrays=self._arrays(evs);part=_safe_partition(sid);d=self.root/part;d.mkdir(parents=True,exist_ok=True)
             for name,arr in arrays.items():np.save(d/f"{name}.npy",arr,allow_pickle=False)
             digest=_digest_arrays(arrays);visible=[e.visible_ns for e in evs]
             pm=ColumnarPartitionManifest(sid,part,len(evs),min(visible) if visible else None,max(visible) if visible else None,digest)
