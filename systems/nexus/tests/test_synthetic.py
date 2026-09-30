@@ -29,3 +29,32 @@ def test_inverse_vol_weights_are_normalized():
     assert len(out)>0
     s=(out['w:A'].abs()+out['w:B'].abs()).round(10)
     assert (s==1.0).all()
+
+
+def test_missing_component_is_excluded_not_zero_imputed():
+    x=_frame(100)
+    x.loc[60,'B']=np.nan
+    d=SyntheticTickerDefinition(
+        'NEXUS:MISSING',('A','B'),method='equal',
+        window=40,min_periods=20,rebalance_every=1
+    )
+    out=AdaptiveTickerEngine().build(x,d)
+    row=out.loc[60]
+    assert np.isfinite(row['value'])
+    assert row['w:B']==0.0
+    assert abs(abs(row['w:A'])-1.0)<1e-12
+    assert 0.0 < row['confidence'] < 1.0
+
+
+def test_all_current_components_missing_stays_missing():
+    x=_frame(100)
+    x.loc[60,['A','B']]=np.nan
+    d=SyntheticTickerDefinition(
+        'NEXUS:MISSING',('A','B'),method='equal',
+        window=40,min_periods=20,rebalance_every=1
+    )
+    out=AdaptiveTickerEngine().build(x,d)
+    row=out.loc[60]
+    assert np.isnan(row['value'])
+    assert row['confidence']==0.0
+    assert row['w:A']==0.0 and row['w:B']==0.0
