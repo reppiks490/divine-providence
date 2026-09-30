@@ -216,6 +216,10 @@ def build_daedalus_validation_handoff(
     by_stream: dict[str, list[StreamManifest]] = defaultdict(list)
     for manifest in manifest_rows:
         by_stream[manifest.identity.stream_id].append(manifest)
+    for sid,rows in by_stream.items():
+        hashes={m.identity.raw_sha256 for m in rows}
+        if len(hashes)>1:
+            raise ValueError(f"stream_id collision across distinct raw contents: {sid}")
 
     handoff_candidates: list[dict[str, Any]] = []
     route_counts: Counter[str] = Counter()
