@@ -20,14 +20,19 @@ class CausalPCAFactor:
     """Online PCA factor fitted only on frames strictly prior to the emitted point."""
 
     def __init__(self, window: int = 256, min_obs: int = 48, min_coverage: float = 0.65) -> None:
-        if min_obs < 2 or window < min_obs:
+        if int(min_obs) < 2 or int(window) < int(min_obs):
             raise ValueError("require window >= min_obs >= 2")
+        coverage=float(min_coverage)
+        if not math.isfinite(coverage) or not 0.0 <= coverage <= 1.0:
+            raise ValueError("min_coverage must be finite and in [0,1]")
         self.window = int(window)
         self.min_obs = int(min_obs)
-        self.min_coverage = float(min_coverage)
+        self.min_coverage = coverage
         self.history: deque[dict[str, float]] = deque(maxlen=self.window)
 
     def update(self, event_ns: int, frame: Mapping[str, float]) -> LatentFactorPoint:
+        if type(event_ns) is not int or event_ns < 0:
+            raise ValueError("event_ns must be a non-negative integer")
         current = {k: float(v) for k, v in frame.items() if math.isfinite(float(v))}
         if self.history:
             common = set(current)
