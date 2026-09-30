@@ -202,8 +202,10 @@ class CorpusCatalog:
         return self._annotate_duplicates([self._profile_raw(p) for p in self.discover()])
 
     def build_parallel(self, workers:int=4) -> list[StreamManifest]:
+        if type(workers) is not int or workers < 1:
+            raise ValueError("workers must be a positive integer")
         paths=self.discover()
-        with ThreadPoolExecutor(max_workers=max(1,int(workers))) as ex:
+        with ThreadPoolExecutor(max_workers=workers) as ex:
             manifests=list(ex.map(self._profile_raw,paths))
         manifests.sort(key=lambda m:m.identity.source_path)
         return self._annotate_duplicates(manifests)
