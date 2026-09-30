@@ -57,13 +57,12 @@ def test_compat_adapter_never_invents_receipt_basis_or_impossible_time():
 
 def test_execution_identity_requires_venue_representation_and_roll_policy():
     r=IdentityRegistry()
-    r.register(IdentityRecord(
-        's','NQ1!','future',venue='CME',representation_class='standard:20m',
-        executable=True,continuous_contract=True,roll_policy=None,
-        timestamp_semantics='bar_close',
-    ))
-    with pytest.raises(ValueError):
-        r.require_execution_safe('s')
+    with pytest.raises(ValueError,match='roll_policy'):
+        IdentityRecord(
+            's','NQ1!','future',venue='CME',representation_class='standard:20m',
+            executable=True,continuous_contract=True,roll_policy=None,
+            timestamp_semantics='bar_close',
+        )
     good=IdentityRecord(
         'named','NQZ6','future',venue='CME',representation_class='standard:20m',
         executable=True,continuous_contract=False,timestamp_semantics='bar_close',
@@ -140,3 +139,14 @@ def test_stream_manifest_rejects_invalid_structural_fields():
         StreamManifest(ident,1,['time'],1,1,0,1.0,0,0,0)
     with pytest.raises(ValueError,match='cannot exceed row_count'):
         StreamManifest(ident,1,['time'],1,1,1,1.0,2,0,0)
+
+
+def test_identity_record_rejects_invalid_reviewed_metadata():
+    with pytest.raises(ValueError,match='invalid timezone'):
+        IdentityRecord('s','NQ','future',timezone='Mars/Chicago')
+    with pytest.raises(ValueError,match='venue'):
+        IdentityRecord('s','NQ','future',venue=' CME ')
+    with pytest.raises(ValueError,match='volume_semantics'):
+        IdentityRecord('s','NQ','future',volume_semantics='')
+    with pytest.raises(TypeError,match='record'):
+        IdentityRegistry().register(object())
