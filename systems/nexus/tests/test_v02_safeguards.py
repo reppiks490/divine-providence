@@ -151,3 +151,9 @@ def test_aion_adapter_refuses_conservative_inferred_availability_basis():
                  availability_basis='conservative_next_strictly_later_source_stamp')
     with pytest.raises(ValueError):
         aion_bar_observation(e)
+
+
+def test_aion_adapter_rejects_impossible_known_availability():
+    bad=BarEvent('s',20,0,1,1,1,1,None,'x',available_ns=10,availability_basis='verified_bar_close')
+    with pytest.raises(ValueError,match='before event'):
+        aion_bar_observation(bad)
