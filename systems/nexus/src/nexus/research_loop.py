@@ -600,6 +600,9 @@ class AdvancedCSVResearchLoop:
         representation_families = Counter(
             str(m.metadata.get("representation_claim", {}).get("family", "unknown")) for m in usable
         )
+        price_geometries = Counter(
+            str(m.metadata.get("representation_claim", {}).get("price_geometry", "unknown")) for m in usable
+        )
         sampling_domains = Counter(
             str(m.metadata.get("representation_claim", {}).get("sampling_domain", "unknown")) for m in usable
         )
@@ -638,6 +641,7 @@ class AdvancedCSVResearchLoop:
             "venue_counts": dict(sorted(venues.items())),
             "filename_claim_counts": dict(sorted(claims.items())),
             "representation_family_counts": dict(sorted(representation_families.items())),
+            "price_geometry_counts": dict(sorted(price_geometries.items())),
             "sampling_domain_counts": dict(sorted(sampling_domains.items())),
             "sampling_construction_counts": dict(sorted(sampling_constructions.items())),
             "prior_anchor": asdict(self.config.prior_anchor),
@@ -673,7 +677,7 @@ class AdvancedCSVResearchLoop:
                 "representation_aggregation_contract": {
                     "raw_representations_are_independent_votes": False,
                     "within_symbol_rule": "Fuse streams within sampling construction inside chart family; fuse constructions to chart family; fuse chart families to one symbol plane; then perform cross-asset weighting.",
-                    "orthogonal_identity_axes": ["chart_family", "sampling_domain", "sampling_construction"],
+                    "orthogonal_identity_axes": ["chart_view_family", "price_geometry", "sampling_domain", "sampling_construction"],
                     "required_engine": "HierarchicalFactorEngine.build_from_manifests",
                     "native_clock_rule": "Tick, range, Renko and other event/profile constructions retain native completion boundaries; never coerce them to fixed minute/hour cadence.",
                     "missing_values_rule": "Missing representation observations remain missing; never replace them with zero merely to create agreement.",
