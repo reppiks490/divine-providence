@@ -121,3 +121,40 @@ def test_exact_byte_alias_path_is_valid_attestation_identity():
     out=build_representation_attestation_status([alias,m],_queue(m),payload)
     assert out["resolved_by_attestation_count"]==1
     assert out["remaining_p0_count"]==0
+
+
+def test_contradictory_valid_attestations_fail_closed():
+    m=_manifest()
+    payload=_valid(m)
+    second=dict(payload["attestations"][0])
+    second["dimensions"]=dict(second["dimensions"])
+    second["dimensions"]["chart_type"]="heikin_ashi"
+    second["reviewed_by"]="second-reviewer"
+    second["reviewed_at"]="2026-09-26"
+    payload["attestations"].append(second)
+    out=build_representation_attestation_status([m],_queue(m),payload)
+    assert out["resolved_by_attestation_count"]==0
+    assert out["remaining_p0_count"]==1
+    assert out["status_counts"]=={"BLOCKED_ATTESTATION_CONFLICT":1}
+    assert out["streams"][0]["valid_attestation_count"]==2
+
+
+def test_multiple_valid_attestations_must_agree_but_can_merge_evidence_sources():
+    m=_manifest()
+    payload=_valid(m)
+    second={
+        **payload["attestations"][0],
+        "reviewed_by":"second-reviewer",
+        "reviewed_at":"2026-09-26",
+        "evidence_sources":["vendor-contract:sha"],
+    }
+    second["dimensions"]=dict(payload["attestations"][0]["dimensions"])
+    payload["attestations"].append(second)
+    out=build_representation_attestation_status([m],_queue(m),payload)
+    assert out["resolved_by_attestation_count"]==1
+    row=out["streams"][0]
+    assert row["valid_attestation_count"]==2
+    assert row["accepted_dimensions"]["timestamp_semantics"]=="BAR_OPEN"
+    assert set(row["accepted_evidence_sources"])=={
+        "vendor-export-settings:screenshot-sha","vendor-contract:sha"
+    }
