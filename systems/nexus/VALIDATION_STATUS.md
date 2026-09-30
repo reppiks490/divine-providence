@@ -23,3 +23,34 @@ Not verified / not claimed:
 - performance benchmark at the full expected corpus scale
 
 The failed editable-install attempt was environmental: pip attempted to download build dependencies while network access was unavailable. Tests run directly against `src/` and passed; dependencies (`numpy`, `pandas`, `pytest`) were already present.
+
+## Canonical superseding update — 2026-09-30
+
+The older checkpoint above is retained as historical context but is no longer
+the current corpus status.
+
+- GitHub Actions NEXUS verification: **161/161 tests passed** on the current
+  representation-safe code path.
+- Historical corpus reconciliation is now reproducible from pinned commits:
+  **10 ZIPs / 659 usable CSV archive members / 13,788,256 logical rows /
+  542 distinct byte-exact contents**.
+- Independent ZIP scanning and NEXUS produce identical sets of 542 content
+  hashes: **0 independent-only / 0 NEXUS-only**.
+- The DAEDALUS extracted-corpus checkpoint remains **803 physical CSV files /
+  542 distinct contents**; the difference from 659 archive members is physical
+  lineage/copy placement, not independent evidence.
+- NEXUS advanced CSV loop semantics are now **v1.17**. Chart/view family and
+  sampling construction are orthogonal identity axes. Tick/range claims cannot
+  be interpreted as minute/hour intervals or as chart-family identity.
+- Representation-sensitive modeling is fail-closed and uses
+  `HierarchicalFactorEngine.build_from_manifests`: streams are fused within
+  sampling construction, constructions within chart family, chart families
+  within symbol, and only then across assets.
+- Exact/logical duplicates receive no extra evidence weight; missing
+  observations remain missing at the representation consensus layer.
+
+This verifies engineering and corpus integrity properties only. It does not
+prove predictive edge, profitability, live execution quality, broker
+connectivity, or production authorization. Named-contract/roll identity,
+micro-contract tapes, export-specific sessions, and unresolved chart-family
+attestations remain separate evidence requirements.
