@@ -155,3 +155,28 @@ def test_source_slo_policy_change_requires_explicit_clear():
         r.set_policy('s',p2)
     r.clear_policy('s')
     r.set_policy('s',p2)
+
+
+def test_source_health_missing_receipt_cannot_erase_future_evidence():
+    import pytest
+    from nexus.source_health import SourceHealthRegistry
+    r=SourceHealthRegistry()
+    r.observe(_e(0,avail=100),received_ns=200)
+    # A later tracker update without a receipt must not erase the fact that
+    # evidence at t=200 was already consumed.
+    r.observe(_e(1,avail=150),received_ns=None)
+    snap=r.tracker('s').snapshot()
+    assert snap.last_received_ns==200
+    assert snap.latest_evidence_ns==200
+    with pytest.raises(ValueError,match='cannot build source-health plane'):
+        r.snapshot(160)
+    assert r.snapshot(200).decision_ns==200
+
+
+def test_source_health_receipt_order_survives_missing_receipt_sample():
+    h=SourceHealthTracker('s')
+    h.observe(_e(0,avail=100),received_ns=200)
+    h.observe(_e(1,avail=110),received_ns=None)
+    h.observe(_e(2,avail=120),received_ns=190)
+    snap=h.snapshot(SourceSLOPolicy(max_receive_lag_ns_p95=None))
+    assert snap.out_of_order_receipts==1
