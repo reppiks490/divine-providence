@@ -83,8 +83,14 @@ class DeclaredCheckpointGap:
     unresolved_row_gap: int
     coverage_claim_allowed: bool
 
+    @property
+    def checkpoint_reconciled(self) -> bool:
+        return self.unresolved_entry_gap == 0 and self.unresolved_row_gap == 0
+
     def to_dict(self) -> dict:
-        return asdict(self)
+        d = asdict(self)
+        d["checkpoint_reconciled"] = self.checkpoint_reconciled
+        return d
 
 
 def _usable(ms: Iterable[StreamManifest]) -> list[StreamManifest]:
@@ -194,11 +200,13 @@ def compare_declared_checkpoint(
     declared_usable_entries: int,
     declared_rows: int,
 ) -> DeclaredCheckpointGap:
-    """Refuse to claim corpus coverage until the materialized data proves it.
+    """Compare materialized counts to a declared checkpoint without authorizing coverage.
 
     Positive gaps mean the declared checkpoint contains material not present in
-    the current catalog.  Negative gaps are clamped to zero because having more
-    material than an older checkpoint is not a coverage deficit.
+    the current catalog. Negative gaps are clamped to zero because having more
+    material than an older checkpoint is not a count deficit. Matching counts
+    reconcile the checkpoint only; semantic/session/identity completeness remains
+    a separate reviewed gate.
     """
 
     usable = _usable(manifests)
@@ -213,5 +221,5 @@ def compare_declared_checkpoint(
         declared_rows=int(declared_rows),
         unresolved_entry_gap=entry_gap,
         unresolved_row_gap=row_gap,
-        coverage_claim_allowed=(entry_gap == 0 and row_gap == 0),
+        coverage_claim_allowed=False,
     )
