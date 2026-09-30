@@ -73,3 +73,18 @@ def test_ablation_preserves_component_weight_cap():
         )
         out=AdaptiveTickerEngine().build(x,sub)
         assert float(out.filter(like='w:').abs().max().max()) <= .6000001
+
+
+def test_ledger_rejects_invalid_identity_and_nonfinite_payload(tmp_path:Path):
+    import pytest
+    l=MarketFabricLedger(tmp_path/'strict-ledger.db')
+    with pytest.raises(ValueError,match='visible_ns'):
+        l.append(-1,'frame',{'x':1})
+    with pytest.raises(ValueError,match='kind'):
+        l.append(1,'   ',{'x':1})
+    with pytest.raises(ValueError):
+        l.append(1,'frame',{'x':float('nan')})
+    with pytest.raises(ValueError,match='non-negative'):
+        l.tail(-1)
+    assert l.count()==0
+    l.close()
