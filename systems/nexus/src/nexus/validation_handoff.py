@@ -6,6 +6,7 @@ from typing import Any, Iterable, Mapping
 from .contracts import StreamManifest
 from .lineage_resolution import verify_representation_lineage_resolution
 from .session_semantics import verify_session_gap_resolution
+from .residual_gap_triage import verify_residual_gap_triage
 
 
 HANDOFF_SCHEMA = "nexus.daedalus-validation-handoff.v1"
@@ -192,6 +193,8 @@ def build_daedalus_validation_handoff(
         raise ValueError("invalid or tampered representation-lineage resolution artifact")
     if session_gap_resolution is not None and not verify_session_gap_resolution(session_gap_resolution):
         raise ValueError("invalid or tampered session-gap resolution artifact")
+    if residual_gap_triage is not None and not verify_residual_gap_triage(residual_gap_triage):
+        raise ValueError("invalid or tampered residual-gap triage artifact")
     family_counts = Counter(str(c.get("family", "unknown")) for c in candidate_rows)
     representation_resolution_by_id: dict[str, Mapping[str, Any]] = {}
     if representation_lineage_resolution:
@@ -273,6 +276,26 @@ def build_daedalus_validation_handoff(
             if not any(m.identity.venue==venue and m.identity.symbol==symbol for m in matches):
                 raise ValueError(
                     f"session resolution for {candidate_id!r} does not match manifest venue/symbol"
+                )
+
+        if residual_triage:
+            sid=str(residual_triage.get("stream_id") or "")
+            if sid not in scope:
+                raise ValueError(
+                    f"residual-gap triage for {candidate_id!r} is not bound to candidate scope"
+                )
+            matches=by_stream.get(sid,[])
+            if not matches:
+                raise ValueError(
+                    f"residual-gap triage for {candidate_id!r} has no matching manifest"
+                )
+            if not any(
+                m.identity.venue==residual_triage.get("venue")
+                and m.identity.symbol==residual_triage.get("symbol")
+                for m in matches
+            ):
+                raise ValueError(
+                    f"residual-gap triage for {candidate_id!r} does not match manifest venue/symbol"
                 )
 
         source_evidence: list[dict[str, Any]] = []
