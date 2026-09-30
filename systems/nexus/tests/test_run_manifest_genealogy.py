@@ -9,7 +9,7 @@ def _built():
     r.register(FactorSpec('meta','1',('base',),'ensemble',dependencies=(('base','1'),)))
     d=DerivationRecord.create(product_id='meta',product_version='1',decision_ns=20,spec_hash=r.get('meta','1').spec_hash,input_hashes={'A':'a'*64},code_version='abc',parameters={'w':1})
     g=FactorGenealogySnapshot.create(r,[d])
-    m=ResearchRunManifest.create(run_id='r1',decision_start_ns=10,decision_end_ns=20,corpus_manifest_hash='c'*64,reviewed_registry_hash='r'*64,genealogy=g,code_version='abc',input_artifacts={'catalog':'1'*64},output_artifacts={'factor':'2'*64},parameters={'x':2},derivations=[d])
+    m=ResearchRunManifest.create(run_id='r1',decision_start_ns=10,decision_end_ns=20,corpus_manifest_hash='c'*64,reviewed_registry_hash='e'*64,genealogy=g,code_version='abc',input_artifacts={'catalog':'1'*64},output_artifacts={'factor':'2'*64},parameters={'x':2},derivations=[d])
     return r,d,g,m
 
 
@@ -100,3 +100,38 @@ def test_derivation_identity_rejects_invalid_hashes_time_and_nan_parameters():
         DerivationRecord.create(**kwargs,parameters={'x':float('nan')})
     with pytest.raises(ValueError,match='product_id'):
         DerivationRecord.create(**{**kwargs,'product_id':' '})
+
+
+def test_run_manifest_rejects_derivations_not_bound_to_genealogy():
+    import pytest
+    r=FactorRegistry()
+    r.register(FactorSpec('base','1',('A',),'equal'))
+    d=DerivationRecord.create(
+        product_id='base',product_version='1',decision_ns=20,
+        spec_hash=r.get('base','1').spec_hash,input_hashes={'A':'a'*64},
+        code_version='v1',
+    )
+    empty=FactorGenealogySnapshot.create(r,[])
+    with pytest.raises(ValueError,match='exactly match'):
+        ResearchRunManifest.create(
+            run_id='x',decision_start_ns=10,decision_end_ns=20,
+            corpus_manifest_hash='c'*64,reviewed_registry_hash='e'*64,
+            genealogy=empty,code_version='v1',
+            input_artifacts={},output_artifacts={},derivations=[d],
+        )
+
+
+def test_run_manifest_rejects_invalid_hashes_and_observation_sequence():
+    import pytest
+    _,_,_,m=_built()
+    with pytest.raises(ValueError,match='reviewed_registry_hash'):
+        ResearchRunManifest.create(
+            run_id='bad',decision_start_ns=10,decision_end_ns=20,
+            corpus_manifest_hash='c'*64,reviewed_registry_hash='not-a-hash',
+            genealogy=FactorGenealogySnapshot.create(FactorRegistry()),
+            code_version='v1',input_artifacts={},output_artifacts={},
+        )
+    with pytest.raises(ValueError,match='sequence'):
+        m.aion_observation(sequence=-1)
+    with pytest.raises(ValueError,match='ingested_ns'):
+        m.aion_observation(ingested_ns=-1)
