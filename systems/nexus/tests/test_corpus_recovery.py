@@ -44,3 +44,15 @@ def test_recovery_plan_ignores_appledouble_and_empty_entries():
     assert out["current"]["usable_entries"] == 1
     assert out["current"]["usable_rows"] == 12
     assert out["current"]["distinct_byte_contents"] == 1
+
+
+def test_historical_anchor_rejects_impossible_counts():
+    import pytest
+    with pytest.raises(ValueError,match='usable_entries'):
+        HistoricalCorpusAnchor(-1,0)
+    with pytest.raises(ValueError,match='distinct_byte_contents'):
+        HistoricalCorpusAnchor(1,1,2)
+    with pytest.raises(ValueError,match='archive_count'):
+        HistoricalCorpusAnchor(1,1,1,-1)
+    with pytest.raises(ValueError,match='owner_expected_min_entries'):
+        build_corpus_recovery_plan([],HistoricalCorpusAnchor(0,0),owner_expected_min_entries=-1)
