@@ -516,6 +516,18 @@ class AdvancedCSVResearchLoop:
         iteration = int(previous.get("iteration", 0)) + 1 if previous else 1
 
         manifests = ZipCorpusCatalog(self.corpus_root).build()
+        # stream_id intentionally uses a compact raw-hash prefix for readability.
+        # Fail closed before producing any artifact if that prefix collides across
+        # different raw contents.
+        stream_hashes:dict[str,str]={}
+        for m in manifests:
+            sid=m.identity.stream_id
+            previous=stream_hashes.get(sid)
+            if previous is not None and previous != m.identity.raw_sha256:
+                raise RuntimeError(
+                    f"stream_id collision across distinct raw contents: {sid}"
+                )
+            stream_hashes[sid]=m.identity.raw_sha256
         # ZIP-native cataloging preserves the raw forensic pass. Attach the same
         # non-authoritative representation hypotheses used by extracted catalogs
         # before integrity/review triage so both paths produce equivalent queues.
