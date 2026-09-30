@@ -29,7 +29,7 @@ The failed editable-install attempt was environmental: pip attempted to download
 The older checkpoint above is retained as historical context but is no longer
 the current corpus status.
 
-- GitHub Actions NEXUS verification: **169/169 tests passed** on the current
+- GitHub Actions NEXUS verification: **174/174 tests passed** on the current
   representation-safe code path.
 - Historical corpus reconciliation is now reproducible from pinned commits:
   **10 ZIPs / 659 usable CSV archive members / 13,788,256 logical rows /
@@ -64,5 +64,16 @@ distinguish an ordinary candlestick view from a TPO/footprint/profile view that
 preserves that geometry. The canonical representation contract is therefore
 four-axis: **chart/view family, price geometry, sampling domain, sampling
 construction**. Family-specific modeling remains fail-closed without reviewed
-view identity. Current GitHub Actions verification: **169/169 tests passed** and
+view identity. Current GitHub Actions verification: **174/174 tests passed** and
 `python -m compileall -q src tests scripts` passed.
+
+
+### Final quadruple-check fusion order
+
+The representation-safe model plane now balances correlated evidence in this
+order: **raw streams -> sampling construction -> price geometry -> reviewed
+chart/view family -> symbol -> cross-asset factor**. Transform math can prove
+price geometry but cannot assign a TPO/footprint/profile/candlestick view family.
+Same-symbol streams from different venues are not interchangeable. Historical
+checkpoint reconciliation never auto-authorizes semantic coverage or production.
+Current GitHub Actions baseline: **174/174 tests passed** plus compileall.
