@@ -106,3 +106,16 @@ def test_replay_batch_rejects_empty_events():
     from nexus.contracts import ReplayBatch
     with pytest.raises(ValueError,match='at least one'):
         ReplayBatch(10,())
+
+
+def test_state_packet_rejects_inconsistent_maps_and_invalid_age():
+    import pytest
+    from nexus.contracts import StatePacket
+    with pytest.raises(ValueError,match='keys must match'):
+        StatePacket(10,{'a':1.0},{},(),{'a':0},{'a':'x'})
+    with pytest.raises(ValueError,match='also be missing'):
+        StatePacket(10,{'a':1.0},{'a':0},('a',),{'a':0},{'a':'x'})
+    with pytest.raises(ValueError,match='age'):
+        StatePacket(10,{'a':1.0},{'a':11},(),{'a':0},{'a':'x'})
+    with pytest.raises(ValueError,match='finite'):
+        StatePacket(10,{'a':float('inf')},{'a':0},(),{'a':0},{'a':'x'})
