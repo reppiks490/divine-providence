@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Any, Iterable, Mapping
 
 from .contracts import StreamManifest
+from .review_queue import verify_representation_review_queue_payload
 
 
 SCHEMA = "nexus.representation-attestation-status.v1"
@@ -105,6 +106,8 @@ def build_representation_attestation_status(
     promotion. It only discharges representation-definition uncertainty for the
     exact attested bytes.
     """
+    if "queue_hash" in review_queue and not verify_representation_review_queue_payload(dict(review_queue)):
+        raise ValueError("invalid or tampered representation review queue")
     manifests_by_id:dict[str,list[StreamManifest]]={}
     for m in sorted(manifests,key=lambda x:(x.identity.stream_id,x.identity.source_path)):
         manifests_by_id.setdefault(m.identity.stream_id,[]).append(m)
