@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import hashlib
 import json
+import math
 from typing import Iterable
 
 from .contracts import StreamManifest
@@ -81,13 +82,22 @@ def _priority(manifest: StreamManifest) -> tuple[str, int, list[str]]:
     hyp = manifest.metadata.get("representation_hypothesis") or {}
     kind = str(hyp.get("kind", "unknown"))
     confidence = float(hyp.get("confidence", 0.0) or 0.0)
+    cadence_confidence=float(manifest.cadence_confidence)
     if kind not in {"fixed_time_candidate"}:
         score += 30; reasons.append(f"hypothesis:{kind}")
-    if confidence < 0.95:
+    if not math.isfinite(confidence):
+        score += 100; reasons.append("hypothesis_confidence_nonfinite")
+        confidence=0.0
+    elif confidence < 0.95:
         score += 20; reasons.append("hypothesis_confidence_below_0.95")
-    if manifest.observed_cadence_ns is None:
+    cadence=manifest.observed_cadence_ns
+    if cadence is None:
         score += 25; reasons.append("observed_cadence_unknown")
-    if manifest.cadence_confidence < 0.95:
+    elif type(cadence) is not int or cadence <= 0:
+        score += 100; reasons.append("observed_cadence_invalid")
+    if not math.isfinite(cadence_confidence):
+        score += 100; reasons.append("cadence_confidence_nonfinite")
+    elif cadence_confidence < 0.95:
         score += 15; reasons.append("cadence_confidence_below_0.95")
     if not reasons:
         reasons.append("clean_but_unreviewed")
@@ -98,20 +108,35 @@ def _priority(manifest: StreamManifest) -> tuple[str, int, list[str]]:
 def build_representation_review_queue(manifests: Iterable[StreamManifest]) -> RepresentationReviewQueue:
     candidates: list[RepresentationReviewCandidate] = []
     families: dict[str, int] = {}
-    for manifest in manifests:
+    unique:dict[str,StreamManifest]={}
+    for manifest in sorted(manifests,key=lambda m:(m.identity.stream_id,m.identity.source_path)):
+        sid=manifest.identity.stream_id
+        old=unique.get(sid)
+        if old is not None:
+            if old.identity.raw_sha256 != manifest.identity.raw_sha256:
+                raise ValueError(f"stream_id collision with different raw hashes: {sid}")
+            continue
+        unique[sid]=manifest
+    for manifest in unique.values():
         flags = set(manifest.quality_flags)
         if manifest.row_count <= 0 or "appledouble" in flags:
             continue
         hyp = manifest.metadata.get("representation_hypothesis") or {}
         kind = str(hyp.get("kind", "unknown"))
         confidence = float(hyp.get("confidence", 0.0) or 0.0)
+        if not math.isfinite(confidence):
+            confidence=0.0
         priority, score, reasons = _priority(manifest)
         family = f"{manifest.identity.venue or '?'}:{manifest.identity.symbol}:{kind}:{manifest.identity.filename_claim or '?'}"
         families[family] = families.get(family, 0) + 1
         # A cadence candidate is useful for review, but never establishes timestamp
         # semantics. BAR_OPEN vs BAR_CLOSE must come from source documentation or
         # another attested evidence artifact.
-        fixed_candidate = manifest.observed_cadence_ns if kind == "fixed_time_candidate" else None
+        fixed_candidate = manifest.observed_cadence_ns if (
+            kind == "fixed_time_candidate"
+            and isinstance(manifest.observed_cadence_ns,int)
+            and manifest.observed_cadence_ns>0
+        ) else None
         candidates.append(
             RepresentationReviewCandidate(
                 stream_id=manifest.identity.stream_id,
@@ -119,8 +144,8 @@ def build_representation_review_queue(manifests: Iterable[StreamManifest]) -> Re
                 venue=manifest.identity.venue,
                 symbol=manifest.identity.symbol,
                 filename_claim=manifest.identity.filename_claim,
-                observed_cadence_ns=manifest.observed_cadence_ns,
-                cadence_confidence=float(manifest.cadence_confidence),
+                observed_cadence_ns=manifest.observed_cadence_ns if isinstance(manifest.observed_cadence_ns,int) and manifest.observed_cadence_ns>0 else None,
+                cadence_confidence=float(manifest.cadence_confidence) if math.isfinite(float(manifest.cadence_confidence)) else 0.0,
                 hypothesis_kind=kind,
                 hypothesis_confidence=confidence,
                 quality_flags=tuple(sorted(flags)),
