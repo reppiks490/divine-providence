@@ -173,3 +173,48 @@ def build_representation_review_queue(manifests: Iterable[StreamManifest]) -> Re
     }
     digest = hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
     return RepresentationReviewQueue(body["schema"], tuple(candidates), family_counts, digest)
+
+
+def verify_representation_review_queue_payload(payload) -> bool:
+    """Verify serialized review-queue integrity and basic semantic consistency."""
+    if not isinstance(payload,dict) or payload.get("schema")!="nexus.representation-review-queue.v1":
+        return False
+    supplied=payload.get("queue_hash")
+    if not isinstance(supplied,str) or len(supplied)!=64:
+        return False
+    try:
+        int(supplied,16)
+    except ValueError:
+        return False
+    body={
+        "schema":payload.get("schema"),
+        "candidates":payload.get("candidates"),
+        "family_counts":payload.get("family_counts"),
+    }
+    try:
+        expected=hashlib.sha256(
+            json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+        ).hexdigest()
+    except (TypeError,ValueError):
+        return False
+    if supplied!=expected:
+        return False
+    candidates=body["candidates"]
+    family_counts=body["family_counts"]
+    if not isinstance(candidates,list) or not isinstance(family_counts,list):
+        return False
+    ids=[]
+    for row in candidates:
+        if not isinstance(row,dict):
+            return False
+        sid=str(row.get("stream_id") or "")
+        if not sid or row.get("authoritative") is not False:
+            return False
+        if row.get("priority") not in {"P0","P1","P2"}:
+            return False
+        if type(row.get("priority_score")) is not int or row["priority_score"] < 0:
+            return False
+        ids.append(sid)
+    if len(set(ids))!=len(ids):
+        return False
+    return True
