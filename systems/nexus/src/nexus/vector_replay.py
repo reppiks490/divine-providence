@@ -37,19 +37,33 @@ class VectorReplayBus:
                 n=checked(sid,next(its[sid]));heapq.heappush(heap,(n.ordering_key,sid,n))
             except StopIteration:pass
 
-    def states(self,streams:dict[str,Iterable[VectorEvent]],*,required_streams:set[str]|None=None,require_available:bool=True)->Iterator[VectorStatePacket]:
+    def states(
+        self,
+        streams:dict[str,Iterable[VectorEvent]],
+        *,
+        required_streams:set[str]|None=None,
+        require_available:bool=True,
+        max_age_ns:int|None=None,
+    )->Iterator[VectorStatePacket]:
+        if max_age_ns is not None and max_age_ns<0:
+            raise ValueError("max_age_ns must be non-negative or None")
         latest={}; required_streams=required_streams or set(); current=None;bucket=[]
         def packet(decision_ns:int,batch:list[VectorEvent]):
             for e in batch:latest[e.stream_id]=e
-            values={sid:e.values() for sid,e in latest.items()}
-            ages={sid:max(0,decision_ns-e.event_ns) for sid,e in latest.items()}
-            missing=tuple(sorted(required_streams-set(latest)))
-            payload={"decision_ns":decision_ns,"streams":{sid:{"fields":values[sid],"sequence":latest[sid].source_sequence,
-                "event_ns":latest[sid].event_ns,"available_ns":latest[sid].available_ns,"basis":latest[sid].availability_basis}
+            visible={
+                sid:e for sid,e in latest.items()
+                if max_age_ns is None or decision_ns-int(e.event_ns)<=max_age_ns
+            }
+            values={sid:e.values() for sid,e in visible.items()}
+            ages={sid:decision_ns-int(e.event_ns) for sid,e in visible.items()}
+            stale=set(latest)-set(visible)
+            missing=tuple(sorted((required_streams-set(visible))|stale))
+            payload={"decision_ns":decision_ns,"streams":{sid:{"fields":values[sid],"sequence":visible[sid].source_sequence,
+                "event_ns":visible[sid].event_ns,"available_ns":visible[sid].available_ns,"basis":visible[sid].availability_basis}
                 for sid in sorted(values)}}
             h=hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(",",":"),allow_nan=False).encode()).hexdigest()
-            return VectorStatePacket(decision_ns,values,ages,missing,{sid:e.source_sequence for sid,e in latest.items()},
-                {sid:e.source_path for sid,e in latest.items()},batch_size=len(batch),frame_hash=h)
+            return VectorStatePacket(decision_ns,values,ages,missing,{sid:e.source_sequence for sid,e in visible.items()},
+                {sid:e.source_path for sid,e in visible.items()},batch_size=len(batch),frame_hash=h)
         for e in self.merge(streams,require_available=require_available):
             if current is None:current=e.visible_ns
             if e.visible_ns!=current:
