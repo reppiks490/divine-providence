@@ -1,0 +1,202 @@
+name: O14 historical corpus audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/o14-corpus-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout ICARUS system code
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned multi-level CSV corpus
+        uses: actions/checkout@v4
+        with:
+          repository: reppiks490/multi-level-csv
+          ref: ce82124352762c14eb33836a5c894bc3a2a71dfe
+          path: _corpus/multi-level-csv
+
+      - name: Checkout pinned index CSV corpus
+        uses: actions/checkout@v4
+        with:
+          repository: reppiks490/csv-data-multi-chart-type
+          ref: a482e7d1801fa7fa5aec093960097c0051c0403c
+          path: _corpus/csv-data-multi-chart-type
+
+      - name: Checkout current PARALLAX inventory code
+        uses: actions/checkout@v4
+        with:
+          repository: reppiks490/aion-parallax-research
+          ref: main
+          path: _parallax
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install audit code
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e systems/nexus
+          python -m pip install -e _parallax
+
+      - name: Run ten-archive audit
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+          import csv
+          import json
+          from collections import Counter
+          from pathlib import Path
+
+          from aion.parallax_manifest import scan_archives
+          from nexus.archive import ZipCorpusCatalog
+
+          root = Path("_corpus")
+          out = Path("_o14_audit")
+          out.mkdir(exist_ok=True)
+
+          archives = sorted(root.rglob("*.zip"))
+          parallax = scan_archives(archives)
+          nexus = ZipCorpusCatalog(root).build()
+
+          usable_nexus = [
+              m for m in nexus
+              if m.row_count > 0 and "appledouble" not in set(m.quality_flags)
+          ]
+
+          p_hashes = {
+              m["member_sha256"] for m in parallax["members"] if m.get("member_sha256")
+          }
+          n_hashes = {
+              m.identity.raw_sha256 for m in usable_nexus if m.identity.raw_sha256
+          }
+
+          family_counts = Counter()
+          sampling_counts = Counter()
+          construction_counts = Counter()
+          symbol_counts = Counter()
+          venue_counts = Counter()
+          archive_usable_counts = Counter()
+          unresolved = []
+          stream_rows = []
+
+          for m in usable_nexus:
+              claim = m.metadata.get("representation_claim", {})
+              family = str(claim.get("family", "unknown"))
+              sampling = str(claim.get("sampling_domain", "unknown"))
+              construction = str(claim.get("construction", "unknown"))
+              family_counts[family] += 1
+              sampling_counts[sampling] += 1
+              construction_counts[construction] += 1
+              symbol_counts[m.identity.symbol] += 1
+              venue_counts[m.identity.venue or "?"] += 1
+              archive = str(m.metadata.get("archive_path", "?"))
+              archive_usable_counts[archive] += 1
+              if family in {"unknown", "time_bars_unspecified"}:
+                  unresolved.append(m.identity.source_path)
+
+              stream_rows.append({
+                  "archive_path": archive,
+                  "archive_member": str(m.metadata.get("archive_member", "")),
+                  "source_path": m.identity.source_path,
+                  "raw_sha256": m.identity.raw_sha256,
+                  "logical_sha256": m.metadata.get("logical_sha256"),
+                  "venue": m.identity.venue,
+                  "symbol": m.identity.symbol,
+                  "filename_claim": m.identity.filename_claim,
+                  "row_count": m.row_count,
+                  "first_event_ns": m.first_event_ns,
+                  "last_event_ns": m.last_event_ns,
+                  "observed_cadence_ns": m.observed_cadence_ns,
+                  "cadence_confidence": m.cadence_confidence,
+                  "representation_family": family,
+                  "sampling_domain": sampling,
+                  "construction": construction,
+                  "native_setting": claim.get("setting"),
+                  "schema_tags": "|".join(claim.get("schema_tags", [])),
+                  "representation_confidence": claim.get("confidence"),
+                  "representation_authoritative": claim.get("authoritative", False),
+                  "quality_flags": "|".join(sorted(set(m.quality_flags))),
+                  "byte_duplicate_of": m.byte_duplicate_of,
+              })
+
+          archive_names = [str(p.relative_to(root)) for p in archives]
+          summary = {
+              "schema": "icarus.o14-historical-corpus-audit.v1",
+              "source_commits": {
+                  "multi_level_csv": "ce82124352762c14eb33836a5c894bc3a2a71dfe",
+                  "csv_data_multi_chart_type": "a482e7d1801fa7fa5aec093960097c0051c0403c",
+              },
+              "archive_count": len(archives),
+              "archives": archive_names,
+              "parallax": parallax["counts"],
+              "nexus": {
+                  "all_csv_entries_including_sidecars": len(nexus),
+                  "usable_entries": len(usable_nexus),
+                  "usable_rows_with_valid_timestamps": sum(m.row_count for m in usable_nexus),
+                  "distinct_byte_contents": len(n_hashes),
+              },
+              "cross_system": {
+                  "parallax_distinct_hashes": len(p_hashes),
+                  "nexus_distinct_hashes": len(n_hashes),
+                  "hash_sets_equal": p_hashes == n_hashes,
+                  "parallax_only_hashes": len(p_hashes - n_hashes),
+                  "nexus_only_hashes": len(n_hashes - p_hashes),
+              },
+              "representation_family_counts": dict(sorted(family_counts.items())),
+              "sampling_domain_counts": dict(sorted(sampling_counts.items())),
+              "construction_counts": dict(sorted(construction_counts.items())),
+              "symbol_counts": dict(sorted(symbol_counts.items())),
+              "venue_counts": dict(sorted(venue_counts.items())),
+              "archive_usable_counts": dict(sorted(archive_usable_counts.items())),
+              "unresolved_representation_count": len(unresolved),
+              "unresolved_representation_examples": unresolved[:50],
+              "reference_checkpoint": {
+                  "archives": 10,
+                  "usable_archive_members": 659,
+                  "logical_rows": 13788256,
+                  "distinct_byte_contents": 542,
+                  "extracted_physical_files": 803,
+              },
+              "checks": {
+                  "archive_count_matches": len(archives) == 10,
+                  "parallax_member_count_matches": parallax["counts"]["physical_csv_members"] == 659,
+                  "parallax_logical_rows_match": parallax["counts"]["logical_data_rows"] == 13788256,
+                  "parallax_distinct_hashes_match": parallax["counts"]["unique_byte_contents"] == 542,
+                  "cross_system_hash_sets_equal": p_hashes == n_hashes,
+              },
+              "production_authorized": False,
+          }
+
+          (out / "O14_CORPUS_AUDIT.json").write_text(
+              json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          with (out / "O14_STREAM_MANIFEST.csv").open("w", newline="", encoding="utf-8") as f:
+              writer = csv.DictWriter(f, fieldnames=list(stream_rows[0]) if stream_rows else [])
+              if stream_rows:
+                  writer.writeheader()
+                  writer.writerows(stream_rows)
+
+          print("O14_AUDIT_SUMMARY=" + json.dumps(summary, sort_keys=True))
+          if not all(summary["checks"].values()):
+              raise SystemExit("Historical corpus checkpoint mismatch; inspect O14 audit artifacts.")
+          PY
+
+      - name: Upload O14 audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: o14-historical-corpus-audit
+          path: _o14_audit/
+          if-no-files-found: error
+          retention-days: 30
