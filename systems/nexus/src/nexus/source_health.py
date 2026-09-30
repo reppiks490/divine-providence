@@ -426,8 +426,15 @@ class SourceHealthRegistry:
         return tracker
 
     def set_policy(self, stream_id: str, policy: SourceSLOPolicy) -> None:
+        if not stream_id:
+            raise ValueError("stream_id is required")
         if not isinstance(policy, SourceSLOPolicy):
             raise TypeError("policy must be SourceSLOPolicy")
+        old=self._policies.get(stream_id)
+        if old is not None and old != policy:
+            raise ValueError(
+                f"source SLO policy conflict for {stream_id}; clear/version the policy explicitly"
+            )
         self._policies[stream_id] = policy
         self.tracker(stream_id)
 
