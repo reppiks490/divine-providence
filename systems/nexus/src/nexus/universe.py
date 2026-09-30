@@ -31,8 +31,11 @@ def build_factor_universe(
     by deleting source data.
     """
     policy=policy or IntegrityPolicy(); decisions=[]; candidates=[]; seen_raw=set();seen_logical=set()
+    if max_streams_per_symbol is not None and int(max_streams_per_symbol) < 0:
+        raise ValueError("max_streams_per_symbol must be non-negative or None")
     excluded={str(x).upper() for x in excluded_symbols}
-    for m in manifests:
+    ordered=sorted(manifests,key=lambda m:(m.identity.stream_id,m.identity.source_path))
+    for m in ordered:
         a=assess_manifest(m,policy);sid=m.identity.stream_id;sym=m.identity.symbol;q=quality_score(m)
         if sym.upper() in excluded:
             decisions.append(UniverseDecision(sid,sym,False,"owner_excluded_symbol",q));continue
@@ -51,7 +54,7 @@ def build_factor_universe(
     selected=[]
     for sym,group in sorted(by_symbol.items()):
         group=sorted(group,key=lambda m:(-quality_score(m),m.identity.stream_id))
-        keep=len(group) if max_streams_per_symbol is None else max(0,int(max_streams_per_symbol))
+        keep=len(group) if max_streams_per_symbol is None else int(max_streams_per_symbol)
         for i,m in enumerate(group):
             ok=i<keep;reason="selected" if ok else "symbol_representation_cap"
             decisions.append(UniverseDecision(m.identity.stream_id,sym,ok,reason,quality_score(m)))
