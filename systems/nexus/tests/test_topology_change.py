@@ -56,3 +56,18 @@ def test_change_engine_rejects_nonfinite_configuration():
         ChangePointEngine(drift=float('nan'))
     with pytest.raises(ValueError,match='threshold'):
         ChangePointEngine(threshold=float('inf'))
+
+
+def test_topology_rejects_nonfinite_configuration_and_returns():
+    import pytest
+    with pytest.raises(ValueError,match='ridge'):
+        RollingTopology(ridge=float('nan'))
+    with pytest.raises(ValueError,match='edge_floor'):
+        RollingTopology(edge_floor=float('nan'))
+    bad=pd.DataFrame({'A':[.1,float('inf')],'B':[.2,.3]})
+    with pytest.raises(ValueError,match='infinite'):
+        RollingTopology(window=2,min_periods=2).snapshot(bad)
+    with pytest.raises(ValueError,match='at'):
+        RollingTopology(window=2,min_periods=2).snapshot(
+            pd.DataFrame({'A':[.1,.2],'B':[.2,.3]}),at=-1
+        )
