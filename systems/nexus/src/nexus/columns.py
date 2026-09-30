@@ -52,10 +52,20 @@ def resolve_columns(
             raise ValueError("explicit column keys must be non-empty")
         if type(raw_value) is not int:
             raise TypeError(f"explicit {key} position must be an integer")
+        if key in normalized:
+            raise ValueError(f"duplicate explicit semantic column key after normalization: {key}")
         normalized[key]=raw_value
     explicit_positions=normalized
+
+    required_norm=tuple(str(x).strip().lower() for x in required)
+    optional_norm=tuple(str(x).strip().lower() for x in optional)
+    all_semantics=required_norm+optional_norm
+    if any(not x for x in all_semantics):
+        raise ValueError("required/optional semantic column names must be non-empty")
+    if len(set(all_semantics)) != len(all_semantics):
+        raise ValueError("required/optional semantic column names must be unique")
     out: dict[str, int] = {}
-    for key in (*required, *optional):
+    for key in all_semantics:
         positions = header.positions.get(key, ())
         if key in explicit_positions:
             i = explicit_positions[key]
@@ -67,7 +77,7 @@ def resolve_columns(
             out[key] = i
             continue
         if not positions:
-            if key in required:
+            if key in required_norm:
                 raise ValueError(f"missing required column: {key}")
             continue
         if len(positions) > 1:
