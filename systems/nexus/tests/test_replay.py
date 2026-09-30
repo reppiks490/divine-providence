@@ -130,3 +130,14 @@ def test_state_packet_requires_canonical_missing_and_lineage():
         StatePacket(10,{}, {}, ('',), {}, {})
     with pytest.raises(ValueError,match='lineage'):
         StatePacket(10,{'a':1.0},{'a':0},(),{'a':0},{'a':''})
+
+
+def test_replay_rejects_coerced_option_types():
+    import pytest
+    event=BarEvent("a",10,0,1,1,1,1,None,"a",available_ns=10)
+    with pytest.raises(TypeError,match="require_available"):
+        list(ReplayBus().merge({"a":[event]},require_available=1))
+    with pytest.raises(ValueError,match="max_age_ns"):
+        list(ReplayBus().states([event],max_age_ns=1.5))
+    with pytest.raises(ValueError,match="max_age_ns"):
+        list(ReplayBus().states([event],max_age_ns=True))
