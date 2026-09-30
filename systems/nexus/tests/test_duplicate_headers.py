@@ -39,3 +39,11 @@ def test_catalog_tracks_bad_numeric_and_inconsistent_ohlc(tmp_path:Path):
     assert m.metadata['nonnumeric_ohlc_rows']==1
     assert m.metadata['inconsistent_ohlc_rows']==1
     assert 'non_numeric' in m.quality_flags and 'ohlc_inconsistent' in m.quality_flags
+
+
+def test_explicit_duplicate_position_must_be_exact_integer():
+    h=profile_header(['time','open','high','low','close','close'])
+    with pytest.raises(TypeError,match='integer'):
+        resolve_columns(h,explicit_positions={'close':4.9})
+    with pytest.raises(TypeError,match='explicit_positions'):
+        resolve_columns(h,explicit_positions=[('close',4)])
