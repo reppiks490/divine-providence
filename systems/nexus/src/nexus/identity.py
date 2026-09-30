@@ -23,15 +23,22 @@ class InstrumentRegistry:
     """Immutable version-by-identity registry; alias resolution never rewrites raw stream identity."""
     def __init__(self): self._specs={}; self._aliases={}
     def register(self,spec:InstrumentSpec)->str:
+        if not spec.instrument_id or not spec.canonical_symbol:
+            raise ValueError("instrument_id and canonical_symbol are required")
         if spec.instrument_id in self._specs and self._specs[spec.instrument_id].spec_hash!=spec.spec_hash:
             raise ValueError(f"immutable instrument conflict: {spec.instrument_id}")
-        for alias in (spec.canonical_symbol,*spec.aliases):
-            k=alias.upper()
+        aliases=tuple((alias,alias.upper()) for alias in (spec.canonical_symbol,*spec.aliases))
+        if any(not alias.strip() for alias,_ in aliases):
+            raise ValueError("instrument aliases must be non-empty")
+        for alias,k in aliases:
             owner=self._aliases.get(k)
             if owner is not None and owner!=spec.instrument_id:
                 raise ValueError(f"ambiguous alias {alias}: {owner} vs {spec.instrument_id}")
+        # Mutate only after every conflict check passes.
+        self._specs[spec.instrument_id]=spec
+        for _,k in aliases:
             self._aliases[k]=spec.instrument_id
-        self._specs[spec.instrument_id]=spec; return spec.spec_hash
+        return spec.spec_hash
     def resolve(self,alias:str)->InstrumentSpec:
         return self._specs[self._aliases[alias.upper()]]
     def get(self,instrument_id:str)->InstrumentSpec: return self._specs[instrument_id]
