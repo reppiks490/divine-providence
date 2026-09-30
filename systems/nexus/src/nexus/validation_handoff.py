@@ -309,7 +309,9 @@ def build_daedalus_validation_handoff(
         for stream_id in sorted(set(scope)):
             matches = sorted(by_stream.get(stream_id, []), key=lambda m: m.identity.source_path)
             if not matches:
-                continue
+                raise ValueError(
+                    f"candidate {candidate_id!r} scope references unknown stream_id {stream_id!r}"
+                )
             source_evidence.extend(_manifest_record(m, admitted_ids) for m in matches)
             seen = [m.last_event_ns for m in matches if m.last_event_ns is not None]
             per_stream_cutoffs[stream_id] = max(seen) if seen else None
@@ -440,14 +442,83 @@ def verify_daedalus_validation_handoff(payload: Mapping[str, Any] | None) -> boo
         if any(not str(x) for x in scope):
             return False
         ids.append(cid);families[family]+=1;routes[route_name]+=1
+
+        expected_route=_route_for_family(
+            family,
+            representation_resolution=row.get("representation_lineage_resolution")
+            if isinstance(row.get("representation_lineage_resolution"),Mapping) else None,
+            session_resolution=row.get("session_gap_resolution")
+            if isinstance(row.get("session_gap_resolution"),Mapping) else None,
+        )
+        if dict(route) != expected_route:
+            return False
         if route.get("protected_holdout_eligible_on_current_history") is not False:
             return False
         if route.get("confirmatory_validation_allowed_on_current_history") is not False:
             return False
+
+        evidence=row.get("source_evidence")
+        if not isinstance(evidence,list) or not evidence:
+            return False
+        evidence_scope=set()
+        per_stream_last={}
+        for ev in evidence:
+            if not isinstance(ev,Mapping):
+                return False
+            sid=str(ev.get("stream_id") or "")
+            if sid not in scope:
+                return False
+            evidence_scope.add(sid)
+            raw_sha=str(ev.get("raw_sha256") or "")
+            if len(raw_sha)!=64:
+                return False
+            try:
+                int(raw_sha,16)
+            except ValueError:
+                return False
+            if type(ev.get("row_count")) is not int or ev["row_count"] < 0:
+                return False
+            if type(ev.get("admitted_default_integrity")) is not bool:
+                return False
+            first=ev.get("first_event_ns");last=ev.get("last_event_ns")
+            if first is not None and (type(first) is not int or first < 0):
+                return False
+            if last is not None and (type(last) is not int or last < 0):
+                return False
+            if first is not None and last is not None and last < first:
+                return False
+            if last is not None:
+                per_stream_last[sid]=max(per_stream_last.get(sid,last),last)
+        if evidence_scope != set(scope):
+            return False
+
+        selection=row.get("selection_context")
+        if not isinstance(selection,Mapping):
+            return False
+        if (
+            selection.get("candidate_was_selected_after_full_accessible_history_scan") is not True
+            or selection.get("independent_confirmation_already_available") is not False
+            or type(selection.get("candidate_family_size_in_iteration")) is not int
+            or selection["candidate_family_size_in_iteration"] < 1
+        ):
+            return False
+
         if family in BEHAVIOR_FAMILIES:
             rule=row.get("clean_confirmation_rule")
             if not isinstance(rule,Mapping) or rule.get("current_source_history_is_pristine") is not False:
                 return False
+            if rule.get("rule") != "UNSEEN_EVIDENCE_ONLY":
+                return False
+            cutoffs=rule.get("per_stream_discovery_last_event_ns")
+            if not isinstance(cutoffs,Mapping) or set(cutoffs) != set(scope):
+                return False
+            if dict(cutoffs) != {sid:per_stream_last.get(sid) for sid in scope}:
+                return False
+            expected_max=max((x for x in per_stream_last.values()),default=None)
+            if rule.get("max_discovery_last_event_ns") != expected_max:
+                return False
+        elif row.get("clean_confirmation_rule") is not None:
+            return False
     if len(set(ids))!=len(ids):
         return False
     return (
