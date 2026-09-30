@@ -19,6 +19,13 @@ class ReplayCheckpoint:
         return cls(state.decision_ns,state.frame_hash or "",payload,h)
 
     def verify(self)->bool:
+        # The top-level routing metadata must be bound to the hashed state, not
+        # merely travel beside it. Otherwise decision_ns/frame_hash could be
+        # tampered while the checkpoint still verifies.
+        if int(self.state.get("decision_ns",-1)) != int(self.decision_ns):
+            return False
+        if str(self.state.get("frame_hash") or "") != str(self.frame_hash or ""):
+            return False
         raw=json.dumps(self.state,sort_keys=True,separators=(",",":"),default=str).encode()
         return hashlib.sha256(raw).hexdigest()==self.checkpoint_hash
 
