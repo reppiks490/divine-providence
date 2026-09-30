@@ -34,7 +34,10 @@ class CausalPCAFactor:
             for hist in self.history:
                 common &= set(hist)
             keys = sorted(common)
-            expected = max(len(set().union(*(set(f) for f in self.history))), 1)
+            expected_keys=set(current)
+            for hist in self.history:
+                expected_keys.update(hist)
+            expected = max(len(expected_keys), 1)
         else:
             keys = sorted(current)
             expected = max(len(current), 1)
