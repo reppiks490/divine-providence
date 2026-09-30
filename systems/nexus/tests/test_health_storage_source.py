@@ -132,3 +132,26 @@ def test_csv_source_propagates_manifest_quality_flags(tmp_path:Path):
     ).events())
     assert len(events)==1
     assert 'claim_mismatch' in events[0].quality_flags
+
+
+def test_quality_scoring_fails_closed_on_corrupt_telemetry():
+    import pytest
+    from nexus.quality import quality_score,dynamic_state_quality
+    m=_m()
+    m.metadata['nonnumeric_ohlc_rows']=-1
+    assert quality_score(m)==0.0
+
+    m=_m();m.metadata['inconsistent_ohlc_rows']=m.row_count+1
+    assert quality_score(m)==0.0
+
+    for value in (float('nan'),float('inf'),-0.1,1.1):
+        with pytest.raises(ValueError,match='base_score'):
+            dynamic_state_quality(
+                base_score=value,age_ns=0,cadence_ns=10
+            )
+    with pytest.raises(ValueError,match='age_ns'):
+        dynamic_state_quality(base_score=1.0,age_ns=1.5,cadence_ns=10)
+    with pytest.raises(ValueError,match='cadence_ns'):
+        dynamic_state_quality(base_score=1.0,age_ns=0,cadence_ns=10.0)
+    with pytest.raises(TypeError,match='missing'):
+        dynamic_state_quality(base_score=1.0,age_ns=0,cadence_ns=10,missing=1)
