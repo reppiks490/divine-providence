@@ -6,7 +6,9 @@ from typing import Any
 
 def _canonical(obj: Any) -> bytes:
     if is_dataclass(obj): obj=asdict(obj)
-    return json.dumps(obj,sort_keys=True,separators=(",",":"),default=str).encode()
+    return json.dumps(
+        obj,sort_keys=True,separators=(",",":"),default=str,allow_nan=False
+    ).encode()
 
 class MarketFabricLedger:
     """Append-only hash-chained journal for NEXUS market-fabric products.
@@ -28,6 +30,11 @@ class MarketFabricLedger:
         self.db.commit()
 
     def append(self, visible_ns:int, kind:str, payload:Any) -> str:
+        if type(visible_ns) is not int or visible_ns < 0:
+            raise ValueError("visible_ns must be a non-negative integer")
+        if not isinstance(kind,str) or not kind.strip():
+            raise ValueError("kind must be a non-empty string")
+        kind=kind.strip()
         raw=_canonical(payload); payload_json=raw.decode()
         row=self.db.execute("SELECT entry_hash FROM journal ORDER BY seq DESC LIMIT 1").fetchone()
         prev=row[0] if row else "0"*64
@@ -46,6 +53,8 @@ class MarketFabricLedger:
         return True
 
     def tail(self, n:int=20):
+        if type(n) is not int or n < 0:
+            raise ValueError("n must be a non-negative integer")
         rows=self.db.execute("SELECT seq,visible_ns,kind,payload_json,entry_hash FROM journal ORDER BY seq DESC LIMIT ?",(n,)).fetchall()
         return list(reversed(rows))
 
