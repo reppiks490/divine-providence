@@ -22,6 +22,8 @@ class ReplayBus:
 
     @staticmethod
     def _validate_event(event:BarEvent, *, require_available:bool=True) -> BarEvent:
+        if type(require_available) is not bool:
+            raise TypeError("require_available must be bool")
         if event.available_ns is not None and int(event.available_ns) < int(event.event_ns):
             raise ReplayAvailabilityError(
                 f"stream {event.stream_id} sequence {event.source_sequence} is available before its event"
@@ -39,6 +41,10 @@ class ReplayBus:
             )
         return event
     def merge(self, streams: dict[str, Iterable[BarEvent]], *, require_available: bool=True) -> Iterator[BarEvent]:
+        if not isinstance(streams,dict):
+            raise TypeError("streams must be a dict")
+        if type(require_available) is not bool:
+            raise TypeError("require_available must be bool")
         heap=[]; its={k:iter(v) for k,v in streams.items()}; last_keys={}
         def checked(expected_sid:str,event:BarEvent)->BarEvent:
             if event.stream_id != expected_sid:
@@ -95,8 +101,10 @@ class ReplayBus:
         return hashlib.sha256(raw).hexdigest()
 
     def _packet(self, decision_ns:int, latest:dict[str,BarEvent], required_streams:set[str], max_age_ns:int|None, batch_size:int) -> StatePacket:
-        if max_age_ns is not None and int(max_age_ns) < 0:
-            raise ValueError("max_age_ns must be non-negative or None")
+        if max_age_ns is not None and (
+            type(max_age_ns) is not int or max_age_ns < 0
+        ):
+            raise ValueError("max_age_ns must be a non-negative integer or None")
         missing=tuple(sorted(required_streams-set(latest)))
         values={sid:e.close for sid,e in latest.items() if max_age_ns is None or decision_ns-e.event_ns <= max_age_ns}
         ages={sid:max(0,decision_ns-e.event_ns) for sid,e in latest.items() if sid in values}
