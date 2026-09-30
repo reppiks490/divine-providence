@@ -196,5 +196,5 @@ def aion_source_health_observation(health_plane,*,ingested_ns:int|None=None)->di
         "published_ns":None,
         "sequence":None,
         "quality_flags":["nexus_source_health"],
-        "availability_basis":"observed_receipt",
+        "availability_basis":"synthetic",
     }
