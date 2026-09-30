@@ -23,7 +23,7 @@ All behavioral discoveries are explicitly `descriptive_only=true`, `statistical_
 PYTHONPATH=src python -m nexus.cli loop-once <archive-root> --state-dir <state-dir>
 ```
 
-Default historical reconciliation anchors are AION's prior checkpoint: 626 usable streams / 12,588,290 rows, plus the owner expectation of roughly 800+ files/streams. These anchors are coverage checks only, not evidence that missing files are available locally.
+Default historical reconciliation anchor is the PARALLAX ten-archive checkpoint: 659 usable archive members / 13,788,256 logical rows / 542 distinct byte contents across 10 ZIPs. The separate DAEDALUS extracted-corpus reconciliation observed 803 physical files with the same 542 distinct contents. The 803 physical count must not be compared directly to usable archive-member count.
 
 ## Iteration 0001 — 2026-09-23
 
@@ -108,3 +108,30 @@ Current routing:
 - 4 P0 evidence/integrity/corpus dependencies -> blocked upstream
 
 No protected holdout has been spent and no production authorization exists.
+
+
+## Representation-safe fusion contract
+
+The corpus is multi-representation by design. Seconds/minutes/hours, tick, range,
+Renko, Heikin Ashi, TPO, volume-footprint/profile and session-profile streams may
+describe overlapping market state and therefore are not independent votes.
+
+Loop v1.16 records non-authoritative representation claims and sampling domains
+from explicit member/path/filename evidence. Tick (T) and range (R) suffixes are
+event-driven construction claims, never fixed-time intervals. Profile-like
+headers are schema tags and do not by themselves prove chart construction.
+
+For modeling, use `HierarchicalFactorEngine.build_from_manifests`:
+
+1. preserve each raw stream and lineage;
+2. causally align only at valid native visibility boundaries;
+3. fuse streams inside each reviewed representation family;
+4. fuse the representation families to one symbol-level state;
+5. retain family disagreement/agreement/coverage as diagnostics;
+6. only then perform cross-asset weighting.
+
+Unknown and `time_bars_unspecified` families fail closed by default so regular
+candles and Heikin Ashi cannot be silently merged. Exact/logical duplicates may
+share compute but receive no additional evidence weight. Missing observations
+stay missing during representation consensus. Event-driven bars are never
+assigned fictional minute/hour completion times.
