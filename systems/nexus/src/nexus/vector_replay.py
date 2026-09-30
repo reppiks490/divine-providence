@@ -7,20 +7,19 @@ from .replay import ReplayAvailabilityError, ReplayOrderingError
 
 class VectorReplayBus:
     """Batch-atomic deterministic replay for generic numeric/context events."""
-    def merge(self,streams:dict[str,Iterable[VectorEvent]],*,require_available:bool=False)->Iterator[VectorEvent]:
+    def merge(self,streams:dict[str,Iterable[VectorEvent]],*,require_available:bool=True)->Iterator[VectorEvent]:
         heap=[];its={k:iter(v) for k,v in streams.items()};last_keys={}
         def checked(expected_sid:str,e:VectorEvent)->VectorEvent:
             if e.stream_id!=expected_sid:
                 raise ReplayOrderingError(
                     f"stream mapping key {expected_sid!r} does not match event stream_id {e.stream_id!r}"
                 )
-            if require_available:
-                if e.available_ns is None:
-                    raise ReplayAvailabilityError(f"stream {e.stream_id} sequence {e.source_sequence} has unknown availability")
-                if int(e.available_ns)<int(e.event_ns):
-                    raise ReplayAvailabilityError(f"stream {e.stream_id} sequence {e.source_sequence} is available before its event")
-                if e.source_timestamp_ns is not None and int(e.event_ns)<int(e.source_timestamp_ns):
-                    raise ReplayAvailabilityError(f"stream {e.stream_id} sequence {e.source_sequence} event precedes source timestamp")
+            if e.available_ns is not None and int(e.available_ns)<int(e.event_ns):
+                raise ReplayAvailabilityError(f"stream {e.stream_id} sequence {e.source_sequence} is available before its event")
+            if e.source_timestamp_ns is not None and int(e.event_ns)<int(e.source_timestamp_ns):
+                raise ReplayAvailabilityError(f"stream {e.stream_id} sequence {e.source_sequence} event precedes source timestamp")
+            if require_available and e.available_ns is None:
+                raise ReplayAvailabilityError(f"stream {e.stream_id} sequence {e.source_sequence} has unknown availability")
             key=e.ordering_key;prev=last_keys.get(expected_sid)
             if prev is not None and key<=prev:
                 raise ReplayOrderingError(
