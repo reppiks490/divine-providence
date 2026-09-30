@@ -60,7 +60,7 @@ These checks prove engineering properties, not predictive edge, profitability, e
 
 This section supersedes the earlier partial-corpus statements above.
 
-- NEXUS GitHub Actions: **161/161 passed**.
+- NEXUS GitHub Actions: **169/169 tests passed**.
 - PARALLAX representation inventory tests: green after adopting the same
   orthogonal chart-family vs sampling-construction semantics.
 - Reproducible O14 ten-archive audit: **10 ZIPs, 659 usable members,
@@ -69,7 +69,7 @@ This section supersedes the earlier partial-corpus statements above.
   all 542 hashes.
 - DAEDALUS extracted catalog: **803 physical files, same 542 distinct
   contents**.
-- NEXUS loop contract: **v1.17**, with chart family, sampling domain, and
+- NEXUS loop contract: **v1.18**, with chart family, sampling domain, and
   sampling construction represented separately.
 - Native tick/range/event clocks are not coerced to a fixed cadence.
 - Family/sampling-count inflation is blocked by hierarchical fusion before
@@ -79,3 +79,15 @@ Still not authorized or claimed: production trading, predictive edge,
 profitability, complete named-contract/roll metadata, micro-contract coverage,
 or automatic resolution of chart families whose original export settings are
 not evidenced.
+
+
+### 2026-09-30 fourth-pass identity hardening
+
+Price geometry is not treated as chart/view identity. Exact standard-OHLC or
+Heikin-Ashi transform matches can prove geometry, but they cannot by themselves
+distinguish an ordinary candlestick view from a TPO/footprint/profile view that
+preserves that geometry. The canonical representation contract is therefore
+four-axis: **chart/view family, price geometry, sampling domain, sampling
+construction**. Family-specific modeling remains fail-closed without reviewed
+view identity. Current GitHub Actions verification: **169/169 tests passed** and
+`python -m compileall -q src tests scripts` passed.
