@@ -58,3 +58,48 @@ def test_all_current_components_missing_stays_missing():
     assert np.isnan(row['value'])
     assert row['confidence']==0.0
     assert row['w:A']==0.0 and row['w:B']==0.0
+
+
+def test_historical_missing_component_gets_no_fit_weight_until_evidenced():
+    x=_frame(120)
+    x.loc[:80,'B']=np.nan
+    d=SyntheticTickerDefinition(
+        'NEXUS:HIST-MISSING',('A','B'),method='inverse_vol',
+        window=40,min_periods=20,rebalance_every=1
+    )
+    out=AdaptiveTickerEngine().build(x,d)
+    # B has no usable trailing return history when it first reappears, so it
+    # cannot receive estimator weight merely because NaNs were mean-imputed.
+    row=out.loc[82]
+    assert row['w:B']==0.0
+    assert abs(row['w:A'])==1.0
+
+
+def test_multivariate_fit_does_not_zero_impute_disjoint_history():
+    x=_frame(120)
+    x.loc[:69,'B']=np.nan
+    x.loc[70:,'A']=np.nan
+    d=SyntheticTickerDefinition(
+        'NEXUS:DISJOINT',('A','B'),method='adaptive_pca',
+        window=50,min_periods=20,rebalance_every=1
+    )
+    out=AdaptiveTickerEngine().build(x,d)
+    # There is no joint A/B training history. The PCA fit must fail closed,
+    # not manufacture covariance by replacing missing z-scores with zero.
+    tail=out.loc[out.index>=90]
+    assert tail['value'].isna().all()
+    assert (tail[['w:A','w:B']]==0.0).all().all()
+
+
+def test_current_missingness_cannot_bypass_component_cap():
+    x=_frame(100)
+    x.loc[60,'B']=np.nan
+    d=SyntheticTickerDefinition(
+        'NEXUS:CAP-MISSING',('A','B'),method='equal',
+        window=40,min_periods=20,rebalance_every=1,max_component_weight=.6
+    )
+    out=AdaptiveTickerEngine().build(x,d)
+    row=out.loc[60]
+    assert np.isnan(row['value'])
+    assert row['confidence']==0.0
+    assert row['w:A']==0.0 and row['w:B']==0.0
