@@ -39,3 +39,10 @@ def test_novelty_rejects_degenerate_configuration():
         TrailingNovelty(window=10,min_periods=20)
     with pytest.raises(ValueError):
         TrailingNovelty(ridge=0)
+
+
+def test_aligner_rejects_invalid_timing_configuration():
+    with pytest.raises(ValueError,match='max_age_ns'):
+        CausalAligner(max_age_ns=-1)
+    with pytest.raises(TypeError,match='allow_exact_matches'):
+        CausalAligner(allow_exact_matches=1)
