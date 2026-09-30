@@ -9,7 +9,7 @@ def test_merge_is_deterministic_and_preserves_equal_times():
     streams={'b':[e('b',10,0,2),e('b',20,1,4)], 'a':[e('a',10,0,1),e('a',20,1,3)]}
     bus=ReplayBus()
     first=[(x.stream_id,x.event_ns,x.source_sequence) for x in bus.merge(streams,require_available=False)]
-    second=[(x.stream_id,x.event_ns,x.source_sequence) for x in bus.merge(streams)]
+    second=[(x.stream_id,x.event_ns,x.source_sequence) for x in bus.merge(streams,require_available=False)]
     assert first==second==[('a',10,0),('b',10,0),('a',20,1),('b',20,1)]
 
 
