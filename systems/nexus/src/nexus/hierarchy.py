@@ -26,16 +26,18 @@ def _quality_adjusted_consensus(
     values: dict[str, float],
     quality: Mapping[str, float] | None,
 ) -> tuple[float, float, float, float]:
-    """Return consensus, disagreement, agreement, effective coverage.
-
-    Robust representation weights are multiplied by explicit source-quality
-    weights. Missing values never become zero-valued observations.
-    """
+    """Return consensus, disagreement, agreement and effective coverage."""
     c = robust_representation_consensus(symbol, event_ns, values)
     if c.representation_count == 0:
         return math.nan, math.nan, math.nan, 0.0
     if not quality:
-        return c.consensus_return, c.disagreement, c.directional_agreement, float(c.representation_count)
+        return (
+            c.consensus_return,
+            c.disagreement,
+            c.directional_agreement,
+            float(c.representation_count),
+        )
+
     raw = []
     xs = []
     for sid, rw in c.contributions.items():
@@ -46,6 +48,7 @@ def _quality_adjusted_consensus(
             xs.append(float(values[sid]))
     if not raw:
         return math.nan, math.nan, math.nan, 0.0
+
     w = np.asarray(raw, dtype=float)
     w /= w.sum()
     x = np.asarray(xs, dtype=float)
@@ -67,34 +70,50 @@ def fuse_representations_by_symbol(
     *,
     quality_weights: Mapping[str, float] | None = None,
     stream_to_family: Mapping[str, str] | None = None,
+    stream_to_construction: Mapping[str, str] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Collapse representation redundancy within symbols before cross-asset modeling.
+    """Fuse correlated market views without representation-count bias.
 
-    With a family map, fusion is explicitly two-stage:
-    streams -> representation families -> symbol. This prevents a densely sampled
-    family (for example many timeframes) from outvoting tick/range/Renko/profile
-    families merely because more CSVs exist. Raw streams remain available outside
-    this derived plane for lineage and replay.
+    Preferred hierarchy:
+      streams -> sampling construction inside chart family -> chart family
+      -> symbol.
+
+    Example: five regular-candle timeframes do not get five votes against one
+    regular-candle tick stream. Likewise, a chart family with three sampling
+    constructions does not automatically get three votes against Heikin Ashi
+    or Renko. Missing observations remain absent from each consensus step.
+
+    For backward compatibility, if no construction map is provided the function
+    performs the older streams -> family -> symbol hierarchy. If no family map
+    is provided it performs a direct per-symbol robust consensus.
     """
     streams = [col for col in returns.columns if col in stream_to_symbol]
-    groups: dict[str, list[str]] = {}
+    symbol_groups: dict[str, list[str]] = {}
     for sid in streams:
-        groups.setdefault(stream_to_symbol[sid], []).append(sid)
-    symbols = sorted(groups)
+        symbol_groups.setdefault(stream_to_symbol[sid], []).append(sid)
+    symbols = sorted(symbol_groups)
 
     family_groups: dict[str, dict[str, list[str]]] = {}
+    construction_groups: dict[str, dict[str, dict[str, list[str]]]] = {}
     if stream_to_family is not None:
-        for sym, members in groups.items():
-            grouped: dict[str, list[str]] = {}
+        for sym, members in symbol_groups.items():
+            fg: dict[str, list[str]] = {}
+            cg: dict[str, dict[str, list[str]]] = {}
             for sid in members:
                 family = str(stream_to_family.get(sid, "unknown"))
-                grouped.setdefault(family, []).append(sid)
-            family_groups[sym] = grouped
+                fg.setdefault(family, []).append(sid)
+                if stream_to_construction is not None:
+                    construction = str(stream_to_construction.get(sid, "unknown"))
+                    cg.setdefault(family, {}).setdefault(construction, []).append(sid)
+            family_groups[sym] = fg
+            if stream_to_construction is not None:
+                construction_groups[sym] = cg
 
     consensus_rows = []
     disagreement_rows = []
     agreement_rows = []
     coverage_rows = []
+
     for ordinal, (idx, row) in enumerate(returns[streams].iterrows()):
         cv = {}
         dv = {}
@@ -109,39 +128,73 @@ def fuse_representations_by_symbol(
             if stream_to_family is None:
                 vals = {
                     sid: float(row[sid])
-                    for sid in groups[sym]
+                    for sid in symbol_groups[sym]
                     if pd.notna(row[sid]) and math.isfinite(float(row[sid]))
                 }
                 cc, dd, aa, ee = _quality_adjusted_consensus(
                     sym, event_ns, vals, quality_weights
                 )
-                cv[sym] = cc
-                dv[sym] = dd
-                av[sym] = aa
-                cov[sym] = ee / max(1, len(groups[sym]))
+                cv[sym], dv[sym], av[sym] = cc, dd, aa
+                cov[sym] = ee / max(1, len(symbol_groups[sym]))
                 continue
 
             family_values: dict[str, float] = {}
             family_quality: dict[str, float] = {}
-            for family, members in family_groups[sym].items():
-                vals = {
-                    sid: float(row[sid])
-                    for sid in members
-                    if pd.notna(row[sid]) and math.isfinite(float(row[sid]))
-                }
+
+            for family, family_members in family_groups[sym].items():
+                if stream_to_construction is None:
+                    vals = {
+                        sid: float(row[sid])
+                        for sid in family_members
+                        if pd.notna(row[sid]) and math.isfinite(float(row[sid]))
+                    }
+                    fc, _, _, fe = _quality_adjusted_consensus(
+                        f"{sym}:{family}", event_ns, vals, quality_weights
+                    )
+                    if math.isfinite(fc):
+                        family_values[family] = fc
+                        family_quality[family] = min(
+                            1.0, fe / max(1, len(family_members))
+                        )
+                    continue
+
+                construction_values: dict[str, float] = {}
+                construction_quality: dict[str, float] = {}
+                for construction, members in construction_groups[sym][family].items():
+                    vals = {
+                        sid: float(row[sid])
+                        for sid in members
+                        if pd.notna(row[sid]) and math.isfinite(float(row[sid]))
+                    }
+                    sc, _, _, se = _quality_adjusted_consensus(
+                        f"{sym}:{family}:{construction}",
+                        event_ns,
+                        vals,
+                        quality_weights,
+                    )
+                    if math.isfinite(sc):
+                        construction_values[construction] = sc
+                        construction_quality[construction] = min(
+                            1.0, se / max(1, len(members))
+                        )
+
                 fc, _, _, fe = _quality_adjusted_consensus(
-                    f"{sym}:{family}", event_ns, vals, quality_weights
+                    f"{sym}:{family}",
+                    event_ns,
+                    construction_values,
+                    construction_quality,
                 )
                 if math.isfinite(fc):
                     family_values[family] = fc
-                    family_quality[family] = min(1.0, fe / max(1, len(members)))
+                    family_quality[family] = min(
+                        1.0,
+                        fe / max(1, len(construction_groups[sym][family])),
+                    )
 
             cc, dd, aa, ee = _quality_adjusted_consensus(
                 sym, event_ns, family_values, family_quality
             )
-            cv[sym] = cc
-            dv[sym] = dd
-            av[sym] = aa
+            cv[sym], dv[sym], av[sym] = cc, dd, aa
             cov[sym] = ee / max(1, len(family_groups[sym]))
 
         consensus_rows.append(cv)
@@ -158,7 +211,7 @@ def fuse_representations_by_symbol(
 
 
 class HierarchicalFactorEngine:
-    """Representations -> families -> symbols -> cross-asset factor."""
+    """Streams -> sampling strata -> chart families -> symbols -> factor."""
 
     def build(
         self,
@@ -168,17 +221,24 @@ class HierarchicalFactorEngine:
         *,
         quality_weights: Mapping[str, float] | None = None,
         stream_to_family: Mapping[str, str] | None = None,
+        stream_to_construction: Mapping[str, str] | None = None,
     ) -> HierarchicalFusionResult:
         symbol_returns, disagreement, agreement, coverage = fuse_representations_by_symbol(
             returns,
             stream_to_symbol,
             quality_weights=quality_weights,
             stream_to_family=stream_to_family,
+            stream_to_construction=stream_to_construction,
         )
         missing = [c for c in definition.components if c not in symbol_returns.columns]
         if missing:
             raise KeyError(f"factor definition references missing symbol consensus: {missing}")
-        levels = np.exp(symbol_returns.fillna(0.0).cumsum())
+
+        # Carry cumulative state through a missing decision instant, but keep the
+        # actual level missing at that instant so absence is not exposed as a
+        # fabricated flat observation.
+        log_levels = symbol_returns.fillna(0.0).cumsum()
+        levels = np.exp(log_levels).where(symbol_returns.notna())
         factor = FactorEnsembleEngine().build(levels, definition)
         return HierarchicalFusionResult(
             symbol_returns, disagreement, agreement, coverage, factor
@@ -191,17 +251,18 @@ class HierarchicalFactorEngine:
         definition: EnsembleDefinition,
         *,
         quality_weights: Mapping[str, float] | None = None,
-        require_reviewable_family: bool = True,
+        require_reviewable_identity: bool = True,
     ) -> HierarchicalFusionResult:
-        """Build a family-balanced symbol plane directly from stream manifests.
+        """Build the representation-safe symbol plane from stream manifests.
 
-        Unknown or merely time_bars_unspecified families fail closed by default
-        because regular candles and Heikin Ashi must never be silently merged under
-        one generic time-bar label.
+        Chart family and sampling construction are separate required dimensions.
+        Unknown chart family or unknown sampling construction fails closed by
+        default rather than being guessed from cadence.
         """
         by_id = {m.identity.stream_id: m for m in manifests}
         stream_to_symbol: dict[str, str] = {}
         stream_to_family: dict[str, str] = {}
+        stream_to_construction: dict[str, str] = {}
         unresolved: list[str] = []
 
         for sid in returns.columns:
@@ -210,15 +271,20 @@ class HierarchicalFactorEngine:
                 continue
             claim = manifest.metadata.get("representation_claim", {})
             family = str(claim.get("family", "unknown"))
-            if require_reviewable_family and family in {"unknown", "time_bars_unspecified"}:
+            construction = str(claim.get("construction", "unknown"))
+            if require_reviewable_identity and (
+                family in {"unknown", "time_bars_unspecified"}
+                or construction == "unknown"
+            ):
                 unresolved.append(sid)
                 continue
             stream_to_symbol[sid] = manifest.identity.symbol
             stream_to_family[sid] = family
+            stream_to_construction[sid] = construction
 
         if unresolved:
             raise ValueError(
-                "representation family unresolved for streams: "
+                "representation identity unresolved for streams: "
                 + ", ".join(sorted(unresolved))
             )
 
@@ -235,4 +301,5 @@ class HierarchicalFactorEngine:
             definition,
             quality_weights=quality_weights,
             stream_to_family=stream_to_family,
+            stream_to_construction=stream_to_construction,
         )
