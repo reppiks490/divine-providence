@@ -14,6 +14,28 @@ def _seal(payload):
     return body
 
 
+def _gap_assessments(explained:int,residual:int):
+    rows=[]
+    cursor=100
+    for _ in range(explained):
+        rows.append({
+            "previous_event_ns":cursor,
+            "next_event_ns":cursor+60,
+            "gap_ns":60,
+            "classification":"EXPLAINED_BY_RECURRING_SESSION_CLOSURE",
+        })
+        cursor+=100
+    for _ in range(residual):
+        rows.append({
+            "previous_event_ns":cursor,
+            "next_event_ns":cursor+60,
+            "gap_ns":60,
+            "classification":"RESIDUAL_OPEN_SESSION_GAP",
+        })
+        cursor+=100
+    return rows
+
+
 def _manifest(stream_hash: str = "a" * 64) -> StreamManifest:
     identity = StreamIdentity(
         source_id="zipcsv", venue="BATS", symbol="TEST", filename_claim="1",
@@ -149,7 +171,7 @@ def test_resolved_session_gap_routes_to_open_session_diagnostic_without_data_los
             "reason": "reviewed",
             "evidence_authority": "test authority",
             "evidence_summary": "test reviewed profile",
-            "gap_assessments": [],
+            "gap_assessments": _gap_assessments(5,1),
             "coarse_resolution_method": None,
             "coarse_evidence_stream_id": None,
         }],
@@ -199,7 +221,7 @@ def test_resolved_session_closures_do_not_route_to_daedalus():
             "reason": "reviewed",
             "evidence_authority": "test authority",
             "evidence_summary": "test reviewed profile",
-            "gap_assessments": [],
+            "gap_assessments": _gap_assessments(5,0),
             "coarse_resolution_method": None,
             "coarse_evidence_stream_id": None,
         }],
