@@ -28,7 +28,7 @@ from .corpus_recovery import HistoricalCorpusAnchor, build_corpus_recovery_plan
 
 
 LOOP_SCHEMA = "nexus.advanced-csv-research-loop.v1"
-LOOP_CODE_VERSION = "1.18.0"
+LOOP_CODE_VERSION = "1.19.0"
 
 CORE_ARTIFACT_NAMES = (
     "corpus_manifest.json",
