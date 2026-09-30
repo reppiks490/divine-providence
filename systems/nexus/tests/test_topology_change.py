@@ -34,3 +34,15 @@ def test_topology_missing_pairs_remain_unknown_not_zero():
     assert snap.centrality['A']>.9
     assert snap.centrality['B']>.9
     assert snap.centrality['C']==0.0
+
+
+def test_change_engine_rejects_invalid_configuration_and_nonfinite_input():
+    import pytest
+    for kwargs in ({'alpha':0},{'alpha':1.1},{'drift':-1},{'threshold':0}):
+        with pytest.raises(ValueError):
+            ChangePointEngine(**kwargs)
+    cp=ChangePointEngine()
+    with pytest.raises(ValueError,match='finite'):
+        cp.update(float('nan'))
+    with pytest.raises(ValueError,match='finite'):
+        cp.update(float('inf'))
