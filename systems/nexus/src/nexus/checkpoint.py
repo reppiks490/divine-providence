@@ -55,5 +55,20 @@ class ReplayCheckpoint:
         Path(path).write_text(json.dumps(asdict(self),indent=2,sort_keys=True),encoding="utf-8")
 
     @classmethod
-    def load(cls,path:str|Path)->"ReplayCheckpoint":
-        x=json.loads(Path(path).read_text(encoding="utf-8"));return cls(**x)
+    def load(cls,path:str|Path,*,verify:bool=True)->"ReplayCheckpoint":
+        if type(verify) is not bool:
+            raise TypeError("verify must be bool")
+        try:
+            raw=Path(path).read_text(encoding="utf-8")
+            x=json.loads(raw)
+        except (OSError,json.JSONDecodeError) as exc:
+            raise ValueError("checkpoint is unreadable") from exc
+        if not isinstance(x,dict):
+            raise ValueError("checkpoint must contain a JSON object")
+        try:
+            checkpoint=cls(**x)
+        except TypeError as exc:
+            raise ValueError("checkpoint schema is invalid") from exc
+        if verify and not checkpoint.verify():
+            raise ValueError("checkpoint failed integrity/semantic verification")
+        return checkpoint
