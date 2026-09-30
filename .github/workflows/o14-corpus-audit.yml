@@ -135,6 +135,7 @@ jobs:
           }
 
           family_counts = Counter()
+          geometry_counts = Counter()
           sampling_counts = Counter()
           construction_counts = Counter()
           symbol_counts = Counter()
@@ -146,9 +147,11 @@ jobs:
           for m in usable_nexus:
               claim = m.metadata.get("representation_claim", {})
               family = str(claim.get("family", "unknown"))
+              geometry = str(claim.get("price_geometry", "unknown"))
               sampling = str(claim.get("sampling_domain", "unknown"))
               construction = str(claim.get("construction", "unknown"))
               family_counts[family] += 1
+              geometry_counts[geometry] += 1
               sampling_counts[sampling] += 1
               construction_counts[construction] += 1
               symbol_counts[m.identity.symbol] += 1
@@ -188,7 +191,7 @@ jobs:
 
           archive_names = [str(p.relative_to(root)) for p in archives]
           summary = {
-              "schema": "icarus.o14-historical-corpus-audit.v1",
+              "schema": "icarus.o14-historical-corpus-audit.v2",
               "source_commits": {
                   "multi_level_csv": "ce82124352762c14eb33836a5c894bc3a2a71dfe",
                   "csv_data_multi_chart_type": "a482e7d1801fa7fa5aec093960097c0051c0403c",
@@ -210,6 +213,7 @@ jobs:
                   "nexus_only_hashes": len(n_hashes - independent_hashes),
               },
               "representation_family_counts": dict(sorted(family_counts.items())),
+              "price_geometry_counts": dict(sorted(geometry_counts.items())),
               "sampling_domain_counts": dict(sorted(sampling_counts.items())),
               "construction_counts": dict(sorted(construction_counts.items())),
               "symbol_counts": dict(sorted(symbol_counts.items())),
