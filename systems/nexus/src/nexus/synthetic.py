@@ -18,64 +18,158 @@ class AdaptiveTickerEngine:
     """Build synthetic state series using trailing-only estimators."""
     @staticmethod
     def _normalize(w:np.ndarray)->np.ndarray:
+        w=np.asarray(w,dtype=float)
+        w=np.where(np.isfinite(w),w,0.0)
         s=float(np.sum(np.abs(w)))
-        return w/s if s>1e-15 else np.ones_like(w)/max(1,len(w))
+        return w/s if s>1e-15 else np.zeros_like(w,dtype=float)
 
     @classmethod
-    def _cap(cls,w:np.ndarray,cap:float)->np.ndarray:
-        w=cls._normalize(np.asarray(w,dtype=float))
-        if cap>=1.0:return w
-        if cap<=0 or cap*len(w)<1-1e-12:raise ValueError("max_component_weight is infeasible for component count")
-        # Iterative absolute cap with redistribution across uncapped weights.
-        sign=np.where(w<0,-1.0,1.0);a=np.abs(w)
-        for _ in range(len(w)+2):
-            over=a>cap+1e-15
-            if not over.any():break
-            excess=float((a[over]-cap).sum());a[over]=cap
-            free=~over
-            room=np.maximum(0.0,cap-a[free]);den=float(room.sum())
-            if excess<=1e-15 or den<=1e-15:break
+    def _cap(
+        cls,
+        w:np.ndarray,
+        cap:float,
+        *,
+        eligible:np.ndarray|None=None,
+    )->np.ndarray:
+        w=np.asarray(w,dtype=float)
+        n=len(w)
+        if cap<=0 or cap*n<1-1e-12:
+            raise ValueError("max_component_weight is infeasible for component count")
+        eligible=np.ones(n,dtype=bool) if eligible is None else np.asarray(eligible,dtype=bool)
+        if len(eligible)!=n:
+            raise ValueError("eligible mask length mismatch")
+        w=np.where(eligible,w,0.0)
+        w=cls._normalize(w)
+        active=int(eligible.sum())
+        if active==0 or not np.any(np.abs(w)>1e-15):
+            return np.zeros_like(w)
+        if cap>=1.0:
+            return w
+        # Missing/unevidenced components are not eligible recipients of cap
+        # redistribution. If the surviving evidence cannot satisfy the cap,
+        # fail closed for this fit rather than assigning weight to missing data.
+        if cap*active<1-1e-12:
+            return np.zeros_like(w)
+
+        sign=np.where(w<0,-1.0,1.0)
+        a=np.abs(w)
+        for _ in range(n+2):
+            over=eligible & (a>cap+1e-15)
+            if not over.any():
+                break
+            excess=float((a[over]-cap).sum())
+            a[over]=cap
+            free=eligible & ~over
+            room=np.maximum(0.0,cap-a[free])
+            den=float(room.sum())
+            if excess<=1e-15 or den<=1e-15:
+                break
             a[free]+=excess*room/den
-        return cls._normalize(sign*a)
+        a[~eligible]=0.0
+        out=cls._normalize(sign*a)
+        if np.any(np.abs(out[eligible])>cap+1e-10):
+            return np.zeros_like(out)
+        return out
 
     def _weights(self,hist:pd.DataFrame,method:str,max_component_weight:float=1.0)->np.ndarray:
         arr=hist.to_numpy(dtype=float)
-        mu=np.nanmean(arr,axis=0);sd=np.nanstd(arr,axis=0);sd=np.where(sd<1e-12,1.0,sd)
-        z=np.nan_to_num((arr-mu)/sd,nan=0.0,posinf=0.0,neginf=0.0)
+        n=arr.shape[1]
+        if max_component_weight<=0 or max_component_weight*n<1-1e-12:
+            raise ValueError("max_component_weight is infeasible for component count")
+
+        counts=np.isfinite(arr).sum(axis=0)
+        sd_all=hist.std(axis=0,ddof=0,skipna=True).to_numpy(dtype=float)
+        eligible=(counts>=2) & np.isfinite(sd_all) & (sd_all>1e-12)
+        w=np.zeros(n,dtype=float)
+
+        if method=="equal":
+            w[eligible]=1.0
+            return self._cap(w,max_component_weight,eligible=eligible)
+
+        if method=="inverse_vol":
+            w[eligible]=1.0/sd_all[eligible]
+            return self._cap(w,max_component_weight,eligible=eligible)
+
+        active_idx=np.flatnonzero(eligible)
+        if active_idx.size==0:
+            return w
+
+        # Multivariate methods require actual joint observations. Missing values
+        # are never replaced by zero/mean z-scores.
+        joint=arr[:,active_idx]
+        joint=joint[np.isfinite(joint).all(axis=1)]
+        if len(joint)<2:
+            return w
+
+        mu=joint.mean(axis=0)
+        sd=joint.std(axis=0)
+        varying=np.isfinite(sd) & (sd>1e-12)
+        active_idx=active_idx[varying]
+        joint=joint[:,varying]
+        sd=sd[varying]
+        mu=mu[varying]
+        if active_idx.size==0:
+            return w
+        active_mask=np.zeros(n,dtype=bool)
+        active_mask[active_idx]=True
+        if active_idx.size==1:
+            w[active_idx[0]]=1.0
+            return self._cap(w,max_component_weight,eligible=active_mask)
+
+        z=(joint-mu)/sd
+
         if method in {"adaptive_pca","shrinkage_pca","robust_pca"}:
             work=z
             if method=="robust_pca":
-                med=np.nanmedian(arr,axis=0);mad=np.nanmedian(np.abs(arr-med),axis=0);scale=np.where(mad>1e-12,1.4826*mad,sd)
-                work=np.clip(np.nan_to_num((arr-med)/scale,nan=0.0),-5.0,5.0)
+                med=np.median(joint,axis=0)
+                mad=np.median(np.abs(joint-med),axis=0)
+                scale=np.where(mad>1e-12,1.4826*mad,sd)
+                work=np.clip((joint-med)/scale,-5.0,5.0)
             cov=np.atleast_2d(np.cov(work,rowvar=False))
+            if not np.isfinite(cov).all():
+                return np.zeros(n,dtype=float)
             if method in {"shrinkage_pca","robust_pca"}:
                 alpha=0.25 if method=="shrinkage_pca" else 0.35
                 cov=(1-alpha)*cov+alpha*np.diag(np.diag(cov))
-            vals,vecs=np.linalg.eigh(cov);w=vecs[:,int(np.argmax(vals))]
-            j=int(np.argmax(np.abs(w)))
-            if w[j]<0:w=-w
-        elif method=="inverse_vol":
-            vol=np.nanstd(arr,axis=0);w=1/np.maximum(vol,1e-12)
-        elif method=="equal":w=np.ones(arr.shape[1])
+            vals,vecs=np.linalg.eigh(cov)
+            local=vecs[:,int(np.argmax(vals))]
+            j=int(np.argmax(np.abs(local)))
+            if local[j]<0:
+                local=-local
+            w[active_idx]=local
         elif method=="cluster_balanced":
-            corr=np.nan_to_num(np.corrcoef(z,rowvar=False),nan=0.0);n=arr.shape[1];adj={i:set() for i in range(n)}
-            for i in range(n):
-                for j in range(i+1,n):
-                    if abs(float(corr[i,j]))>=0.70:adj[i].add(j);adj[j].add(i)
+            corr=np.corrcoef(z,rowvar=False)
+            if not np.isfinite(corr).all():
+                return np.zeros(n,dtype=float)
+            k=len(active_idx)
+            adj={i:set() for i in range(k)}
+            for i in range(k):
+                for j in range(i+1,k):
+                    if abs(float(corr[i,j]))>=0.70:
+                        adj[i].add(j);adj[j].add(i)
             seen=set();groups=[]
-            for i in range(n):
-                if i in seen:continue
+            for i in range(k):
+                if i in seen:
+                    continue
                 stack=[i];seen.add(i);g=[]
                 while stack:
                     x=stack.pop();g.append(x)
-                    for y in adj[x]:
-                        if y not in seen:seen.add(y);stack.append(y)
+                    for y in sorted(adj[x]):
+                        if y not in seen:
+                            seen.add(y);stack.append(y)
                 groups.append(g)
-            w=np.zeros(n);cluster_budget=1/max(1,len(groups));vol=np.nanstd(arr,axis=0)
+            local=np.zeros(k,dtype=float)
+            cluster_budget=1/max(1,len(groups))
+            vol=joint.std(axis=0)
             for g in groups:
-                inv=1/np.maximum(vol[g],1e-12);inv=inv/inv.sum();w[g]=cluster_budget*inv
-        else:raise ValueError(f"unknown method: {method}")
-        return self._cap(w,max_component_weight)
+                inv=1/vol[g]
+                inv=inv/inv.sum()
+                local[g]=cluster_budget*inv
+            w[active_idx]=local
+        else:
+            raise ValueError(f"unknown method: {method}")
+
+        return self._cap(w,max_component_weight,eligible=active_mask)
 
     def build(self, values: pd.DataFrame, definition: SyntheticTickerDefinition) -> pd.DataFrame:
         x=values.loc[:,list(definition.components)].astype(float)
@@ -99,9 +193,15 @@ class AdaptiveTickerEngine:
                 den=float(np.sum(np.abs(effective_w)))
                 if den>1e-15:
                     effective_w/=den
-                    value=float(np.dot(z_arr[finite],effective_w[finite]))
-                    concentration=float(np.max(np.abs(effective_w)))
-                    confidence=max(0.0,min(1.0,coverage*(1.0-concentration/2.0)))
+                    # Current missingness must not bypass the configured
+                    # component cap by renormalizing the surviving weight to 1.
+                    if np.max(np.abs(effective_w))>definition.max_component_weight+1e-10:
+                        effective_w[:]=0.0
+                        value=float("nan"); confidence=0.0
+                    else:
+                        value=float(np.dot(z_arr[finite],effective_w[finite]))
+                        concentration=float(np.max(np.abs(effective_w)))
+                        confidence=max(0.0,min(1.0,coverage*(1.0-concentration/2.0)))
                 else:
                     value=float("nan"); confidence=0.0
             else:
