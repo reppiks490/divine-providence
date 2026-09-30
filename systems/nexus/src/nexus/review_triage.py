@@ -11,8 +11,14 @@ SCHEMA = "nexus.representation-review-triage.v1"
 
 def _classify(row: Mapping[str, Any]) -> str:
     kind = str(row.get("hypothesis_kind") or "")
-    if kind == "event_or_transformed_candidate":
-        return "EVENT_OR_TRANSFORMED_REQUIRES_VENDOR_DEFINITION"
+    if kind in {"event_or_transformed_candidate", "event_bar_claim_candidate", "event_representation_candidate", "derived_event_candidate"}:
+        return "EVENT_DRIVEN_REQUIRES_VENDOR_DEFINITION"
+    if kind == "profile_view_candidate":
+        return "PROFILE_VIEW_REQUIRES_EXPORT_DEFINITION"
+    if kind == "derived_time_candidate":
+        return "DERIVED_TIME_REQUIRES_EXPORT_PROVENANCE"
+    if kind == "derived_time_mismatch_candidate":
+        return "DERIVED_TIME_MISMATCH_REQUIRES_EXPORT_SETTING_EVIDENCE"
     if kind == "timeframe_mismatch_candidate":
         # A low-confidence cadence estimate can fall into the historical
         # timeframe_mismatch hypothesis even when the modal cadence numerically
