@@ -4,7 +4,7 @@ import math
 from pathlib import Path
 from .columns import profile_header, AmbiguousColumnError
 from .contracts import VectorEvent, QualityFlag
-from .ingest import BarClockPolicy, _next_strictly_greater
+from .ingest import BarClockPolicy, BackwardSourceTimeError, _next_strictly_greater
 from .timeutil import timestamp_to_ns
 
 
@@ -58,7 +58,13 @@ def iter_numeric_events(
                 if math.isfinite(v): fields.append((_field_id(header[i],i),v))
             if not fields: continue
             parsed.append((seq,raw_ns,tuple(fields),duplicate_flag))
-    next_greater=_next_strictly_greater([x[1] for x in parsed]); has_any_sealed=any(x is not None for x in next_greater)
+    raw_times=[x[1] for x in parsed]
+    for i,(a,b) in enumerate(zip(raw_times,raw_times[1:]),start=1):
+        if b<a:
+            raise BackwardSourceTimeError(
+                f"{path}: source time moved backward at parsed row {i}: {b} < {a}"
+            )
+    next_greater=_next_strictly_greater(raw_times); has_any_sealed=any(x is not None for x in next_greater)
     for (seq,raw_ns,fields,header_flags),next_ns in zip(parsed,next_greater):
         event_ns,available_ns,qflags,basis=clock_policy.resolve(raw_ns,next_strictly_later_ns=next_ns)
         if (clock_policy.source_stamp=="conservative_next" and available_ns is None
