@@ -83,6 +83,50 @@ class StreamManifest:
     quality_flags: list[str] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.identity,StreamIdentity):
+            raise TypeError("identity must be StreamIdentity")
+        if type(self.row_count) is not int or self.row_count < 0:
+            raise ValueError("row_count must be a non-negative integer")
+        if not isinstance(self.columns,list) or any(not isinstance(x,str) for x in self.columns):
+            raise TypeError("columns must be a list of strings")
+        for name,value in (
+            ("first_event_ns",self.first_event_ns),
+            ("last_event_ns",self.last_event_ns),
+        ):
+            if value is not None and (type(value) is not int or value < 0):
+                raise ValueError(f"{name} must be a non-negative integer or None")
+        if (
+            self.first_event_ns is not None
+            and self.last_event_ns is not None
+            and self.last_event_ns < self.first_event_ns
+        ):
+            raise ValueError("last_event_ns cannot precede first_event_ns")
+        if self.observed_cadence_ns is not None and (
+            type(self.observed_cadence_ns) is not int or self.observed_cadence_ns <= 0
+        ):
+            raise ValueError("observed_cadence_ns must be a positive integer or None")
+        confidence=float(self.cadence_confidence)
+        if not math.isfinite(confidence) or not 0.0 <= confidence <= 1.0:
+            raise ValueError("cadence_confidence must be finite and in [0,1]")
+        for name,value in (
+            ("repeated_timestamp_count",self.repeated_timestamp_count),
+            ("backward_timestamp_count",self.backward_timestamp_count),
+            ("fractional_timestamp_count",self.fractional_timestamp_count),
+        ):
+            if type(value) is not int or value < 0:
+                raise ValueError(f"{name} must be a non-negative integer")
+            if value > self.row_count:
+                raise ValueError(f"{name} cannot exceed row_count")
+        if self.byte_duplicate_of is not None and not isinstance(self.byte_duplicate_of,str):
+            raise TypeError("byte_duplicate_of must be a string or None")
+        if not isinstance(self.quality_flags,list) or any(
+            not isinstance(x,str) for x in self.quality_flags
+        ):
+            raise TypeError("quality_flags must be a list of strings")
+        if not isinstance(self.metadata,dict):
+            raise TypeError("metadata must be a dict")
+
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
         d["identity"] = asdict(self.identity)
