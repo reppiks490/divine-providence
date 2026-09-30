@@ -178,3 +178,55 @@ def test_derivation_observation_preserves_later_ingestion_time():
     )
     obs=bundle.aion['derivation_observations'][0]
     assert obs['event_ns']==160 and obs['available_ns']==160 and obs['ingested_ns']==175
+
+
+def test_mapped_health_persists_to_aion_like_typed_plane():
+    from nexus.source_health import SourceHealthRegistry, SourceSLOPolicy
+    m=_manifest('A','a')
+    e=BarEvent(
+        m.identity.stream_id,100,0,1,2,.5,1.5,None,'A.csv',
+        available_ns=160,availability_basis='verified_bar_close'
+    )
+    bus=ReplayBus();batch=next(bus.merge_batches({e.stream_id:[e]}))
+    state=next(bus.states_batches([batch]))
+    h=SourceHealthRegistry();h.set_policy(
+        e.stream_id,SourceSLOPolicy(max_receive_lag_ns_p95=20)
+    );h.observe(e,received_ns=160)
+    plane=h.snapshot(160)
+    bundle=SiblingInstantRouter().package(
+        batch=batch,state=state,manifests={e.stream_id:m},
+        factors={},topology={},quality={},source_health=plane.to_dict(),
+    )
+    matching=[
+        o for o in bundle.aion['observations']
+        if o.get('payload',{}).get('plane_hash')==plane.plane_hash
+    ]
+    assert len(matching)==1
+    assert bundle.aion['source_health_plane_hash']==plane.plane_hash
+
+
+def test_sibling_router_rejects_manifest_identity_mismatch_and_bad_ingestion():
+    import pytest
+    m=_manifest('A','a')
+    wrong=_manifest('B','b')
+    e=BarEvent(
+        m.identity.stream_id,100,0,1,2,.5,1.5,None,'A.csv',
+        available_ns=160,availability_basis='verified_bar_close'
+    )
+    bus=ReplayBus();batch=next(bus.merge_batches({e.stream_id:[e]}))
+    state=next(bus.states_batches([batch]))
+    with pytest.raises(ValueError,match='manifest identity mismatch'):
+        SiblingInstantRouter().package(
+            batch=batch,state=state,manifests={e.stream_id:wrong},
+            factors={},topology={},quality={},
+        )
+    with pytest.raises(ValueError,match='ingested_ns'):
+        SiblingInstantRouter().package(
+            batch=batch,state=state,manifests={e.stream_id:m},
+            factors={},topology={},quality={},ingested_ns=159,
+        )
+    with pytest.raises(ValueError,match='derivation_sequence'):
+        SiblingInstantRouter().package(
+            batch=batch,state=state,manifests={e.stream_id:m},
+            factors={},topology={},quality={},derivation_sequence=1.5,
+        )
