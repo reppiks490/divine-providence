@@ -24,6 +24,15 @@ def causal_bar_features(df: pd.DataFrame) -> pd.DataFrame:
     observed_close=np.isfinite(c.to_numpy())
     if np.any(c.to_numpy()[observed_close] <= 0):
         raise ValueError("log-return features require strictly positive observed close prices")
+    finite_ohlc=(
+        np.isfinite(o.to_numpy()) & np.isfinite(h.to_numpy())
+        & np.isfinite(l.to_numpy()) & np.isfinite(c.to_numpy())
+    )
+    if finite_ohlc.any():
+        oa=o.to_numpy()[finite_ohlc];ha=h.to_numpy()[finite_ohlc]
+        la=l.to_numpy()[finite_ohlc];ca=c.to_numpy()[finite_ohlc]
+        if np.any(ha < np.maximum(oa,ca)) or np.any(la > np.minimum(oa,ca)) or np.any(ha < la):
+            raise ValueError("OHLC feature inputs contain inconsistent bar geometry")
     ret=np.log(c).diff()
     out=pd.DataFrame(index=x.index)
     out["ret_1"]=ret
@@ -32,7 +41,10 @@ def causal_bar_features(df: pd.DataFrame) -> pd.DataFrame:
     out["rv_20"]=ret.rolling(20,min_periods=10).std(ddof=0)*np.sqrt(20)
     out["mom_5"]=np.log(c/c.shift(5))
     out["mom_20"]=np.log(c/c.shift(20))
-    true_range=pd.concat([(h-l).abs(),(h-c.shift(1)).abs(),(l-c.shift(1)).abs()],axis=1).max(axis=1)
+    true_range=pd.concat(
+        [(h-l).abs(),(h-c.shift(1)).abs(),(l-c.shift(1)).abs()],axis=1
+    ).max(axis=1)
+    true_range=true_range.where(h.notna() & l.notna())
     out["atr_pct_14"]=true_range.rolling(14,min_periods=7).mean()/c.replace(0,np.nan)
     out["eff_20"]=(c-c.shift(20)).abs()/c.diff().abs().rolling(20,min_periods=10).sum().replace(0,np.nan)
     if "volume" in {str(v).lower() for v in x.columns}:
