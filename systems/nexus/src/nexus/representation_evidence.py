@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 from collections import Counter
+import hashlib
+import json
 from typing import Any, Mapping
+
+from .review_triage import verify_representation_review_triage
 
 
 SCHEMA = "nexus.representation-source-evidence.v1"
@@ -113,6 +117,8 @@ def build_representation_source_evidence(review_triage: Mapping[str, Any]) -> di
     that the CSV ``time`` column necessarily maps to Pine ``time``, or that the
     chart was a standard time-based chart.
     """
+    if not verify_representation_review_triage(review_triage):
+        raise ValueError("invalid or tampered representation review triage")
     clusters = [c for c in review_triage.get("clusters", []) if isinstance(c, Mapping)]
     comparison_counts: Counter[str] = Counter()
     stream_comparison_counts: Counter[str] = Counter()
@@ -171,7 +177,7 @@ def build_representation_source_evidence(review_triage: Mapping[str, Any]) -> di
         stream_comparison_counts.get("OBSERVED_FASTER_THAN_STANDARD_TIMEFRAME_CLAIM", 0)
         + stream_comparison_counts.get("OBSERVED_SLOWER_THAN_STANDARD_TIMEFRAME_CLAIM", 0)
     )
-    return {
+    body = {
         "schema": SCHEMA,
         "sources": list(SOURCES),
         "cluster_count": len(evidence_rows),
@@ -196,3 +202,68 @@ def build_representation_source_evidence(review_triage: Mapping[str, Any]) -> di
         "auto_resolved_count": 0,
         "production_authorized": False,
     }
+    body["evidence_hash"]=hashlib.sha256(
+        json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    return body
+
+
+def verify_representation_source_evidence(payload: Mapping[str, Any] | None) -> bool:
+    if not isinstance(payload,Mapping) or payload.get("schema") != SCHEMA:
+        return False
+    supplied=payload.get("evidence_hash")
+    if not isinstance(supplied,str) or len(supplied)!=64:
+        return False
+    try:
+        int(supplied,16)
+    except ValueError:
+        return False
+    body=dict(payload);body.pop("evidence_hash",None)
+    try:
+        expected=hashlib.sha256(
+            json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+        ).hexdigest()
+    except (TypeError,ValueError):
+        return False
+    if supplied!=expected or body.get("auto_resolved_count") != 0 or body.get("production_authorized") is not False:
+        return False
+    if body.get("sources") != list(SOURCES):
+        return False
+    rows=body.get("clusters")
+    if not isinstance(rows,list) or body.get("cluster_count") != len(rows):
+        return False
+    cluster_counts=Counter();stream_counts=Counter();total=0
+    for row in rows:
+        if not isinstance(row,Mapping):
+            return False
+        count=row.get("stream_count")
+        ids=row.get("stream_ids")
+        comparison=row.get("claim_vs_observed")
+        if (
+            type(count) is not int or count < 1
+            or not isinstance(ids,list) or len(ids)!=count or len(set(ids))!=len(ids)
+            or comparison not in {
+                "UNRESOLVED","EXACT_CADENCE_MATCH",
+                "OBSERVED_FASTER_THAN_STANDARD_TIMEFRAME_CLAIM",
+                "OBSERVED_SLOWER_THAN_STANDARD_TIMEFRAME_CLAIM",
+            }
+            or row.get("remaining_p0") is not True
+            or row.get("auto_resolved") is not False
+            or row.get("production_authorized") is not False
+        ):
+            return False
+        cluster_counts[comparison]+=1
+        stream_counts[comparison]+=count
+        total+=count
+    exact=stream_counts.get("EXACT_CADENCE_MATCH",0)
+    incompatible=(
+        stream_counts.get("OBSERVED_FASTER_THAN_STANDARD_TIMEFRAME_CLAIM",0)
+        + stream_counts.get("OBSERVED_SLOWER_THAN_STANDARD_TIMEFRAME_CLAIM",0)
+    )
+    return (
+        body.get("p0_stream_count")==total
+        and body.get("comparison_cluster_counts")==dict(sorted(cluster_counts.items()))
+        and body.get("comparison_stream_counts")==dict(sorted(stream_counts.items()))
+        and body.get("standard_timeframe_cadence_compatible_stream_count")==exact
+        and body.get("standard_timeframe_cadence_incompatible_stream_count")==incompatible
+    )
