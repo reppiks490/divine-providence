@@ -683,7 +683,7 @@ class AdvancedCSVResearchLoop:
                 "decisions": [asdict(x) for x in universe_decisions],
                 "representation_aggregation_contract": {
                     "raw_representations_are_independent_votes": False,
-                    "within_symbol_rule": "Fuse streams within sampling construction inside chart family; fuse constructions to chart family; fuse chart families to one symbol plane; then perform cross-asset weighting.",
+                    "within_symbol_rule": "Fuse streams within sampling construction; fuse constructions within price geometry; fuse geometries within reviewed chart/view family; fuse chart/view families to one symbol plane; then perform cross-asset weighting.",
                     "orthogonal_identity_axes": ["chart_view_family", "price_geometry", "sampling_domain", "sampling_construction"],
                     "required_engine": "HierarchicalFactorEngine.build_from_manifests",
                     "native_clock_rule": "Tick, range, Renko and other event/profile constructions retain native completion boundaries; never coerce them to fixed minute/hour cadence.",
