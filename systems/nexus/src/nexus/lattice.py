@@ -35,6 +35,8 @@ class MultiResolutionClockLattice:
         *,
         rule: RepresentationClockRule | None = None,
     ) -> None:
+        if not isinstance(representation_class,str) or not representation_class.strip():
+            raise ClockPolicyError("representation_class is required")
         if rule is not None:
             if rule.representation_class != representation_class:
                 raise ClockPolicyError("rule representation_class does not match registration")
@@ -64,6 +66,8 @@ class MultiResolutionClockLattice:
         return out
 
     def visible_ns(self, stream_id: str, source_timestamp_ns: int) -> int:
+        if type(source_timestamp_ns) is not int or source_timestamp_ns < 0:
+            raise ClockPolicyError("source_timestamp_ns must be a non-negative integer")
         try:
             manifest, rep = self._streams[stream_id]
         except KeyError as exc:
