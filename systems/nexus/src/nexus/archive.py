@@ -89,7 +89,13 @@ class ZipCorpusCatalog:
         meta={**base_meta,'raw_filename_claim':parsed.raw_claim,'download_copy_ordinal':parsed.copy_ordinal,'claim_cadence_ns':claim_ns,
               'logical_sha256':logical.hexdigest() if has_logical else None,'duplicate_header_positions':duplicate_positions,
               'usable_ohlc_rows':usable,'invalid_timestamp_rows':bad_ts,'nonnumeric_ohlc_rows':bad_num,'inconsistent_ohlc_rows':bad_geom}
-        return StreamManifest(ident,rows,columns,min_ns,max_ns,cadence,conf,repeats,backwards,frac,None,sorted(set(flags)),meta)
+        manifest=StreamManifest(ident,rows,columns,min_ns,max_ns,cadence,conf,repeats,backwards,frac,None,sorted(set(flags)),meta)
+        from .representation import infer_representation_claim, infer_representation_hypothesis
+        rep=infer_representation_claim(manifest)
+        manifest.metadata['representation_claim']=rep.to_dict()
+        hyp=infer_representation_hypothesis(manifest)
+        manifest.metadata['representation_hypothesis']={'kind':hyp.kind,'confidence':hyp.confidence,'reasons':list(hyp.reasons),'authoritative':False}
+        return manifest
 
     @staticmethod
     def _annotate(manifests:list[StreamManifest])->list[StreamManifest]:
