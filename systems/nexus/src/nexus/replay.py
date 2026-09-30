@@ -3,26 +3,57 @@ import hashlib, heapq, json
 from typing import Iterable, Iterator
 from .contracts import BarEvent, ReplayBatch, ReplayInstant, StatePacket
 
-class ReplayAvailabilityError(ValueError):
+class ReplayContractError(ValueError):
+    pass
+
+class ReplayAvailabilityError(ReplayContractError):
+    pass
+
+class ReplayOrderingError(ReplayContractError):
     pass
 
 class ReplayBus:
     """Causal deterministic merge with optional batch-atomic same-availability replay."""
     def merge(self, streams: dict[str, Iterable[BarEvent]], *, require_available: bool=False) -> Iterator[BarEvent]:
-        heap=[]; its={k:iter(v) for k,v in streams.items()}
-        def checked(event:BarEvent)->BarEvent:
-            if require_available and event.available_ns is None:
-                raise ReplayAvailabilityError(f"stream {event.stream_id} sequence {event.source_sequence} has unknown availability")
+        heap=[]; its={k:iter(v) for k,v in streams.items()}; last_keys={}
+        def checked(expected_sid:str,event:BarEvent)->BarEvent:
+            if event.stream_id != expected_sid:
+                raise ReplayOrderingError(
+                    f"stream mapping key {expected_sid!r} does not match event stream_id {event.stream_id!r}"
+                )
+            if require_available:
+                if event.available_ns is None:
+                    raise ReplayAvailabilityError(
+                        f"stream {event.stream_id} sequence {event.source_sequence} has unknown availability"
+                    )
+                if int(event.available_ns) < int(event.event_ns):
+                    raise ReplayAvailabilityError(
+                        f"stream {event.stream_id} sequence {event.source_sequence} is available before its event"
+                    )
+                if (
+                    event.source_timestamp_ns is not None
+                    and int(event.event_ns) < int(event.source_timestamp_ns)
+                ):
+                    raise ReplayAvailabilityError(
+                        f"stream {event.stream_id} sequence {event.source_sequence} event precedes source timestamp"
+                    )
+            key=event.ordering_key
+            previous=last_keys.get(expected_sid)
+            if previous is not None and key <= previous:
+                raise ReplayOrderingError(
+                    f"stream {event.stream_id} ordering key did not strictly increase: {key} <= {previous}"
+                )
+            last_keys[expected_sid]=key
             return event
         for sid,it in its.items():
             try:
-                e=checked(next(it)); heapq.heappush(heap,(e.ordering_key,sid,e))
+                e=checked(sid,next(it)); heapq.heappush(heap,(e.ordering_key,sid,e))
             except StopIteration: pass
         while heap:
             _,sid,e=heapq.heappop(heap)
             yield e
             try:
-                n=checked(next(its[sid])); heapq.heappush(heap,(n.ordering_key,sid,n))
+                n=checked(sid,next(its[sid])); heapq.heappush(heap,(n.ordering_key,sid,n))
             except StopIteration: pass
 
     def merge_batches(self, streams: dict[str, Iterable[BarEvent]], *, require_available: bool=False) -> Iterator[ReplayBatch]:
