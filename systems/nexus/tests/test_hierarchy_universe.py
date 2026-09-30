@@ -47,13 +47,13 @@ def test_hierarchical_factor_runs_on_symbol_plane():
     assert set(result.symbol_returns)=={"A","B"}
 
 
-def test_family_balancing_prevents_dense_time_family_from_outvoting_event_views():
+def test_sampling_then_family_balancing_prevents_dense_timeframe_vote_inflation():
     idx=range(3)
     r=pd.DataFrame({
-        "NQ:t1":[0.02]*3,
-        "NQ:t2":[0.021]*3,
-        "NQ:t3":[0.019]*3,
-        "NQ:t4":[0.022]*3,
+        "NQ:t1":[0.03]*3,
+        "NQ:t2":[0.031]*3,
+        "NQ:t3":[0.029]*3,
+        "NQ:t4":[0.032]*3,
         "NQ:tick":[-0.02]*3,
         "NQ:range":[-0.021]*3,
         "NQ:renko":[-0.019]*3,
@@ -64,12 +64,21 @@ def test_family_balancing_prevents_dense_time_family_from_outvoting_event_views(
         "NQ:t2":"regular_candles",
         "NQ:t3":"regular_candles",
         "NQ:t4":"regular_candles",
-        "NQ:tick":"tick_bars",
-        "NQ:range":"range_bars",
+        "NQ:tick":"regular_candles",
+        "NQ:range":"regular_candles",
         "NQ:renko":"renko",
     }
+    construction={
+        "NQ:t1":"time_bar",
+        "NQ:t2":"time_bar",
+        "NQ:t3":"time_bar",
+        "NQ:t4":"time_bar",
+        "NQ:tick":"tick",
+        "NQ:range":"range",
+        "NQ:renko":"range",
+    }
     fused,_,agreement,coverage=fuse_representations_by_symbol(
-        r,symbol,stream_to_family=family
+        r,symbol,stream_to_family=family,stream_to_construction=construction
     )
     assert fused.iloc[0]["NQ"] < 0.0
     assert agreement.iloc[0]["NQ"] >= 0.5
@@ -80,10 +89,10 @@ def test_build_from_manifests_fails_closed_on_unresolved_time_family():
     from nexus.hierarchy import HierarchicalFactorEngine
     unresolved=_m("NQ","d")
     unresolved.metadata["representation_claim"]={
-        "family":"time_bars_unspecified","sampling_domain":"time"
+        "family":"unknown","sampling_domain":"time","construction":"time_bar"
     }
     returns=pd.DataFrame({unresolved.identity.stream_id:[0.01,0.01,0.01]})
     d=EnsembleDefinition("H",("NQ",),methods=("equal",),window=2,min_periods=1,rebalance_every=1)
     import pytest
-    with pytest.raises(ValueError,match="representation family unresolved"):
+    with pytest.raises(ValueError,match="representation identity unresolved"):
         HierarchicalFactorEngine().build_from_manifests(returns,[unresolved],d)
