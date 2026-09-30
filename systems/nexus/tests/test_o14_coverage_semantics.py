@@ -122,3 +122,15 @@ def test_ha_geometry_requires_recursive_open_identity():
     assert bad["ha_close_high_low_score"] == 1.0
     assert bad["ha_open_recurrence_score"] < 0.5
     assert bad["ha_score"] < probe.PROOF_SCORE
+
+
+def test_geometry_probe_requires_most_of_candidate_to_overlap():
+    probe = _load_script("o14_representation_probe.py")
+    standard = {i: (100.0, 102.0, 98.0, 101.0) for i in range(220)}
+    candidate = {i: (100.0, 102.0, 98.0, 101.0) for i in range(1000)}
+    result = probe._compare(standard, candidate)
+    assert result["overlap"] == 220
+    assert result["candidate_coverage"] == 0.22
+    assert result["reference_coverage"] == 1.0
+    assert result["standard_score"] == 0.0
+    assert result["ha_score"] == 0.0
