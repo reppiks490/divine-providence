@@ -12,8 +12,10 @@ def timestamp_to_ns(value: str | int | float) -> tuple[int, bool]:
         raise ValueError(f"invalid timestamp: {value!r}") from e
     if not d.is_finite():
         raise ValueError(f"non-finite timestamp: {value!r}")
+    if d < 0:
+        raise ValueError(f"negative timestamp: {value!r}")
     fractional = d != d.to_integral_value()
-    mag = abs(d)
+    mag = d
     if mag < Decimal("1e11"):      # seconds
         ns = int(d * Decimal("1e9"))
     elif mag < Decimal("1e14"):    # milliseconds
