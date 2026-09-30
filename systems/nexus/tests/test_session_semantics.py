@@ -221,8 +221,10 @@ def test_session_resolution_rejects_stream_collisions_and_duplicate_candidate_id
         ident=StreamIdentity("src","CME","NQ1!","20",source_path=path,raw_sha256=raw)
         return StreamManifest(ident,10,["time","open","high","low","close"],1,10,1_200_000_000_000,1.0,0,0,0)
 
-    a=m("a"*64,"a.csv")
-    b=m("b"*64,"b.csv")
+    # stream_id uses the first 12 hash hex chars, so keep that prefix equal
+    # while changing the remaining raw hash to create a genuine collision.
+    a=m("a"*12+"1"*52,"a.csv")
+    b=m("a"*12+"2"*52,"b.csv")
     candidate={"candidate_id":"gap","family":"sampling_gap_sensitivity","scope":[a.identity.stream_id]}
     with pytest.raises(ValueError,match="stream_id collision"):
         build_session_gap_resolution(tmp_path,[a,b],[candidate])
