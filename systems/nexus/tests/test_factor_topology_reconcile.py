@@ -61,6 +61,6 @@ def test_reconciliation_rejects_invalid_logical_hash_and_declared_counts():
         reconcile_catalogs([bad],[])
     good=_m('good.csv','a'*64,'1'*64)
     with pytest.raises(ValueError,match='declared_usable_entries'):
-        compare_declared_checkpoint(good if False else [good],declared_usable_entries=1.5,declared_rows=1)
+        compare_declared_checkpoint([good],declared_usable_entries=1.5,declared_rows=1)
     with pytest.raises(ValueError,match='declared_rows'):
         compare_declared_checkpoint([good],declared_usable_entries=1,declared_rows=-1)
