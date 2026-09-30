@@ -141,3 +141,17 @@ def test_serialized_health_plane_requires_hash_and_semantic_consistency():
     inconsistent['healthy_streams']=[]
     inconsistent['failed_streams']=['s']
     assert not SourceHealthPlane.from_dict(inconsistent).verify()
+
+
+def test_source_slo_policy_change_requires_explicit_clear():
+    import pytest
+    from nexus.source_health import SourceHealthRegistry
+    r=SourceHealthRegistry()
+    p1=SourceSLOPolicy(max_gap_size=0)
+    p2=SourceSLOPolicy(max_gap_size=2)
+    r.set_policy('s',p1)
+    r.set_policy('s',p1)
+    with pytest.raises(ValueError,match='policy conflict'):
+        r.set_policy('s',p2)
+    r.clear_policy('s')
+    r.set_policy('s',p2)
