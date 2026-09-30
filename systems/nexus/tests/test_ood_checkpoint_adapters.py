@@ -72,9 +72,8 @@ def test_checkpoint_requires_frame_hash_and_finite_state():
     no_frame=StatePacket(10,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash=None)
     with pytest.raises(ValueError,match='frame_hash'):
         ReplayCheckpoint.from_state(no_frame)
-    bad=StatePacket(10,{'a':float('nan')},{'a':0},(),{'a':1},{'a':'x'},frame_hash='f')
-    with pytest.raises(ValueError):
-        ReplayCheckpoint.from_state(bad)
+    with pytest.raises(ValueError,match='finite'):
+        StatePacket(10,{'a':float('nan')},{'a':0},(),{'a':1},{'a':'x'},frame_hash='f')
 
 
 def test_ood_configuration_rejects_degenerate_parameters():
