@@ -15,7 +15,9 @@ def test_merge_is_deterministic_and_preserves_equal_times():
 
 def test_asof_state_never_uses_future_value():
     merged=ReplayBus().merge({'a':[e('a',10,0,1),e('a',30,1,9)], 'b':[e('b',20,0,2)]},require_available=False)
-    states=list(ReplayBus().states(merged,required_streams={'a','b'}))
+    states=list(ReplayBus().states(
+        merged,required_streams={'a','b'},require_available=False
+    ))
     at20=next(x for x in states if x.decision_ns==20)
     assert at20.values['a']==1
     assert at20.values['b']==2
