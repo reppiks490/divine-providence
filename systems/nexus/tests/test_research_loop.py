@@ -150,3 +150,20 @@ def test_loop_owner_exclusions_do_not_enter_model_admitted_plane(tmp_path):
     blocked=[d for d in universe["decisions"] if d["reason"]=="owner_excluded_symbol"]
     assert len(blocked)==1
     assert blocked[0]["symbol"]=="ETHUSD"
+
+
+def test_checkpoint_counts_never_auto_authorize_coverage(tmp_path):
+    archive = tmp_path / "corpus.zip"
+    _write_zip(archive)
+    state = tmp_path / "state"
+    cfg = AdvancedLoopConfig(
+        state_dir=str(state),
+        prior_anchor=CoverageAnchor("test", 1, 4),
+        min_owner_expected_entries=1,
+    )
+    result = AdvancedCSVResearchLoop(tmp_path, cfg).run_once()
+    assert result.summary["historical_checkpoint_reconciled"] is True
+    assert result.summary["coverage_claim_allowed"] is False
+    universe = json.loads((state / "iteration_0001" / "factor_universe.json").read_text())
+    assert universe["selected_stream_ids_are_independent_components"] is False
+    assert universe["model_plane_ready"] is False
