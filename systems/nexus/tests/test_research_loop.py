@@ -125,3 +125,25 @@ def test_loop_emits_representation_aggregation_contract(tmp_path):
     assert contract["required_engine"] == "HierarchicalFactorEngine.build_from_manifests"
     assert "native completion boundaries" in contract["native_clock_rule"]
     assert result.summary["production_authorized"] is False
+
+
+def test_loop_owner_exclusions_do_not_enter_model_admitted_plane(tmp_path):
+    archive=tmp_path/"corpus.zip"
+    with zipfile.ZipFile(archive,"w",compression=zipfile.ZIP_DEFLATED) as zf:
+        text="time,open,high,low,close\n1700000000,1,2,0,1\n1700000060,1,2,0,1.1\n1700000120,1.1,2,1,1.2\n"
+        zf.writestr("INDEX_ETHUSD, 1.csv",text)
+        zf.writestr("CME_MINI_NQ1!, 1.csv",text)
+    state=tmp_path/"state"
+    cfg=AdvancedLoopConfig(
+        state_dir=str(state),
+        prior_anchor=CoverageAnchor("test",2,6),
+        min_owner_expected_entries=2,
+        min_returns_for_behavior_candidate=2,
+    )
+    result=AdvancedCSVResearchLoop(tmp_path,cfg).run_once()
+    assert result.summary["owner_excluded_stream_count"]==1
+    assert result.summary["model_admitted_entries_after_owner_exclusions"]==1
+    universe=json.loads((state/"iteration_0001"/"factor_universe.json").read_text())
+    blocked=[d for d in universe["decisions"] if d["reason"]=="owner_excluded_symbol"]
+    assert len(blocked)==1
+    assert blocked[0]["symbol"]=="ETHUSD"
