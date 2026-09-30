@@ -51,7 +51,8 @@ def timeframe_claim_to_ns(claim: str | None) -> int | None:
 
     Numeric claims are minutes; `S`, `D`, and `W` are fixed-duration claims.
     Month (`M`) is deliberately not converted because calendar months are not
-    fixed-duration intervals.
+    fixed-duration intervals. Tick (`T`) and range (`R`) claims are deliberately
+    non-time constructions and therefore never convert to nanoseconds.
     """
     if not claim:
         return None
@@ -72,3 +73,24 @@ def timeframe_claim_to_ns(claim: str | None) -> int | None:
     if unit == "W":
         return n * 7 * 86_400 * second
     return None
+
+
+def sampling_claim_metadata(claim: str | None) -> dict[str, str | None]:
+    """Classify a filename interval/construction claim without granting authority.
+
+    TradingView-style numeric/S/D/W/M claims are time/calendar sampling. T and R
+    suffixes denote tick- and range-driven constructions. This is a filename claim
+    only; reviewed representation identity remains a separate gate.
+    """
+    if not claim:
+        return {"sampling_domain": "unknown", "construction": "unknown", "setting": None}
+    value = claim.strip().upper()
+    m = _TIMEFRAME_RE.fullmatch(value)
+    if not m:
+        return {"sampling_domain": "unknown", "construction": "unknown", "setting": value}
+    unit = (m.group("unit") or "MIN").upper()
+    if unit == "T":
+        return {"sampling_domain": "event", "construction": "tick", "setting": value}
+    if unit == "R":
+        return {"sampling_domain": "event", "construction": "range", "setting": value}
+    return {"sampling_domain": "time", "construction": "time_bar", "setting": value}
