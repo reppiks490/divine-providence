@@ -1,7 +1,7 @@
 import numpy as np,pandas as pd
 from nexus.synthetic import AdaptiveTickerEngine,SyntheticTickerDefinition
 from nexus.topology import RollingTopology
-from nexus.reconcile import reconcile_catalogs,compare_declared_checkpoint
+from nexus.reconcile import reconcile_catalogs,compare_declared_checkpoint,fingerprint
 from nexus.contracts import StreamIdentity,StreamManifest
 
 def test_robust_factor_methods_and_component_cap():
@@ -64,3 +64,9 @@ def test_reconciliation_rejects_invalid_logical_hash_and_declared_counts():
         compare_declared_checkpoint([good],declared_usable_entries=1.5,declared_rows=1)
     with pytest.raises(ValueError,match='declared_rows'):
         compare_declared_checkpoint([good],declared_usable_entries=1,declared_rows=-1)
+
+
+def test_corpus_fingerprint_is_input_order_independent_when_paths_tie():
+    a=_m('same.csv','a'*64,'1'*64)
+    b=_m('same.csv','b'*64,'2'*64,'ES')
+    assert fingerprint('x',[a,b]).manifest_sha256 == fingerprint('x',[b,a]).manifest_sha256
