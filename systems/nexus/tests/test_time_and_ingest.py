@@ -15,3 +15,10 @@ def test_repeated_timestamps_preserve_sequence(tmp_path: Path):
     rows=list(iter_bars(p,'s',emit_unsealed_terminal=True))
     assert [r.event_ns for r in rows]==[100_000_000_000,100_000_000_000]
     assert [r.source_sequence for r in rows]==[0,1]
+
+
+def test_nonfinite_epoch_is_rejected():
+    import pytest
+    for value in ('NaN','Infinity','-Infinity'):
+        with pytest.raises(ValueError):
+            timestamp_to_ns(value)
