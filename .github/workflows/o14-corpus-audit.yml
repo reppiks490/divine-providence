@@ -237,6 +237,12 @@ jobs:
               raise SystemExit("Historical corpus checkpoint mismatch; inspect O14 audit artifacts.")
           PY
 
+      - name: Probe standard and Heikin-Ashi representations
+        run: |
+          PYTHONPATH=systems/nexus/src python systems/nexus/scripts/o14_representation_probe.py _corpus \
+            --output-json _o14_audit/O14_REPRESENTATION_PROBE.json \
+            --output-csv _o14_audit/O14_REPRESENTATION_PROBE.csv
+
       - name: Upload O14 audit artifacts
         if: always()
         uses: actions/upload-artifact@v4
