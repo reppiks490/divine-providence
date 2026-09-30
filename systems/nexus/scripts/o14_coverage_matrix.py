@@ -125,11 +125,11 @@ def _sampling(rows: list[dict[str, str]], symbol: str, construction: str) -> tup
     return "NOT_EXPLICITLY_IDENTIFIED", []
 
 
-def _named_contract_present(rows: list[dict[str, str]], base_symbol: str) -> bool:
+def _named_contract_present(rows: list[dict[str, str]], base_symbol: str, venue: str) -> bool:
     root = base_symbol.rstrip("1!")
     for r in rows:
         sym = r["symbol"]
-        if sym == base_symbol:
+        if sym == base_symbol or (r.get("venue") or "").upper() != venue.upper():
             continue
         if sym.startswith(root) and not sym.endswith("1!"):
             return True
@@ -180,7 +180,7 @@ def build(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, str]])
             row[f"{construction}_sampling"] = status
             row[f"{construction}_settings"] = " | ".join(settings)
 
-        named = _named_contract_present(manifest_rows, symbol) if asset != "BTCUSD" else True
+        named = _named_contract_present(manifest_rows, symbol, spec["venue"]) if asset != "BTCUSD" else True
         row["named_contract_present"] = "YES" if named else "NO"
         if not named:
             gaps.append({
@@ -201,7 +201,11 @@ def build(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, str]])
 
         micro = spec.get("micro")
         if micro:
-            micro_present = any(r["symbol"] == micro or r["symbol"].startswith(micro) for r in manifest_rows)
+            micro_present = any(
+                (r["symbol"] == micro or r["symbol"].startswith(micro))
+                and (r.get("venue") or "").upper() == spec["venue"].upper()
+                for r in manifest_rows
+            )
             row["micro"] = micro
             row["micro_present"] = "YES" if micro_present else "NO"
             if not micro_present:
