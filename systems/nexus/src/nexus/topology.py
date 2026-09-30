@@ -108,6 +108,10 @@ class RollingTopology:
         return TopologySnapshot(ts,corr,centrality,edges,entropy,partial,communities)
 
     def lead_lag(self, returns: pd.DataFrame, max_lag: int=8, min_overlap: int=40) -> pd.DataFrame:
+        if type(max_lag) is not int or max_lag < 1:
+            raise ValueError("max_lag must be a positive integer")
+        if type(min_overlap) is not int or min_overlap < 2:
+            raise ValueError("min_overlap must be an integer >= 2")
         cols=list(returns.columns); rows=[]; hist=returns.tail(self.window)
         for a in cols:
             for b in cols:
@@ -127,7 +131,9 @@ class RollingTopology:
 
         This is stability telemetry only; it is not a causal or predictive claim.
         """
-        records=[];step=max(1,int(step))
+        if type(step) is not int or step < 1:
+            raise ValueError("step must be a positive integer")
+        records=[];step=step
         for at in range(self.min_periods,len(returns)+1,step):
             hist=returns.iloc[:at].tail(self.window)
             ll=self.lead_lag(hist,max_lag=max_lag,min_overlap=min_overlap)
@@ -143,8 +149,10 @@ class RollingTopology:
 
     def edge_survival(self,returns:pd.DataFrame,step:int=20)->pd.DataFrame:
         """Describe how often pairwise correlation edges survive across trailing snapshots."""
+        if type(step) is not int or step < 1:
+            raise ValueError("step must be a positive integer")
         counts={}; total=0
-        for at in range(self.min_periods,len(returns)+1,max(1,step)):
+        for at in range(self.min_periods,len(returns)+1,step):
             snap=self.snapshot(returns,at); total+=1
             for a,b,w in snap.strongest_edges:
                 k=tuple(sorted((a,b))); counts.setdefault(k,[0,[]]); counts[k][0]+=1; counts[k][1].append(w)
