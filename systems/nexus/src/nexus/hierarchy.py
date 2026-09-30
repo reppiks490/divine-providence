@@ -252,12 +252,15 @@ class HierarchicalFactorEngine:
         *,
         quality_weights: Mapping[str, float] | None = None,
         require_reviewable_identity: bool = True,
+        require_authoritative_identity: bool = True,
     ) -> HierarchicalFusionResult:
         """Build the representation-safe symbol plane from stream manifests.
 
         Chart family and sampling construction are separate required dimensions.
         Unknown chart family or unknown sampling construction fails closed by
-        default rather than being guessed from cadence.
+        default rather than being guessed from cadence. By default, inferred
+        claims with authoritative=False are also rejected; research callers must
+        opt out explicitly and still remain non-production.
         """
         by_id = {m.identity.stream_id: m for m in manifests}
         stream_to_symbol: dict[str, str] = {}
@@ -276,6 +279,9 @@ class HierarchicalFactorEngine:
                 family in {"unknown", "time_bars_unspecified"}
                 or construction == "unknown"
             ):
+                unresolved.append(sid)
+                continue
+            if require_authoritative_identity and claim.get("authoritative") is not True:
                 unresolved.append(sid)
                 continue
             stream_to_symbol[sid] = manifest.identity.symbol
