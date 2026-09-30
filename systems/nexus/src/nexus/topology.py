@@ -15,8 +15,16 @@ class TopologySnapshot:
 
 class RollingTopology:
     def __init__(self, window: int=120, min_periods: int=40, edge_floor: float=0.25, partial_edge_floor:float=0.15, ridge:float=1e-3):
-        self.window=window; self.min_periods=min_periods; self.edge_floor=edge_floor
-        self.partial_edge_floor=partial_edge_floor; self.ridge=ridge
+        if int(min_periods)<2 or int(window)<int(min_periods):
+            raise ValueError("require window >= min_periods >= 2")
+        if not (0.0 <= float(edge_floor) <= 1.0):
+            raise ValueError("edge_floor must be in [0,1]")
+        if not (0.0 <= float(partial_edge_floor) <= 1.0):
+            raise ValueError("partial_edge_floor must be in [0,1]")
+        if float(ridge)<=0.0:
+            raise ValueError("ridge must be positive")
+        self.window=int(window); self.min_periods=int(min_periods); self.edge_floor=float(edge_floor)
+        self.partial_edge_floor=float(partial_edge_floor); self.ridge=float(ridge)
 
     def _partial(self,hist:pd.DataFrame)->pd.DataFrame:
         cols=list(hist.columns)
@@ -47,13 +55,26 @@ class RollingTopology:
         return out
 
     def _communities(self,partial:pd.DataFrame)->tuple[tuple[str,...],...]:
-        cols=list(partial.columns); adj={c:set() for c in cols}
-        for i,a in enumerate(cols):
-            for b in cols[i+1:]:
-                if abs(float(partial.loc[a,b]))>=self.partial_edge_floor:
+        cols=list(partial.columns)
+        # A completely unestimated column is unknown, not a proven singleton
+        # community. Keep only nodes with at least one finite off-diagonal link.
+        active=[
+            c for c in cols
+            if any(
+                other!=c and np.isfinite(float(partial.loc[c,other]))
+                for other in cols
+            )
+        ]
+        if len(cols)==1 and cols:
+            active=cols
+        adj={c:set() for c in active}
+        for i,a in enumerate(active):
+            for b in active[i+1:]:
+                w=float(partial.loc[a,b])
+                if np.isfinite(w) and abs(w)>=self.partial_edge_floor:
                     adj[a].add(b);adj[b].add(a)
         seen=set(); groups=[]
-        for c in cols:
+        for c in active:
             if c in seen:continue
             stack=[c]; comp=[];seen.add(c)
             while stack:
@@ -91,13 +112,14 @@ class RollingTopology:
         for a in cols:
             for b in cols:
                 if a==b: continue
-                best=(0,0.0)
+                best_lag=0;best_corr=float("nan")
                 for lag in range(1,max_lag+1):
                     z=pd.concat([hist[a],hist[b].shift(-lag)],axis=1).dropna()
                     if len(z)<min_overlap: continue
-                    c=float(z.iloc[:,0].corr(z.iloc[:,1]))
-                    if np.isfinite(c) and abs(c)>abs(best[1]): best=(lag,c)
-                rows.append({"leader":a,"follower":b,"lag_bars":best[0],"corr":best[1]})
+                    corr_value=float(z.iloc[:,0].corr(z.iloc[:,1]))
+                    if np.isfinite(corr_value) and (not np.isfinite(best_corr) or abs(corr_value)>abs(best_corr)):
+                        best_lag=lag;best_corr=corr_value
+                rows.append({"leader":a,"follower":b,"lag_bars":best_lag,"corr":best_corr})
         return pd.DataFrame(rows).sort_values("corr",key=lambda s:s.abs(),ascending=False)
 
     def lead_lag_stability(self,returns:pd.DataFrame,max_lag:int=8,min_overlap:int=40,step:int=20)->pd.DataFrame:
