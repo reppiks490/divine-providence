@@ -13,8 +13,12 @@ class ReplayCheckpoint:
 
     @classmethod
     def from_state(cls,state:StatePacket)->"ReplayCheckpoint":
+        if int(state.decision_ns)<0:
+            raise ValueError("checkpoint decision_ns must be non-negative")
+        if not state.frame_hash:
+            raise ValueError("checkpoint requires a deterministic frame_hash")
         payload=asdict(state)
-        raw=json.dumps(payload,sort_keys=True,separators=(",",":"),default=str).encode()
+        raw=json.dumps(payload,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
         h=hashlib.sha256(raw).hexdigest()
         return cls(state.decision_ns,state.frame_hash or "",payload,h)
 
@@ -26,7 +30,10 @@ class ReplayCheckpoint:
             return False
         if str(self.state.get("frame_hash") or "") != str(self.frame_hash or ""):
             return False
-        raw=json.dumps(self.state,sort_keys=True,separators=(",",":"),default=str).encode()
+        try:
+            raw=json.dumps(self.state,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+        except (TypeError,ValueError):
+            return False
         return hashlib.sha256(raw).hexdigest()==self.checkpoint_hash
 
     def save(self,path:str|Path):
