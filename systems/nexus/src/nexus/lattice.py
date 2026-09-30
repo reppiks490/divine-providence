@@ -84,6 +84,13 @@ class MultiResolutionClockLattice:
                 continue
             if e.stream_id not in self._streams:
                 raise ClockPolicyError(f"event uses unregistered stream: {e.stream_id}")
-            # If ingestion already supplied verified availability, preserve it.
-            vals.append(e.available_ns if e.available_ns is not None else self.visible_ns(e.stream_id, e.event_ns))
+            # If ingestion supplied availability, it still must be causally valid.
+            if e.available_ns is not None:
+                if e.available_ns < e.event_ns:
+                    raise ClockPolicyError(
+                        f"event availability precedes event time for {e.stream_id}"
+                    )
+                vals.append(e.available_ns)
+            else:
+                vals.append(self.visible_ns(e.stream_id, e.event_ns))
         return tuple(sorted(set(vals)))
