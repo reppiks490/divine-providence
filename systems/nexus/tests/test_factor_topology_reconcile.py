@@ -38,3 +38,17 @@ def test_matching_declared_counts_do_not_authorize_semantic_coverage():
     assert g.checkpoint_reconciled is True
     assert g.coverage_claim_allowed is False
     assert g.to_dict()['checkpoint_reconciled'] is True
+
+
+def test_topology_rejects_invalid_lag_and_step_configuration():
+    import pytest
+    r=pd.DataFrame({'a':[.1,.2,.3],'b':[.2,.3,.4]})
+    t=RollingTopology(window=3,min_periods=2)
+    with pytest.raises(ValueError,match='max_lag'):
+        t.lead_lag(r,max_lag=0,min_overlap=2)
+    with pytest.raises(ValueError,match='min_overlap'):
+        t.lead_lag(r,max_lag=1,min_overlap=1)
+    with pytest.raises(ValueError,match='step'):
+        t.lead_lag_stability(r,step=0)
+    with pytest.raises(ValueError,match='step'):
+        t.edge_survival(r,step=0)
