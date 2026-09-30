@@ -34,3 +34,15 @@ def test_manifest_policy_requires_review_for_explicit_clock():
     policy=policy_from_manifest(manifest,source_stamp='close',reviewed=True)
     assert policy.basis=='verified_bar_close'
     assert 'clock_policy_reviewed' in policy.extra_quality_flags
+
+
+def test_bar_clock_policy_rejects_negative_delay_and_bad_cadence():
+    import pytest
+    with pytest.raises(ValueError,match='availability_delay_ns'):
+        BarClockPolicy(availability_delay_ns=-1)
+    with pytest.raises(ValueError,match='cadence_ns'):
+        BarClockPolicy(cadence_ns=0)
+    with pytest.raises(ValueError,match='open-stamped'):
+        BarClockPolicy(source_stamp='open')
+    with pytest.raises(ValueError,match='unknown source_stamp'):
+        BarClockPolicy(source_stamp='nonsense')
