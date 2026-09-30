@@ -25,7 +25,8 @@ def test_atomic_sibling_route_carries_same_decision_source_health():
     e = BarEvent(m.identity.stream_id, 100, 0, 1,2,.5,1.5,None,'A.csv', available_ns=160, availability_basis='verified_bar_close')
     health = SourceHealthRegistry()
     health.set_policy(e.stream_id, SourceSLOPolicy(max_receive_lag_ns_p95=20))
-    health.observe(e, received_ns=170)
+    # Same-instant health must use evidence known by the replay decision time.
+    health.observe(e, received_ns=160)
     instant = next(ReplayBus().instants({e.stream_id:[e]}, require_available=True))
     plane = health.snapshot(instant.decision_ns)
     assert plane.verify()
