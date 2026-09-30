@@ -37,3 +37,25 @@ def test_cluster_sector_or_representation_family_ablation_uses_same_generic_engi
     out=SensorAblationEngine().evaluate_clusters(values,d,{'tech':('A','B'),'macro':('C','D')})
     assert {x.removed for x in out}=={'cluster:tech','cluster:macro'}
     assert all(x.overlap>0 for x in out)
+
+
+def test_transform_promotion_rejects_vacuous_causality_evidence():
+    reg=CausalTransformRegistry()
+    reg.register(TransformSpec('labels','1','feature','c'*64))
+    x=pd.DataFrame({'x':np.arange(8,dtype=float)})
+    with pytest.raises(ValueError,match='insufficient comparable evidence'):
+        reg.certify(
+            'labels','1',
+            lambda d: pd.DataFrame({'label':['x']*len(d)},index=d.index),
+            x,
+        )
+    assert not reg.promotable('labels','1')
+
+
+def test_transform_spec_rejects_malformed_identity():
+    with pytest.raises(ValueError,match='name'):
+        TransformSpec('','1','feature','a'*64)
+    with pytest.raises(ValueError,match='code_hash'):
+        TransformSpec('x','1','feature','not-a-hash')
+    with pytest.raises(ValueError,match='trimmed'):
+        TransformSpec(' x ','1','feature','a'*64)
