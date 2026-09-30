@@ -39,7 +39,12 @@ def test_review_queue_deduplicates_exact_stream_copies():
 
 
 def test_review_queue_malformed_confidence_is_p0_not_silently_clean():
-    m=_m('NQ',hc=float('nan'))
+    # StreamManifest rejects this at construction, but it remains mutable because
+    # catalog enrichment is intentional. The queue must still fail closed if a
+    # corrupted in-memory manifest reaches it.
+    m=_m('NQ')
+    m.cadence_confidence=float('nan')
+    m.metadata['representation_hypothesis']['confidence']=float('nan')
     q=build_representation_review_queue([m])
     assert len(q.candidates)==1
     row=q.candidates[0]
