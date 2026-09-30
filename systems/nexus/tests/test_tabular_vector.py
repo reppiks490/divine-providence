@@ -75,3 +75,17 @@ def test_vector_event_rejects_invalid_numeric_structure():
         VectorEvent('s',1,0,(('x',1.0),('x',2.0)),'p')
     with pytest.raises(ValueError,match='finite'):
         VectorEvent('s',1,0,(('x',float('nan')),),'p')
+
+
+def test_vector_state_and_event_reject_empty_or_inconsistent_structure():
+    from nexus.contracts import VectorEvent, VectorStatePacket
+    with pytest.raises(ValueError,match='at least one'):
+        VectorEvent('s',1,0,(),'p')
+    with pytest.raises(ValueError,match='keys must match'):
+        VectorStatePacket(
+            10,{'s':{'x':1.0}},{},(),{'s':0},{'s':'p'}
+        )
+    with pytest.raises(ValueError,match='finite'):
+        VectorStatePacket(
+            10,{'s':{'x':float('inf')}},{'s':0},(),{'s':0},{'s':'p'}
+        )
