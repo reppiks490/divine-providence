@@ -51,3 +51,15 @@ def test_clock_lattice_refuses_unreviewed_semantics():
         pass
     else:
         raise AssertionError("unreviewed clock semantics must not be admitted")
+
+
+def test_clock_rule_rejects_invalid_configuration():
+    import pytest
+    with pytest.raises(ClockPolicyError,match='availability_delay_ns'):
+        RepresentationClockRule('x','close',availability_delay_ns=-1)
+    with pytest.raises(ClockPolicyError,match='explicit cadence_mode'):
+        RepresentationClockRule('x','close','explicit',reviewed=True)
+    with pytest.raises(ClockPolicyError,match='variable cadence'):
+        RepresentationClockRule('x','open','variable',reviewed=True)
+    with pytest.raises(ClockPolicyError,match='timestamp_semantics'):
+        RepresentationClockRule('x','future',reviewed=True)
