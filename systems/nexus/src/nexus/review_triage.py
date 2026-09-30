@@ -4,6 +4,7 @@ from collections import Counter, defaultdict
 from typing import Any, Mapping
 
 from .filename import timeframe_claim_to_ns
+from .review_queue import verify_representation_review_queue_payload
 
 
 SCHEMA = "nexus.representation-review-triage.v1"
@@ -40,6 +41,8 @@ def build_representation_review_triage(review_queue: Mapping[str, Any]) -> dict[
     This is an orchestration artifact only. A shared filename/cadence pattern is not
     authoritative evidence of representation type or timestamp semantics.
     """
+    if "queue_hash" in review_queue and not verify_representation_review_queue_payload(dict(review_queue)):
+        raise ValueError("invalid or tampered representation review queue")
     rows = [r for r in review_queue.get("candidates", []) if isinstance(r, Mapping)]
     p0 = [r for r in rows if str(r.get("priority")) == "P0"]
     class_counts: Counter[str] = Counter()
