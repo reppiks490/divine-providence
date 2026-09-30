@@ -71,3 +71,18 @@ def test_novelty_rejects_nonfinite_configuration_and_state():
     bad=pd.DataFrame({'a':[1.0,float('inf')],'b':[2.0,3.0]})
     with pytest.raises(ValueError,match='infinite'):
         TrailingNovelty(window=2,min_periods=2).score(bad)
+
+
+def test_aligner_rejects_fractional_clock_and_age_configuration():
+    with pytest.raises(ValueError,match='max_age_ns'):
+        CausalAligner(max_age_ns=10.5)
+    fractional=pd.DataFrame({
+        'event_ns':[10.5,20.0],'source_sequence':[0,1],'close':[1.,2.]
+    })
+    with pytest.raises(AlignmentError,match='noninteger timestamps'):
+        CausalAligner().align(fractional,{})
+    bad_seq=pd.DataFrame({
+        'event_ns':[10,20],'source_sequence':[0,1.5],'close':[1.,2.]
+    })
+    with pytest.raises(AlignmentError,match='noninteger source_sequence'):
+        CausalAligner().align(bad_seq,{})
