@@ -27,3 +27,37 @@
 - `python -m compileall -q src tests`.
 - DAEDALUS: require 58 passed or better and rerun `scripts/audit.py`.
 - If the corpus and loop version are unchanged, require `same_corpus_reproducible=true` and `unexpected_nondeterminism=false`.
+
+## Superseding next task — 2026-09-30
+
+Do **not** spend the next cycle searching for the old 626/800-file corpus gap.
+The ten historical ZIPs are recovered and independently reconciled.
+
+Current verified baseline:
+
+- 10 ZIPs
+- 659 usable archive members
+- 13,788,256 logical rows
+- 542 distinct byte contents
+- 803 extracted physical CSV files mapping to the same 542 contents
+- NEXUS CI: 161/161 passed
+- representation contract: v1.17
+- production authorization: false
+
+Highest-value continuation:
+
+1. Consume the O14 representation probe and bind only mathematically proved
+   standard/Heikin-Ashi identities.
+2. Keep unresolved TPO/footprint/session-profile/Renko identities fail-closed
+   unless exact export/vendor evidence exists; do not infer them from column
+   names alone.
+3. Build the O14 gap matrix from the recovered corpus and request only genuinely
+   missing cells: named expiries/roll metadata, micro contracts, session
+   metadata, and missing required timeframes.
+4. Keep chart family and tick/range/time sampling as separate axes through all
+   joins, replay, ablation and model inputs.
+5. Preserve DAEDALUS holdout/selection-contamination rules and all existing
+   production gates.
+
+The 238-stream `Full csv candles only.zip` subset remains useful as the
+known-standard reference plane, but it is not the complete corpus.
