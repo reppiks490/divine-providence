@@ -46,3 +46,18 @@ def test_aligner_rejects_invalid_timing_configuration():
         CausalAligner(max_age_ns=-1)
     with pytest.raises(TypeError,match='allow_exact_matches'):
         CausalAligner(allow_exact_matches=1)
+
+
+def test_alignment_rejects_nonfinite_and_ambiguous_clock_identity():
+    base=pd.DataFrame({'event_ns':[10,20],'source_sequence':[0,1],'close':[1.,2.]})
+    bad_time=base.copy(); bad_time.loc[1,'event_ns']=np.nan
+    with pytest.raises(AlignmentError,match='null'):
+        CausalAligner().align(base,{'B':bad_time})
+    bad_seq=base.copy(); bad_seq.loc[1,'source_sequence']=-1
+    with pytest.raises(AlignmentError,match='negative'):
+        CausalAligner().align(base,{'B':bad_seq})
+    repeated=pd.DataFrame({
+        'event_ns':[10,10],'source_sequence':[2,1],'close':[1.,2.]
+    })
+    with pytest.raises(AlignmentError,match='nonincreasing sequence'):
+        CausalAligner().align(repeated,{})
