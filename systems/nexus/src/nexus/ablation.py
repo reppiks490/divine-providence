@@ -26,7 +26,7 @@ class SensorAblationEngine:
         for removed in definition.components:
             keep=tuple(c for c in definition.components if c!=removed)
             if not keep: continue
-            d=SyntheticTickerDefinition(definition.name+f":minus:{removed}",keep,definition.method,definition.window,definition.min_periods,definition.rebalance_every,definition.clip_z)
+            d=SyntheticTickerDefinition(definition.name+f":minus:{removed}",keep,definition.method,definition.window,definition.min_periods,definition.rebalance_every,definition.clip_z,definition.max_component_weight)
             r=self._score(full,eng.build(values,d),removed)
             if r: out.append(r)
         return sorted(out,key=lambda x:x.mean_abs_displacement,reverse=True)
@@ -37,7 +37,7 @@ class SensorAblationEngine:
         for name,members in sorted(clusters.items()):
             keep=tuple(c for c in definition.components if c not in set(members))
             if not keep or set(keep)==base: continue
-            d=SyntheticTickerDefinition(definition.name+f":minus-cluster:{name}",keep,definition.method,definition.window,definition.min_periods,definition.rebalance_every,definition.clip_z)
+            d=SyntheticTickerDefinition(definition.name+f":minus-cluster:{name}",keep,definition.method,definition.window,definition.min_periods,definition.rebalance_every,definition.clip_z,definition.max_component_weight)
             r=self._score(full,eng.build(values,d),f"cluster:{name}")
             if r: out.append(r)
         return sorted(out,key=lambda x:x.mean_abs_displacement,reverse=True)
