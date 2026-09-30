@@ -122,3 +122,22 @@ def test_source_health_plane_rejects_rewind_lookahead():
     with pytest.raises(ValueError,match='cannot build source-health plane'):
         r.snapshot(110)
     assert r.snapshot(120).decision_ns==120
+
+
+def test_serialized_health_plane_requires_hash_and_semantic_consistency():
+    from nexus.source_health import SourceHealthRegistry, SourceHealthPlane
+    r=SourceHealthRegistry()
+    r.set_policy('s',SourceSLOPolicy(max_receive_lag_ns_p95=10,max_gap_size=0))
+    r.observe(_e(0,avail=100),received_ns=105)
+    plane=r.snapshot(110)
+    restored=SourceHealthPlane.from_dict(plane.to_dict())
+    assert restored.verify()
+
+    tampered=plane.to_dict()
+    tampered['healthy_fraction']=0.0
+    assert not SourceHealthPlane.from_dict(tampered).verify()
+
+    inconsistent=plane.to_dict()
+    inconsistent['healthy_streams']=[]
+    inconsistent['failed_streams']=['s']
+    assert not SourceHealthPlane.from_dict(inconsistent).verify()
