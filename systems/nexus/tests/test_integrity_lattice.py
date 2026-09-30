@@ -5,7 +5,7 @@ from nexus.lattice import MultiResolutionClockLattice
 
 
 def manifest(*, sid="X", cadence=60, flags=(), metadata=None):
-    i=StreamIdentity("csv","X",sid,"1","csv_export",f"{sid}.csv",sid.lower()*64 if len(sid)==1 else "a"*64)
+    i=StreamIdentity("csv","X",sid,"1","csv_export",f"{sid}.csv","a"*64)
     return StreamManifest(i,100,["time","open","high","low","close"],0,6000,cadence,1.0,0,0,0,None,list(flags),metadata or {"usable_ohlc_rows":100})
 
 
