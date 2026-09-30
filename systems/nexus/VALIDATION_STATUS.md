@@ -29,7 +29,7 @@ The failed editable-install attempt was environmental: pip attempted to download
 The older checkpoint above is retained as historical context but is no longer
 the current corpus status.
 
-- GitHub Actions NEXUS verification: **161/161 tests passed** on the current
+- GitHub Actions NEXUS verification: **169/169 tests passed** on the current
   representation-safe code path.
 - Historical corpus reconciliation is now reproducible from pinned commits:
   **10 ZIPs / 659 usable CSV archive members / 13,788,256 logical rows /
@@ -39,7 +39,7 @@ the current corpus status.
 - The DAEDALUS extracted-corpus checkpoint remains **803 physical CSV files /
   542 distinct contents**; the difference from 659 archive members is physical
   lineage/copy placement, not independent evidence.
-- NEXUS advanced CSV loop semantics are now **v1.17**. Chart/view family and
+- NEXUS advanced CSV loop semantics are now **v1.18**. Chart/view family and
   sampling construction are orthogonal identity axes. Tick/range claims cannot
   be interpreted as minute/hour intervals or as chart-family identity.
 - Representation-sensitive modeling is fail-closed and uses
@@ -54,3 +54,15 @@ prove predictive edge, profitability, live execution quality, broker
 connectivity, or production authorization. Named-contract/roll identity,
 micro-contract tapes, export-specific sessions, and unresolved chart-family
 attestations remain separate evidence requirements.
+
+
+### 2026-09-30 fourth-pass identity hardening
+
+Price geometry is not treated as chart/view identity. Exact standard-OHLC or
+Heikin-Ashi transform matches can prove geometry, but they cannot by themselves
+distinguish an ordinary candlestick view from a TPO/footprint/profile view that
+preserves that geometry. The canonical representation contract is therefore
+four-axis: **chart/view family, price geometry, sampling domain, sampling
+construction**. Family-specific modeling remains fail-closed without reviewed
+view identity. Current GitHub Actions verification: **169/169 tests passed** and
+`python -m compileall -q src tests scripts` passed.
