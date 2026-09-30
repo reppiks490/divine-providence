@@ -16,7 +16,7 @@ EXECUTION = {
     "PL": {"symbol": "PL1!", "venue": "NYMEX", "required_standard": ["1", "20", "60", "1D"], "ha": ["20"], "micro": "PLM"},
     "PA": {"symbol": "PA1!", "venue": "NYMEX", "required_standard": ["1", "20", "60", "1D"], "ha": ["20"], "micro": "PAM"},
     "BTCF": {"symbol": "BTC1!", "venue": "CME", "required_standard": ["1", "20", "60", "1D"], "ha": ["20"], "micro": None},
-    "BTCUSD": {"symbol": "BTCUSD", "venue": "NAMED_SPOT", "required_standard": ["1", "20", "60", "1D"], "ha": ["20"], "micro": None},
+    "BTCUSD": {"symbol": "BTCUSD", "venue": "BITSTAMP", "required_standard": ["1", "20", "60", "1D"], "ha": ["20"], "micro": None},
 }
 
 MICRO_REQUIRED = ["1", "20", "1D"]
@@ -119,12 +119,19 @@ def _status(
     families: dict[str, str],
     geometries: dict[str, str],
     symbol: str,
+    venue: str,
     claim: str,
     wanted_family: str,
     wanted_geometry: str,
 ) -> tuple[str, list[str]]:
-    # Timeframe coverage is based on observed cadence, never filename text alone.
-    matched = [r for r in rows if r["symbol"] == symbol and _cadence_matches(r, claim)]
+    # Timeframe coverage is based on observed cadence and exact venue identity,
+    # never filename text or same-symbol prints from a different venue.
+    matched = [
+        r for r in rows
+        if r["symbol"] == symbol
+        and (r.get("venue") or "").upper() == venue.upper()
+        and _cadence_matches(r, claim)
+    ]
     both = [
         r for r in matched
         if families.get(r["raw_sha256"]) == wanted_family
@@ -160,8 +167,13 @@ def _status(
     return "MISSING", []
 
 
-def _sampling(rows: list[dict[str, str]], symbol: str, construction: str) -> tuple[str, list[str]]:
-    matched = [r for r in rows if r["symbol"] == symbol and r.get("construction") == construction]
+def _sampling(rows: list[dict[str, str]], symbol: str, venue: str, construction: str) -> tuple[str, list[str]]:
+    matched = [
+        r for r in rows
+        if r["symbol"] == symbol
+        and (r.get("venue") or "").upper() == venue.upper()
+        and r.get("construction") == construction
+    ]
     if matched:
         return "PRESENT_NATIVE_SAMPLING", sorted({r["native_setting"] for r in matched if r.get("native_setting")})
     return "NOT_EXPLICITLY_IDENTIFIED", []
@@ -192,7 +204,7 @@ def build(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, str]])
         }
         for claim in sorted(set(spec["required_standard"] + ["240"])):
             status, sources = _status(
-                manifest_rows, families, geometries, symbol, claim,
+                manifest_rows, families, geometries, symbol, spec["venue"], claim,
                 "regular_candles", "standard_ohlc"
             )
             key = f"standard_{claim}"
@@ -209,7 +221,7 @@ def build(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, str]])
 
         for claim in spec["ha"]:
             status, sources = _status(
-                manifest_rows, families, geometries, symbol, claim,
+                manifest_rows, families, geometries, symbol, spec["venue"], claim,
                 "heikin_ashi", "heikin_ashi"
             )
             row[f"ha_{claim}"] = status
@@ -224,19 +236,30 @@ def build(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, str]])
                 })
 
         for construction in ("tick", "range"):
-            status, settings = _sampling(manifest_rows, symbol, construction)
+            status, settings = _sampling(manifest_rows, symbol, spec["venue"], construction)
             row[f"{construction}_sampling"] = status
             row[f"{construction}_settings"] = " | ".join(settings)
 
-        named = _named_contract_present(manifest_rows, symbol, spec["venue"]) if asset != "BTCUSD" else True
-        row["named_contract_present"] = "YES" if named else "NO"
-        if not named:
-            gaps.append({
-                "asset": asset,
-                "requirement": "named_front_next_contract_and_roll_metadata",
-                "status": "MISSING",
-                "priority": "P1",
-            })
+        if asset == "BTCUSD":
+            row["named_contract_present"] = "N/A"
+            row["spot_venue_present"] = (
+                "YES" if any(
+                    r["symbol"] == symbol
+                    and (r.get("venue") or "").upper() == spec["venue"].upper()
+                    for r in manifest_rows
+                ) else "NO"
+            )
+        else:
+            named = _named_contract_present(manifest_rows, symbol, spec["venue"])
+            row["named_contract_present"] = "YES" if named else "NO"
+            row["spot_venue_present"] = "N/A"
+            if not named:
+                gaps.append({
+                    "asset": asset,
+                    "requirement": "named_front_next_contract_and_roll_metadata",
+                    "status": "MISSING",
+                    "priority": "P1",
+                })
 
         row["historical_session_metadata"] = "UNRESOLVED_IN_ARCHIVE_METADATA"
         if asset != "BTCUSD":
@@ -270,7 +293,7 @@ def build(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, str]])
         matrix.append(row)
 
     return {
-        "schema": "icarus.o14-coverage-matrix.v2",
+        "schema": "icarus.o14-coverage-matrix.v3",
         "matrix": matrix,
         "gaps": gaps,
         "gap_counts": {
@@ -279,7 +302,7 @@ def build(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, str]])
             "unresolved": sum(g["status"] != "MISSING" for g in gaps),
         },
         "rules": {
-            "proved_present": "Requires both the requested chart/view family and requested price geometry, plus observed cadence within 5%; deterministic OHLC transform math proves geometry only, never view family.",
+            "proved_present": "Requires exact symbol+venue, the requested chart/view family and price geometry, plus observed cadence within 5%; deterministic OHLC transform math proves geometry only, never view family.",
             "representation_unresolved": "Bytes may exist and geometry may be mathematically proved, but a family-specific O14 requirement stays open unless chart/view family is independently evidenced.",
             "bulk_reexport_required": False,
         },
