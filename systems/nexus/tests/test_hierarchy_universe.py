@@ -119,6 +119,7 @@ def test_build_from_manifests_accepts_authoritative_identity():
     m=_m("NQ","f")
     m.metadata["representation_claim"]={
         "family":"regular_candles",
+        "price_geometry":"standard_ohlc",
         "sampling_domain":"time",
         "construction":"time_bar",
         "authoritative":True,
@@ -139,3 +140,32 @@ def test_universe_owner_exclusion_preserves_data_but_blocks_selection():
     assert eth.identity.stream_id not in selected
     d=next(x for x in decisions if x.stream_id==eth.identity.stream_id)
     assert d.reason=="owner_excluded_symbol"
+
+
+def test_price_geometry_balancing_prevents_geometry_count_bias():
+    r=pd.DataFrame({
+        "NQ:s1":[0.03]*3,
+        "NQ:s2":[0.031]*3,
+        "NQ:s3":[0.029]*3,
+        "NQ:s4":[0.032]*3,
+        "NQ:ha":[-0.02]*3,
+    })
+    symbol={col:"NQ" for col in r.columns}
+    family={col:"profile_view" for col in r.columns}
+    geometry={
+        "NQ:s1":"standard_ohlc",
+        "NQ:s2":"standard_ohlc",
+        "NQ:s3":"standard_ohlc",
+        "NQ:s4":"standard_ohlc",
+        "NQ:ha":"heikin_ashi",
+    }
+    construction={col:"time_bar" for col in r.columns}
+    fused,_,_,_=fuse_representations_by_symbol(
+        r,symbol,
+        stream_to_family=family,
+        stream_to_geometry=geometry,
+        stream_to_construction=construction,
+    )
+    # Four standard-geometry files collapse to one geometry plane before the
+    # single HA geometry plane is fused, so file count cannot dominate.
+    assert abs(fused.iloc[0]["NQ"]-0.00525) < 0.002
