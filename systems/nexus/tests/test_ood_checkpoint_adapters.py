@@ -83,3 +83,21 @@ def test_ood_configuration_rejects_degenerate_parameters():
     with pytest.raises(ValueError): RollingMahalanobisOOD(ridge=0)
     with pytest.raises(ValueError): RollingMahalanobisOOD(threshold=0)
     with pytest.raises(ValueError): KernelShiftSensor(gamma=0)
+
+
+def test_ood_rejects_nonfinite_configuration_and_input():
+    import pytest
+    for value in (float('nan'),float('inf')):
+        with pytest.raises(ValueError,match='ridge'):
+            RollingMahalanobisOOD(ridge=value)
+        with pytest.raises(ValueError,match='threshold'):
+            RollingMahalanobisOOD(threshold=value)
+        with pytest.raises(ValueError,match='gamma'):
+            KernelShiftSensor(gamma=value)
+    with pytest.raises(TypeError,match='integers'):
+        RollingMahalanobisOOD(window=250.5)
+    bad=pd.DataFrame({'x':[1.0,float('inf')],'y':[2.0,3.0]})
+    with pytest.raises(ValueError,match='infinite'):
+        RollingMahalanobisOOD(window=2,min_periods=2).score(bad)
+    with pytest.raises(ValueError,match='infinite'):
+        KernelShiftSensor(window=2,min_periods=2).score_at_end(bad)
