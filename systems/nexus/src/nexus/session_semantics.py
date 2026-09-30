@@ -970,6 +970,8 @@ def verify_session_gap_resolution(payload: Mapping[str, Any] | None) -> bool:
 
 def build_session_semantic_blocker_report(session_gap_resolution: Mapping[str, Any]) -> dict[str, Any]:
     """Convert unresolved session rows into a compact evidence-acquisition queue."""
+    if not verify_session_gap_resolution(session_gap_resolution):
+        raise ValueError("invalid or tampered session-gap resolution artifact")
     rows: list[dict[str, Any]] = []
     for raw in session_gap_resolution.get("resolutions", []):
         if not isinstance(raw, Mapping) or bool(raw.get("session_semantics_resolved")):
