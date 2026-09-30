@@ -1,5 +1,9 @@
 from nexus.contracts import StreamIdentity, StreamManifest
-from nexus.residual_gap_triage import classify_residual_gaps
+import hashlib
+import json
+import pytest
+
+from nexus.residual_gap_triage import classify_residual_gaps, build_residual_gap_triage
 
 
 def _m(symbol: str, raw: str, cadence: int, first: int, last: int, rows: int = 1000):
@@ -68,3 +72,31 @@ def test_sibling_selection_prioritizes_temporal_overlap():
     overlapping = _m("NQ1!", "8", 50, 1_000, 2_000)
     chosen = _eligible_siblings(target, [target, *disjoint, overlapping])
     assert overlapping.identity.stream_id in {m.identity.stream_id for m in chosen}
+
+
+def _sealed_empty_session():
+    body={
+        "schema":"nexus.session-gap-resolution.v1",
+        "candidate_count":0,
+        "session_semantics_resolved_count":0,
+        "residual_diagnostic_count":0,
+        "still_session_blocked_count":0,
+        "resolutions":[],
+        "data_loss_asserted":False,
+        "production_authorized":False,
+    }
+    body["resolution_hash"]=hashlib.sha256(
+        json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    return body
+
+
+def test_residual_gap_builder_requires_verified_session_artifact(tmp_path):
+    good=_sealed_empty_session()
+    out=build_residual_gap_triage(tmp_path,[],good)
+    assert out["candidate_count"]==0
+
+    tampered=dict(good)
+    tampered["candidate_count"]=1
+    with pytest.raises(ValueError,match='tampered'):
+        build_residual_gap_triage(tmp_path,[],tampered)
