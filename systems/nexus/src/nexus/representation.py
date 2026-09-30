@@ -117,6 +117,7 @@ class RepresentationClaim:
     """Non-authoritative chart/sampling identity inferred from explicit source clues."""
 
     family: str
+    price_geometry: str
     sampling_domain: str
     construction: str
     setting: str | None
@@ -128,6 +129,7 @@ class RepresentationClaim:
     def to_dict(self) -> dict:
         return {
             "family": self.family,
+            "price_geometry": self.price_geometry,
             "sampling_domain": self.sampling_domain,
             "construction": self.construction,
             "setting": self.setting,
@@ -139,13 +141,13 @@ class RepresentationClaim:
 
 
 def infer_representation_claim(manifest) -> RepresentationClaim:
-    """Infer orthogonal chart-family and sampling-construction claims.
+    """Infer orthogonal chart/view, price-geometry and sampling claims.
 
     family answers what chart/view this is (regular candles, Heikin Ashi,
-    Renko, TPO, footprint, session profile). sampling_domain and construction
-    answer how it is sampled (time, tick, range). These axes must never be
-    collapsed into one label: a tick/range suffix is not evidence that the
-    chart family itself is a tick or range chart family.
+    Renko, TPO, footprint, session profile). price_geometry answers whether
+    exported OHLC is standard, Heikin-Ashi, Renko-like, or unresolved.
+    sampling_domain and construction answer how it is sampled (time, tick,
+    range). These axes must never be collapsed into one label.
 
     All values remain non-authoritative until reviewed evidence binds them to
     the exact stream bytes.
@@ -167,6 +169,7 @@ def infer_representation_claim(manifest) -> RepresentationClaim:
     norm = re.sub(r"[^a-z0-9]+", " ", source.lower()).strip()
 
     family = "unknown"
+    price_geometry = "unknown"
     reasons: list[str] = []
     confidence = 0.0
 
@@ -184,6 +187,12 @@ def infer_representation_claim(manifest) -> RepresentationClaim:
             family = value
             confidence = 0.98
             reasons.append(reason)
+            if value == "regular_candles":
+                price_geometry = "standard_ohlc"
+            elif value == "heikin_ashi":
+                price_geometry = "heikin_ashi"
+            elif value == "renko":
+                price_geometry = "renko"
             break
 
     archive_name = str(manifest.metadata.get("archive_path") or "").replace("\\", "/").rsplit("/", 1)[-1].lower()
@@ -197,6 +206,7 @@ def infer_representation_claim(manifest) -> RepresentationClaim:
     }
     if family == "unknown" and archive_name in documented_regular_archives:
         family = "regular_candles"
+        price_geometry = "standard_ohlc"
         confidence = 0.95
         reasons.append("documented_stock_candle_tide_archive")
 
@@ -223,6 +233,7 @@ def infer_representation_claim(manifest) -> RepresentationClaim:
 
     return RepresentationClaim(
         family=family,
+        price_geometry=price_geometry,
         sampling_domain=sampling_domain,
         construction=construction,
         setting=sample["setting"],
