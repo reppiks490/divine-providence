@@ -61,3 +61,13 @@ def test_alignment_rejects_nonfinite_and_ambiguous_clock_identity():
     })
     with pytest.raises(AlignmentError,match='nonincreasing sequence'):
         CausalAligner().align(repeated,{})
+
+
+def test_novelty_rejects_nonfinite_configuration_and_state():
+    with pytest.raises(ValueError,match='ridge'):
+        TrailingNovelty(ridge=float('nan'))
+    with pytest.raises(TypeError,match='integers'):
+        TrailingNovelty(window=50.5,min_periods=20)
+    bad=pd.DataFrame({'a':[1.0,float('inf')],'b':[2.0,3.0]})
+    with pytest.raises(ValueError,match='infinite'):
+        TrailingNovelty(window=2,min_periods=2).score(bad)
