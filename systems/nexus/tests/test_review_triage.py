@@ -26,7 +26,7 @@ def test_review_triage_groups_without_auto_resolution():
     out = build_representation_review_triage(q)
     assert out["p0_count"] == 3
     assert out["p2_count"] == 1
-    assert out["triage_class_counts"]["EVENT_OR_TRANSFORMED_REQUIRES_VENDOR_DEFINITION"] == 2
+    assert out["triage_class_counts"]["EVENT_DRIVEN_REQUIRES_VENDOR_DEFINITION"] == 2
     assert out["triage_class_counts"]["TIMEFRAME_MISMATCH_REQUIRES_EXPORT_SETTING_EVIDENCE"] == 1
     assert out["auto_resolved_count"] == 0
     assert out["production_authorized"] is False
