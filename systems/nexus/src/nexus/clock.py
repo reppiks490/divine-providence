@@ -20,16 +20,26 @@ class RepresentationClockRule:
     notes: str = ""
 
     def __post_init__(self) -> None:
-        if not self.representation_class:
-            raise ClockPolicyError("representation_class is required")
+        if (
+            not isinstance(self.representation_class,str)
+            or not self.representation_class.strip()
+            or self.representation_class != self.representation_class.strip()
+        ):
+            raise ClockPolicyError("representation_class must be a non-empty trimmed string")
+        if type(self.reviewed) is not bool:
+            raise ClockPolicyError("reviewed must be bool")
+        if not isinstance(self.notes,str):
+            raise ClockPolicyError("notes must be a string")
         if self.timestamp_semantics not in {"open", "close", "event", "unknown"}:
             raise ClockPolicyError(f"unknown timestamp_semantics: {self.timestamp_semantics}")
         if self.cadence_mode not in {"manifest", "variable", "explicit"}:
             raise ClockPolicyError(f"unknown cadence_mode: {self.cadence_mode}")
-        if int(self.availability_delay_ns) < 0:
-            raise ClockPolicyError("availability_delay_ns must be non-negative")
-        if self.explicit_cadence_ns is not None and int(self.explicit_cadence_ns) <= 0:
-            raise ClockPolicyError("explicit_cadence_ns must be positive or None")
+        if type(self.availability_delay_ns) is not int or self.availability_delay_ns < 0:
+            raise ClockPolicyError("availability_delay_ns must be a non-negative integer")
+        if self.explicit_cadence_ns is not None and (
+            type(self.explicit_cadence_ns) is not int or self.explicit_cadence_ns <= 0
+        ):
+            raise ClockPolicyError("explicit_cadence_ns must be a positive integer or None")
         if self.cadence_mode == "explicit" and self.explicit_cadence_ns is None:
             raise ClockPolicyError("explicit cadence_mode requires explicit_cadence_ns")
         if self.timestamp_semantics == "open" and self.cadence_mode == "variable":
@@ -45,8 +55,12 @@ class RepresentationClockRule:
             raise ClockPolicyError(
                 f"representation {self.representation_class!r} is not reviewed; refusing to invent availability"
             )
-        t = int(source_timestamp_ns)
-        delay = int(self.availability_delay_ns)
+        if type(source_timestamp_ns) is not int or source_timestamp_ns < 0:
+            raise ClockPolicyError("source_timestamp_ns must be a non-negative integer")
+        if not isinstance(manifest,StreamManifest):
+            raise TypeError("manifest must be StreamManifest")
+        t = source_timestamp_ns
+        delay = self.availability_delay_ns
         if self.timestamp_semantics == "open":
             if self.cadence_mode == "manifest":
                 cadence = manifest.observed_cadence_ns
@@ -56,7 +70,7 @@ class RepresentationClockRule:
                 cadence = None
             if cadence is None or cadence <= 0:
                 raise ClockPolicyError("open-stamped time bars require reviewed positive cadence")
-            return t + int(cadence) + delay
+            return t + cadence + delay
         if self.timestamp_semantics in {"close", "event"}:
             return t + delay
         raise ClockPolicyError(
@@ -85,7 +99,7 @@ class RepresentationClockRule:
         return BarClockPolicy(
             source_stamp=self.timestamp_semantics,
             cadence_ns=cadence,
-            availability_delay_ns=int(self.availability_delay_ns),
+            availability_delay_ns=self.availability_delay_ns,
             basis="verified_bar_close",
         )
 
@@ -102,6 +116,8 @@ class ClockPolicyRegistry:
         self._rules: dict[str, RepresentationClockRule] = {}
 
     def register(self, rule: RepresentationClockRule) -> None:
+        if not isinstance(rule,RepresentationClockRule):
+            raise TypeError("rule must be RepresentationClockRule")
         old = self._rules.get(rule.representation_class)
         if old is not None and old != rule:
             raise ClockPolicyError(
