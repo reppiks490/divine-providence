@@ -48,3 +48,11 @@ def test_replay_is_strict_by_default():
     import pytest
     with pytest.raises(ReplayAvailabilityError,match='unknown availability'):
         list(ReplayBus().merge({'a':[e('a',10,0,1)]}))
+
+
+def test_bar_replay_rejects_negative_max_age():
+    import pytest
+    event=BarEvent('a',10,0,1,1,1,1,None,'a',available_ns=10)
+    merged=ReplayBus().merge({'a':[event]})
+    with pytest.raises(ValueError,match='max_age_ns'):
+        list(ReplayBus().states(merged,max_age_ns=-1))
