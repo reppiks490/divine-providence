@@ -1,6 +1,7 @@
 from pathlib import Path
 from nexus.timeutil import timestamp_to_ns
-from nexus.ingest import iter_bars, BarClockPolicy
+from nexus.ingest import iter_bars, BarClockPolicy, policy_from_manifest
+from nexus.contracts import StreamIdentity, StreamManifest
 
 
 def test_fractional_epoch_preserved():
@@ -22,3 +23,14 @@ def test_nonfinite_epoch_is_rejected():
     for value in ('NaN','Infinity','-Infinity'):
         with pytest.raises(ValueError):
             timestamp_to_ns(value)
+
+
+def test_manifest_policy_requires_review_for_explicit_clock():
+    import pytest
+    ident=StreamIdentity('csv','CME','NQ','1','csv','x.csv','a'*64)
+    manifest=StreamManifest(ident,10,['time','open','high','low','close'],0,9,60,1.0,0,0,0)
+    with pytest.raises(ValueError,match='reviewed=True'):
+        policy_from_manifest(manifest,source_stamp='close')
+    policy=policy_from_manifest(manifest,source_stamp='close',reviewed=True)
+    assert policy.basis=='verified_bar_close'
+    assert 'clock_policy_reviewed' in policy.extra_quality_flags
