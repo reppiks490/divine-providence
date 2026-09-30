@@ -104,7 +104,7 @@ class NpyColumnarBarStore:
         self.root.mkdir(parents=True,exist_ok=True)
         manifests=[]
         for sid in sorted(grouped):
-            evs=sorted(grouped[sid],key=lambda e:e.ordering_key)
+            evs=list(grouped[sid])
             if any(b.ordering_key<=a.ordering_key for a,b in zip(evs,evs[1:])):
                 raise ValueError(f"stream {sid!r} contains duplicate/nonincreasing ordering keys")
             arrays=self._arrays(evs); part=_safe_partition(sid); d=self.root/part; d.mkdir(parents=True,exist_ok=True)
@@ -125,7 +125,6 @@ class NpyColumnarBarStore:
         for sid in sorted(streams):
             evs=list(streams[sid])
             if any(e.stream_id!=sid for e in evs):raise ValueError(f"stream mapping key {sid!r} does not match event stream_id")
-            evs.sort(key=lambda e:e.ordering_key)
             if any(b.ordering_key<=a.ordering_key for a,b in zip(evs,evs[1:])):
                 raise ValueError(f"stream {sid!r} contains duplicate/nonincreasing ordering keys")
             arrays=self._arrays(evs);part=_safe_partition(sid);d=self.root/part;d.mkdir(parents=True,exist_ok=True)
