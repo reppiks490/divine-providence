@@ -42,3 +42,12 @@ def test_npy_columnar_roundtrip_and_tamper_detection(tmp_path:Path):
 
 def test_parquet_frontier_reports_runtime_capability():
     assert isinstance(ParquetBarStore.available(),bool)
+
+
+def test_empty_quality_plane_is_not_perfect_health():
+    state=StatePacket(100,{}, {}, (), {}, {}, frame_hash='empty')
+    h=QualityStateEngine().build(state,{})
+    assert h.coverage==0.0
+    assert h.mean_quality==0.0
+    assert h.min_quality==0.0
+    assert h.missing_count==0
