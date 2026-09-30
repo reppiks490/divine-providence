@@ -2,6 +2,17 @@ from __future__ import annotations
 from dataclasses import dataclass,asdict
 import hashlib,json
 from pathlib import Path
+from typing import Any
+
+def _is_sha256(value:Any)->bool:
+    if not isinstance(value,str) or len(value)!=64:
+        return False
+    try:
+        int(value,16)
+    except ValueError:
+        return False
+    return True
+
 
 @dataclass(frozen=True,slots=True)
 class FabricCheckpointManifest:
@@ -18,14 +29,42 @@ class FabricCheckpointManifest:
     def _payload(*,decision_ns:int,catalog_sha256:str,event_store_sha256:str,ledger_head_sha256:str,replay_checkpoint_sha256:str,code_version:str)->dict:
         return {"schema":"nexus.fabric-checkpoint.v1","decision_ns":int(decision_ns),"catalog_sha256":catalog_sha256,"event_store_sha256":event_store_sha256,"ledger_head_sha256":ledger_head_sha256,"replay_checkpoint_sha256":replay_checkpoint_sha256,"code_version":code_version}
 
+    @staticmethod
+    def _valid_fields(*,decision_ns:int,catalog_sha256:str,event_store_sha256:str,ledger_head_sha256:str,replay_checkpoint_sha256:str,code_version:str)->bool:
+        return (
+            type(decision_ns) is int and decision_ns >= 0
+            and all(_is_sha256(x) for x in (
+                catalog_sha256,event_store_sha256,ledger_head_sha256,replay_checkpoint_sha256
+            ))
+            and isinstance(code_version,str) and bool(code_version.strip())
+        )
+
     @classmethod
     def create(cls,**kwargs)->"FabricCheckpointManifest":
-        p=cls._payload(**kwargs);h=hashlib.sha256(json.dumps(p,sort_keys=True,separators=(",",":")).encode()).hexdigest();return cls(**p,checkpoint_sha256=h)
+        if not cls._valid_fields(**kwargs):
+            raise ValueError("invalid fabric-checkpoint identity fields")
+        p=cls._payload(**kwargs)
+        h=hashlib.sha256(json.dumps(p,sort_keys=True,separators=(",",":")).encode()).hexdigest()
+        return cls(**p,checkpoint_sha256=h)
 
     def verify(self)->bool:
+        if self.schema!="nexus.fabric-checkpoint.v1" or not _is_sha256(self.checkpoint_sha256):
+            return False
+        if not self._valid_fields(
+            decision_ns=self.decision_ns,
+            catalog_sha256=self.catalog_sha256,
+            event_store_sha256=self.event_store_sha256,
+            ledger_head_sha256=self.ledger_head_sha256,
+            replay_checkpoint_sha256=self.replay_checkpoint_sha256,
+            code_version=self.code_version,
+        ):
+            return False
         p=self._payload(decision_ns=self.decision_ns,catalog_sha256=self.catalog_sha256,event_store_sha256=self.event_store_sha256,ledger_head_sha256=self.ledger_head_sha256,replay_checkpoint_sha256=self.replay_checkpoint_sha256,code_version=self.code_version)
         return hashlib.sha256(json.dumps(p,sort_keys=True,separators=(",",":")).encode()).hexdigest()==self.checkpoint_sha256
 
-    def save(self,path:str|Path):Path(path).write_text(json.dumps(asdict(self),indent=2,sort_keys=True)+"\n",encoding="utf-8")
+    def save(self,path:str|Path):
+        if not self.verify():
+            raise ValueError("refusing to save invalid fabric checkpoint")
+        Path(path).write_text(json.dumps(asdict(self),indent=2,sort_keys=True)+"\n",encoding="utf-8")
     @classmethod
     def load(cls,path:str|Path)->"FabricCheckpointManifest":return cls(**json.loads(Path(path).read_text(encoding="utf-8")))
