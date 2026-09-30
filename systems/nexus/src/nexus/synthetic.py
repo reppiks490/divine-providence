@@ -1,7 +1,46 @@
 from __future__ import annotations
 from dataclasses import dataclass
+import math
 import numpy as np
 import pandas as pd
+
+_METHODS=frozenset({
+    "equal","inverse_vol","adaptive_pca","shrinkage_pca","robust_pca","cluster_balanced"
+})
+
+
+def _validate_common_definition(
+    *,
+    name:str,
+    components:tuple[str,...],
+    window:int,
+    min_periods:int,
+    rebalance_every:int,
+    clip_z:float,
+    max_component_weight:float,
+)->None:
+    if not isinstance(name,str) or not name.strip() or name != name.strip():
+        raise ValueError("name must be a non-empty trimmed string")
+    if not isinstance(components,tuple) or not components:
+        raise ValueError("components must be a non-empty tuple")
+    if any(not isinstance(x,str) or not x.strip() or x != x.strip() for x in components):
+        raise ValueError("component names must be non-empty trimmed strings")
+    if len(set(components)) != len(components):
+        raise ValueError("components must be unique")
+    if type(window) is not int or type(min_periods) is not int:
+        raise TypeError("window and min_periods must be integers")
+    if min_periods < 1 or window < min_periods:
+        raise ValueError("require window >= min_periods >= 1")
+    if type(rebalance_every) is not int or rebalance_every < 1:
+        raise ValueError("rebalance_every must be a positive integer")
+    if not math.isfinite(float(clip_z)) or float(clip_z) <= 0:
+        raise ValueError("clip_z must be finite and positive")
+    cap=float(max_component_weight)
+    if not math.isfinite(cap) or not 0.0 < cap <= 1.0:
+        raise ValueError("max_component_weight must be finite and in (0,1]")
+    if cap*len(components) < 1.0-1e-12:
+        raise ValueError("max_component_weight is infeasible for component count")
+
 
 @dataclass(frozen=True)
 class SyntheticTickerDefinition:
@@ -13,6 +52,19 @@ class SyntheticTickerDefinition:
     rebalance_every: int = 10
     clip_z: float = 6.0
     max_component_weight: float = 1.0
+
+    def __post_init__(self)->None:
+        _validate_common_definition(
+            name=self.name,
+            components=self.components,
+            window=self.window,
+            min_periods=self.min_periods,
+            rebalance_every=self.rebalance_every,
+            clip_z=self.clip_z,
+            max_component_weight=self.max_component_weight,
+        )
+        if self.method not in _METHODS:
+            raise ValueError(f"unknown method: {self.method}")
 
 class AdaptiveTickerEngine:
     """Build synthetic state series using trailing-only estimators."""
@@ -178,7 +230,20 @@ class AdaptiveTickerEngine:
         return self._cap(w,max_component_weight,eligible=active_mask)
 
     def build(self, values: pd.DataFrame, definition: SyntheticTickerDefinition) -> pd.DataFrame:
+        if not isinstance(values,pd.DataFrame):
+            raise TypeError("values must be a pandas DataFrame")
+        missing=[x for x in definition.components if x not in values.columns]
+        if missing:
+            raise ValueError(f"missing synthetic components: {missing}")
         x=values.loc[:,list(definition.components)].astype(float)
+        arr=x.to_numpy(dtype=float,copy=False)
+        if np.isinf(arr).any():
+            raise ValueError("synthetic level inputs contain infinite values")
+        observed=np.isfinite(arr)
+        if np.any(arr[observed] <= 0):
+            raise ValueError(
+                "synthetic log-return levels must be strictly positive when observed"
+            )
         returns=np.log(x).diff()
         out=[]; last_w=None
         for i in range(len(x)):
@@ -226,6 +291,24 @@ class EnsembleDefinition:
     rebalance_every:int=10
     clip_z:float=6.0
     max_component_weight:float=1.0
+
+    def __post_init__(self)->None:
+        _validate_common_definition(
+            name=self.name,
+            components=self.components,
+            window=self.window,
+            min_periods=self.min_periods,
+            rebalance_every=self.rebalance_every,
+            clip_z=self.clip_z,
+            max_component_weight=self.max_component_weight,
+        )
+        if not isinstance(self.methods,tuple) or not self.methods:
+            raise ValueError("methods must be a non-empty tuple")
+        if len(set(self.methods)) != len(self.methods):
+            raise ValueError("methods must be unique")
+        unknown=[m for m in self.methods if m not in _METHODS]
+        if unknown:
+            raise ValueError(f"unknown methods: {unknown}")
 
 class FactorEnsembleEngine:
     """Run simple factor builders in parallel and expose disagreement/stability instead of hiding it."""
