@@ -17,6 +17,25 @@ class HistoricalCorpusAnchor:
     archive_count: int | None = None
     label: str = "historical-anchor"
 
+    def __post_init__(self)->None:
+        for name,value in (
+            ("usable_entries",self.usable_entries),("usable_rows",self.usable_rows)
+        ):
+            if type(value) is not int or value < 0:
+                raise ValueError(f"{name} must be a non-negative integer")
+        if self.distinct_byte_contents is not None and (
+            type(self.distinct_byte_contents) is not int
+            or self.distinct_byte_contents < 0
+            or self.distinct_byte_contents > self.usable_entries
+        ):
+            raise ValueError("distinct_byte_contents must lie in [0, usable_entries]")
+        if self.archive_count is not None and (
+            type(self.archive_count) is not int or self.archive_count < 0
+        ):
+            raise ValueError("archive_count must be a non-negative integer or None")
+        if not isinstance(self.label,str) or not self.label.strip():
+            raise ValueError("label must be non-empty")
+
 
 def _usable(manifests: Iterable[StreamManifest]) -> list[StreamManifest]:
     return [m for m in manifests if m.row_count > 0 and "appledouble" not in set(m.quality_flags)]
@@ -34,6 +53,10 @@ def build_corpus_recovery_plan(
     not as proof that the historical corpus was complete. Duplicate entries are
     preserved as lineage facts but do not count as new market evidence.
     """
+    if owner_expected_min_entries is not None and (
+        type(owner_expected_min_entries) is not int or owner_expected_min_entries < 0
+    ):
+        raise ValueError("owner_expected_min_entries must be a non-negative integer or None")
     rows = _usable(manifests)
     current_entries = len(rows)
     current_rows = sum(int(m.row_count) for m in rows)
