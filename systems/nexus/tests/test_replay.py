@@ -119,3 +119,14 @@ def test_state_packet_rejects_inconsistent_maps_and_invalid_age():
         StatePacket(10,{'a':1.0},{'a':11},(),{'a':0},{'a':'x'})
     with pytest.raises(ValueError,match='finite'):
         StatePacket(10,{'a':float('inf')},{'a':0},(),{'a':0},{'a':'x'})
+
+
+def test_state_packet_requires_canonical_missing_and_lineage():
+    import pytest
+    from nexus.contracts import StatePacket
+    with pytest.raises(ValueError,match='sorted canonically'):
+        StatePacket(10,{}, {}, ('b','a'), {}, {})
+    with pytest.raises(ValueError,match='non-empty stream ids'):
+        StatePacket(10,{}, {}, ('',), {}, {})
+    with pytest.raises(ValueError,match='lineage'):
+        StatePacket(10,{'a':1.0},{'a':0},(),{'a':0},{'a':''})
