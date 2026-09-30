@@ -136,3 +136,25 @@ def test_cme_daily_gap_stays_blocked_without_holiday_or_sibling_evidence():
     b = _ns_from_local(datetime(2026, 8, 4, 17, 0, tzinfo=tz))
     out = _assess_cme_equity_daily_gap(CME_EQUITY_23X5, a, b, [])
     assert out.classification == "COARSE_BAR_CALENDAR_REVIEW_REQUIRED"
+
+
+def test_session_profile_rejects_invalid_calendar_geometry():
+    import pytest
+    from nexus.session_semantics import DailyWindow, SessionProfile
+    with pytest.raises(TypeError,match='integers'):
+        DailyWindow(1.5,10)
+    with pytest.raises(ValueError,match='timezone'):
+        SessionProfile(
+            'x','Not/AZone',((0,(DailyWindow(0,10),)),),
+            'authority','summary',
+        )
+    with pytest.raises(ValueError,match='non-overlapping'):
+        SessionProfile(
+            'x','UTC',((0,(DailyWindow(0,10),DailyWindow(5,20))),),
+            'authority','summary',
+        )
+    with pytest.raises(ValueError,match='effective_end_ns'):
+        SessionProfile(
+            'x','UTC',((0,(DailyWindow(0,10),)),),
+            'authority','summary',effective_start_ns=20,effective_end_ns=10,
+        )
