@@ -30,7 +30,7 @@ def test_event_bar_never_uses_observed_cadence_as_completion_offset():
     assert event==t and available==t
     assert QualityFlag.EVENT_DRIVEN_REPRESENTATION.value in flags
     assert QualityFlag.CLOCK_POLICY_REVIEWED.value in flags
-    assert basis=='verified_bar_close'
+    assert basis=='reviewed_event_completion'
 
 
 def test_open_stamped_event_bar_is_rejected():
@@ -51,3 +51,17 @@ def test_tick_and_range_claims_are_non_time_sampling():
     assert sampling_claim_metadata(rng.timeframe_claim)=={
         'sampling_domain':'event','construction':'range','setting':'10R'
     }
+
+
+def test_unreviewed_declared_clock_falls_back_to_conservative_next():
+    p=RepresentationPolicy(
+        'declared-1m',RepresentationKind.TIME_BAR,TimestampSemantics.BAR_OPEN,
+        fixed_interval_ns=60_000_000_000,reviewed=False,
+    )
+    cp=p.to_clock_policy()
+    assert cp.source_stamp=='conservative_next'
+    event,available,flags,basis=cp.resolve(100,next_strictly_later_ns=200)
+    assert event==100 and available==200
+    assert basis=='conservative_next_strictly_later_source_stamp'
+    assert QualityFlag.CLOCK_POLICY_REVIEWED.value not in flags
+    assert QualityFlag.STAMP_SEMANTICS_UNKNOWN.value in flags
