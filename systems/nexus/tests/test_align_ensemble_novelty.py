@@ -32,3 +32,10 @@ def test_factor_ensemble_and_novelty_are_future_stable():
     states=pd.DataFrame({'f':full['value'],'d':full['method_disagreement']}).dropna()
     nov=TrailingNovelty(window=50,min_periods=20).score(states)
     assert nov.notna().sum()>0
+
+
+def test_novelty_rejects_degenerate_configuration():
+    with pytest.raises(ValueError):
+        TrailingNovelty(window=10,min_periods=20)
+    with pytest.raises(ValueError):
+        TrailingNovelty(ridge=0)
