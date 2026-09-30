@@ -49,8 +49,11 @@ def athena_provenance(
     *,event_ns:int,ingestion_ns:int,source_id:str,representation_id:str,
     version:str,lineage_id:str,plane:str='research',quality_flags=(),
 )->dict:
-    if not isinstance(quality_flags,tuple):
-        quality_flags=tuple(quality_flags)
+    if isinstance(quality_flags,str) or not isinstance(quality_flags,(tuple,list)):
+        raise TypeError("quality_flags must be a tuple/list of strings, not a scalar string")
+    if any(not isinstance(x,str) or not x for x in quality_flags):
+        raise ValueError("quality_flags entries must be non-empty strings")
+    quality_flags=tuple(quality_flags)
     return _strict_athena_provenance(
         event_time_ns=event_ns,ingestion_time_ns=ingestion_ns,
         source_id=source_id,representation_id=representation_id,version=version,
