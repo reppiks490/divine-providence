@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from collections import Counter
+from datetime import datetime
 from typing import Any, Iterable, Mapping
 
 from .contracts import StreamManifest
@@ -38,7 +39,11 @@ def _required_dimensions(manifest: StreamManifest) -> tuple[str, ...]:
     return tuple(required)
 
 
-def _attestation_identity_valid(row: Mapping[str, Any], manifest: StreamManifest) -> tuple[bool, list[str]]:
+def _attestation_identity_valid(
+    row: Mapping[str, Any],
+    manifest: StreamManifest,
+    source_paths: set[str] | None = None,
+) -> tuple[bool, list[str]]:
     errors: list[str] = []
     if _norm(row.get("stream_id")) != manifest.identity.stream_id:
         errors.append("stream_id_mismatch")
@@ -48,7 +53,8 @@ def _attestation_identity_valid(row: Mapping[str, Any], manifest: StreamManifest
     elif raw_sha != manifest.identity.raw_sha256.lower():
         errors.append("raw_sha256_mismatch")
     source_path = _norm(row.get("source_path"))
-    if source_path and source_path != manifest.identity.source_path:
+    allowed_paths=source_paths or {manifest.identity.source_path}
+    if source_path and source_path not in allowed_paths:
         errors.append("source_path_mismatch")
     return not errors, errors
 
@@ -57,8 +63,21 @@ def _attestation_evidence_valid(row: Mapping[str, Any]) -> tuple[bool, list[str]
     errors: list[str] = []
     if row.get("reviewed") is not True:
         errors.append("reviewed_true_required")
+    if not _known(row.get("reviewed_by")):
+        errors.append("reviewed_by_required")
+    reviewed_at=_norm(row.get("reviewed_at"))
+    if not reviewed_at:
+        errors.append("reviewed_at_required")
+    else:
+        try:
+            datetime.fromisoformat(reviewed_at.replace("Z","+00:00"))
+        except ValueError:
+            errors.append("reviewed_at_invalid")
     source_refs = row.get("evidence_sources") or []
-    if not isinstance(source_refs, list) or not any(_known(x) for x in source_refs):
+    if (
+        not isinstance(source_refs, list)
+        or not any(isinstance(x,str) and _known(x) for x in source_refs)
+    ):
         errors.append("evidence_source_required")
     evidence_hash = _norm(row.get("evidence_sha256")).lower()
     if evidence_hash and not _SHA256_RE.fullmatch(evidence_hash):
@@ -82,7 +101,9 @@ def build_representation_attestation_status(
     promotion. It only discharges representation-definition uncertainty for the
     exact attested bytes.
     """
-    manifests_by_id = {m.identity.stream_id: m for m in manifests}
+    manifests_by_id:dict[str,list[StreamManifest]]={}
+    for m in sorted(manifests,key=lambda x:(x.identity.stream_id,x.identity.source_path)):
+        manifests_by_id.setdefault(m.identity.stream_id,[]).append(m)
     rows = [r for r in review_queue.get("candidates", []) if isinstance(r, Mapping)]
     p0 = [r for r in rows if str(r.get("priority")) == "P0"]
 
@@ -106,7 +127,22 @@ def build_representation_attestation_status(
 
     for q in sorted(p0, key=lambda r: (_norm(r.get("stream_id")), _norm(r.get("source_path")))):
         sid = _norm(q.get("stream_id"))
-        manifest = manifests_by_id.get(sid)
+        matches = manifests_by_id.get(sid,[])
+        raw_hashes={m.identity.raw_sha256 for m in matches}
+        if len(raw_hashes)>1:
+            status="BLOCKED_STREAM_ID_COLLISION"
+            statuses.append({
+                "stream_id":sid,
+                "source_path":_norm(q.get("source_path")),
+                "status":status,
+                "identity_errors":["stream_id_maps_to_multiple_raw_hashes"],
+                "missing_dimensions":[],
+                "required_dimensions":[],
+                "attestation_count":len(by_stream.get(sid,[])),
+            })
+            status_counts[status]+=1
+            continue
+        manifest = matches[0] if matches else None
         if manifest is None:
             status = "BLOCKED_MANIFEST_NOT_FOUND"
             row_out = {
@@ -122,6 +158,10 @@ def build_representation_attestation_status(
             status_counts[status] += 1
             continue
 
+        source_paths={m.identity.source_path for m in matches}
+        queue_path=_norm(q.get("source_path"))
+        if queue_path in source_paths:
+            manifest=next(m for m in matches if m.identity.source_path==queue_path)
         required = _required_dimensions(manifest)
         candidates = by_stream.get(sid, [])
         if not candidates:
@@ -146,10 +186,13 @@ def build_representation_attestation_status(
         # reasons from the best (fewest-errors) candidate deterministically.
         evaluated: list[tuple[int, Mapping[str, Any], list[str], list[str], list[str]]] = []
         for att in candidates:
-            ident_ok, ident_errors = _attestation_identity_valid(att, manifest)
+            ident_ok, ident_errors = _attestation_identity_valid(att, manifest, source_paths)
             ev_ok, evidence_errors = _attestation_evidence_valid(att)
             dimensions = att.get("dimensions") if isinstance(att.get("dimensions"), Mapping) else {}
             missing = [name for name in required if not _known(dimensions.get(name))]
+            timestamp_semantics=_norm(dimensions.get("timestamp_semantics")).upper()
+            if timestamp_semantics not in {"BAR_OPEN","BAR_CLOSE","EVENT_COMPLETION"} and "timestamp_semantics" not in missing:
+                missing.append("timestamp_semantics")
             penalty = len(ident_errors) * 100 + len(evidence_errors) * 10 + len(missing)
             evaluated.append((penalty, att, ident_errors, evidence_errors, missing))
             if ident_ok and ev_ok and not missing:
