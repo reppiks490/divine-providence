@@ -86,8 +86,30 @@ def _family_map(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, 
     return family
 
 
+def _expected_cadence_ns(claim: str) -> int | None:
+    if claim == "1D":
+        return 86_400 * 1_000_000_000
+    if claim.endswith("S") and claim[:-1].isdigit():
+        return int(claim[:-1]) * 1_000_000_000
+    if claim.isdigit():
+        return int(claim) * 60 * 1_000_000_000
+    return None
+
+
+def _cadence_matches(row: dict[str, str], claim: str) -> bool:
+    expected = _expected_cadence_ns(claim)
+    try:
+        observed = int(row.get("observed_cadence_ns") or 0)
+    except ValueError:
+        return False
+    if not expected or observed <= 0:
+        return False
+    return abs(observed / expected - 1.0) <= 0.05
+
+
 def _status(rows: list[dict[str, str]], families: dict[str, str], symbol: str, claim: str, wanted_family: str) -> tuple[str, list[str]]:
-    matched = [r for r in rows if r["symbol"] == symbol and r["filename_claim"] == claim]
+    # Timeframe coverage is based on observed cadence, never filename text alone.
+    matched = [r for r in rows if r["symbol"] == symbol and _cadence_matches(r, claim)]
     proved = [r for r in matched if families.get(r["raw_sha256"]) == wanted_family]
     if proved:
         return "PROVED_PRESENT", sorted({r["source_path"] for r in proved})
@@ -130,6 +152,7 @@ def build(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, str]])
             status, sources = _status(manifest_rows, families, symbol, claim, "regular_candles")
             key = f"standard_{claim}"
             row[key] = status
+            row[f"{key}_basis"] = "observed_cadence_not_filename_claim"
             row[f"{key}_sources"] = " | ".join(sources)
             if claim in spec["required_standard"] and status != "PROVED_PRESENT":
                 gaps.append({
@@ -142,6 +165,7 @@ def build(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, str]])
         for claim in spec["ha"]:
             status, sources = _status(manifest_rows, families, symbol, claim, "heikin_ashi")
             row[f"ha_{claim}"] = status
+            row[f"ha_{claim}_basis"] = "observed_cadence_not_filename_claim"
             row[f"ha_{claim}_sources"] = " | ".join(sources)
             if status != "PROVED_PRESENT":
                 gaps.append({
@@ -203,7 +227,7 @@ def build(manifest_rows: list[dict[str, str]], probe_rows: list[dict[str, str]])
             "unresolved": sum(g["status"] != "MISSING" for g in gaps),
         },
         "rules": {
-            "proved_present": "Requires a known/documented regular archive, exact-byte propagation, explicit family evidence, or deterministic standard/HA transform proof.",
+            "proved_present": "Requires a known/documented regular archive, exact-byte propagation, explicit family evidence, or deterministic standard/HA transform proof; time-based requirement matching uses observed cadence within 5%, never filename text alone.",
             "representation_unresolved": "Bytes exist but chart family is not safely established; do not count as satisfying a family-specific requirement.",
             "bulk_reexport_required": False,
         },
