@@ -96,3 +96,34 @@ def test_build_from_manifests_fails_closed_on_unresolved_time_family():
     import pytest
     with pytest.raises(ValueError,match="representation identity unresolved"):
         HierarchicalFactorEngine().build_from_manifests(returns,[unresolved],d)
+
+
+def test_build_from_manifests_rejects_inferred_identity_by_default():
+    from nexus.hierarchy import HierarchicalFactorEngine
+    m=_m("NQ","e")
+    m.metadata["representation_claim"]={
+        "family":"regular_candles",
+        "sampling_domain":"time",
+        "construction":"time_bar",
+        "authoritative":False,
+    }
+    returns=pd.DataFrame({m.identity.stream_id:[0.01,0.01,0.01]})
+    d=EnsembleDefinition("H",("NQ",),methods=("equal",),window=2,min_periods=1,rebalance_every=1)
+    import pytest
+    with pytest.raises(ValueError,match="representation identity unresolved"):
+        HierarchicalFactorEngine().build_from_manifests(returns,[m],d)
+
+
+def test_build_from_manifests_accepts_authoritative_identity():
+    from nexus.hierarchy import HierarchicalFactorEngine
+    m=_m("NQ","f")
+    m.metadata["representation_claim"]={
+        "family":"regular_candles",
+        "sampling_domain":"time",
+        "construction":"time_bar",
+        "authoritative":True,
+    }
+    returns=pd.DataFrame({m.identity.stream_id:[0.01,0.01,0.01,0.01]})
+    d=EnsembleDefinition("H",("NQ",),methods=("equal",),window=2,min_periods=1,rebalance_every=1)
+    result=HierarchicalFactorEngine().build_from_manifests(returns,[m],d)
+    assert list(result.symbol_returns.columns)==["NQ"]
