@@ -522,8 +522,8 @@ class AdvancedCSVResearchLoop:
         stream_hashes:dict[str,str]={}
         for m in manifests:
             sid=m.identity.stream_id
-            previous=stream_hashes.get(sid)
-            if previous is not None and previous != m.identity.raw_sha256:
+            prior_raw_sha=stream_hashes.get(sid)
+            if prior_raw_sha is not None and prior_raw_sha != m.identity.raw_sha256:
                 raise RuntimeError(
                     f"stream_id collision across distinct raw contents: {sid}"
                 )
