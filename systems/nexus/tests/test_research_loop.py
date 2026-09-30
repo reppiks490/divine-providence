@@ -107,3 +107,21 @@ def test_event_or_transformed_representation_never_becomes_fixed_cadence_gap_can
         admitted_count=1, review_counts=Counter(),
     )
     assert all(c.family != "sampling_gap_sensitivity" for c in out)
+
+
+def test_loop_emits_representation_aggregation_contract(tmp_path):
+    archive = tmp_path / "corpus.zip"
+    _write_zip(archive)
+    state = tmp_path / "state"
+    cfg = AdvancedLoopConfig(
+        state_dir=str(state),
+        prior_anchor=CoverageAnchor("test", 1, 4),
+        min_owner_expected_entries=1,
+    )
+    result = AdvancedCSVResearchLoop(tmp_path, cfg).run_once()
+    universe = json.loads((state / "iteration_0001" / "factor_universe.json").read_text())
+    contract = universe["representation_aggregation_contract"]
+    assert contract["raw_representations_are_independent_votes"] is False
+    assert contract["required_engine"] == "HierarchicalFactorEngine"
+    assert "native completion boundaries" in contract["native_clock_rule"]
+    assert result.summary["production_authorized"] is False
