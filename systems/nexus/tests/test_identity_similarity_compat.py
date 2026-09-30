@@ -2,6 +2,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 from nexus.identity_registry import IdentityRegistry, IdentityRecord
+from nexus.identity import InstrumentRegistry, InstrumentSpec
 from nexus.similarity import NearDuplicateDetector
 from nexus.contracts import BarEvent, StreamIdentity, StreamManifest
 from nexus.compat import aion_bar_observation, aion_source_spec, argus_candle_proxy_feature
@@ -33,3 +34,14 @@ def test_aion_source_is_candle_tier():
     m=StreamManifest(ident,10,['time','open','high','low','close'],1,2,1,1.0,0,0,0)
     spec=aion_source_spec(m)
     assert spec['max_evidence_tier']==1 and spec['capabilities']==['bar']
+
+
+def test_instrument_registry_alias_conflict_is_atomic():
+    r=InstrumentRegistry()
+    r.register(InstrumentSpec('nq','NQ','future',venue='CME',aliases=('NASDAQ FUT',)))
+    with pytest.raises(ValueError,match='ambiguous alias'):
+        r.register(InstrumentSpec('es','ES','future',venue='CME',aliases=('SP FUT','NASDAQ FUT')))
+    with pytest.raises(KeyError):
+        r.resolve('SP FUT')
+    with pytest.raises(KeyError):
+        r.get('es')
