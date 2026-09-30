@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import csv
 import io
+import json
+import hashlib
 from dataclasses import dataclass, asdict
 from datetime import date, datetime, time, timedelta, timezone
 from bisect import bisect_left
@@ -783,7 +785,7 @@ def build_session_gap_resolution(
             zf.close()
 
     rows = [r.to_dict() for r in sorted(resolutions, key=lambda r: r.candidate_id)]
-    return {
+    body = {
         "schema": SCHEMA,
         "candidate_count": len(rows),
         "session_semantics_resolved_count": sum(bool(r["session_semantics_resolved"]) for r in rows),
@@ -793,6 +795,71 @@ def build_session_gap_resolution(
         "data_loss_asserted": False,
         "production_authorized": False,
     }
+    body["resolution_hash"] = hashlib.sha256(
+        json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    return body
+
+
+def verify_session_gap_resolution(payload: Mapping[str, Any] | None) -> bool:
+    if not isinstance(payload,Mapping) or payload.get("schema") != SCHEMA:
+        return False
+    supplied=payload.get("resolution_hash")
+    if not isinstance(supplied,str) or len(supplied)!=64:
+        return False
+    try:
+        int(supplied,16)
+    except ValueError:
+        return False
+    body=dict(payload);body.pop("resolution_hash",None)
+    try:
+        expected=hashlib.sha256(
+            json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+        ).hexdigest()
+    except (TypeError,ValueError):
+        return False
+    if supplied != expected:
+        return False
+    if body.get("production_authorized") is not False or body.get("data_loss_asserted") is not False:
+        return False
+    rows=body.get("resolutions")
+    if not isinstance(rows,list):
+        return False
+    ids=[];resolved=0;diagnostics=0
+    for row in rows:
+        if not isinstance(row,Mapping):
+            return False
+        cid=str(row.get("candidate_id") or "")
+        if not cid:
+            return False
+        ids.append(cid)
+        for name in (
+            "gap_count","session_explained_gap_count","residual_open_session_gap_count",
+            "unsupported_effective_period_gap_count","coarse_calendar_gap_count",
+        ):
+            value=row.get(name,0)
+            if type(value) is not int or value < 0:
+                return False
+        is_resolved=row.get("session_semantics_resolved")
+        diagnostic=row.get("residual_data_quality_diagnostic_required")
+        if type(is_resolved) is not bool or type(diagnostic) is not bool:
+            return False
+        if diagnostic and not is_resolved:
+            return False
+        if is_resolved:
+            resolved += 1
+            if not row.get("profile_id") or not row.get("evidence_authority") or not row.get("evidence_summary"):
+                return False
+        if diagnostic:
+            diagnostics += 1
+    if len(set(ids)) != len(ids):
+        return False
+    return (
+        int(body.get("candidate_count",-1)) == len(rows)
+        and int(body.get("session_semantics_resolved_count",-1)) == resolved
+        and int(body.get("residual_diagnostic_count",-1)) == diagnostics
+        and int(body.get("still_session_blocked_count",-1)) == len(rows)-resolved
+    )
 
 
 def build_session_semantic_blocker_report(session_gap_resolution: Mapping[str, Any]) -> dict[str, Any]:
