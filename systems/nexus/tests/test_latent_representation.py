@@ -32,3 +32,11 @@ def test_empty_representation_consensus_is_missing_not_zero():
     assert np.isnan(r.consensus_return)
     assert np.isnan(r.disagreement)
     assert np.isnan(r.directional_agreement)
+
+
+def test_unfitted_latent_state_is_missing_not_neutral_zero():
+    f=CausalPCAFactor(window=10,min_obs=3)
+    p=f.update(1,{'a':1.0,'b':2.0})
+    assert np.isnan(p.score)
+    assert np.isnan(p.explained_variance)
+    assert p.loadings=={}
