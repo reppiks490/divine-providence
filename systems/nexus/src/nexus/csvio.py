@@ -17,7 +17,15 @@ def load_ohlcv(
     optional semantic header is duplicated. Conservative mode uses the next strictly later
     source stamp as availability and withholds a terminal unsealed group by default.
     """
-    policy = BarClockPolicy(source_stamp="conservative_next" if conservative_availability else "close")
+    if type(conservative_availability) is not bool:
+        raise TypeError("conservative_availability must be bool")
+    if type(keep_unsealed_terminal) is not bool:
+        raise TypeError("keep_unsealed_terminal must be bool")
+    # Disabling the conservative-next rule must not invent verified bar-close
+    # timing. Unknown timestamp semantics remain explicitly unavailable.
+    policy = BarClockPolicy(
+        source_stamp="conservative_next" if conservative_availability else "unknown"
+    )
     events = list(iter_bars(
         path,
         "csvio",
