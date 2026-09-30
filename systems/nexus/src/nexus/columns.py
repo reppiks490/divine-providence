@@ -43,7 +43,17 @@ def resolve_columns(
     Duplicate semantic fields are never silently collapsed. A caller must choose the exact
     original position through ``explicit_positions``. Positions are zero-based.
     """
-    explicit_positions = {str(k).lower(): int(v) for k, v in (explicit_positions or {}).items()}
+    if explicit_positions is not None and not isinstance(explicit_positions,dict):
+        raise TypeError("explicit_positions must be a dict or None")
+    normalized:dict[str,int]={}
+    for raw_key,raw_value in (explicit_positions or {}).items():
+        key=str(raw_key).strip().lower()
+        if not key:
+            raise ValueError("explicit column keys must be non-empty")
+        if type(raw_value) is not int:
+            raise TypeError(f"explicit {key} position must be an integer")
+        normalized[key]=raw_value
+    explicit_positions=normalized
     out: dict[str, int] = {}
     for key in (*required, *optional):
         positions = header.positions.get(key, ())
