@@ -4,6 +4,8 @@ from collections import Counter, defaultdict
 from typing import Any, Iterable, Mapping
 
 from .contracts import StreamManifest
+from .lineage_resolution import verify_representation_lineage_resolution
+from .session_semantics import verify_session_gap_resolution
 
 
 HANDOFF_SCHEMA = "nexus.daedalus-validation-handoff.v1"
@@ -170,8 +172,26 @@ def build_daedalus_validation_handoff(
     after the recorded discovery cutoff or an independently sourced non-overlapping
     period whose identity/semantics are reviewed).
     """
+    if type(source_iteration) is not int or source_iteration < 0:
+        raise ValueError("source_iteration must be a non-negative integer")
+    if not isinstance(loop_code_version,str) or not loop_code_version.strip():
+        raise ValueError("loop_code_version is required")
+    if not isinstance(corpus_manifest_hash,str) or len(corpus_manifest_hash)!=64:
+        raise ValueError("corpus_manifest_hash must be a SHA-256 hex digest")
+    try:
+        int(corpus_manifest_hash,16)
+    except ValueError as exc:
+        raise ValueError("corpus_manifest_hash must be a SHA-256 hex digest") from exc
+
     manifest_rows = list(manifests)
     candidate_rows = [_candidate_dict(c) for c in candidates]
+    candidate_ids=[str(c.get("candidate_id") or "") for c in candidate_rows]
+    if any(not x for x in candidate_ids) or len(set(candidate_ids)) != len(candidate_ids):
+        raise ValueError("candidate_id values must be non-empty and unique")
+    if representation_lineage_resolution is not None and not verify_representation_lineage_resolution(representation_lineage_resolution):
+        raise ValueError("invalid or tampered representation-lineage resolution artifact")
+    if session_gap_resolution is not None and not verify_session_gap_resolution(session_gap_resolution):
+        raise ValueError("invalid or tampered session-gap resolution artifact")
     family_counts = Counter(str(c.get("family", "unknown")) for c in candidate_rows)
     representation_resolution_by_id: dict[str, Mapping[str, Any]] = {}
     if representation_lineage_resolution:
@@ -209,6 +229,51 @@ def build_daedalus_validation_handoff(
         )
         route_counts[route["route"]] += 1
         scope = [str(x) for x in candidate.get("scope", [])]
+        if not scope or any(not x for x in scope):
+            raise ValueError(f"candidate {candidate_id!r} must have a non-empty stream scope")
+
+        if representation_resolution and representation_resolution.get("status") == "SAME_REPRESENTATION_COPY_LINEAGE_RESOLVED":
+            canonical_sid=str(representation_resolution.get("canonical_stream_id") or "")
+            canonical_sha=str(representation_resolution.get("canonical_raw_sha256") or "")
+            if canonical_sid not in scope:
+                raise ValueError(
+                    f"representation resolution for {candidate_id!r} is not bound to candidate scope"
+                )
+            canonical_matches=[
+                m for m in by_stream.get(canonical_sid,[])
+                if m.identity.raw_sha256 == canonical_sha
+            ]
+            if not canonical_matches:
+                raise ValueError(
+                    f"representation resolution for {candidate_id!r} does not match canonical manifest bytes"
+                )
+            for rel in representation_resolution.get("pairwise_relations",[]):
+                if not isinstance(rel,Mapping):
+                    raise ValueError("invalid pairwise lineage relation")
+                left=str(rel.get("left_stream_id") or "")
+                right=str(rel.get("right_stream_id") or "")
+                if left not in scope or right not in scope:
+                    raise ValueError(
+                        f"pairwise lineage relation for {candidate_id!r} escapes candidate scope"
+                    )
+
+        if session_resolution and session_resolution.get("session_semantics_resolved") is True:
+            sid=str(session_resolution.get("stream_id") or "")
+            if sid not in scope:
+                raise ValueError(
+                    f"session resolution for {candidate_id!r} is not bound to candidate scope"
+                )
+            matches=by_stream.get(sid,[])
+            if not matches:
+                raise ValueError(
+                    f"session resolution for {candidate_id!r} has no matching manifest"
+                )
+            venue=session_resolution.get("venue")
+            symbol=session_resolution.get("symbol")
+            if not any(m.identity.venue==venue and m.identity.symbol==symbol for m in matches):
+                raise ValueError(
+                    f"session resolution for {candidate_id!r} does not match manifest venue/symbol"
+                )
 
         source_evidence: list[dict[str, Any]] = []
         per_stream_cutoffs: dict[str, int | None] = {}
