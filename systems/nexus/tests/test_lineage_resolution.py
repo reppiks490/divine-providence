@@ -2,7 +2,10 @@ import zipfile
 from pathlib import Path
 
 from nexus.contracts import StreamIdentity, StreamManifest
-from nexus.lineage_resolution import build_representation_lineage_resolution
+from nexus.lineage_resolution import (
+    build_representation_lineage_resolution,
+    verify_representation_lineage_resolution,
+)
 
 
 def _manifest(raw_hash: str, member: str, rows: int) -> StreamManifest:
@@ -41,6 +44,7 @@ def test_subset_exports_resolve_to_one_copy_lineage(tmp_path: Path):
         _write(zf, "a.csv", [[2, 10, 11, 9, 10], [3, 11, 12, 10, 11], [4, 12, 13, 11, 12]])
         _write(zf, "b.csv", [[1, 9, 10, 8, 9], [2, 10, 11, 9, 10], [3, 11, 12, 10, 11], [4, 12, 13, 11, 12], [5, 13, 14, 12, 13]])
     out = build_representation_lineage_resolution(tmp_path, [a, b], [_candidate([a, b])])
+    assert verify_representation_lineage_resolution(out)
     row = out["resolutions"][0]
     assert row["status"] == "SAME_REPRESENTATION_COPY_LINEAGE_RESOLVED"
     assert row["canonical_stream_id"] == b.identity.stream_id
@@ -72,3 +76,16 @@ def test_terminal_snapshot_revision_is_compatible_but_interior_revision_is_not(t
     out = build_representation_lineage_resolution(tmp_path, [a, b], [_candidate([a, b])])
     assert out["resolutions"][0]["status"] == "UNRESOLVED_REPRESENTATION_IDENTITY"
     assert out["resolutions"][0]["unresolved_conflict_count"] == 1
+
+
+def test_lineage_resolution_seal_detects_tampering(tmp_path: Path):
+    a=_manifest("a"*64,"a.csv",2)
+    with zipfile.ZipFile(tmp_path/"corpus.zip","w") as zf:
+        _write(zf,"a.csv",[[1,1,2,0,1],[2,2,3,1,2]])
+    out=build_representation_lineage_resolution(
+        tmp_path,[a],[_candidate([a])]
+    )
+    assert verify_representation_lineage_resolution(out)
+    tampered=dict(out)
+    tampered["resolved_count"]=999
+    assert not verify_representation_lineage_resolution(tampered)
