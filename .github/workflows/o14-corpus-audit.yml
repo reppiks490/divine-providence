@@ -5,6 +5,12 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/o14-corpus-audit.yml"
+      - "systems/nexus/src/nexus/archive.py"
+      - "systems/nexus/src/nexus/catalog.py"
+      - "systems/nexus/src/nexus/filename.py"
+      - "systems/nexus/src/nexus/representation.py"
+      - "systems/nexus/src/nexus/timeutil.py"
+      - "systems/nexus/scripts/o14_representation_probe.py"
   workflow_dispatch:
 
 permissions:
