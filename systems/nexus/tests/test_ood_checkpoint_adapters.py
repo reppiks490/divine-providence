@@ -100,3 +100,23 @@ def test_ood_rejects_nonfinite_configuration_and_input():
         RollingMahalanobisOOD(window=2,min_periods=2).score(bad)
     with pytest.raises(ValueError,match='infinite'):
         KernelShiftSensor(window=2,min_periods=2).score_at_end(bad)
+
+
+def test_checkpoint_rejects_rehashed_structurally_invalid_state(tmp_path:Path):
+    import hashlib,json
+    s=StatePacket(10,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash='abc')
+    cp=ReplayCheckpoint.from_state(s)
+    bad=dict(cp.state)
+    bad['ages_ns']={'a':11}
+    raw=json.dumps(bad,sort_keys=True,separators=(',',':'),allow_nan=False).encode()
+    forged=ReplayCheckpoint(
+        decision_ns=10,frame_hash='abc',state=bad,
+        checkpoint_hash=hashlib.sha256(raw).hexdigest(),
+    )
+    assert forged.verify() is False
+
+    hostile=ReplayCheckpoint(
+        decision_ns=10,frame_hash='abc',state={'decision_ns':'not-an-int'},
+        checkpoint_hash='z'*64,
+    )
+    assert hostile.verify() is False
