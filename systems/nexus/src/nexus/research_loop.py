@@ -28,7 +28,7 @@ from .corpus_recovery import HistoricalCorpusAnchor, build_corpus_recovery_plan
 
 
 LOOP_SCHEMA = "nexus.advanced-csv-research-loop.v1"
-LOOP_CODE_VERSION = "1.19.0"
+LOOP_CODE_VERSION = "1.20.0"
 
 CORE_ARTIFACT_NAMES = (
     "corpus_manifest.json",
@@ -62,6 +62,27 @@ def _read_json(path: Path) -> dict[str, Any] | None:
     except (OSError, json.JSONDecodeError):
         return None
     return value if isinstance(value, dict) else None
+
+
+def _is_sha256(value: Any) -> bool:
+    if not isinstance(value,str) or len(value)!=64:
+        return False
+    try:
+        int(value,16)
+    except ValueError:
+        return False
+    return True
+
+
+def _path_within(root: Path, relative: str) -> Path:
+    p=Path(relative)
+    if p.is_absolute():
+        raise ValueError("state artifact paths must be relative")
+    root_resolved=root.resolve()
+    candidate=(root/p).resolve()
+    if candidate != root_resolved and root_resolved not in candidate.parents:
+        raise ValueError("state artifact path escapes state_dir")
+    return candidate
 
 
 def _candidate_ids(payload: dict[str, Any] | None) -> set[str]:
@@ -491,9 +512,72 @@ class AdvancedCSVResearchLoop:
         if not self._state_path.exists():
             return None
         try:
-            return json.loads(self._state_path.read_text())
-        except (OSError, json.JSONDecodeError):
-            return None
+            state=json.loads(self._state_path.read_text())
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RuntimeError("loop_state.json exists but is unreadable") from exc
+        if not isinstance(state,dict):
+            raise RuntimeError("loop_state.json must contain an object")
+
+        supplied_state_hash=state.get("state_hash")
+        if supplied_state_hash is not None:
+            if not _is_sha256(supplied_state_hash):
+                raise RuntimeError("loop state_hash is invalid")
+            state_body=dict(state);state_body.pop("state_hash",None)
+            if _digest(state_body)!=supplied_state_hash:
+                raise RuntimeError("loop state_hash mismatch")
+
+        if (
+            state.get("schema") != LOOP_SCHEMA
+            or state.get("status") != "completed"
+            or state.get("production_authorized") is not False
+            or type(state.get("iteration")) is not int
+            or state["iteration"] < 1
+            or not _is_sha256(state.get("iteration_hash"))
+            or not _is_sha256(state.get("corpus_manifest_hash"))
+            or not isinstance(state.get("artifact_hashes"),dict)
+        ):
+            raise RuntimeError("loop state failed semantic validation")
+
+        summary_rel=state.get("latest_summary_path")
+        if not isinstance(summary_rel,str) or not summary_rel:
+            raise RuntimeError("loop state is missing latest_summary_path")
+        try:
+            summary_path=_path_within(self.state_dir,summary_rel)
+        except ValueError as exc:
+            raise RuntimeError(str(exc)) from exc
+        summary=_read_json(summary_path)
+        if summary is None:
+            raise RuntimeError("referenced previous iteration summary is missing/unreadable")
+        supplied_iteration_hash=summary.get("iteration_hash")
+        if not _is_sha256(supplied_iteration_hash):
+            raise RuntimeError("previous iteration summary hash is invalid")
+        summary_body=dict(summary);summary_body.pop("iteration_hash",None)
+        if _digest(summary_body)!=supplied_iteration_hash:
+            raise RuntimeError("previous iteration summary hash mismatch")
+        if (
+            supplied_iteration_hash != state["iteration_hash"]
+            or summary.get("schema") != LOOP_SCHEMA
+            or summary.get("iteration") != state["iteration"]
+            or summary.get("loop_code_version") != state.get("loop_code_version")
+            or summary.get("corpus_manifest_hash") != state["corpus_manifest_hash"]
+            or summary.get("artifact_hashes") != state["artifact_hashes"]
+            or summary.get("production_authorized") is not False
+        ):
+            raise RuntimeError("loop state and previous summary disagree")
+
+        iteration_dir=summary_path.parent
+        for name,expected in state["artifact_hashes"].items():
+            if not isinstance(name,str) or not name or not _is_sha256(expected):
+                raise RuntimeError("loop state contains invalid artifact hash metadata")
+            artifact_path=iteration_dir/name
+            payload=_read_json(artifact_path)
+            if payload is None or _digest(payload)!=expected:
+                raise RuntimeError(f"previous artifact failed hash verification: {name}")
+
+        # Legacy state files without state_hash are accepted only after the full
+        # summary/artifact verification above. The next successful run migrates
+        # them to a sealed state automatically.
+        return state
 
     def _sweep_all(self, manifests: list[StreamManifest], admitted_ids: set[str]) -> list[StreamSweep]:
         by_archive: dict[str, list[StreamManifest]] = defaultdict(list)
@@ -741,6 +825,8 @@ class AdvancedCSVResearchLoop:
 
         prev_research = _read_json(previous_iteration_dir / "research_queue.json") if previous_iteration_dir else None
         prev_review = _read_json(previous_iteration_dir / "representation_review_queue.json") if previous_iteration_dir else None
+        if previous_iteration_dir and (prev_research is None or prev_review is None):
+            raise RuntimeError("verified previous iteration is missing required stability artifacts")
         current_candidate_ids = {c.candidate_id for c in candidates}
         previous_candidate_ids = _candidate_ids(prev_research)
         current_review_ids = {str(c.stream_id) for c in review_queue.candidates}
@@ -911,6 +997,7 @@ class AdvancedCSVResearchLoop:
             "coverage_claim_allowed": summary["coverage_claim_allowed"],
             "production_authorized": False,
         }
+        state["state_hash"]=_digest(state)
         self._state_path.write_text(json.dumps(state, sort_keys=True, indent=2, allow_nan=False))
         artifact_paths.append(str(self._state_path))
         return LoopResult(iteration, corpus_manifest_hash, iteration_hash, str(summary_path), str(self._state_path), tuple(artifact_paths), summary)
