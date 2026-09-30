@@ -180,7 +180,7 @@ def _sampling(rows: list[dict[str, str]], symbol: str, venue: str, construction:
 
 
 def _named_contract_present(rows: list[dict[str, str]], base_symbol: str, venue: str) -> bool:
-    root = base_symbol.rstrip("1!")
+    root = base_symbol[:-2] if base_symbol.endswith("1!") else base_symbol
     for r in rows:
         sym = r["symbol"]
         if sym == base_symbol or (r.get("venue") or "").upper() != venue.upper():
