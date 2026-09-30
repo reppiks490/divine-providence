@@ -103,6 +103,12 @@ class SiblingInstantRouter:
         derivation_sequence: int = 0,
         source_health: SourceHealthPlane | Mapping[str, Any] | None = None,
     ) -> SiblingInstantBundle:
+        if type(derivation_sequence) is not int or derivation_sequence < 0:
+            raise ValueError("derivation_sequence must be a non-negative integer")
+        if ingested_ns is not None and (type(ingested_ns) is not int or ingested_ns < 0):
+            raise ValueError("ingested_ns must be a non-negative integer or None")
+        if ingested_ns is not None and ingested_ns < state.decision_ns:
+            raise ValueError("ingested_ns cannot precede the routed decision instant")
         if state.decision_ns != batch.visible_ns:
             raise ValueError("state and replay batch must describe the same visibility instant")
         if state.batch_size != len(batch.events):
@@ -120,12 +126,14 @@ class SiblingInstantRouter:
                 raise ValueError("derivation decision_ns must match the routed market instant; atomic replay instant required")
 
         health_payload: dict[str, Any] | None = None
+        health_plane_obj: SourceHealthPlane | None = None
         if source_health is not None:
             if isinstance(source_health, SourceHealthPlane):
                 if not source_health.verify():
                     raise ValueError("source_health plane hash verification failed")
                 if int(source_health.decision_ns) != int(state.decision_ns):
                     raise ValueError("source_health decision_ns mismatch; source-health decision_ns must match the atomic replay instant")
+                health_plane_obj = source_health
                 health_payload = json.loads(json.dumps(source_health.to_dict(), sort_keys=True, separators=(",", ":"), allow_nan=False))
             else:
                 plane = SourceHealthPlane.from_dict(dict(source_health))
@@ -133,6 +141,7 @@ class SiblingInstantRouter:
                     raise ValueError("source_health plane hash/semantic verification failed")
                 if int(plane.decision_ns) != int(state.decision_ns):
                     raise ValueError("source_health decision_ns mismatch; source-health decision_ns must match the atomic replay instant")
+                health_plane_obj = plane
                 health_payload = json.loads(json.dumps(plane.to_dict(), sort_keys=True, separators=(",", ":"), allow_nan=False))
 
         event_lineage = [
@@ -179,6 +188,10 @@ class SiblingInstantRouter:
             manifest = manifests.get(e.stream_id)
             if manifest is None:
                 raise KeyError(f"missing manifest for stream {e.stream_id}")
+            if manifest.identity.stream_id != e.stream_id:
+                raise ValueError(
+                    f"manifest identity mismatch for routed stream {e.stream_id}"
+                )
             aion_specs[e.stream_id] = aion_source_spec(manifest)
             aion_observations.append(aion_bar_observation(e, ingested_ns=ingested_ns))
             athena_provenance_rows.append(
@@ -224,9 +237,12 @@ class SiblingInstantRouter:
             )
             for i, d in enumerate(derivations)
         ]
-        typed_health = source_health if isinstance(source_health, SourceHealthPlane) else None
-        health_specs = [aion_source_health_spec(plane_hash=typed_health.plane_hash)] if typed_health is not None else []
-        health_observations = [aion_source_health_observation(typed_health, ingested_ns=ingested_ns)] if typed_health is not None else []
+        health_specs = [
+            aion_source_health_spec(plane_hash=health_plane_obj.plane_hash)
+        ] if health_plane_obj is not None else []
+        health_observations = [
+            aion_source_health_observation(health_plane_obj, ingested_ns=ingested_ns)
+        ] if health_plane_obj is not None else []
         aion_source_rows = [aion_specs[k] for k in sorted(aion_specs)] + derivation_specs + health_specs
         aion_all_observations = aion_observations + derivation_observations + health_observations
         derivation_hashes = [d.derivation_hash for d in derivations]
