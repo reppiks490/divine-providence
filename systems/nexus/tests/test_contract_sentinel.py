@@ -56,3 +56,16 @@ def test_contract_sentinel_relative_snapshot_is_location_independent(tmp_path: P
     assert ids[0] == ids[1]
     absolute = ContractDriftSnapshot.capture({('AION','contracts'): tmp_path/'machine_a'/'aion'/'contracts.py'})
     assert absolute.snapshot_hash != ids[0]
+
+
+def test_contract_sentinel_rejects_empty_or_wrong_schema_baseline(tmp_path: Path):
+    import dataclasses
+    import pytest
+    with pytest.raises(ValueError,match='at least one boundary'):
+        ContractDriftSnapshot.capture({})
+    p=tmp_path/'c.py';p.write_text('X=1\n')
+    good=ContractDriftSnapshot.capture({('AION','contracts'):p})
+    bad=dataclasses.replace(good,schema='wrong')
+    assert not bad.verify()
+    with pytest.raises(ValueError,match='hash/schema'):
+        compare_contract_snapshots(bad,good)
