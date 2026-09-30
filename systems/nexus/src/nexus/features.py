@@ -37,7 +37,10 @@ def causal_bar_features(df: pd.DataFrame) -> pd.DataFrame:
     out["eff_20"]=(c-c.shift(20)).abs()/c.diff().abs().rolling(20,min_periods=10).sum().replace(0,np.nan)
     if "volume" in {str(v).lower() for v in x.columns}:
         col=next(v for v in x.columns if str(v).lower()=="volume")
-        v=pd.to_numeric(x[col],errors="coerce").astype(float)
+        try:
+            v=pd.to_numeric(x[col],errors="raise").astype(float)
+        except (TypeError,ValueError) as exc:
+            raise ValueError("volume feature input must be numeric when present") from exc
         if np.isinf(v.to_numpy()).any():
             raise ValueError("volume feature input contains infinite values")
         if np.any(v.to_numpy()[np.isfinite(v.to_numpy())] < 0):
