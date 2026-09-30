@@ -8,3 +8,43 @@ def test_no_production_authority_and_argus_proxy_firewall():
     assert a['evidence_tier']=='CANDLE_PROXY'
     assert a['microstructure_truth'] is False
     assert for_athena(p)['advisory_only'] is True
+
+
+def test_market_state_and_sibling_adapters_reject_malformed_boundary_values():
+    import pytest
+    from nexus.adapters import (
+        argus_candle_proxy_feature,athena_provenance,
+        aion_context_source_spec,aion_derivation_source_spec,
+    )
+    with pytest.raises(ValueError,match='decision_ns'):
+        market_state_packet(
+            decision_ns=1.5,factors={},topology={},quality={},lineage=[]
+        )
+    with pytest.raises(ValueError,match='finite'):
+        market_state_packet(
+            decision_ns=1,factors={'x':float('nan')},
+            topology={},quality={},lineage=[]
+        )
+    with pytest.raises(ValueError,match='finite JSON'):
+        market_state_packet(
+            decision_ns=1,factors={},topology={'x':float('inf')},
+            quality={},lineage=[]
+        )
+    with pytest.raises(ValueError,match='finite'):
+        argus_candle_proxy_feature(
+            name='x',value=float('nan'),event_ns=1,source_id='s',reason='r'
+        )
+    with pytest.raises(ValueError,match='cannot precede'):
+        athena_provenance(
+            event_time_ns=10,ingestion_time_ns=9,source_id='s',
+            representation_id='r',version='1',lineage_id='l'
+        )
+    with pytest.raises(ValueError,match='source_sha256'):
+        aion_context_source_spec(
+            source_id='s',representation_id='r',symbol='X',
+            source_sha256='bad',evidence_reference='e'
+        )
+    with pytest.raises(ValueError,match='spec_hash'):
+        aion_derivation_source_spec(
+            product_id='p',product_version='1',spec_hash='bad',code_version='v'
+        )
