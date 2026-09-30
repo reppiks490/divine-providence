@@ -2,25 +2,40 @@ from __future__ import annotations
 import hashlib,heapq,json
 from typing import Iterable,Iterator
 from .contracts import VectorEvent,VectorStatePacket
-from .replay import ReplayAvailabilityError
+from .replay import ReplayAvailabilityError, ReplayOrderingError
 
 
 class VectorReplayBus:
     """Batch-atomic deterministic replay for generic numeric/context events."""
     def merge(self,streams:dict[str,Iterable[VectorEvent]],*,require_available:bool=False)->Iterator[VectorEvent]:
-        heap=[];its={k:iter(v) for k,v in streams.items()}
-        def checked(e:VectorEvent)->VectorEvent:
-            if require_available and e.available_ns is None:
-                raise ReplayAvailabilityError(f"stream {e.stream_id} sequence {e.source_sequence} has unknown availability")
+        heap=[];its={k:iter(v) for k,v in streams.items()};last_keys={}
+        def checked(expected_sid:str,e:VectorEvent)->VectorEvent:
+            if e.stream_id!=expected_sid:
+                raise ReplayOrderingError(
+                    f"stream mapping key {expected_sid!r} does not match event stream_id {e.stream_id!r}"
+                )
+            if require_available:
+                if e.available_ns is None:
+                    raise ReplayAvailabilityError(f"stream {e.stream_id} sequence {e.source_sequence} has unknown availability")
+                if int(e.available_ns)<int(e.event_ns):
+                    raise ReplayAvailabilityError(f"stream {e.stream_id} sequence {e.source_sequence} is available before its event")
+                if e.source_timestamp_ns is not None and int(e.event_ns)<int(e.source_timestamp_ns):
+                    raise ReplayAvailabilityError(f"stream {e.stream_id} sequence {e.source_sequence} event precedes source timestamp")
+            key=e.ordering_key;prev=last_keys.get(expected_sid)
+            if prev is not None and key<=prev:
+                raise ReplayOrderingError(
+                    f"stream {e.stream_id} ordering key did not strictly increase: {key} <= {prev}"
+                )
+            last_keys[expected_sid]=key
             return e
         for sid,it in its.items():
             try:
-                e=checked(next(it));heapq.heappush(heap,(e.ordering_key,sid,e))
+                e=checked(sid,next(it));heapq.heappush(heap,(e.ordering_key,sid,e))
             except StopIteration:pass
         while heap:
             _,sid,e=heapq.heappop(heap);yield e
             try:
-                n=checked(next(its[sid]));heapq.heappush(heap,(n.ordering_key,sid,n))
+                n=checked(sid,next(its[sid]));heapq.heappush(heap,(n.ordering_key,sid,n))
             except StopIteration:pass
 
     def states(self,streams:dict[str,Iterable[VectorEvent]],*,required_streams:set[str]|None=None,require_available:bool=True)->Iterator[VectorStatePacket]:
