@@ -82,3 +82,21 @@ def test_genealogy_and_run_reject_tampered_derivation():
             genealogy=g,code_version='abc',input_artifacts={},output_artifacts={},
             derivations=[bad],
         )
+
+
+def test_derivation_identity_rejects_invalid_hashes_time_and_nan_parameters():
+    import pytest
+    kwargs=dict(
+        product_id='x',product_version='1',decision_ns=1,
+        spec_hash='a'*64,input_hashes={'A':'b'*64},code_version='v1',
+    )
+    with pytest.raises(ValueError,match='decision_ns'):
+        DerivationRecord.create(**{**kwargs,'decision_ns':-1})
+    with pytest.raises(ValueError,match='spec_hash'):
+        DerivationRecord.create(**{**kwargs,'spec_hash':'not-a-hash'})
+    with pytest.raises(ValueError,match='input hash'):
+        DerivationRecord.create(**{**kwargs,'input_hashes':{'A':'bad'}})
+    with pytest.raises(ValueError,match='canonical JSON'):
+        DerivationRecord.create(**kwargs,parameters={'x':float('nan')})
+    with pytest.raises(ValueError,match='product_id'):
+        DerivationRecord.create(**{**kwargs,'product_id':' '})
