@@ -9,7 +9,7 @@ from typing import Any, Iterable, Mapping
 import zipfile
 
 from .contracts import StreamManifest
-from .session_semantics import _load_times
+from .session_semantics import _load_times, verify_session_gap_resolution
 
 
 SCHEMA = "nexus.residual-gap-triage.v1"
@@ -247,9 +247,19 @@ def build_residual_gap_triage(
     manifests: Iterable[StreamManifest],
     session_gap_resolution: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if not verify_session_gap_resolution(session_gap_resolution):
+        raise ValueError("invalid or tampered session-gap resolution artifact")
     root = Path(corpus_root)
     manifest_rows = list(manifests)
-    by_id = {m.identity.stream_id: m for m in manifest_rows}
+    grouped:dict[str,list[StreamManifest]]={}
+    for m in sorted(manifest_rows,key=lambda x:(x.identity.stream_id,x.identity.source_path)):
+        grouped.setdefault(m.identity.stream_id,[]).append(m)
+    by_id:dict[str,StreamManifest]={}
+    for sid,rows in grouped.items():
+        hashes={m.identity.raw_sha256 for m in rows}
+        if len(hashes)>1:
+            raise ValueError(f"stream_id collision with different raw hashes: {sid}")
+        by_id[sid]=rows[0]
     archive_cache: dict[str, zipfile.ZipFile] = {}
     time_cache: dict[str, list[int]] = {}
 
