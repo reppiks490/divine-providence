@@ -80,6 +80,7 @@ class SourceHealthSnapshot:
     last_event_ns: int | None
     last_available_ns: int | None
     last_received_ns: int | None
+    latest_evidence_ns: int | None
     availability_unknown_samples: int
     slo_passed: bool | None
     slo_failures: tuple[str, ...]
@@ -133,6 +134,7 @@ class SourceHealthTracker:
         self._last_event_ns: int | None = None
         self._last_available_ns: int | None = None
         self._last_received_ns: int | None = None
+        self._latest_evidence_ns: int | None = None
         self._availability_unknown = 0
 
     def set_connected(self, connected: bool) -> None:
@@ -162,7 +164,18 @@ class SourceHealthTracker:
         self._samples += 1
         self._last_event_ns = int(event.event_ns)
         self._last_available_ns = None if event.available_ns is None else int(event.available_ns)
-        self._last_received_ns = None if received_ns is None else int(received_ns)
+        if received_ns is not None:
+            self._last_received_ns = int(received_ns)
+        evidence_candidates=[int(event.event_ns)]
+        if event.available_ns is not None:
+            evidence_candidates.append(int(event.available_ns))
+        if received_ns is not None:
+            evidence_candidates.append(int(received_ns))
+        observed=max(evidence_candidates)
+        self._latest_evidence_ns = (
+            observed if self._latest_evidence_ns is None
+            else max(self._latest_evidence_ns, observed)
+        )
         self._last_clock_uncertainty_ns = int(clock_uncertainty_ns)
         self._max_clock_uncertainty_ns = max(self._max_clock_uncertainty_ns, int(clock_uncertainty_ns))
 
@@ -283,6 +296,7 @@ class SourceHealthTracker:
             last_event_ns=self._last_event_ns,
             last_available_ns=self._last_available_ns,
             last_received_ns=self._last_received_ns,
+            latest_evidence_ns=self._latest_evidence_ns,
             availability_unknown_samples=self._availability_unknown,
             slo_passed=slo_passed,
             slo_failures=tuple(failures),
@@ -458,13 +472,7 @@ class SourceHealthRegistry:
         for stream_id in sorted(self._trackers):
             policy = self._policies.get(stream_id)
             snap = self._trackers[stream_id].snapshot(policy)
-            evidence_ns = (
-                snap.last_received_ns
-                if snap.last_received_ns is not None
-                else snap.last_available_ns
-                if snap.last_available_ns is not None
-                else snap.last_event_ns
-            )
+            evidence_ns = snap.latest_evidence_ns
             if evidence_ns is not None and int(evidence_ns) > int(decision_ns):
                 raise ValueError(
                     f"cannot build source-health plane at {decision_ns} from "
