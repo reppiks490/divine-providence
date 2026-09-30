@@ -28,7 +28,7 @@ from .corpus_recovery import HistoricalCorpusAnchor, build_corpus_recovery_plan
 
 
 LOOP_SCHEMA = "nexus.advanced-csv-research-loop.v1"
-LOOP_CODE_VERSION = "1.15.0"
+LOOP_CODE_VERSION = "1.16.0"
 
 CORE_ARTIFACT_NAMES = (
     "corpus_manifest.json",
@@ -123,8 +123,9 @@ class CoverageAnchor:
 @dataclass(frozen=True, slots=True)
 class AdvancedLoopConfig:
     state_dir: str
-    prior_anchor: CoverageAnchor = CoverageAnchor("AION_PRIOR_CHECKPOINT", 626, 12_588_290)
-    min_owner_expected_entries: int = 800
+    prior_anchor: CoverageAnchor = CoverageAnchor("PARALLAX_TEN_ARCHIVE_CHECKPOINT", 659, 13_788_256)
+    min_owner_expected_entries: int = 659
+    owner_expected_physical_entries: int = 803
     max_candidates_per_family: int = 100
     min_returns_for_behavior_candidate: int = 200
     persistence_abs_threshold: float = 0.15
@@ -513,9 +514,14 @@ class AdvancedCSVResearchLoop:
         # ZIP-native cataloging preserves the raw forensic pass. Attach the same
         # non-authoritative representation hypotheses used by extracted catalogs
         # before integrity/review triage so both paths produce equivalent queues.
-        from .representation import infer_representation_hypothesis
+        from .representation import infer_representation_claim, infer_representation_hypothesis
         for m in manifests:
-            if m.row_count > 0 and "appledouble" not in m.quality_flags and "representation_hypothesis" not in m.metadata:
+            if m.row_count <= 0 or "appledouble" in m.quality_flags:
+                continue
+            if "representation_claim" not in m.metadata:
+                rep = infer_representation_claim(m)
+                m.metadata["representation_claim"] = rep.to_dict()
+            if "representation_hypothesis" not in m.metadata:
                 hyp = infer_representation_hypothesis(m)
                 m.metadata["representation_hypothesis"] = {
                     "kind": hyp.kind, "confidence": hyp.confidence,
@@ -540,11 +546,17 @@ class AdvancedCSVResearchLoop:
         representation_attestation_status = build_representation_attestation_status(
             manifests, review_queue.to_dict(), _read_json(attestation_input_path) if attestation_input_path.exists() else None
         )
+        if self.config.prior_anchor.name == "PARALLAX_TEN_ARCHIVE_CHECKPOINT":
+            historical_distinct, historical_archives = 542, 10
+        elif self.config.prior_anchor.name == "AION_PRIOR_CHECKPOINT":
+            historical_distinct, historical_archives = 513, 9
+        else:
+            historical_distinct, historical_archives = None, None
         recovery_anchor = HistoricalCorpusAnchor(
             usable_entries=self.config.prior_anchor.usable_entries,
             usable_rows=self.config.prior_anchor.usable_rows,
-            distinct_byte_contents=513 if self.config.prior_anchor.name == "AION_PRIOR_CHECKPOINT" else None,
-            archive_count=9 if self.config.prior_anchor.name == "AION_PRIOR_CHECKPOINT" else None,
+            distinct_byte_contents=historical_distinct,
+            archive_count=historical_archives,
             label=self.config.prior_anchor.name,
         )
         corpus_recovery_plan = build_corpus_recovery_plan(
@@ -571,6 +583,12 @@ class AdvancedCSVResearchLoop:
         symbols = Counter(m.identity.symbol for m in usable)
         venues = Counter((m.identity.venue or "?") for m in usable)
         claims = Counter((m.identity.filename_claim or "?") for m in usable)
+        representation_families = Counter(
+            str(m.metadata.get("representation_claim", {}).get("family", "unknown")) for m in usable
+        )
+        sampling_domains = Counter(
+            str(m.metadata.get("representation_claim", {}).get("sampling_domain", "unknown")) for m in usable
+        )
         prior_hash = previous.get("corpus_manifest_hash") if previous else None
         delta = {
             "previous_iteration": previous.get("iteration") if previous else None,
@@ -599,8 +617,11 @@ class AdvancedCSVResearchLoop:
             "symbol_counts": dict(sorted(symbols.items())),
             "venue_counts": dict(sorted(venues.items())),
             "filename_claim_counts": dict(sorted(claims.items())),
+            "representation_family_counts": dict(sorted(representation_families.items())),
+            "sampling_domain_counts": dict(sorted(sampling_domains.items())),
             "prior_anchor": asdict(self.config.prior_anchor),
             "owner_expected_min_entries": self.config.min_owner_expected_entries,
+            "owner_expected_physical_entries": self.config.owner_expected_physical_entries,
             "delta": delta,
             "descriptive_only": True,
             "statistical_promotion_performed": False,
@@ -624,7 +645,20 @@ class AdvancedCSVResearchLoop:
         artifacts: dict[str, Any] = {
             "corpus_manifest.json": {"schema": "nexus.corpus-manifest.loop.v1", "corpus_manifest_hash": corpus_manifest_hash, "streams": manifest_payload},
             "integrity_report.json": {"schema": "nexus.integrity-loop.v1", "admitted_stream_ids": sorted(admitted_ids), "rejected": rejected},
-            "factor_universe.json": {"schema": "nexus.factor-universe.loop.v1", "selected_stream_ids": list(selected_universe), "decisions": [asdict(x) for x in universe_decisions], "production_authorized": False},
+            "factor_universe.json": {
+                "schema": "nexus.factor-universe.loop.v2",
+                "selected_stream_ids": list(selected_universe),
+                "decisions": [asdict(x) for x in universe_decisions],
+                "representation_aggregation_contract": {
+                    "raw_representations_are_independent_votes": False,
+                    "within_symbol_rule": "Fuse causally aligned representations to one symbol plane before cross-asset weighting.",
+                    "required_engine": "HierarchicalFactorEngine",
+                    "native_clock_rule": "Tick, range, Renko and other event/profile constructions retain native completion boundaries; never coerce them to fixed minute/hour cadence.",
+                    "missing_values_rule": "Missing representation observations remain missing; never replace them with zero merely to create agreement.",
+                    "duplicate_rule": "Exact/logical duplicates may share compute but never receive additional evidence weight.",
+                },
+                "production_authorized": False,
+            },
             "representation_review_queue.json": review_queue.to_dict(),
             "representation_review_triage.json": representation_review_triage,
             "representation_source_evidence.json": representation_source_evidence,
