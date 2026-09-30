@@ -22,7 +22,7 @@ def test_reviewed_registry_is_versioned_immutable_and_not_auto_active(tmp_path:P
 
 
 def test_reviewed_registry_rejects_semantic_fiction_and_unreviewed_execution():
-    with pytest.raises(ValueError,match='event-driven'):
+    with pytest.raises(ValueError,match='event bars'):
         _record(kind='event_bar',timestamp_semantics='event_completion',fixed_interval_ns=60_000_000_000)
     with pytest.raises(ValueError,match='execution-safe'):
         _record(timestamp_semantics='unknown',fixed_interval_ns=None,executable=True)
