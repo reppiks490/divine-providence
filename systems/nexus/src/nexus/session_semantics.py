@@ -397,8 +397,8 @@ def _infer_bzx_export_profile(times: list[int]) -> tuple[SessionProfile | None, 
     if ratio >= 0.98:
         return (
             BZX_REGULAR,
-            "OBSERVED_EXPORT_RTH_FINGERPRINT_REVIEWED",
-            f"The frozen export has an RTH-only recurring support fingerprint on {boundary_consistent}/{len(interior)} interior weekdays ({ratio:.3%}); no out-of-RTH rows were observed.",
+            "OBSERVED_EXPORT_RTH_FINGERPRINT_SUPPORT_ONLY",
+            f"The frozen export has an RTH-only recurring support fingerprint on {boundary_consistent}/{len(interior)} interior weekdays ({ratio:.3%}); absence of out-of-RTH rows is support evidence only and does not prove the chart-session setting.",
         )
     return None, None, None
 
@@ -441,8 +441,14 @@ def _candidate_dict(candidate: Any) -> dict[str, Any]:
 
 def _to_event_ns(raw: str) -> int | None:
     try:
-        return int(Decimal(raw.strip()) * Decimal(1_000_000_000))
-    except (InvalidOperation, ValueError, AttributeError):
+        value=Decimal(raw.strip())
+        if not value.is_finite() or value < 0:
+            return None
+        scaled=value * Decimal(1_000_000_000)
+        if scaled != scaled.to_integral_value():
+            return None
+        return int(scaled)
+    except (InvalidOperation, ValueError, AttributeError, OverflowError):
         return None
 
 
@@ -462,6 +468,8 @@ def _load_times(zf: zipfile.ZipFile, member: str) -> list[int]:
                 value = None
             if value is not None:
                 out.append(value)
+    if any(b <= a for a,b in zip(out,out[1:])):
+        return []
     return out
 
 
@@ -626,11 +634,19 @@ def build_session_gap_resolution(
     by_stream: dict[str, list[StreamManifest]] = {}
     for m in manifest_rows:
         by_stream.setdefault(m.identity.stream_id, []).append(m)
+    for sid,rows in by_stream.items():
+        hashes={m.identity.raw_sha256 for m in rows}
+        if len(hashes)>1:
+            raise ValueError(f"stream_id collision with different raw hashes: {sid}")
 
-    candidate_rows = [
-        _candidate_dict(c) for c in candidates
-        if str(_candidate_dict(c).get("family", "")) == "sampling_gap_sensitivity"
-    ]
+    candidate_rows = []
+    for candidate in candidates:
+        row=_candidate_dict(candidate)
+        if str(row.get("family",""))=="sampling_gap_sensitivity":
+            candidate_rows.append(row)
+    candidate_ids=[str(row.get("candidate_id") or "") for row in candidate_rows]
+    if any(not cid for cid in candidate_ids) or len(set(candidate_ids)) != len(candidate_ids):
+        raise ValueError("sampling-gap candidate_id values must be non-empty and unique")
 
     archive_cache: dict[str, zipfile.ZipFile] = {}
     time_cache: dict[str, list[int]] = {}
@@ -690,7 +706,9 @@ def build_session_gap_resolution(
                 if inferred_profile is not None:
                     profile = inferred_profile
                     profile_status = str(inferred_status)
-                    observed_profile_resolved = True
+                    observed_profile_resolved = (
+                        inferred_status == "OBSERVED_EXPORT_EXTENDED_SESSION_DIRECTLY_ATTESTED"
+                    )
                     observed_profile_reason = inferred_reason
                     possible_profiles = ()
 
