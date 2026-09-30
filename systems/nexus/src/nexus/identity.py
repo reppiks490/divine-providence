@@ -15,6 +15,27 @@ class InstrumentSpec:
     underlying:str|None=None
     metadata:tuple[tuple[str,str],...]=()
 
+    def __post_init__(self) -> None:
+        for name,value in (
+            ("instrument_id",self.instrument_id),
+            ("canonical_symbol",self.canonical_symbol),
+            ("asset_class",self.asset_class),
+        ):
+            if not isinstance(value,str) or not value.strip() or value != value.strip():
+                raise ValueError(f"{name} must be a non-empty trimmed string")
+        if self.contract_kind not in {
+            "spot","future","continuous_future","equity","index","synthetic","other"
+        }:
+            raise ValueError("unsupported contract_kind")
+        if self.execution_role not in {"context","execution_candidate","non_executable"}:
+            raise ValueError("unsupported execution_role")
+        aliases=[str(x).strip().upper() for x in self.aliases]
+        if any(not x for x in aliases) or len(set(aliases)) != len(aliases):
+            raise ValueError("instrument aliases must be non-empty and unique")
+        keys=[str(k) for k,_ in self.metadata]
+        if any(not k.strip() for k in keys) or len(set(keys)) != len(keys):
+            raise ValueError("instrument metadata keys must be non-empty and unique")
+
     @property
     def spec_hash(self)->str:
         return hashlib.sha256(json.dumps(asdict(self),sort_keys=True,separators=(",",":"),default=str).encode()).hexdigest()
@@ -27,9 +48,7 @@ class InstrumentRegistry:
             raise ValueError("instrument_id and canonical_symbol are required")
         if spec.instrument_id in self._specs and self._specs[spec.instrument_id].spec_hash!=spec.spec_hash:
             raise ValueError(f"immutable instrument conflict: {spec.instrument_id}")
-        aliases=tuple((alias,alias.upper()) for alias in (spec.canonical_symbol,*spec.aliases))
-        if any(not alias.strip() for alias,_ in aliases):
-            raise ValueError("instrument aliases must be non-empty")
+        aliases=tuple((alias,alias.strip().upper()) for alias in (spec.canonical_symbol,*spec.aliases))
         for alias,k in aliases:
             owner=self._aliases.get(k)
             if owner is not None and owner!=spec.instrument_id:
@@ -40,7 +59,9 @@ class InstrumentRegistry:
             self._aliases[k]=spec.instrument_id
         return spec.spec_hash
     def resolve(self,alias:str)->InstrumentSpec:
-        return self._specs[self._aliases[alias.upper()]]
+        if not isinstance(alias,str) or not alias.strip():
+            raise KeyError(alias)
+        return self._specs[self._aliases[alias.strip().upper()]]
     def get(self,instrument_id:str)->InstrumentSpec: return self._specs[instrument_id]
     def all(self): return tuple(self._specs[k] for k in sorted(self._specs))
     def dump(self,path:str|Path):
