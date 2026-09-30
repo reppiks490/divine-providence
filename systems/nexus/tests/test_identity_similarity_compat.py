@@ -150,3 +150,18 @@ def test_identity_record_rejects_invalid_reviewed_metadata():
         IdentityRecord('s','NQ','future',volume_semantics='')
     with pytest.raises(TypeError,match='record'):
         IdentityRegistry().register(object())
+
+
+def test_compat_adapter_reuses_strict_time_and_numeric_validation():
+    ev=BarEvent(
+        's',10,0,1,2,0,1.5,None,'x',
+        available_ns=20,availability_basis='observed_receipt'
+    )
+    with pytest.raises(ValueError,match='cannot precede'):
+        aion_bar_observation(ev,ingested_ns=19)
+    with pytest.raises(ValueError,match='non-negative integer'):
+        aion_bar_observation(ev,available_ns=20.5)
+    with pytest.raises(ValueError,match='finite'):
+        argus_candle_proxy_feature(
+            name='x',value=float('nan'),event_ns=10,source_id='s',reason='csv'
+        )
