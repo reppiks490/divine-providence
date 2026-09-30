@@ -24,7 +24,7 @@ def test_near_duplicate_preserves_detection_not_deletion():
 def test_aion_compat_refuses_unproved_availability():
     ev=BarEvent('s',10,0,1,2,0,1.5,None,'x')
     with pytest.raises(ValueError): aion_bar_observation(ev)
-    obs=aion_bar_observation(ev,available_ns=20,ingested_ns=21)
+    obs=aion_bar_observation(ev,available_ns=20,ingested_ns=21,availability_basis='observed_receipt')
     assert obs['available_ns']==20 and obs['evidence_tier']==1
     assert argus_candle_proxy_feature(name='x',value=1,event_ns=10,source_id='s',reason='csv')['evidence_tier']==1
 
@@ -45,3 +45,28 @@ def test_instrument_registry_alias_conflict_is_atomic():
         r.resolve('SP FUT')
     with pytest.raises(KeyError):
         r.get('es')
+
+
+def test_compat_adapter_never_invents_receipt_basis_or_impossible_time():
+    ev=BarEvent('s',10,0,1,2,0,1.5,None,'x')
+    with pytest.raises(ValueError,match='attested availability basis'):
+        aion_bar_observation(ev,available_ns=20)
+    with pytest.raises(ValueError,match='before event'):
+        aion_bar_observation(ev,available_ns=5,availability_basis='observed_receipt')
+
+
+def test_execution_identity_requires_venue_representation_and_roll_policy():
+    r=IdentityRegistry()
+    r.register(IdentityRecord(
+        's','NQ1!','future',venue='CME',representation_class='standard:20m',
+        executable=True,continuous_contract=True,roll_policy=None,
+        timestamp_semantics='bar_close',
+    ))
+    with pytest.raises(ValueError):
+        r.require_execution_safe('s')
+    good=IdentityRecord(
+        'named','NQZ6','future',venue='CME',representation_class='standard:20m',
+        executable=True,continuous_contract=False,timestamp_semantics='bar_close',
+    )
+    r.register(good)
+    assert r.require_execution_safe('named')==good
