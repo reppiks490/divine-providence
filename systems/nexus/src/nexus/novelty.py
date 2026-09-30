@@ -1,17 +1,29 @@
 from __future__ import annotations
+import math
 import numpy as np
 import pandas as pd
 
 class TrailingNovelty:
     """Causal ridge-Mahalanobis novelty against trailing states; emits no supervisory verdict."""
     def __init__(self,window:int=250,min_periods:int=60,ridge:float=1e-3):
-        if int(min_periods)<2 or int(window)<int(min_periods):
+        if type(window) is not int or type(min_periods) is not int:
+            raise TypeError("window and min_periods must be integers")
+        if min_periods<2 or window<min_periods:
             raise ValueError("require window >= min_periods >= 2")
-        if float(ridge)<=0:
-            raise ValueError("ridge must be positive")
-        self.window=int(window); self.min_periods=int(min_periods); self.ridge=float(ridge)
+        if not math.isfinite(float(ridge)) or float(ridge)<=0:
+            raise ValueError("ridge must be finite and positive")
+        self.window=window; self.min_periods=min_periods; self.ridge=float(ridge)
 
     def score(self,states:pd.DataFrame)->pd.Series:
+        if not isinstance(states,pd.DataFrame):
+            raise TypeError("states must be a pandas DataFrame")
+        try:
+            numeric=states.astype(float)
+        except (TypeError,ValueError) as exc:
+            raise ValueError("novelty states must be numeric") from exc
+        if np.isinf(numeric.to_numpy(dtype=float,copy=False)).any():
+            raise ValueError("novelty states contain infinite values")
+        states=numeric
         vals=[]
         for i in range(len(states)):
             if i<self.min_periods:
