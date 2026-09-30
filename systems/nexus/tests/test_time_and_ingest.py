@@ -2,6 +2,7 @@ from pathlib import Path
 from nexus.timeutil import timestamp_to_ns
 from nexus.ingest import iter_bars, BarClockPolicy, policy_from_manifest
 from nexus.contracts import StreamIdentity, StreamManifest
+from nexus.features import causal_bar_features
 
 
 def test_fractional_epoch_preserved():
@@ -46,3 +47,36 @@ def test_bar_clock_policy_rejects_negative_delay_and_bad_cadence():
         BarClockPolicy(source_stamp='open')
     with pytest.raises(ValueError,match='unknown source_stamp'):
         BarClockPolicy(source_stamp='nonsense')
+
+
+def test_causal_bar_features_reject_invalid_log_domain_and_infinity():
+    import pandas as pd
+    import pytest
+    good=pd.DataFrame({
+        'open':[1.,2.],'high':[2.,3.],'low':[.5,1.5],'close':[1.5,2.5]
+    })
+    out=causal_bar_features(good)
+    assert list(out.index)==[0,1]
+
+    zero=good.copy();zero.loc[1,'close']=0.0
+    with pytest.raises(ValueError,match='strictly positive'):
+        causal_bar_features(zero)
+
+    inf=good.copy();inf.loc[1,'high']=float('inf')
+    with pytest.raises(ValueError,match='infinite'):
+        causal_bar_features(inf)
+
+
+def test_causal_bar_features_reject_negative_or_infinite_volume():
+    import pandas as pd
+    import pytest
+    base=pd.DataFrame({
+        'open':[1.,2.],'high':[2.,3.],'low':[.5,1.5],'close':[1.5,2.5],
+        'volume':[1.,2.],
+    })
+    bad=base.copy();bad.loc[1,'volume']=-1
+    with pytest.raises(ValueError,match='non-negative'):
+        causal_bar_features(bad)
+    bad=base.copy();bad.loc[1,'volume']=float('inf')
+    with pytest.raises(ValueError,match='infinite'):
+        causal_bar_features(bad)
