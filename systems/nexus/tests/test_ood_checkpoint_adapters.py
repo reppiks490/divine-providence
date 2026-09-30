@@ -120,3 +120,15 @@ def test_checkpoint_rejects_rehashed_structurally_invalid_state(tmp_path:Path):
         checkpoint_hash='z'*64,
     )
     assert hostile.verify() is False
+
+
+def test_aion_adapter_rejects_silent_ingestion_time_coercion():
+    import pytest
+    known=BarEvent(
+        's',10,0,1,1,1,1,None,'x',
+        available_ns=20,availability_basis='observed_receipt'
+    )
+    with pytest.raises(ValueError,match='cannot precede'):
+        aion_bar_observation(known,ingested_ns=19)
+    with pytest.raises(ValueError,match='non-negative integer'):
+        aion_bar_observation(known,ingested_ns=20.5)
