@@ -19,3 +19,18 @@ def test_change_detector_flags_large_shift():
     seen=False
     for _ in range(10): seen = cp.update(10.0).change or seen
     assert seen
+
+
+def test_topology_missing_pairs_remain_unknown_not_zero():
+    rng=np.random.default_rng(17)
+    a=rng.normal(size=120)
+    b=a+rng.normal(scale=.02,size=120)
+    c=np.full(120,np.nan)
+    r=pd.DataFrame({'A':a,'B':b,'C':c})
+    snap=RollingTopology(window=120,min_periods=40,edge_floor=.5).snapshot(r)
+    assert np.isnan(snap.correlation.loc['A','C'])
+    assert np.isnan(snap.partial_correlation.loc['A','C'])
+    # Missing C does not dilute A/B centrality as if A-C were a true zero edge.
+    assert snap.centrality['A']>.9
+    assert snap.centrality['B']>.9
+    assert snap.centrality['C']==0.0
