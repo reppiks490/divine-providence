@@ -57,7 +57,6 @@ def test_checkpoint_top_level_metadata_is_bound_to_state(tmp_path:Path):
     raw['decision_ns']=11
     p.write_text(json.dumps(raw))
     assert not ReplayCheckpoint.load(p).verify()
-    raw=json.loads(cp_path.read_text()) if False else None
 
 
 def test_checkpoint_top_level_frame_hash_tamper_fails(tmp_path:Path):
