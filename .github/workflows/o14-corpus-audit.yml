@@ -32,13 +32,6 @@ jobs:
           ref: a482e7d1801fa7fa5aec093960097c0051c0403c
           path: _corpus/csv-data-multi-chart-type
 
-      - name: Checkout current PARALLAX inventory code
-        uses: actions/checkout@v4
-        with:
-          repository: reppiks490/aion-parallax-research
-          ref: main
-          path: _parallax
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -47,26 +40,76 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e systems/nexus
-          python -m pip install -e _parallax
 
       - name: Run ten-archive audit
         run: |
           python - <<'PY'
           from __future__ import annotations
           import csv
+          import hashlib
+          import io
           import json
+          import zipfile
           from collections import Counter
           from pathlib import Path
 
-          from aion.parallax_manifest import scan_archives
           from nexus.archive import ZipCorpusCatalog
+
+          def is_sidecar(name: str) -> bool:
+              parts = name.replace("\\", "/").split("/")
+              return "__MACOSX" in parts or parts[-1].startswith("._")
+
+          def sha_stream(stream) -> str:
+              h = hashlib.sha256()
+              for block in iter(lambda: stream.read(1 << 20), b""):
+                  h.update(block)
+              return h.hexdigest()
+
+          def independent_zip_scan(paths):
+              members = []
+              total_rows = 0
+              for path in paths:
+                  with zipfile.ZipFile(path) as zf:
+                      for info in zf.infolist():
+                          if info.is_dir() or not info.filename.lower().endswith(".csv") or is_sidecar(info.filename):
+                              continue
+                          with zf.open(info) as raw:
+                              digest = sha_stream(raw)
+                          rows = 0
+                          status = "parsed"
+                          try:
+                              with zf.open(info) as raw, io.TextIOWrapper(raw, encoding="utf-8-sig", newline="") as text:
+                                  reader = csv.reader(text, strict=True)
+                                  next(reader)
+                                  rows = sum(1 for _ in reader)
+                          except Exception as exc:
+                              status = f"parse_error:{type(exc).__name__}"
+                          total_rows += rows
+                          members.append({
+                              "archive": str(path),
+                              "member": info.filename,
+                              "sha256": digest,
+                              "rows": rows,
+                              "status": status,
+                          })
+              hashes = Counter(x["sha256"] for x in members)
+              return {
+                  "members": members,
+                  "counts": {
+                      "physical_csv_members": len(members),
+                      "parsed_csv_members": sum(x["status"] == "parsed" for x in members),
+                      "unique_byte_contents": len(hashes),
+                      "records_in_exact_duplicate_groups": sum(hashes[x["sha256"]] > 1 for x in members),
+                      "logical_data_rows": total_rows,
+                  },
+              }
 
           root = Path("_corpus")
           out = Path("_o14_audit")
           out.mkdir(exist_ok=True)
 
           archives = sorted(root.rglob("*.zip"))
-          parallax = scan_archives(archives)
+          independent = independent_zip_scan(archives)
           nexus = ZipCorpusCatalog(root).build()
 
           usable_nexus = [
@@ -74,8 +117,8 @@ jobs:
               if m.row_count > 0 and "appledouble" not in set(m.quality_flags)
           ]
 
-          p_hashes = {
-              m["member_sha256"] for m in parallax["members"] if m.get("member_sha256")
+          independent_hashes = {
+              m["sha256"] for m in independent["members"] if m.get("sha256")
           }
           n_hashes = {
               m.identity.raw_sha256 for m in usable_nexus if m.identity.raw_sha256
@@ -139,7 +182,7 @@ jobs:
               },
               "archive_count": len(archives),
               "archives": archive_names,
-              "parallax": parallax["counts"],
+              "independent_zip_scan": independent["counts"],
               "nexus": {
                   "all_csv_entries_including_sidecars": len(nexus),
                   "usable_entries": len(usable_nexus),
@@ -147,11 +190,11 @@ jobs:
                   "distinct_byte_contents": len(n_hashes),
               },
               "cross_system": {
-                  "parallax_distinct_hashes": len(p_hashes),
+                  "independent_distinct_hashes": len(independent_hashes),
                   "nexus_distinct_hashes": len(n_hashes),
-                  "hash_sets_equal": p_hashes == n_hashes,
-                  "parallax_only_hashes": len(p_hashes - n_hashes),
-                  "nexus_only_hashes": len(n_hashes - p_hashes),
+                  "hash_sets_equal": independent_hashes == n_hashes,
+                  "independent_only_hashes": len(independent_hashes - n_hashes),
+                  "nexus_only_hashes": len(n_hashes - independent_hashes),
               },
               "representation_family_counts": dict(sorted(family_counts.items())),
               "sampling_domain_counts": dict(sorted(sampling_counts.items())),
@@ -170,10 +213,10 @@ jobs:
               },
               "checks": {
                   "archive_count_matches": len(archives) == 10,
-                  "parallax_member_count_matches": parallax["counts"]["physical_csv_members"] == 659,
-                  "parallax_logical_rows_match": parallax["counts"]["logical_data_rows"] == 13788256,
-                  "parallax_distinct_hashes_match": parallax["counts"]["unique_byte_contents"] == 542,
-                  "cross_system_hash_sets_equal": p_hashes == n_hashes,
+                  "independent_member_count_matches": independent["counts"]["physical_csv_members"] == 659,
+                  "independent_logical_rows_match": independent["counts"]["logical_data_rows"] == 13788256,
+                  "independent_distinct_hashes_match": independent["counts"]["unique_byte_contents"] == 542,
+                  "cross_system_hash_sets_equal": independent_hashes == n_hashes,
               },
               "production_authorized": False,
           }
