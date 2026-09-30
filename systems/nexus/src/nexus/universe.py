@@ -31,10 +31,19 @@ def build_factor_universe(
     by deleting source data.
     """
     policy=policy or IntegrityPolicy(); decisions=[]; candidates=[]; seen_raw=set();seen_logical=set()
-    if max_streams_per_symbol is not None and int(max_streams_per_symbol) < 0:
-        raise ValueError("max_streams_per_symbol must be non-negative or None")
-    excluded={str(x).upper() for x in excluded_symbols}
+    if max_streams_per_symbol is not None and (
+        type(max_streams_per_symbol) is not int or max_streams_per_symbol < 0
+    ):
+        raise ValueError("max_streams_per_symbol must be a non-negative integer or None")
+    excluded={str(x).strip().upper() for x in excluded_symbols if str(x).strip()}
     ordered=sorted(manifests,key=lambda m:(m.identity.stream_id,m.identity.source_path))
+    stream_hashes={}
+    for m in ordered:
+        sid=m.identity.stream_id
+        old=stream_hashes.get(sid)
+        if old is not None and old != m.identity.raw_sha256:
+            raise ValueError(f"stream_id collision across distinct raw contents: {sid}")
+        stream_hashes[sid]=m.identity.raw_sha256
     for m in ordered:
         a=assess_manifest(m,policy);sid=m.identity.stream_id;sym=m.identity.symbol;q=quality_score(m)
         if sym.upper() in excluded:
