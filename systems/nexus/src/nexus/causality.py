@@ -66,10 +66,18 @@ def audit_prefix_invariance(
     values merely because future rows were appended. This test is method-agnostic and
     is useful for factor, topology, feature, and model-preprocessing code.
     """
+    if not isinstance(data,pd.DataFrame):
+        raise TypeError("data must be a pandas DataFrame")
+    if not math.isfinite(float(atol)) or float(atol) < 0:
+        raise ValueError("atol must be finite and non-negative")
+    if not math.isfinite(float(rtol)) or float(rtol) < 0:
+        raise ValueError("rtol must be finite and non-negative")
+    if type(max_violations) is not int or max_violations < 1:
+        raise ValueError("max_violations must be a positive integer")
     if cutpoints is None:
         n=len(data)
         cutpoints=tuple(sorted(set(x for x in (max(2,n//4),max(2,n//2),max(2,3*n//4),n) if x<=n)))
-    cps=tuple(int(c) for c in cutpoints if 1 <= int(c) <= len(data))
+    cps=tuple(dict.fromkeys(int(c) for c in cutpoints if 1 <= int(c) <= len(data)))
     full=build(data.copy())
     violations=[]; comparisons=0
     for cp in cps:
@@ -88,4 +96,4 @@ def audit_prefix_invariance(
                     violations.append(CausalityViolation(cp,str(idx),c,float(av),float(bv),float(abs(av-bv))))
                     if len(violations)>=max_violations:
                         return CausalityAudit(False,cps,comparisons,tuple(violations))
-    return CausalityAudit(not violations,cps,comparisons,tuple(violations))
+    return CausalityAudit(not violations and comparisons>0,cps,comparisons,tuple(violations))
