@@ -90,3 +90,10 @@ def test_npy_store_rejects_out_of_order_input_instead_of_sorting(tmp_path:Path):
     early=BarEvent('s',10,0,1,2,.5,1.5,None,'p',available_ns=10)
     with pytest.raises(ValueError,match='ordering keys'):
         NpyColumnarBarStore(tmp_path/'out-of-order').write([late,early])
+
+
+def test_quality_plane_rejects_negative_clock_uncertainty():
+    import pytest
+    state=StatePacket(100,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash='f')
+    with pytest.raises(ValueError,match='clock_uncertainty_ns'):
+        QualityStateEngine().build(state,{'a':_m()},clock_uncertainty_ns={'a':-1})
