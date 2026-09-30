@@ -52,6 +52,10 @@ class FactorGenealogySnapshot:
 
     @classmethod
     def create(cls, registry: FactorRegistry, derivations: Iterable[DerivationRecord] = ()) -> "FactorGenealogySnapshot":
+        registry.validate_complete()
+        derivations = tuple(derivations)
+        if any(not d.verify() for d in derivations):
+            raise ValueError("invalid derivation record in genealogy")
         factors = tuple(sorted((
             FactorGenealogyNode(s.name, s.version, tuple(s.components), s.method, tuple(s.dependencies), s.spec_hash)
             for s in registry.all()
@@ -109,6 +113,9 @@ class ResearchRunManifest:
             raise ValueError("invalid decision interval")
         if not genealogy.verify():
             raise ValueError("genealogy hash verification failed")
+        derivations = tuple(derivations)
+        if any(not d.verify() for d in derivations):
+            raise ValueError("invalid derivation record in research run")
         inputs = tuple(sorted((str(k), str(v)) for k, v in input_artifacts.items()))
         outputs = tuple(sorted((str(k), str(v)) for k, v in output_artifacts.items()))
         params_hash = _digest(parameters or {})
@@ -177,7 +184,7 @@ class ResearchRunManifest:
             "revision": 1,
             "kind": "context",
             "event_ns": self.decision_end_ns,
-            "available_ns": self.decision_end_ns,
+            "available_ns": ingestion,
             "ingested_ns": ingestion,
             "evidence_tier": 1,
             "payload": self.to_dict(),
