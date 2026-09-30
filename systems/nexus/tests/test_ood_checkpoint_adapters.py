@@ -65,3 +65,21 @@ def test_checkpoint_top_level_frame_hash_tamper_fails(tmp_path:Path):
     cp=ReplayCheckpoint.from_state(s); p=tmp_path/'cp-frame.json'; cp.save(p)
     raw=json.loads(p.read_text());raw['frame_hash']='tampered';p.write_text(json.dumps(raw))
     assert not ReplayCheckpoint.load(p).verify()
+
+
+def test_checkpoint_requires_frame_hash_and_finite_state():
+    import pytest
+    no_frame=StatePacket(10,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash=None)
+    with pytest.raises(ValueError,match='frame_hash'):
+        ReplayCheckpoint.from_state(no_frame)
+    bad=StatePacket(10,{'a':float('nan')},{'a':0},(),{'a':1},{'a':'x'},frame_hash='f')
+    with pytest.raises(ValueError):
+        ReplayCheckpoint.from_state(bad)
+
+
+def test_ood_configuration_rejects_degenerate_parameters():
+    import pytest
+    with pytest.raises(ValueError): RollingMahalanobisOOD(window=10,min_periods=20)
+    with pytest.raises(ValueError): RollingMahalanobisOOD(ridge=0)
+    with pytest.raises(ValueError): RollingMahalanobisOOD(threshold=0)
+    with pytest.raises(ValueError): KernelShiftSensor(gamma=0)
