@@ -51,3 +51,26 @@ def test_empty_quality_plane_is_not_perfect_health():
     assert h.mean_quality==0.0
     assert h.min_quality==0.0
     assert h.missing_count==0
+
+
+def test_npy_manifest_version_and_backend_are_verified(tmp_path:Path):
+    import json
+    events=[BarEvent('s',10,0,1,2,.5,1.5,None,'p',available_ns=10)]
+    store=NpyColumnarBarStore(tmp_path/'store-meta')
+    store.write(events)
+    path=tmp_path/'store-meta'/'manifest.json'
+    raw=json.loads(path.read_text())
+    raw['version']='forged'
+    path.write_text(json.dumps(raw))
+    assert not store.verify()
+
+
+def test_dynamic_quality_rejects_negative_timing_inputs():
+    from nexus.quality import dynamic_state_quality
+    import pytest
+    with pytest.raises(ValueError,match='age_ns'):
+        dynamic_state_quality(base_score=1.0,age_ns=-1,cadence_ns=10)
+    with pytest.raises(ValueError,match='clock_uncertainty_ns'):
+        dynamic_state_quality(base_score=1.0,age_ns=0,cadence_ns=10,clock_uncertainty_ns=-1)
+    with pytest.raises(ValueError,match='cadence_ns'):
+        dynamic_state_quality(base_score=1.0,age_ns=0,cadence_ns=0)
