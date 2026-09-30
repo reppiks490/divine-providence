@@ -74,11 +74,13 @@ def _compare(
             "overlap": len(common),
             "coverage": coverage,
             "standard_score": 0.0,
+            "ha_close_high_low_score": 0.0,
+            "ha_open_recurrence_score": 0.0,
             "ha_score": 0.0,
         }
 
     standard_ok = 0
-    ha_ok = 0
+    ha_chl_ok = 0
     for ts in common:
         so, sh, sl, sc = standard[ts]
         co, ch, cl, cc = candidate[ts]
@@ -99,13 +101,31 @@ def _compare(
             and _same(expected_high, ch, all_values)
             and _same(expected_low, cl, all_values)
         ):
-            ha_ok += 1
+            ha_chl_ok += 1
 
+    # Heikin-Ashi open is recursive: current HA open equals the midpoint of
+    # the previous HA open and HA close. Validate it on the candidate's own
+    # consecutive rows so timestamp overlap gaps cannot create a false proof.
+    candidate_times = sorted(candidate)
+    ha_open_ok = 0
+    ha_open_total = max(0, len(candidate_times) - 1)
+    for prev_ts, ts in zip(candidate_times, candidate_times[1:]):
+        prev_o, _, _, prev_c = candidate[prev_ts]
+        co, ch, cl, cc = candidate[ts]
+        expected_open = (prev_o + prev_c) / 2.0
+        if _same(expected_open, co, (prev_o, prev_c, co, ch, cl, cc)):
+            ha_open_ok += 1
+
+    standard_score = standard_ok / len(common)
+    ha_chl_score = ha_chl_ok / len(common)
+    ha_open_score = (ha_open_ok / ha_open_total) if ha_open_total else 0.0
     return {
         "overlap": len(common),
         "coverage": coverage,
-        "standard_score": standard_ok / len(common),
-        "ha_score": ha_ok / len(common),
+        "standard_score": standard_score,
+        "ha_close_high_low_score": ha_chl_score,
+        "ha_open_recurrence_score": ha_open_score,
+        "ha_score": min(ha_chl_score, ha_open_score),
     }
 
 
@@ -160,6 +180,8 @@ def probe(root: Path) -> dict:
                 "overlap": 0,
                 "coverage": 0.0,
                 "standard_score": 0.0,
+                "ha_close_high_low_score": 0.0,
+                "ha_open_recurrence_score": 0.0,
                 "ha_score": 0.0,
                 "production_authorized": False,
             })
@@ -194,7 +216,9 @@ def probe(root: Path) -> dict:
             chosen = best_ha
 
         scores = chosen[4] if chosen else {
-            "overlap": 0, "coverage": 0.0, "standard_score": 0.0, "ha_score": 0.0
+            "overlap": 0, "coverage": 0.0, "standard_score": 0.0,
+            "ha_close_high_low_score": 0.0, "ha_open_recurrence_score": 0.0,
+            "ha_score": 0.0
         }
         ref = chosen[3] if chosen else None
         output.append({
@@ -211,6 +235,8 @@ def probe(root: Path) -> dict:
             "overlap": int(scores["overlap"]),
             "coverage": float(scores["coverage"]),
             "standard_score": float(scores["standard_score"]),
+            "ha_close_high_low_score": float(scores["ha_close_high_low_score"]),
+            "ha_open_recurrence_score": float(scores["ha_open_recurrence_score"]),
             "ha_score": float(scores["ha_score"]),
             "production_authorized": False,
         })
@@ -219,7 +245,7 @@ def probe(root: Path) -> dict:
     for row in output:
         counts[row["proved_price_geometry"] or "unresolved"] += 1
     return {
-        "schema": "nexus.o14-representation-probe.v2",
+        "schema": "nexus.o14-representation-probe.v3",
         "known_standard_archive": KNOWN_STANDARD_ARCHIVE,
         "thresholds": {
             "minimum_overlap": MIN_OVERLAP,
@@ -229,7 +255,7 @@ def probe(root: Path) -> dict:
         "counts": dict(sorted(counts.items())),
         "rows": output,
         "limitations": [
-            "Only exact overlapping standard OHLC equality or deterministic Heikin-Ashi identities create a price-geometry proof.",
+            "Only exact overlapping standard OHLC equality or deterministic Heikin-Ashi close/high/low plus recursive-open identities create a price-geometry proof.",
             "Standard OHLC geometry does not prove an ordinary-candlestick view: TPO, footprint or profile views can preserve standard OHLC while remaining distinct chart/view families.",
             "Heikin-Ashi geometry likewise does not prove the absence of an additional footprint/profile view layer.",
             "This probe never assigns TPO, footprint, session-volume-profile, Renko or other view-family identity without explicit source evidence.",
