@@ -89,3 +89,18 @@ def test_direct_state_batches_reject_nonincreasing_batch_time():
     batches=[ReplayBatch(10,(a,)),ReplayBatch(9,(b,))]
     with pytest.raises(Exception,match='strictly increase'):
         list(ReplayBus().states_batches(batches))
+
+
+def test_direct_states_reject_global_visibility_rewind():
+    import pytest
+    a=BarEvent('a',20,0,1,1,1,1,None,'a',available_ns=20)
+    b=BarEvent('b',10,0,1,1,1,1,None,'b',available_ns=10)
+    with pytest.raises(Exception,match='visibility moved backward'):
+        list(ReplayBus().states([a,b]))
+
+
+def test_replay_batch_rejects_empty_events():
+    import pytest
+    from nexus.contracts import ReplayBatch
+    with pytest.raises(ValueError,match='at least one'):
+        ReplayBatch(10,())
