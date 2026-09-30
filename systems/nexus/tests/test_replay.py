@@ -70,3 +70,22 @@ def test_bar_event_rejects_structurally_invalid_identity_and_numbers():
         BarEvent('s',1,0,1,2,0,float('nan'),None,'p')
     with pytest.raises(ValueError,match='available_ns'):
         BarEvent('s',1,0,1,2,0,1,None,'p',available_ns=-1)
+
+
+def test_direct_state_construction_cannot_bypass_availability_gate():
+    import pytest
+    unknown=BarEvent('a',10,0,1,1,1,1,None,'a')
+    with pytest.raises(Exception,match='unknown availability'):
+        list(ReplayBus().states([unknown]))
+    forensic=list(ReplayBus().states([unknown],require_available=False))
+    assert forensic[0].decision_ns==10
+
+
+def test_direct_state_batches_reject_nonincreasing_batch_time():
+    import pytest
+    from nexus.contracts import ReplayBatch
+    a=BarEvent('a',10,0,1,1,1,1,None,'a',available_ns=10)
+    b=BarEvent('b',9,0,1,1,1,1,None,'b',available_ns=9)
+    batches=[ReplayBatch(10,(a,)),ReplayBatch(9,(b,))]
+    with pytest.raises(Exception,match='strictly increase'):
+        list(ReplayBus().states_batches(batches))
