@@ -67,12 +67,22 @@ def policy_from_manifest(
     *,
     source_stamp: str = "conservative_next",
     availability_delay_ns: int = 0,
+    reviewed: bool = False,
 ) -> BarClockPolicy:
+    if source_stamp in {"open","close"} and not reviewed:
+        raise ValueError(
+            "explicit open/close timestamp semantics require reviewed=True; "
+            "use conservative_next for unreviewed CSV timing"
+        )
     return BarClockPolicy(
         source_stamp=source_stamp,
         cadence_ns=manifest.observed_cadence_ns,
         availability_delay_ns=availability_delay_ns,
-        basis="verified_bar_close" if source_stamp in {"open", "close"} else "unknown",
+        basis="verified_bar_close" if reviewed and source_stamp in {"open", "close"} else "unknown",
+        extra_quality_flags=(
+            (QualityFlag.CLOCK_POLICY_REVIEWED.value,)
+            if reviewed and source_stamp in {"open","close"} else ()
+        ),
     )
 
 
