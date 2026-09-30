@@ -8,6 +8,10 @@ from .replay import ReplayAvailabilityError, ReplayOrderingError
 class VectorReplayBus:
     """Batch-atomic deterministic replay for generic numeric/context events."""
     def merge(self,streams:dict[str,Iterable[VectorEvent]],*,require_available:bool=True)->Iterator[VectorEvent]:
+        if not isinstance(streams,dict):
+            raise TypeError("streams must be a dict")
+        if type(require_available) is not bool:
+            raise TypeError("require_available must be bool")
         heap=[];its={k:iter(v) for k,v in streams.items()};last_keys={}
         def checked(expected_sid:str,e:VectorEvent)->VectorEvent:
             if e.stream_id!=expected_sid:
@@ -45,8 +49,10 @@ class VectorReplayBus:
         require_available:bool=True,
         max_age_ns:int|None=None,
     )->Iterator[VectorStatePacket]:
-        if max_age_ns is not None and max_age_ns<0:
-            raise ValueError("max_age_ns must be non-negative or None")
+        if max_age_ns is not None and (
+            type(max_age_ns) is not int or max_age_ns<0
+        ):
+            raise ValueError("max_age_ns must be a non-negative integer or None")
         latest={}; required_streams=required_streams or set(); current=None;bucket=[]
         def packet(decision_ns:int,batch:list[VectorEvent]):
             for e in batch:latest[e.stream_id]=e
