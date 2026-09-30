@@ -24,3 +24,11 @@ def test_representation_consensus_downweights_outlier_without_merging_identity()
     assert abs(r.consensus_return-.01)<.02
     assert r.contributions['bad'] < r.contributions['time']
     assert set(r.contributions)=={'time','renko','ha','bad'}
+
+
+def test_empty_representation_consensus_is_missing_not_zero():
+    r=robust_representation_consensus('NQ',1,{})
+    assert r.representation_count==0
+    assert np.isnan(r.consensus_return)
+    assert np.isnan(r.disagreement)
+    assert np.isnan(r.directional_agreement)
