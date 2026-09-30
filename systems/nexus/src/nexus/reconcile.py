@@ -126,7 +126,16 @@ def fingerprint(label: str, ms: list[StreamManifest]) -> CorpusFingerprint:
     if not isinstance(label,str) or not label.strip():
         raise ValueError("fingerprint label must be non-empty")
     usable = _usable(ms)
-    payload = [m.to_dict() for m in sorted(ms, key=lambda x: x.identity.source_path)]
+    payload = [
+        m.to_dict() for m in sorted(
+            ms,
+            key=lambda x: (
+                x.identity.source_path,
+                x.identity.stream_id,
+                x.identity.raw_sha256,
+            ),
+        )
+    ]
     h = hashlib.sha256(
         json.dumps(payload,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
     ).hexdigest()
