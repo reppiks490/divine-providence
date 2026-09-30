@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 import re
 
-_TIMEFRAME_RE = re.compile(r"^(?P<n>\d+)(?P<unit>S|D|W|M)?$", re.I)
-_COPY_RE = re.compile(r"^(?P<tf>\d+(?:S|D|W|M)?)(?:\s+(?P<copy>\d+))?$", re.I)
+_TIMEFRAME_RE = re.compile(r"^(?P<n>\d+)(?P<unit>S|D|W|M|T|R)?$", re.I)
+_COPY_RE = re.compile(r"^(?P<tf>\d+(?:S|D|W|M|T|R)?)(?:\s+(?P<copy>\d+))?$", re.I)
 
 
 @dataclass(frozen=True, slots=True)
