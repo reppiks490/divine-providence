@@ -145,3 +145,36 @@ def test_same_instant_bundle_rejects_health_plane_from_other_instant():
     plane=SourceHealthRegistry().snapshot(159)
     with pytest.raises(ValueError,match='source_health decision_ns'):
         SiblingInstantRouter().package(batch=batch,state=state,manifests={ea.stream_id:ma},factors={},topology={},quality={},source_health=plane)
+
+
+def test_same_instant_bundle_rejects_tampered_health_mapping():
+    from nexus.source_health import SourceHealthRegistry, SourceSLOPolicy
+    import pytest
+    m=_manifest('A','a')
+    e=BarEvent(m.identity.stream_id,100,0,1,2,.5,1.5,None,'A.csv',available_ns=160,availability_basis='verified_bar_close')
+    bus=ReplayBus(); batch=next(bus.merge_batches({e.stream_id:[e]},require_available=True)); state=next(bus.states_batches([batch]))
+    health=SourceHealthRegistry(); health.set_policy(e.stream_id,SourceSLOPolicy(max_receive_lag_ns_p95=20))
+    health.observe(e,received_ns=160)
+    payload=health.snapshot(160).to_dict()
+    payload['healthy_fraction']=0.0
+    with pytest.raises(ValueError,match='hash/semantic'):
+        SiblingInstantRouter().package(
+            batch=batch,state=state,manifests={e.stream_id:m},
+            factors={},topology={},quality={},source_health=payload,
+        )
+
+
+def test_derivation_observation_preserves_later_ingestion_time():
+    m=_manifest('A','a')
+    e=BarEvent(m.identity.stream_id,100,0,1,2,.5,1.5,None,'A.csv',available_ns=160,availability_basis='verified_bar_close')
+    bus=ReplayBus(); batch=next(bus.merge_batches({e.stream_id:[e]},require_available=True)); state=next(bus.states_batches([batch]))
+    d=DerivationRecord.create(
+        product_id='NEXUS:RISK',product_version='4',decision_ns=160,
+        spec_hash='e'*64,input_hashes={'A':m.identity.raw_sha256},code_version='test'
+    )
+    bundle=SiblingInstantRouter().package(
+        batch=batch,state=state,manifests={e.stream_id:m},
+        factors={},topology={},quality={},factor_derivations=[d],ingested_ns=175,
+    )
+    obs=bundle.aion['derivation_observations'][0]
+    assert obs['event_ns']==160 and obs['available_ns']==160 and obs['ingested_ns']==175
