@@ -22,7 +22,9 @@ class QualityStateEngine:
         clock_uncertainty_ns=clock_uncertainty_ns or {};all_ids=sorted(set(manifests)|set(packet.values)|set(packet.missing));states={};stale_ids=[];uncertain=0
         for sid in all_ids:
             m=manifests.get(sid);base=quality_score(m) if m is not None else 0.0;cadence=m.observed_cadence_ns if m is not None else None
-            age=packet.ages_ns.get(sid);present=sid in packet.values and age is not None;unc=max(0,int(clock_uncertainty_ns.get(sid,0)))
+            age=packet.ages_ns.get(sid);present=sid in packet.values and age is not None;unc=int(clock_uncertainty_ns.get(sid,0))
+            if unc < 0:
+                raise ValueError(f"clock_uncertainty_ns[{sid!r}] must be non-negative")
             flags=tuple(m.quality_flags) if m is not None else ();uncertain+=int(unc>0 or "stamp_semantics_unknown" in flags)
             dq=dynamic_state_quality(base_score=base,age_ns=0 if age is None else age,cadence_ns=cadence,missing=not present,clock_uncertainty_ns=unc)
             ratio=(age/cadence) if present and cadence and cadence>0 else None;stale=bool(ratio is not None and ratio>stale_after_multiples)
