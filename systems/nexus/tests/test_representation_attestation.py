@@ -90,3 +90,34 @@ def test_review_and_source_evidence_are_mandatory():
     out = build_representation_attestation_status([m], _queue(m), payload)
     assert out["resolved_by_attestation_count"] == 0
     assert out["status_counts"] == {"BLOCKED_ATTESTATION_EVIDENCE_INCOMPLETE": 1}
+
+
+def test_attestation_requires_reviewer_time_and_valid_timestamp_semantics():
+    m=_manifest()
+    payload=_valid(m)
+    payload["attestations"][0]["reviewed_by"]=""
+    payload["attestations"][0]["reviewed_at"]="not-a-date"
+    out=build_representation_attestation_status([m],_queue(m),payload)
+    assert out["resolved_by_attestation_count"]==0
+    assert out["status_counts"]=={"BLOCKED_ATTESTATION_EVIDENCE_INCOMPLETE":1}
+
+    payload=_valid(m)
+    payload["attestations"][0]["dimensions"]["timestamp_semantics"]="BANANA"
+    out=build_representation_attestation_status([m],_queue(m),payload)
+    assert out["resolved_by_attestation_count"]==0
+    assert out["status_counts"]=={"BLOCKED_ATTESTATION_DIMENSIONS_INCOMPLETE":1}
+
+
+def test_exact_byte_alias_path_is_valid_attestation_identity():
+    m=_manifest()
+    alias=_manifest()
+    alias.identity=StreamIdentity(
+        alias.identity.source_id,alias.identity.venue,alias.identity.symbol,
+        alias.identity.filename_claim,alias.identity.representation,
+        "archive.zip::copy/NQ.csv",alias.identity.raw_sha256,
+    )
+    payload=_valid(m)
+    payload["attestations"][0]["source_path"]=alias.identity.source_path
+    out=build_representation_attestation_status([alias,m],_queue(m),payload)
+    assert out["resolved_by_attestation_count"]==1
+    assert out["remaining_p0_count"]==0
