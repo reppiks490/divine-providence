@@ -28,7 +28,7 @@ from .corpus_recovery import HistoricalCorpusAnchor, build_corpus_recovery_plan
 
 
 LOOP_SCHEMA = "nexus.advanced-csv-research-loop.v1"
-LOOP_CODE_VERSION = "1.17.0"
+LOOP_CODE_VERSION = "1.18.0"
 
 CORE_ARTIFACT_NAMES = (
     "corpus_manifest.json",
@@ -126,6 +126,11 @@ class AdvancedLoopConfig:
     prior_anchor: CoverageAnchor = CoverageAnchor("PARALLAX_TEN_ARCHIVE_CHECKPOINT", 659, 13_788_256)
     min_owner_expected_entries: int = 659
     owner_expected_physical_entries: int = 803
+    excluded_model_symbols: tuple[str, ...] = (
+        "ETHUSD", "ETHUSDT", "ETH1!",
+        "SOLUSD", "SOLUSDT", "SOL1!",
+        "MBT", "MBT1!",
+    )
     max_candidates_per_family: int = 100
     min_returns_for_behavior_candidate: int = 200
     persistence_abs_threshold: float = 0.15
@@ -534,9 +539,18 @@ class AdvancedCSVResearchLoop:
 
         assessments = [assess_manifest(m, IntegrityPolicy()) for m in manifests]
         admitted_ids = {a.stream_id for a in assessments if a.admitted}
+        excluded_model_symbols = {x.upper() for x in self.config.excluded_model_symbols}
+        excluded_model_ids = {
+            m.identity.stream_id for m in manifests
+            if m.identity.symbol.upper() in excluded_model_symbols
+        }
+        model_admitted_ids = admitted_ids - excluded_model_ids
         admitted_count = sum(1 for m in usable if m.identity.stream_id in admitted_ids)
+        model_admitted_count = sum(1 for m in usable if m.identity.stream_id in model_admitted_ids)
         rejected = [a.to_dict() for a in assessments if not a.admitted]
-        selected_universe, universe_decisions = build_factor_universe(manifests)
+        selected_universe, universe_decisions = build_factor_universe(
+            manifests, excluded_symbols=self.config.excluded_model_symbols
+        )
 
         review_queue = build_representation_review_queue(manifests)
         review_counts = Counter(c.priority for c in review_queue.candidates)
@@ -563,10 +577,10 @@ class AdvancedCSVResearchLoop:
             manifests, recovery_anchor, owner_expected_min_entries=self.config.min_owner_expected_entries
         )
 
-        sweeps = self._sweep_all(manifests, admitted_ids)
+        sweeps = self._sweep_all(manifests, model_admitted_ids)
         candidates = _build_candidates(
             manifests, sweeps, config=self.config, usable_entries=len(usable), usable_rows=usable_rows,
-            admitted_count=admitted_count, review_counts=review_counts,
+            admitted_count=model_admitted_count, review_counts=review_counts,
         )
         representation_lineage_resolution = build_representation_lineage_resolution(
             self.corpus_root, manifests, candidates
@@ -612,6 +626,9 @@ class AdvancedCSVResearchLoop:
             "usable_entries": len(usable),
             "usable_rows": usable_rows,
             "admitted_entries_default_integrity": admitted_count,
+            "model_admitted_entries_after_owner_exclusions": model_admitted_count,
+            "owner_excluded_model_symbols": list(self.config.excluded_model_symbols),
+            "owner_excluded_stream_count": len(excluded_model_ids),
             "withheld_usable_entries_default_integrity": len(usable) - admitted_count,
             "factor_universe_streams": len(selected_universe),
             "representation_review_counts": dict(sorted(review_counts.items())),
@@ -635,7 +652,7 @@ class AdvancedCSVResearchLoop:
         iter_dir = self.state_dir / f"iteration_{iteration:04d}"
         iter_dir.mkdir(parents=True, exist_ok=True)
         validation_handoff = build_daedalus_validation_handoff(
-            manifests, candidates, admitted_ids=admitted_ids, corpus_manifest_hash=corpus_manifest_hash,
+            manifests, candidates, admitted_ids=model_admitted_ids, corpus_manifest_hash=corpus_manifest_hash,
             source_iteration=iteration, loop_code_version=LOOP_CODE_VERSION,
             representation_lineage_resolution=representation_lineage_resolution,
             session_gap_resolution=session_gap_resolution,
