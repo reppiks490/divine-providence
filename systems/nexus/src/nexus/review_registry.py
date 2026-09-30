@@ -40,26 +40,44 @@ class ReviewedRepresentationRecord:
     notes: str = ""
 
     def __post_init__(self) -> None:
-        if not self.stream_id or not self.version or not self.canonical_instrument or not self.representation_class:
-            raise ValueError("reviewed representation requires stable stream/version/instrument/class identity")
-        if not self.reviewed_by:
-            raise ValueError("reviewed_by is required")
+        for name,value in (
+            ("stream_id",self.stream_id),("version",self.version),
+            ("canonical_instrument",self.canonical_instrument),
+            ("asset_class",self.asset_class),
+            ("representation_class",self.representation_class),
+            ("reviewed_by",self.reviewed_by),
+        ):
+            if not isinstance(value,str) or not value.strip() or value != value.strip():
+                raise ValueError(f"{name} must be a non-empty trimmed string")
         if not _is_sha256(self.review_evidence_sha256):
             raise ValueError("review_evidence_sha256 must be a SHA-256 digest")
+        if type(self.executable) is not bool or type(self.continuous_contract) is not bool:
+            raise TypeError("executable and continuous_contract must be bool")
+        if type(self.availability_delay_ns) is not int or self.availability_delay_ns < 0:
+            raise ValueError("availability_delay_ns must be a non-negative integer")
+        if self.fixed_interval_ns is not None and (
+            type(self.fixed_interval_ns) is not int or self.fixed_interval_ns <= 0
+        ):
+            raise ValueError("fixed_interval_ns must be a positive integer or None")
         try:
             kind=RepresentationKind(self.kind);sem=TimestampSemantics(self.timestamp_semantics)
         except ValueError as exc:
             raise ValueError("unsupported representation kind/timestamp semantics") from exc
-        if self.availability_delay_ns < 0:
-            raise ValueError("availability_delay_ns cannot be negative")
-        if self.fixed_interval_ns is not None and self.fixed_interval_ns <= 0:
-            raise ValueError("fixed_interval_ns must be positive")
-        if sem == TimestampSemantics.BAR_OPEN and not self.fixed_interval_ns:
-            raise ValueError("BAR_OPEN semantics require a reviewed fixed interval")
-        if kind in (RepresentationKind.EVENT_BAR,RepresentationKind.DERIVED_EVENT_BAR) and self.fixed_interval_ns is not None:
-            raise ValueError("event-driven representations cannot be assigned a fictional fixed interval")
-        if self.executable and sem == TimestampSemantics.UNKNOWN:
-            raise ValueError("execution-safe review cannot retain unknown timestamp semantics")
+        RepresentationPolicy(
+            representation_id=f"{self.representation_class}@{self.version}",
+            kind=kind,
+            timestamp_semantics=sem,
+            fixed_interval_ns=self.fixed_interval_ns,
+            availability_delay_ns=self.availability_delay_ns,
+            reviewed=True,
+        )
+        if self.executable:
+            if sem == TimestampSemantics.UNKNOWN:
+                raise ValueError("execution-safe review cannot retain unknown timestamp semantics")
+            if not self.venue:
+                raise ValueError("execution-safe review requires venue")
+            if self.continuous_contract and not self.roll_policy:
+                raise ValueError("execution-safe continuous contracts require roll_policy")
 
     @property
     def key(self)->tuple[str,str]:
