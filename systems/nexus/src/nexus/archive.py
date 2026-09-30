@@ -73,8 +73,10 @@ class ZipCorpusCatalog:
                             try:
                                 o,h,lo,c=(float(row[idx[k]]) for k in required)
                                 if not all(math.isfinite(v) for v in (o,h,lo,c)):raise ValueError
-                                usable+=1
-                                if h<max(o,c) or lo>min(o,c) or h<lo:bad_geom+=1
+                                if h<max(o,c) or lo>min(o,c) or h<lo:
+                                    bad_geom+=1
+                                else:
+                                    usable+=1
                             except (ValueError,TypeError):bad_num+=1
         except (OSError,UnicodeError,csv.Error):flags.append(QualityFlag.EMPTY.value)
         cadence,conf,repeats,backwards=_infer_cadence_counts(diffs,repeats,backwards)
