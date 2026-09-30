@@ -381,6 +381,18 @@ class SourceHealthRegistry:
         for stream_id in sorted(self._trackers):
             policy = self._policies.get(stream_id)
             snap = self._trackers[stream_id].snapshot(policy)
+            evidence_ns = (
+                snap.last_received_ns
+                if snap.last_received_ns is not None
+                else snap.last_available_ns
+                if snap.last_available_ns is not None
+                else snap.last_event_ns
+            )
+            if evidence_ns is not None and int(evidence_ns) > int(decision_ns):
+                raise ValueError(
+                    f"cannot build source-health plane at {decision_ns} from "
+                    f"{stream_id} evidence observed at {evidence_ns}"
+                )
             rows[stream_id] = snap.to_dict()
             if policy is None:
                 unknown.append(stream_id)
