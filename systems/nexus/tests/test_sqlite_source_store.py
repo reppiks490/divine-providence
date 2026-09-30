@@ -27,3 +27,22 @@ def test_sqlite_same_revision_duplicate_is_rejected(tmp_path:Path):
     try:s.append([e])
     except Exception:pass
     else:raise AssertionError('expected primary-key rejection')
+
+
+def test_sqlite_replace_mode_is_idempotent_not_mutating(tmp_path:Path):
+    import pytest
+    m=_manifest()
+    original=BarEvent(
+        m.identity.stream_id,10,0,1,2,.5,1.5,None,'x',
+        available_ns=11,availability_basis='observed_receipt'
+    )
+    s=SQLiteBarStore(tmp_path/'idempotent.db')
+    assert s.append([original])==1
+    assert s.append([original],replace_same_revision=True)==1
+    changed=BarEvent(
+        m.identity.stream_id,10,0,1,2,.5,9.5,None,'x',
+        available_ns=11,availability_basis='observed_receipt'
+    )
+    with pytest.raises(ValueError,match='conflicting payload'):
+        s.append([changed],replace_same_revision=True)
+    assert list(s.iter_stream(m.identity.stream_id))==[original]
