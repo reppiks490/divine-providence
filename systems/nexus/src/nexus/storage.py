@@ -151,6 +151,8 @@ class NpyColumnarBarStore:
 
     def verify(self)->bool:
         manifest=json.loads((self.root/"manifest.json").read_text(encoding="utf-8"))
+        if manifest.get("version") != self.VERSION or manifest.get("backend") != "npy":
+            return False
         parts=[]
         for entry in manifest["partitions"]:
             d=self.root/entry["partition"]
@@ -190,10 +192,13 @@ class ParquetBarStore:
         pa,pq=self._require_arrow();self.root.mkdir(parents=True,exist_ok=True);parts=[]
         for sid in sorted(streams):
             part=_safe_partition(sid);d=self.root/part;d.mkdir(parents=True,exist_ok=True);path=d/"bars.parquet"
-            writer=None;buf=[];rows=0;first=None;last=None
+            writer=None;buf=[];rows=0;first=None;last=None;previous_key=None
             try:
                 for e in streams[sid]:
                     if e.stream_id!=sid:raise ValueError(f"stream mapping key {sid!r} does not match event stream_id")
+                    if previous_key is not None and e.ordering_key<=previous_key:
+                        raise ValueError(f"stream {sid!r} ordering key did not strictly increase")
+                    previous_key=e.ordering_key
                     v=e.visible_ns;first=v if first is None else min(first,v);last=v if last is None else max(last,v);rows+=1
                     row=asdict(e);row["quality_flags"]=list(e.quality_flags);buf.append(row)
                     if len(buf)>=chunk_rows:
@@ -225,7 +230,10 @@ class ParquetBarStore:
                     None if r["available_ns"] is None else int(r["available_ns"]),int(r["revision"]),None if r["source_timestamp_ns"] is None else int(r["source_timestamp_ns"]),r["availability_basis"])
 
     def verify(self)->bool:
-        manifest=json.loads((self.root/"manifest.json").read_text(encoding="utf-8"));parts=[]
+        manifest=json.loads((self.root/"manifest.json").read_text(encoding="utf-8"))
+        if manifest.get("version") != self.VERSION or manifest.get("backend") != "parquet":
+            return False
+        parts=[]
         for e in manifest["partitions"]:
             path=self.root/e["path"]
             if not path.exists() or hashlib.sha256(path.read_bytes()).hexdigest()!=e["file_sha256"]:return False
