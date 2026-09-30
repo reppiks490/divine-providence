@@ -19,16 +19,23 @@ class RollingMahalanobisOOD:
     not a calibrated trading probability.
     """
     def __init__(self,window:int=250,min_periods:int=80,ridge:float=1e-3,threshold:float=4.0):
-        if int(min_periods)<2 or int(window)<int(min_periods):
+        if type(window) is not int or type(min_periods) is not int:
+            raise TypeError("window and min_periods must be integers")
+        if min_periods<2 or window<min_periods:
             raise ValueError("require window >= min_periods >= 2")
-        if float(ridge)<=0:
-            raise ValueError("ridge must be positive")
-        if float(threshold)<=0:
-            raise ValueError("threshold must be positive")
-        self.window=int(window);self.min_periods=int(min_periods);self.ridge=float(ridge);self.threshold=float(threshold)
+        if not math.isfinite(float(ridge)) or float(ridge)<=0:
+            raise ValueError("ridge must be finite and positive")
+        if not math.isfinite(float(threshold)) or float(threshold)<=0:
+            raise ValueError("threshold must be finite and positive")
+        self.window=window;self.min_periods=min_periods;self.ridge=float(ridge);self.threshold=float(threshold)
 
     def score(self,frame:pd.DataFrame)->pd.DataFrame:
-        x=frame.astype(float); rows=[]
+        if not isinstance(frame,pd.DataFrame):
+            raise TypeError("frame must be a pandas DataFrame")
+        x=frame.astype(float)
+        if np.isinf(x.to_numpy(dtype=float,copy=False)).any():
+            raise ValueError("OOD frame contains infinite values")
+        rows=[]
         for i in range(len(x)):
             if i<self.min_periods:continue
             hist=x.iloc[max(0,i-self.window):i].dropna(how="all")
@@ -49,11 +56,13 @@ class RollingMahalanobisOOD:
 class KernelShiftSensor:
     """Small deterministic RBF-MMD-style two-window drift sensor."""
     def __init__(self,window:int=80,min_periods:int=40,gamma:float|None=None):
-        if int(min_periods)<2 or int(window)<int(min_periods):
+        if type(window) is not int or type(min_periods) is not int:
+            raise TypeError("window and min_periods must be integers")
+        if min_periods<2 or window<min_periods:
             raise ValueError("require window >= min_periods >= 2")
-        if gamma is not None and float(gamma)<=0:
-            raise ValueError("gamma must be positive or None")
-        self.window=int(window);self.min_periods=int(min_periods);self.gamma=None if gamma is None else float(gamma)
+        if gamma is not None and (not math.isfinite(float(gamma)) or float(gamma)<=0):
+            raise ValueError("gamma must be finite and positive or None")
+        self.window=window;self.min_periods=min_periods;self.gamma=None if gamma is None else float(gamma)
 
     @staticmethod
     def _rbf(a,b,gamma):
@@ -61,7 +70,12 @@ class KernelShiftSensor:
         return np.exp(-gamma*d)
 
     def score_at_end(self,frame:pd.DataFrame)->float:
-        x=frame.astype(float).dropna()
+        if not isinstance(frame,pd.DataFrame):
+            raise TypeError("frame must be a pandas DataFrame")
+        raw=frame.astype(float)
+        if np.isinf(raw.to_numpy(dtype=float,copy=False)).any():
+            raise ValueError("kernel-shift frame contains infinite values")
+        x=raw.dropna()
         if len(x)<2*self.min_periods:return float("nan")
         b=x.tail(self.window).to_numpy(float);a=x.iloc[-2*self.window:-self.window].to_numpy(float)
         if len(a)<self.min_periods or len(b)<self.min_periods:return float("nan")
