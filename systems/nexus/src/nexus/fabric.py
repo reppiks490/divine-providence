@@ -67,4 +67,19 @@ class FabricCheckpointManifest:
             raise ValueError("refusing to save invalid fabric checkpoint")
         Path(path).write_text(json.dumps(asdict(self),indent=2,sort_keys=True)+"\n",encoding="utf-8")
     @classmethod
-    def load(cls,path:str|Path)->"FabricCheckpointManifest":return cls(**json.loads(Path(path).read_text(encoding="utf-8")))
+    def load(cls,path:str|Path,*,verify:bool=True)->"FabricCheckpointManifest":
+        if type(verify) is not bool:
+            raise TypeError("verify must be bool")
+        try:
+            body=json.loads(Path(path).read_text(encoding="utf-8"))
+        except (OSError,json.JSONDecodeError) as exc:
+            raise ValueError("fabric checkpoint is unreadable") from exc
+        if not isinstance(body,dict):
+            raise ValueError("fabric checkpoint must contain a JSON object")
+        try:
+            obj=cls(**body)
+        except TypeError as exc:
+            raise ValueError("fabric checkpoint schema is invalid") from exc
+        if verify and not obj.verify():
+            raise ValueError("fabric checkpoint failed integrity/semantic verification")
+        return obj
