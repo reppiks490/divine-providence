@@ -40,8 +40,8 @@ Current verified baseline:
 - 13,788,256 logical rows
 - 542 distinct byte contents
 - 803 extracted physical CSV files mapping to the same 542 contents
-- NEXUS CI: 161/161 passed
-- representation contract: v1.17
+- NEXUS CI: 169/169 passed
+- representation contract: v1.18
 - production authorization: false
 
 Highest-value continuation:
@@ -61,3 +61,15 @@ Highest-value continuation:
 
 The 238-stream `Full csv candles only.zip` subset remains useful as the
 known-standard reference plane, but it is not the complete corpus.
+
+
+### 2026-09-30 fourth-pass identity hardening
+
+Price geometry is not treated as chart/view identity. Exact standard-OHLC or
+Heikin-Ashi transform matches can prove geometry, but they cannot by themselves
+distinguish an ordinary candlestick view from a TPO/footprint/profile view that
+preserves that geometry. The canonical representation contract is therefore
+four-axis: **chart/view family, price geometry, sampling domain, sampling
+construction**. Family-specific modeling remains fail-closed without reviewed
+view identity. Current GitHub Actions verification: **169/169 tests passed** and
+`python -m compileall -q src tests scripts` passed.
