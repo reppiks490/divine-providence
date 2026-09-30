@@ -171,6 +171,39 @@ class StatePacket:
     batch_size: int = 1
     frame_hash: str | None = None
 
+    def __post_init__(self) -> None:
+        if type(self.decision_ns) is not int or self.decision_ns < 0:
+            raise ValueError("decision_ns must be a non-negative integer")
+        if type(self.batch_size) is not int or self.batch_size < 1:
+            raise ValueError("batch_size must be a positive integer")
+        if self.data_plane not in {x.value for x in DataPlane}:
+            raise ValueError("unsupported data_plane")
+        if self.frame_hash is not None and (
+            not isinstance(self.frame_hash,str) or not self.frame_hash
+        ):
+            raise ValueError("frame_hash must be a non-empty string or None")
+        keys=set(self.values)
+        if keys != set(self.ages_ns) or keys != set(self.source_sequences) or keys != set(self.lineage):
+            raise ValueError("state values/ages/source_sequences/lineage keys must match")
+        if not isinstance(self.missing,tuple) or len(set(self.missing)) != len(self.missing):
+            raise ValueError("missing must be a unique tuple")
+        if keys & set(self.missing):
+            raise ValueError("present state values cannot also be missing")
+        for sid,value in self.values.items():
+            if not isinstance(sid,str) or not sid:
+                raise ValueError("state stream ids must be non-empty strings")
+            if not math.isfinite(float(value)):
+                raise ValueError(f"state value for {sid!r} must be finite")
+            age=self.ages_ns[sid]
+            seq=self.source_sequences[sid]
+            if type(age) is not int or age < 0 or age > self.decision_ns:
+                raise ValueError(f"state age for {sid!r} is invalid")
+            if type(seq) is not int or seq < 0:
+                raise ValueError(f"state sequence for {sid!r} must be non-negative")
+            if not isinstance(self.lineage[sid],str):
+                raise TypeError(f"state lineage for {sid!r} must be a string")
+
+
 @dataclass(frozen=True, slots=True)
 class SyntheticPoint:
     ticker: str
@@ -214,6 +247,8 @@ class VectorEvent:
                 raise ValueError(f"{name} must be a non-negative integer or None")
         if not isinstance(self.fields,tuple):
             raise TypeError("fields must be a tuple")
+        if not self.fields:
+            raise ValueError("vector event must contain at least one numeric field")
         names=[]
         for field_name,value in self.fields:
             if not isinstance(field_name,str) or not field_name:
@@ -256,3 +291,39 @@ class VectorStatePacket:
     data_plane: str = DataPlane.RESEARCH.value
     batch_size: int = 1
     frame_hash: str | None = None
+
+    def __post_init__(self) -> None:
+        if type(self.decision_ns) is not int or self.decision_ns < 0:
+            raise ValueError("decision_ns must be a non-negative integer")
+        if type(self.batch_size) is not int or self.batch_size < 1:
+            raise ValueError("batch_size must be a positive integer")
+        if self.data_plane not in {x.value for x in DataPlane}:
+            raise ValueError("unsupported data_plane")
+        if self.frame_hash is not None and (
+            not isinstance(self.frame_hash,str) or not self.frame_hash
+        ):
+            raise ValueError("frame_hash must be a non-empty string or None")
+        keys=set(self.values)
+        if keys != set(self.ages_ns) or keys != set(self.source_sequences) or keys != set(self.lineage):
+            raise ValueError("vector state values/ages/source_sequences/lineage keys must match")
+        if not isinstance(self.missing,tuple) or len(set(self.missing)) != len(self.missing):
+            raise ValueError("missing must be a unique tuple")
+        if keys & set(self.missing):
+            raise ValueError("present vector state values cannot also be missing")
+        for sid,fields in self.values.items():
+            if not isinstance(sid,str) or not sid:
+                raise ValueError("vector state stream ids must be non-empty strings")
+            if not isinstance(fields,dict) or not fields:
+                raise ValueError(f"vector state fields for {sid!r} must be non-empty")
+            if any(not isinstance(k,str) or not k for k in fields):
+                raise ValueError(f"vector state field names for {sid!r} must be non-empty strings")
+            if any(not math.isfinite(float(v)) for v in fields.values()):
+                raise ValueError(f"vector state fields for {sid!r} must be finite")
+            age=self.ages_ns[sid]
+            seq=self.source_sequences[sid]
+            if type(age) is not int or age < 0 or age > self.decision_ns:
+                raise ValueError(f"vector state age for {sid!r} is invalid")
+            if type(seq) is not int or seq < 0:
+                raise ValueError(f"vector state sequence for {sid!r} must be non-negative")
+            if not isinstance(self.lineage[sid],str):
+                raise TypeError(f"vector state lineage for {sid!r} must be a string")
