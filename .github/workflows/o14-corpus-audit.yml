@@ -175,6 +175,7 @@ jobs:
                   "observed_cadence_ns": m.observed_cadence_ns,
                   "cadence_confidence": m.cadence_confidence,
                   "representation_family": family,
+                  "price_geometry": str(claim.get("price_geometry", "unknown")),
                   "sampling_domain": sampling,
                   "construction": construction,
                   "native_setting": claim.get("setting"),
