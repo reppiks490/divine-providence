@@ -5,7 +5,11 @@ import pandas as pd
 class TrailingNovelty:
     """Causal ridge-Mahalanobis novelty against trailing states; emits no supervisory verdict."""
     def __init__(self,window:int=250,min_periods:int=60,ridge:float=1e-3):
-        self.window=window; self.min_periods=min_periods; self.ridge=ridge
+        if int(min_periods)<2 or int(window)<int(min_periods):
+            raise ValueError("require window >= min_periods >= 2")
+        if float(ridge)<=0:
+            raise ValueError("ridge must be positive")
+        self.window=int(window); self.min_periods=int(min_periods); self.ridge=float(ridge)
 
     def score(self,states:pd.DataFrame)->pd.Series:
         vals=[]
