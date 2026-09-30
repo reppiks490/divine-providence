@@ -98,7 +98,7 @@ def test_same_instant_bundle_carries_exact_source_health_plane():
     e=BarEvent(m.identity.stream_id,100,0,1,2,.5,1.5,None,'A.csv',available_ns=160,availability_basis='verified_bar_close')
     bus=ReplayBus(); batch=next(bus.merge_batches({e.stream_id:[e]},require_available=True)); state=next(bus.states_batches([batch]))
     health=SourceHealthRegistry(); health.set_policy(e.stream_id,SourceSLOPolicy(max_receive_lag_ns_p95=20,max_gap_size=0))
-    health.observe(e,received_ns=170)
+    health.observe(e,received_ns=160)
     plane=health.snapshot(160)
     bundle=SiblingInstantRouter().package(batch=batch,state=state,manifests={e.stream_id:m},factors={},topology={},quality={},source_health=plane)
     assert bundle.aion['source_health']['plane_hash']==plane.plane_hash
@@ -113,9 +113,10 @@ def test_same_instant_bundle_rejects_health_from_different_instant():
     e=BarEvent(m.identity.stream_id,100,0,1,2,.5,1.5,None,'A.csv',available_ns=160,availability_basis='verified_bar_close')
     bus=ReplayBus(); batch=next(bus.merge_batches({e.stream_id:[e]},require_available=True)); state=next(bus.states_batches([batch]))
     health=SourceHealthRegistry(); health.observe(e,received_ns=170)
+    plane=health.snapshot(170)
     import pytest
     with pytest.raises(ValueError,match='source_health decision_ns'):
-        SiblingInstantRouter().package(batch=batch,state=state,manifests={e.stream_id:m},factors={},topology={},quality={},source_health=health.snapshot(159))
+        SiblingInstantRouter().package(batch=batch,state=state,manifests={e.stream_id:m},factors={},topology={},quality={},source_health=plane)
 
 
 def test_same_instant_bundle_persists_source_health_without_execution_authority():
@@ -124,7 +125,7 @@ def test_same_instant_bundle_persists_source_health_without_execution_authority(
     ea=BarEvent(ma.identity.stream_id,100,0,1,2,.5,1.5,None,'A.csv',available_ns=160,availability_basis='verified_bar_close')
     bus=ReplayBus(); batch=next(bus.merge_batches({ea.stream_id:[ea]},require_available=True)); state=next(bus.states_batches([batch]))
     health=SourceHealthRegistry(); health.set_policy(ea.stream_id,SourceSLOPolicy(max_receive_lag_ns_p95=20,max_gap_size=0))
-    health.observe(ea,received_ns=170)
+    health.observe(ea,received_ns=160)
     plane=health.snapshot(state.decision_ns)
     bundle=SiblingInstantRouter().package(batch=batch,state=state,manifests={ea.stream_id:ma},factors={},topology={},quality={},source_health=plane,ingested_ns=170)
     assert bundle.aion['source_health_plane_hash']==plane.plane_hash
