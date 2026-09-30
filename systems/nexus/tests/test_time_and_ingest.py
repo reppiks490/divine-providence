@@ -80,3 +80,14 @@ def test_causal_bar_features_reject_negative_or_infinite_volume():
     bad=base.copy();bad.loc[1,'volume']=float('inf')
     with pytest.raises(ValueError,match='infinite'):
         causal_bar_features(bad)
+
+
+def test_causal_bar_features_reject_malformed_volume_text():
+    import pandas as pd
+    import pytest
+    bad=pd.DataFrame({
+        'open':[1.,2.],'high':[2.,3.],'low':[.5,1.5],'close':[1.5,2.5],
+        'volume':[1.,'not-volume'],
+    })
+    with pytest.raises(ValueError,match='volume feature input must be numeric'):
+        causal_bar_features(bad)
