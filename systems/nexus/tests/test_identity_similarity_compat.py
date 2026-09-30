@@ -5,7 +5,10 @@ from nexus.identity_registry import IdentityRegistry, IdentityRecord
 from nexus.identity import InstrumentRegistry, InstrumentSpec
 from nexus.similarity import NearDuplicateDetector
 from nexus.contracts import BarEvent, StreamIdentity, StreamManifest
-from nexus.compat import aion_bar_observation, aion_source_spec, argus_candle_proxy_feature
+from nexus.compat import (
+    aion_bar_observation, aion_source_spec, argus_candle_proxy_feature,
+    athena_provenance,
+)
 
 
 def test_identity_registry_requires_review_for_execution():
@@ -164,4 +167,17 @@ def test_compat_adapter_reuses_strict_time_and_numeric_validation():
     with pytest.raises(ValueError,match='finite'):
         argus_candle_proxy_feature(
             name='x',value=float('nan'),event_ns=10,source_id='s',reason='csv'
+        )
+
+
+def test_compat_rejects_scalar_quality_flag_string():
+    with pytest.raises(TypeError,match='quality_flags'):
+        athena_provenance(
+            event_ns=10,ingestion_ns=10,source_id='s',representation_id='r',
+            version='1',lineage_id='l',quality_flags='bad',
+        )
+    with pytest.raises(ValueError,match='quality_flags'):
+        athena_provenance(
+            event_ns=10,ingestion_ns=10,source_id='s',representation_id='r',
+            version='1',lineage_id='l',quality_flags=['ok',''],
         )
