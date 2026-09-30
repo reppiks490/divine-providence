@@ -2,6 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 from enum import Enum
 from typing import Any
+import math
 
 class DataPlane(str, Enum):
     RESEARCH = "research"
@@ -83,6 +84,40 @@ class BarEvent:
     source_timestamp_ns: int | None = None
     availability_basis: str = "unknown"
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.stream_id,str) or not self.stream_id:
+            raise ValueError("stream_id is required")
+        for name,value in (
+            ("event_ns",self.event_ns),
+            ("source_sequence",self.source_sequence),
+            ("revision",self.revision),
+        ):
+            if type(value) is not int or value < 0:
+                raise ValueError(f"{name} must be a non-negative integer")
+        for name,value in (
+            ("available_ns",self.available_ns),
+            ("source_timestamp_ns",self.source_timestamp_ns),
+        ):
+            if value is not None and (type(value) is not int or value < 0):
+                raise ValueError(f"{name} must be a non-negative integer or None")
+        for name,value in (
+            ("open",self.open),("high",self.high),("low",self.low),("close",self.close)
+        ):
+            if not math.isfinite(float(value)):
+                raise ValueError(f"{name} must be finite")
+        if self.volume is not None and not math.isfinite(float(self.volume)):
+            raise ValueError("volume must be finite or None")
+        if self.data_plane not in {x.value for x in DataPlane}:
+            raise ValueError("unsupported data_plane")
+        if not isinstance(self.source_path,str):
+            raise TypeError("source_path must be a string")
+        if not isinstance(self.quality_flags,tuple) or any(
+            not isinstance(x,str) for x in self.quality_flags
+        ):
+            raise TypeError("quality_flags must be a tuple of strings")
+        if not isinstance(self.availability_basis,str) or not self.availability_basis:
+            raise ValueError("availability_basis is required")
+
     @property
     def visible_ns(self) -> int:
         return self.event_ns if self.available_ns is None else self.available_ns
@@ -156,6 +191,44 @@ class VectorEvent:
     revision: int = 0
     source_timestamp_ns: int | None = None
     availability_basis: str = "unknown"
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.stream_id,str) or not self.stream_id:
+            raise ValueError("stream_id is required")
+        for name,value in (
+            ("event_ns",self.event_ns),
+            ("source_sequence",self.source_sequence),
+            ("revision",self.revision),
+        ):
+            if type(value) is not int or value < 0:
+                raise ValueError(f"{name} must be a non-negative integer")
+        for name,value in (
+            ("available_ns",self.available_ns),
+            ("source_timestamp_ns",self.source_timestamp_ns),
+        ):
+            if value is not None and (type(value) is not int or value < 0):
+                raise ValueError(f"{name} must be a non-negative integer or None")
+        if not isinstance(self.fields,tuple):
+            raise TypeError("fields must be a tuple")
+        names=[]
+        for field_name,value in self.fields:
+            if not isinstance(field_name,str) or not field_name:
+                raise ValueError("vector field names must be non-empty strings")
+            if not math.isfinite(float(value)):
+                raise ValueError(f"vector field {field_name!r} must be finite")
+            names.append(field_name)
+        if len(set(names)) != len(names):
+            raise ValueError("vector field names must be unique")
+        if self.data_plane not in {x.value for x in DataPlane}:
+            raise ValueError("unsupported data_plane")
+        if not isinstance(self.source_path,str):
+            raise TypeError("source_path must be a string")
+        if not isinstance(self.quality_flags,tuple) or any(
+            not isinstance(x,str) for x in self.quality_flags
+        ):
+            raise TypeError("quality_flags must be a tuple of strings")
+        if not isinstance(self.availability_basis,str) or not self.availability_basis:
+            raise ValueError("availability_basis is required")
 
     @property
     def visible_ns(self) -> int:
