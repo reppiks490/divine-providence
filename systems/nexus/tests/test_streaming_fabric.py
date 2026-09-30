@@ -61,3 +61,18 @@ def test_fabric_checkpoint_rejects_invalid_identity_fields(tmp_path:Path):
     assert not bad.verify()
     with pytest.raises(ValueError,match='refusing'):
         bad.save(tmp_path/'bad.json')
+
+
+def test_fabric_load_rejects_tampered_checkpoint_by_default(tmp_path:Path):
+    import json
+    good=FabricCheckpointManifest.create(
+        decision_ns=1,catalog_sha256='a'*64,event_store_sha256='b'*64,
+        ledger_head_sha256='c'*64,replay_checkpoint_sha256='d'*64,code_version='1',
+    )
+    p=tmp_path/'fabric-tamper.json';good.save(p)
+    body=json.loads(p.read_text());body['decision_ns']=2;p.write_text(json.dumps(body))
+    with pytest.raises(ValueError,match='verification'):
+        FabricCheckpointManifest.load(p)
+    assert not FabricCheckpointManifest.load(p,verify=False).verify()
+    with pytest.raises(TypeError,match='verify'):
+        FabricCheckpointManifest.load(p,verify=1)
