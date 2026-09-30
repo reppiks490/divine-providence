@@ -46,3 +46,13 @@ def test_change_engine_rejects_invalid_configuration_and_nonfinite_input():
         cp.update(float('nan'))
     with pytest.raises(ValueError,match='finite'):
         cp.update(float('inf'))
+
+
+def test_change_engine_rejects_nonfinite_configuration():
+    import pytest
+    with pytest.raises(ValueError,match='alpha'):
+        ChangePointEngine(alpha=float('nan'))
+    with pytest.raises(ValueError,match='drift'):
+        ChangePointEngine(drift=float('nan'))
+    with pytest.raises(ValueError,match='threshold'):
+        ChangePointEngine(threshold=float('inf'))
