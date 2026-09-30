@@ -19,6 +19,25 @@ class ReplayBus:
     require_available=False to inspect events whose decision-time visibility is
     unresolved, but those events are not causal/model-ready.
     """
+
+    @staticmethod
+    def _validate_event(event:BarEvent, *, require_available:bool=True) -> BarEvent:
+        if event.available_ns is not None and int(event.available_ns) < int(event.event_ns):
+            raise ReplayAvailabilityError(
+                f"stream {event.stream_id} sequence {event.source_sequence} is available before its event"
+            )
+        if (
+            event.source_timestamp_ns is not None
+            and int(event.event_ns) < int(event.source_timestamp_ns)
+        ):
+            raise ReplayAvailabilityError(
+                f"stream {event.stream_id} sequence {event.source_sequence} event precedes source timestamp"
+            )
+        if require_available and event.available_ns is None:
+            raise ReplayAvailabilityError(
+                f"stream {event.stream_id} sequence {event.source_sequence} has unknown availability"
+            )
+        return event
     def merge(self, streams: dict[str, Iterable[BarEvent]], *, require_available: bool=True) -> Iterator[BarEvent]:
         heap=[]; its={k:iter(v) for k,v in streams.items()}; last_keys={}
         def checked(expected_sid:str,event:BarEvent)->BarEvent:
@@ -26,21 +45,7 @@ class ReplayBus:
                 raise ReplayOrderingError(
                     f"stream mapping key {expected_sid!r} does not match event stream_id {event.stream_id!r}"
                 )
-            if event.available_ns is not None and int(event.available_ns) < int(event.event_ns):
-                raise ReplayAvailabilityError(
-                    f"stream {event.stream_id} sequence {event.source_sequence} is available before its event"
-                )
-            if (
-                event.source_timestamp_ns is not None
-                and int(event.event_ns) < int(event.source_timestamp_ns)
-            ):
-                raise ReplayAvailabilityError(
-                    f"stream {event.stream_id} sequence {event.source_sequence} event precedes source timestamp"
-                )
-            if require_available and event.available_ns is None:
-                raise ReplayAvailabilityError(
-                    f"stream {event.stream_id} sequence {event.source_sequence} has unknown availability"
-                )
+            self._validate_event(event,require_available=require_available)
             key=event.ordering_key
             previous=last_keys.get(expected_sid)
             if previous is not None and key <= previous:
@@ -104,17 +109,51 @@ class ReplayBus:
             batch_size=batch_size, frame_hash=self._frame_hash(decision_ns,latest,values),
         )
 
-    def states(self, merged: Iterable[BarEvent], required_streams: set[str] | None=None, max_age_ns: int | None=None):
+    def states(
+        self,
+        merged: Iterable[BarEvent],
+        required_streams: set[str] | None=None,
+        max_age_ns: int | None=None,
+        *,
+        require_available: bool=True,
+    ):
         latest: dict[str,BarEvent]={}; required_streams=required_streams or set()
+        last_key_by_stream={}
         for event in merged:
+            self._validate_event(event,require_available=require_available)
+            previous=last_key_by_stream.get(event.stream_id)
+            if previous is not None and event.ordering_key<=previous:
+                raise ReplayOrderingError(
+                    f"stream {event.stream_id} ordering key did not strictly increase"
+                )
+            last_key_by_stream[event.stream_id]=event.ordering_key
             latest[event.stream_id]=event
             yield self._packet(event.visible_ns,latest,required_streams,max_age_ns,1)
 
-    def states_batches(self, batches: Iterable[ReplayBatch], required_streams:set[str]|None=None, max_age_ns:int|None=None):
+    def states_batches(
+        self,
+        batches: Iterable[ReplayBatch],
+        required_streams:set[str]|None=None,
+        max_age_ns:int|None=None,
+        *,
+        require_available: bool=True,
+    ):
         """Emit exactly one state per visibility instant after all simultaneous events are applied."""
         latest:dict[str,BarEvent]={}; required_streams=required_streams or set()
+        last_visible=None
+        last_key_by_stream={}
         for batch in batches:
+            if last_visible is not None and batch.visible_ns<=last_visible:
+                raise ReplayOrderingError("replay batches must strictly increase in visible_ns")
+            last_visible=batch.visible_ns
             for event in batch.events:
+                self._validate_event(event,require_available=require_available)
+                previous=last_key_by_stream.get(event.stream_id)
+                if previous is not None and event.ordering_key<=previous:
+                    raise ReplayOrderingError(
+                        f"stream {event.stream_id} ordering key did not strictly increase"
+                    )
+                last_key_by_stream[event.stream_id]=event.ordering_key
                 latest[event.stream_id]=event
             yield self._packet(batch.visible_ns,latest,required_streams,max_age_ns,len(batch.events))
 
