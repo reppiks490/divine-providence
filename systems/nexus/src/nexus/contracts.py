@@ -41,6 +41,28 @@ class StreamIdentity:
     source_path: str = ""
     raw_sha256: str = ""
 
+    def __post_init__(self) -> None:
+        for name,value in (("source_id",self.source_id),("symbol",self.symbol)):
+            if not isinstance(value,str) or not value.strip() or value != value.strip():
+                raise ValueError(f"{name} must be a non-empty trimmed string")
+        if self.venue is not None and (
+            not isinstance(self.venue,str) or not self.venue.strip() or self.venue != self.venue.strip()
+        ):
+            raise ValueError("venue must be a non-empty trimmed string or None")
+        if self.filename_claim is not None and not isinstance(self.filename_claim,str):
+            raise TypeError("filename_claim must be a string or None")
+        if not isinstance(self.representation,str) or not self.representation.strip():
+            raise ValueError("representation must be non-empty")
+        if not isinstance(self.source_path,str):
+            raise TypeError("source_path must be a string")
+        if not isinstance(self.raw_sha256,str) or len(self.raw_sha256)!=64:
+            raise ValueError("raw_sha256 must be a SHA-256 hex digest")
+        try:
+            int(self.raw_sha256,16)
+        except ValueError as exc:
+            raise ValueError("raw_sha256 must be a SHA-256 hex digest") from exc
+        object.__setattr__(self,"raw_sha256",self.raw_sha256.lower())
+
     @property
     def stream_id(self) -> str:
         return f"{self.source_id}:{self.symbol}:{self.raw_sha256[:12]}"
