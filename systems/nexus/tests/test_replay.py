@@ -1,5 +1,5 @@
 from nexus.contracts import BarEvent
-from nexus.replay import ReplayBus
+from nexus.replay import ReplayBus, ReplayAvailabilityError, ReplayOrderingError
 
 
 def e(s,t,q,c): return BarEvent(s,t,q,c,c,c,c,None,s)
@@ -19,3 +19,26 @@ def test_asof_state_never_uses_future_value():
     at20=next(x for x in states if x.decision_ns==20)
     assert at20.values['a']==1
     assert at20.values['b']==2
+
+
+def test_replay_rejects_stream_key_mismatch():
+    import pytest
+    with pytest.raises(ReplayOrderingError,match='mapping key'):
+        list(ReplayBus().merge({'a':[e('b',10,0,1)]}))
+
+
+def test_replay_rejects_nonincreasing_per_stream_ordering_key():
+    import pytest
+    rows=[e('a',20,1,2),e('a',10,0,1)]
+    with pytest.raises(ReplayOrderingError,match='strictly increase'):
+        list(ReplayBus().merge({'a':rows}))
+
+
+def test_strict_replay_rejects_impossible_availability_contract():
+    import pytest
+    early=BarEvent('a',20,0,1,1,1,1,None,'a',available_ns=10)
+    with pytest.raises(ReplayAvailabilityError,match='available before'):
+        list(ReplayBus().merge({'a':[early]},require_available=True))
+    source_future=BarEvent('a',20,0,1,1,1,1,None,'a',available_ns=30,source_timestamp_ns=25)
+    with pytest.raises(ReplayAvailabilityError,match='precedes source timestamp'):
+        list(ReplayBus().merge({'a':[source_future]},require_available=True))
