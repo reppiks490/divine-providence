@@ -3,7 +3,10 @@ import json
 import pytest
 
 from nexus.contracts import StreamIdentity, StreamManifest
-from nexus.validation_handoff import build_daedalus_validation_handoff
+from nexus.validation_handoff import (
+    build_daedalus_validation_handoff,
+    verify_daedalus_validation_handoff,
+)
 
 
 def _seal(payload):
@@ -280,3 +283,32 @@ def test_handoff_rejects_tampered_or_scope_mismatched_resolution():
             corpus_manifest_hash='c'*64,source_iteration=1,loop_code_version='x',
             representation_lineage_resolution=wrong,
         )
+
+
+def test_handoff_artifact_is_tamper_evident():
+    m=_manifest()
+    candidate={
+        "candidate_id":"p","family":"return_persistence",
+        "priority":"P1","score":1.0,"scope":[m.identity.stream_id],
+        "rationale":"x","required_next_test":"y",
+    }
+    out=build_daedalus_validation_handoff(
+        [m],[candidate],admitted_ids={m.identity.stream_id},
+        corpus_manifest_hash="c"*64,source_iteration=1,loop_code_version="test",
+    )
+    assert verify_daedalus_validation_handoff(out)
+    assert len(out["handoff_hash"])==64
+
+    tampered=dict(out)
+    tampered["protected_holdout_spent"]=True
+    assert not verify_daedalus_validation_handoff(tampered)
+
+    rehashed=dict(out)
+    rehashed.pop("handoff_hash")
+    rehashed["candidates"]=[dict(rehashed["candidates"][0])]
+    rehashed["candidates"][0]["route"]=dict(rehashed["candidates"][0]["route"])
+    rehashed["candidates"][0]["route"]["protected_holdout_eligible_on_current_history"]=True
+    rehashed["handoff_hash"]=hashlib.sha256(
+        json.dumps(rehashed,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_daedalus_validation_handoff(rehashed)
