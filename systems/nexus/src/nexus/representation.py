@@ -32,14 +32,28 @@ class RepresentationPolicy:
     reviewed: bool = False
 
     def __post_init__(self):
-        if self.availability_delay_ns < 0:
-            raise ValueError("availability delay cannot be negative")
+        if not isinstance(self.representation_id,str) or not self.representation_id.strip():
+            raise ValueError("representation_id is required")
+        if not isinstance(self.kind,RepresentationKind):
+            raise TypeError("kind must be RepresentationKind")
+        if not isinstance(self.timestamp_semantics,TimestampSemantics):
+            raise TypeError("timestamp_semantics must be TimestampSemantics")
+        if type(self.reviewed) is not bool:
+            raise TypeError("reviewed must be bool")
+        if type(self.availability_delay_ns) is not int or self.availability_delay_ns < 0:
+            raise ValueError("availability delay must be a non-negative integer")
+        if self.fixed_interval_ns is not None and (
+            type(self.fixed_interval_ns) is not int or self.fixed_interval_ns <= 0
+        ):
+            raise ValueError("fixed_interval_ns must be a positive integer or None")
         if self.timestamp_semantics == TimestampSemantics.BAR_OPEN:
             if self.kind not in (RepresentationKind.TIME_BAR, RepresentationKind.DERIVED_TIME_BAR):
                 raise ValueError("open-stamped fixed completion only applies to time bars")
-            if not self.fixed_interval_ns or self.fixed_interval_ns <= 0:
+            if not self.fixed_interval_ns:
                 raise ValueError("open-stamped time bars require fixed_interval_ns")
         if self.kind in (RepresentationKind.EVENT_BAR, RepresentationKind.DERIVED_EVENT_BAR):
+            if self.fixed_interval_ns is not None:
+                raise ValueError("event bars cannot be assigned a fixed interval")
             if self.timestamp_semantics == TimestampSemantics.BAR_OPEN:
                 raise ValueError("event bars cannot infer completion by adding a fixed cadence")
 
