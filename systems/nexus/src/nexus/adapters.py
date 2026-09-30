@@ -51,9 +51,13 @@ def aion_bar_observation(event:BarEvent,*,ingested_ns:int|None=None,availability
     if event.available_ns is None:
         raise ValueError("AION strict observation requires explicit available_ns")
     basis=availability_basis or event.availability_basis
-    allowed={"observed_receipt","attested_release","verified_bar_close","synthetic"}
+    allowed={"observed_receipt","attested_release","verified_bar_close","reviewed_event_completion","synthetic"}
     if basis not in allowed:
         raise ValueError(f"AION export requires an AION-attested availability basis; got {basis!r}")
+    if int(event.available_ns) < int(event.event_ns):
+        raise ValueError("AION export rejects available_ns before event_ns")
+    if event.source_timestamp_ns is not None and int(event.event_ns) < int(event.source_timestamp_ns):
+        raise ValueError("AION export rejects event_ns before source_timestamp_ns")
     ingested_ns=max(event.available_ns,int(ingested_ns if ingested_ns is not None else event.available_ns))
     return {
         "source_id":event.stream_id,
@@ -93,8 +97,12 @@ def aion_context_source_spec(*,source_id:str,representation_id:str,symbol:str,so
 def aion_context_observation(event,*,ingested_ns:int|None=None,availability_basis:str|None=None)->dict[str,Any]:
     if event.available_ns is None: raise ValueError("AION context export requires explicit available_ns")
     basis=availability_basis or event.availability_basis
-    if basis not in {"observed_receipt","attested_release","verified_bar_close","synthetic"}:
+    if basis not in {"observed_receipt","attested_release","verified_bar_close","reviewed_event_completion","synthetic"}:
         raise ValueError(f"AION context export requires an AION-attested availability basis; got {basis!r}")
+    if int(event.available_ns) < int(event.event_ns):
+        raise ValueError("AION context export rejects available_ns before event_ns")
+    if event.source_timestamp_ns is not None and int(event.event_ns) < int(event.source_timestamp_ns):
+        raise ValueError("AION context export rejects event_ns before source_timestamp_ns")
     ing=max(int(event.available_ns),int(ingested_ns if ingested_ns is not None else event.available_ns))
     return {"source_id":event.stream_id,"source_event_id":f"context:{event.source_sequence}","revision":max(1,event.revision+1),
             "kind":"context","event_ns":int(event.event_ns),"available_ns":int(event.available_ns),"ingested_ns":ing,
@@ -142,7 +150,7 @@ def aion_derivation_observation(derivation,*,sequence:int|None=None,quality_flag
         "published_ns":None,
         "sequence":None if sequence is None else int(sequence),
         "quality_flags":list(quality_flags),
-        "availability_basis":"observed_receipt",
+        "availability_basis":"synthetic",
     }
 
 
