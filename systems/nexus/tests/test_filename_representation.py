@@ -1,7 +1,7 @@
 from pathlib import Path
 import pytest
 
-from nexus.filename import parse_market_filename, timeframe_claim_to_ns
+from nexus.filename import parse_market_filename, timeframe_claim_to_ns, sampling_claim_metadata
 from nexus.representation import RepresentationKind, RepresentationPolicy, TimestampSemantics
 from nexus.contracts import QualityFlag
 
@@ -36,3 +36,18 @@ def test_event_bar_never_uses_observed_cadence_as_completion_offset():
 def test_open_stamped_event_bar_is_rejected():
     with pytest.raises(ValueError):
         RepresentationPolicy('range',RepresentationKind.EVENT_BAR,TimestampSemantics.BAR_OPEN,fixed_interval_ns=60_000_000_000)
+
+
+def test_tick_and_range_claims_are_non_time_sampling():
+    tick=parse_market_filename(Path('CME_MINI_DL_NQ1!, 1000T.csv'))
+    rng=parse_market_filename(Path('CME_MINI_DL_NQ1!, 10R.csv'))
+    assert tick.timeframe_claim=='1000T'
+    assert rng.timeframe_claim=='10R'
+    assert timeframe_claim_to_ns(tick.timeframe_claim) is None
+    assert timeframe_claim_to_ns(rng.timeframe_claim) is None
+    assert sampling_claim_metadata(tick.timeframe_claim)=={
+        'sampling_domain':'event','construction':'tick','setting':'1000T'
+    }
+    assert sampling_claim_metadata(rng.timeframe_claim)=={
+        'sampling_domain':'event','construction':'range','setting':'10R'
+    }
