@@ -21,10 +21,18 @@ class FactorRegistry:
     def __init__(self): self._specs={}
     def register(self,spec:FactorSpec):
         key=(spec.name,spec.version)
-        if key in self._specs and self._specs[key].spec_hash != spec.spec_hash:
+        old=self._specs.get(key)
+        if old is not None and old.spec_hash != spec.spec_hash:
             raise ValueError(f"immutable factor version conflict: {key}")
         self._specs[key]=spec
-        self.validate_dag()
+        try:
+            self.validate_dag()
+        except Exception:
+            if old is None:
+                self._specs.pop(key,None)
+            else:
+                self._specs[key]=old
+            raise
         return spec.spec_hash
     def get(self,name:str,version:str): return self._specs[(name,version)]
     def all(self): return tuple(self._specs[k] for k in sorted(self._specs))
@@ -39,8 +47,20 @@ class FactorRegistry:
             visiting.remove(n); done.add(n)
         for n in graph: visit(n)
         return True
+    def missing_dependencies(self):
+        return tuple(sorted({
+            dep
+            for spec in self._specs.values()
+            for dep in spec.dependencies
+            if dep not in self._specs
+        }))
+    def validate_complete(self):
+        missing=self.missing_dependencies()
+        if missing:
+            raise ValueError(f"missing factor dependencies: {missing}")
+        return self.validate_dag()
     def dependency_order(self):
-        self.validate_dag(); out=[]; seen=set()
+        self.validate_complete(); out=[]; seen=set()
         def visit(n):
             if n in seen:return
             for d in self._specs[n].dependencies:
