@@ -131,19 +131,27 @@ def aion_derivation_source_spec(*,product_id:str,product_version:str,spec_hash:s
     }
 
 
-def aion_derivation_observation(derivation,*,sequence:int|None=None,quality_flags:tuple[str,...]=())->dict[str,Any]:
+def aion_derivation_observation(
+    derivation,
+    *,
+    sequence:int|None=None,
+    quality_flags:tuple[str,...]=(),
+    ingested_ns:int|None=None,
+)->dict[str,Any]:
     """AION context observation containing the exact NEXUS derivation genealogy."""
     if not derivation.verify():
         raise ValueError("invalid derivation record")
+    decision_ns=int(derivation.decision_ns)
+    ingestion=max(decision_ns,int(ingested_ns if ingested_ns is not None else decision_ns))
     src=aion_derivation_source_spec(product_id=derivation.product_id,product_version=derivation.product_version,spec_hash=derivation.spec_hash,code_version=derivation.code_version)
     return {
         "source_id":src["source_id"],
         "source_event_id":f"derivation:{derivation.derivation_hash}",
         "revision":1,
         "kind":"context",
-        "event_ns":int(derivation.decision_ns),
-        "available_ns":int(derivation.decision_ns),
-        "ingested_ns":int(derivation.decision_ns),
+        "event_ns":decision_ns,
+        "available_ns":decision_ns,
+        "ingested_ns":ingestion,
         "evidence_tier":1,
         "payload":derivation.to_dict(),
         "plane":"research",
