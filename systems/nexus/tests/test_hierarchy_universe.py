@@ -226,3 +226,30 @@ def test_hierarchy_rejects_stream_id_collision_across_distinct_bytes():
     )
     with pytest.raises(ValueError,match='collision'):
         HierarchicalFactorEngine().build_from_manifests(returns,[a,b],d)
+
+
+def test_universe_rejects_compact_stream_id_hash_prefix_collision():
+    import pytest
+    from nexus.contracts import StreamIdentity, StreamManifest
+
+    def mk(raw,path):
+        ident=StreamIdentity("src","CME","NQ1!","20",source_path=path,raw_sha256=raw)
+        return StreamManifest(
+            ident,10,["time","open","high","low","close"],
+            1,10,1_200_000_000_000,1.0,0,0,0,
+            metadata={"usable_ohlc_rows":10},
+        )
+
+    a=mk("a"*12+"1"*52,"a.csv")
+    b=mk("a"*12+"2"*52,"b.csv")
+    assert a.identity.stream_id==b.identity.stream_id
+    with pytest.raises(ValueError,match="stream_id collision"):
+        build_factor_universe([a,b])
+
+
+def test_universe_rejects_coerced_symbol_cap():
+    import pytest
+    with pytest.raises(ValueError,match="max_streams_per_symbol"):
+        build_factor_universe([_m("A","a")],max_streams_per_symbol=1.5)
+    with pytest.raises(ValueError,match="max_streams_per_symbol"):
+        build_factor_universe([_m("A","a")],max_streams_per_symbol=True)
