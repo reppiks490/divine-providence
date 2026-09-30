@@ -13,6 +13,20 @@ class MarketSource(Protocol):
     def events(self)->Iterable[BarEvent]: ...
 
 
+def _merge_event_flags(
+    events:Iterable[BarEvent], manifest:StreamManifest
+)->Iterator[BarEvent]:
+    sid=manifest.identity.stream_id
+    manifest_flags=tuple(manifest.quality_flags)
+    for event in events:
+        if event.stream_id!=sid:
+            raise ValueError(
+                f"manifest stream_id {sid!r} does not match event stream_id {event.stream_id!r}"
+            )
+        flags=tuple(dict.fromkeys((*event.quality_flags,*manifest_flags)))
+        yield event if flags==event.quality_flags else replace(event,quality_flags=flags)
+
+
 def _policy_with_manifest_flags(
     policy:BarClockPolicy, manifest:StreamManifest
 )->BarClockPolicy:
@@ -62,15 +76,7 @@ class IterableMarketSource:
         return self._manifest
 
     def events(self)->Iterator[BarEvent]:
-        sid=self._manifest.identity.stream_id
-        manifest_flags=tuple(self._manifest.quality_flags)
-        for event in self._events:
-            if event.stream_id!=sid:
-                raise ValueError(
-                    f"manifest stream_id {sid!r} does not match event stream_id {event.stream_id!r}"
-                )
-            flags=tuple(dict.fromkeys((*event.quality_flags,*manifest_flags)))
-            yield event if flags==event.quality_flags else replace(event,quality_flags=flags)
+        yield from _merge_event_flags(self._events,self._manifest)
 
 
 @dataclass
@@ -85,8 +91,11 @@ class SQLiteMarketSource:
 
     def events(self)->Iterable[BarEvent]:
         from .storage import SQLiteBarStore
-        return SQLiteBarStore(self.store_path).iter_stream(
-            self._manifest.identity.stream_id
+        return _merge_event_flags(
+            SQLiteBarStore(self.store_path).iter_stream(
+                self._manifest.identity.stream_id
+            ),
+            self._manifest,
         )
 
 
@@ -102,6 +111,9 @@ class NpyMarketSource:
 
     def events(self)->Iterable[BarEvent]:
         from .storage import NpyColumnarBarStore
-        return NpyColumnarBarStore(self.store_root).iter_stream(
-            self._manifest.identity.stream_id
+        return _merge_event_flags(
+            NpyColumnarBarStore(self.store_root).iter_stream(
+                self._manifest.identity.stream_id
+            ),
+            self._manifest,
         )
