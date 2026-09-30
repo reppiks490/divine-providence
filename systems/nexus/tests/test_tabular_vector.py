@@ -65,3 +65,13 @@ def test_vector_replay_expires_stale_context(tmp_path:Path):
 def test_vector_replay_rejects_negative_max_age():
     with pytest.raises(ValueError,match='max_age_ns'):
         list(VectorReplayBus().states({},max_age_ns=-1))
+
+
+def test_vector_event_rejects_invalid_numeric_structure():
+    from nexus.contracts import VectorEvent
+    with pytest.raises(ValueError,match='event_ns'):
+        VectorEvent('s',-1,0,(('x',1.0),),'p')
+    with pytest.raises(ValueError,match='unique'):
+        VectorEvent('s',1,0,(('x',1.0),('x',2.0)),'p')
+    with pytest.raises(ValueError,match='finite'):
+        VectorEvent('s',1,0,(('x',float('nan')),),'p')
