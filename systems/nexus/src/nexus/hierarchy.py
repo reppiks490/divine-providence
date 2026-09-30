@@ -40,7 +40,9 @@ def _quality_adjusted_consensus(
     raw = []
     xs = []
     for sid, rw in c.contributions.items():
-        q = max(0.0, min(1.0, float(quality.get(sid, 1.0))))
+        q = float(quality.get(sid, 1.0))
+        if not math.isfinite(q) or not 0.0 <= q <= 1.0:
+            raise ValueError(f"quality weight for {sid!r} must be finite and in [0,1]")
         w = float(rw) * q
         if w > 0 and sid in values and math.isfinite(float(values[sid])):
             raw.append(w)
@@ -57,9 +59,7 @@ def _quality_adjusted_consensus(
         agreement = float(np.mean(np.abs(x) < max(disagreement, 1e-12)))
     else:
         agreement = float(np.mean(np.sign(x) == np.sign(consensus)))
-    effective = float(
-        sum(max(0.0, min(1.0, float(quality.get(sid, 1.0)))) for sid in c.contributions)
-    )
+    effective = float(sum(float(quality.get(sid,1.0)) for sid in c.contributions))
     return consensus, disagreement, agreement, effective
 
 
@@ -95,6 +95,25 @@ def fuse_representations_by_symbol(
     - family but no geometry: construction -> family -> symbol;
     - family+geometry but no construction: streams -> geometry -> family -> symbol.
     """
+    if not isinstance(returns,pd.DataFrame):
+        raise TypeError("returns must be a pandas DataFrame")
+    if returns.columns.duplicated().any():
+        raise ValueError("returns columns must be unique")
+    try:
+        numeric=returns.astype(float)
+    except (TypeError,ValueError) as exc:
+        raise ValueError("representation returns must be numeric") from exc
+    if np.isinf(numeric.to_numpy(dtype=float,copy=False)).any():
+        raise ValueError("representation returns contain infinite values")
+    returns=numeric
+    for sid,sym in stream_to_symbol.items():
+        if not isinstance(sid,str) or not sid or not isinstance(sym,str) or not sym:
+            raise ValueError("stream_to_symbol requires non-empty string identities")
+    if quality_weights is not None:
+        for sid,value in quality_weights.items():
+            q=float(value)
+            if not math.isfinite(q) or not 0.0 <= q <= 1.0:
+                raise ValueError(f"quality weight for {sid!r} must be finite and in [0,1]")
     streams = [col for col in returns.columns if col in stream_to_symbol]
     symbol_groups: dict[str, list[str]] = {}
     for sid in streams:
@@ -288,8 +307,17 @@ class HierarchicalFactorEngine:
         if missing:
             raise KeyError(f"factor definition references missing symbol consensus: {missing}")
 
-        log_levels = symbol_returns.fillna(0.0).cumsum()
-        levels = np.exp(log_levels).where(symbol_returns.notna())
+        # Build independent contiguous level segments. A missing return breaks
+        # the level chain; it is never treated as a zero-return bridge.
+        levels=pd.DataFrame(np.nan,index=symbol_returns.index,columns=symbol_returns.columns,dtype=float)
+        for col in symbol_returns.columns:
+            s=symbol_returns[col]
+            groups=s.isna().cumsum()
+            cumulative=s.groupby(groups).cumsum()
+            level=np.exp(cumulative).where(s.notna())
+            if np.isinf(level.to_numpy(dtype=float,copy=False)).any():
+                raise ValueError(f"symbol return accumulation overflow for {col!r}")
+            levels[col]=level
         factor = FactorEnsembleEngine().build(levels, definition)
         return HierarchicalFusionResult(
             symbol_returns, disagreement, agreement, coverage, factor
@@ -306,7 +334,15 @@ class HierarchicalFactorEngine:
         require_authoritative_identity: bool = True,
     ) -> HierarchicalFusionResult:
         """Build a fail-closed, four-axis representation-safe model plane."""
-        by_id = {m.identity.stream_id: m for m in manifests}
+        grouped:dict[str,list]={}
+        for m in sorted(manifests,key=lambda x:(x.identity.stream_id,x.identity.source_path)):
+            grouped.setdefault(m.identity.stream_id,[]).append(m)
+        by_id={}
+        for sid,rows in grouped.items():
+            hashes={m.identity.raw_sha256 for m in rows}
+            if len(hashes)>1:
+                raise ValueError(f"stream_id collision across distinct raw contents: {sid}")
+            by_id[sid]=rows[0]
         stream_to_symbol: dict[str, str] = {}
         stream_to_family: dict[str, str] = {}
         stream_to_geometry: dict[str, str] = {}
@@ -316,6 +352,7 @@ class HierarchicalFactorEngine:
         for sid in returns.columns:
             manifest = by_id.get(sid)
             if manifest is None:
+                unresolved.append(str(sid))
                 continue
             claim = manifest.metadata.get("representation_claim", {})
             family = str(claim.get("family", "unknown"))
