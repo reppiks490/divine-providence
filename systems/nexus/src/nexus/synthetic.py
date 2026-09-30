@@ -256,11 +256,11 @@ class AdaptiveTickerEngine:
             mu=hist.mean(); sd=hist.std(ddof=0).replace(0,np.nan)
             z=((returns.iloc[i]-mu)/sd).clip(-definition.clip_z,definition.clip_z)
             z_arr=z.to_numpy(dtype=float)
-            finite=np.isfinite(z_arr) & np.isfinite(last_w)
-            coverage=float(finite.mean())
+            active=np.isfinite(z_arr) & np.isfinite(last_w) & (np.abs(last_w)>1e-15)
+            coverage=float(active.mean())
             effective_w=np.zeros_like(last_w,dtype=float)
-            if finite.any():
-                effective_w[finite]=last_w[finite]
+            if active.any():
+                effective_w[active]=last_w[active]
                 den=float(np.sum(np.abs(effective_w)))
                 if den>1e-15:
                     effective_w/=den
@@ -270,7 +270,7 @@ class AdaptiveTickerEngine:
                         effective_w[:]=0.0
                         value=float("nan"); confidence=0.0
                     else:
-                        value=float(np.dot(z_arr[finite],effective_w[finite]))
+                        value=float(np.dot(z_arr[active],effective_w[active]))
                         concentration=float(np.max(np.abs(effective_w)))
                         confidence=max(0.0,min(1.0,coverage*(1.0-concentration/2.0)))
                 else:
@@ -351,7 +351,8 @@ class FactorEnsembleEngine:
                 w=frame.iloc[loc][wcols].to_numpy(float); p=frame.iloc[loc-1][wcols].to_numpy(float)
                 ts.append(float(np.abs(w-p).sum()))
                 den=np.linalg.norm(w)*np.linalg.norm(p)
-                ss.append(float(np.dot(w,p)/den) if den>0 else 0.0)
+                if den>1e-15:
+                    ss.append(float(np.dot(w,p)/den))
             turnover.append(float(np.mean(ts)) if ts else np.nan)
             stability.append(float(np.mean(ss)) if ss else np.nan)
         out["weight_turnover"]=turnover; out["weight_stability"]=stability
