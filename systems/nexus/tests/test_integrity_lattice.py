@@ -84,3 +84,19 @@ def test_clock_lattice_rejects_negative_source_timestamp():
     lat.register(m,'time:1m',rule=RepresentationClockRule('time:1m','close',reviewed=True))
     with pytest.raises(ClockPolicyError,match='source_timestamp_ns'):
         lat.visible_ns(m.identity.stream_id,-1)
+
+
+def test_clock_rule_rejects_fractional_timing_configuration():
+    import pytest
+    with pytest.raises(ClockPolicyError,match='availability_delay_ns'):
+        RepresentationClockRule('x','close',availability_delay_ns=1.5)
+    with pytest.raises(ClockPolicyError,match='explicit_cadence_ns'):
+        RepresentationClockRule(
+            'x','close','explicit',explicit_cadence_ns=60.5,reviewed=True
+        )
+    with pytest.raises(ClockPolicyError,match='source_timestamp_ns'):
+        RepresentationClockRule('x','close',reviewed=True).visible_ns(
+            10.5,manifest()
+        )
+    with pytest.raises(ClockPolicyError,match='reviewed'):
+        RepresentationClockRule('x','close',reviewed=1)
