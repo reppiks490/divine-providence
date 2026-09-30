@@ -559,7 +559,10 @@ class AdvancedCSVResearchLoop:
             or summary.get("schema") != LOOP_SCHEMA
             or summary.get("iteration") != state["iteration"]
             or summary.get("loop_code_version") != state.get("loop_code_version")
-            or summary.get("corpus_manifest_hash") != state["corpus_manifest_hash"]
+            or (
+                summary.get("corpus_manifest_hash")
+                or (summary.get("delta") or {}).get("current_corpus_manifest_hash")
+            ) != state["corpus_manifest_hash"]
             or summary.get("artifact_hashes") != state["artifact_hashes"]
             or summary.get("production_authorized") is not False
         ):
@@ -720,6 +723,7 @@ class AdvancedCSVResearchLoop:
             "schema": LOOP_SCHEMA,
             "loop_code_version": LOOP_CODE_VERSION,
             "iteration": iteration,
+            "corpus_manifest_hash": corpus_manifest_hash,
             "historical_checkpoint_reconciled": bool(
                 corpus_recovery_plan["acceptance"]["historical_anchor_reconciled"]
             ),
