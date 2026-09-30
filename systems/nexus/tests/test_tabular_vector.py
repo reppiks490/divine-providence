@@ -89,3 +89,12 @@ def test_vector_state_and_event_reject_empty_or_inconsistent_structure():
         VectorStatePacket(
             10,{'s':{'x':float('inf')}},{'s':0},(),{'s':0},{'s':'p'}
         )
+
+
+def test_vector_replay_rejects_coerced_option_types():
+    from nexus.contracts import VectorEvent
+    e=VectorEvent("a",10,0,(("x",1.0),),"a",available_ns=10)
+    with pytest.raises(TypeError,match="require_available"):
+        list(VectorReplayBus().merge({"a":[e]},require_available=1))
+    with pytest.raises(ValueError,match="max_age_ns"):
+        list(VectorReplayBus().states({"a":[e]},max_age_ns=1.5))
