@@ -2,6 +2,7 @@ from nexus.contracts import StreamIdentity, StreamManifest
 from nexus.representation_attestation import (
     INPUT_SCHEMA,
     build_representation_attestation_status,
+    verify_representation_attestation_status,
 )
 
 
@@ -169,3 +170,19 @@ def test_duplicate_p0_queue_rows_do_not_inflate_stream_counts():
     assert out["resolved_by_attestation_count"]==1
     assert out["remaining_p0_count"]==0
     assert out["resolved_stream_ids"]==[m.identity.stream_id]
+
+
+def test_attestation_requires_evidence_digest_and_status_is_tamper_evident():
+    m=_manifest()
+    payload=_valid(m)
+    payload["attestations"][0].pop("evidence_sha256")
+    out=build_representation_attestation_status([m],_queue(m),payload)
+    assert out["resolved_by_attestation_count"]==0
+    assert out["status_counts"]=={"BLOCKED_ATTESTATION_EVIDENCE_INCOMPLETE":1}
+    assert verify_representation_attestation_status(out)
+
+    good=build_representation_attestation_status([m],_queue(m),_valid(m))
+    assert verify_representation_attestation_status(good)
+    tampered=dict(good)
+    tampered["resolved_by_attestation_count"]=0
+    assert not verify_representation_attestation_status(tampered)
