@@ -93,6 +93,10 @@ class AdaptiveTickerEngine:
         active_idx=np.flatnonzero(eligible)
         if active_idx.size==0:
             return w
+        if method in {"adaptive_pca","shrinkage_pca","robust_pca"} and active_idx.size<2:
+            # PCA-family estimators are inherently multivariate. Do not silently
+            # turn a missing-component episode into a one-component factor.
+            return w
 
         # Multivariate methods require actual joint observations. Missing values
         # are never replaced by zero/mean z-scores.
@@ -113,8 +117,10 @@ class AdaptiveTickerEngine:
         active_mask=np.zeros(n,dtype=bool)
         active_mask[active_idx]=True
         if active_idx.size==1:
-            w[active_idx[0]]=1.0
-            return self._cap(w,max_component_weight,eligible=active_mask)
+            if method=="cluster_balanced":
+                w[active_idx[0]]=1.0
+                return self._cap(w,max_component_weight,eligible=active_mask)
+            return w
 
         z=(joint-mu)/sd
 
