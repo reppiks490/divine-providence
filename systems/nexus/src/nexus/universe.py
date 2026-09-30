@@ -22,11 +22,20 @@ def build_factor_universe(
     *,
     policy: IntegrityPolicy | None = None,
     max_streams_per_symbol: int | None = None,
+    excluded_symbols: Iterable[str] = (),
 ) -> tuple[tuple[str, ...], tuple[UniverseDecision, ...]]:
-    """Select a lineage-safe factor universe without duplicate/copy inflation."""
+    """Select a lineage-safe factor universe without duplicate/copy inflation.
+
+    Excluded symbols remain in the forensic corpus but cannot enter this model
+    universe. The exclusion is explicit and auditable rather than implemented
+    by deleting source data.
+    """
     policy=policy or IntegrityPolicy(); decisions=[]; candidates=[]; seen_raw=set();seen_logical=set()
+    excluded={str(x).upper() for x in excluded_symbols}
     for m in manifests:
         a=assess_manifest(m,policy);sid=m.identity.stream_id;sym=m.identity.symbol;q=quality_score(m)
+        if sym.upper() in excluded:
+            decisions.append(UniverseDecision(sid,sym,False,"owner_excluded_symbol",q));continue
         if not a.admitted:
             decisions.append(UniverseDecision(sid,sym,False,"integrity_gate",q));continue
         rh=m.identity.raw_sha256;lh=m.metadata.get("logical_sha256")
