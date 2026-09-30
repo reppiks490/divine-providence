@@ -118,9 +118,14 @@ class ReplayBus:
         require_available: bool=True,
     ):
         latest: dict[str,BarEvent]={}; required_streams=required_streams or set()
-        last_key_by_stream={}
+        last_key_by_stream={}; last_visible=None
         for event in merged:
             self._validate_event(event,require_available=require_available)
+            if last_visible is not None and event.visible_ns < last_visible:
+                raise ReplayOrderingError(
+                    f"merged replay visibility moved backward: {event.visible_ns} < {last_visible}"
+                )
+            last_visible=event.visible_ns
             previous=last_key_by_stream.get(event.stream_id)
             if previous is not None and event.ordering_key<=previous:
                 raise ReplayOrderingError(
