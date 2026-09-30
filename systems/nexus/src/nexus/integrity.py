@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, asdict
 from typing import Iterable
+import math
 
 from .contracts import StreamManifest
 from .quality import quality_score
@@ -62,6 +63,18 @@ def assess_manifest(m: StreamManifest, policy: IntegrityPolicy | None = None) ->
     inconsistent = int(m.metadata.get("inconsistent_ohlc_rows", 0))
     usable = int(m.metadata.get("usable_ohlc_rows", max(0, m.row_count - nonnumeric - inconsistent)))
 
+    metadata_invalid = (
+        m.row_count < 0
+        or invalid < 0
+        or nonnumeric < 0
+        or inconsistent < 0
+        or usable < 0
+        or usable > max(0, int(m.row_count))
+        or not math.isfinite(float(m.cadence_confidence))
+        or not 0.0 <= float(m.cadence_confidence) <= 1.0
+        or (m.observed_cadence_ns is not None and int(m.observed_cadence_ns) <= 0)
+    )
+
     invalid_rate = invalid / max(1, m.row_count + invalid)
     nonnumeric_rate = nonnumeric / rows
     inconsistent_rate = inconsistent / rows
@@ -70,6 +83,8 @@ def assess_manifest(m: StreamManifest, policy: IntegrityPolicy | None = None) ->
 
     blockers: list[str] = []
     warnings: list[str] = []
+    if metadata_invalid:
+        blockers.append("invalid_integrity_metadata")
     if m.row_count <= 0:
         blockers.append("no_usable_rows")
     if policy.reject_appledouble and "appledouble" in flags:
