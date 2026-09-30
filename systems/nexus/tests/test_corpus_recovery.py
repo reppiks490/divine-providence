@@ -6,7 +6,11 @@ def _m(raw: str, rows: int = 10):
     ident = StreamIdentity("zipcsv", "CME", "NQ1!", "1", source_path=f"{raw}.csv", raw_sha256=raw * 64)
     return StreamManifest(
         ident, rows, ["time", "open", "high", "low", "close"],
-        1, rows, 60, 1.0, 0, 0, 0,
+        None if rows==0 else 1,
+        None if rows==0 else rows,
+        None if rows==0 else 60,
+        0.0 if rows==0 else 1.0,
+        0, 0, 0,
         quality_flags=[], metadata={}
     )
 
