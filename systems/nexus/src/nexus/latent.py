@@ -29,10 +29,13 @@ class CausalPCAFactor:
         self.min_obs = int(min_obs)
         self.min_coverage = coverage
         self.history: deque[dict[str, float]] = deque(maxlen=self.window)
+        self._last_event_ns: int | None = None
 
     def update(self, event_ns: int, frame: Mapping[str, float]) -> LatentFactorPoint:
         if type(event_ns) is not int or event_ns < 0:
             raise ValueError("event_ns must be a non-negative integer")
+        if self._last_event_ns is not None and event_ns <= self._last_event_ns:
+            raise ValueError("event_ns must strictly increase for online latent state")
         current = {k: float(v) for k, v in frame.items() if math.isfinite(float(v))}
         if self.history:
             common = set(current)
@@ -72,6 +75,7 @@ class CausalPCAFactor:
         coverage = len(current) / expected
         if coverage >= self.min_coverage:
             self.history.append(current)
+        self._last_event_ns = event_ns
         return LatentFactorPoint(
             event_ns=int(event_ns),
             score=score,
