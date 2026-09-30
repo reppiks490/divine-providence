@@ -1,7 +1,10 @@
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
-from nexus.session_semantics import CME_EQUITY_23X5, CME_CRYPTO_24X7_2026, _assess_gap
+from nexus.session_semantics import (
+    CME_EQUITY_23X5, CME_CRYPTO_24X7_2026, _assess_gap,
+    verify_session_gap_resolution,
+)
 
 
 def _ns(dt):
@@ -158,3 +161,43 @@ def test_session_profile_rejects_invalid_calendar_geometry():
             'x','UTC',((0,(DailyWindow(0,10),)),),
             'authority','summary',effective_start_ns=20,effective_end_ns=10,
         )
+
+
+def test_session_resolution_verifier_rejects_rehashed_impossible_counts():
+    import hashlib,json
+    body={
+        "schema":"nexus.session-gap-resolution.v1",
+        "candidate_count":1,
+        "session_semantics_resolved_count":1,
+        "residual_diagnostic_count":0,
+        "still_session_blocked_count":0,
+        "resolutions":[{
+            "candidate_id":"x","stream_id":"s","venue":"CME","symbol":"NQ1!",
+            "profile_id":"p","profile_status":"EXACT_PROFILE_REVIEWED",
+            "gap_count":1,"session_explained_gap_count":1,
+            "residual_open_session_gap_count":0,
+            "unsupported_effective_period_gap_count":0,
+            "coarse_calendar_gap_count":0,
+            "session_semantics_resolved":True,
+            "residual_data_quality_diagnostic_required":False,
+            "reason":"x","evidence_authority":"CME","evidence_summary":"reviewed",
+            "gap_assessments":[{
+                "previous_event_ns":10,"next_event_ns":20,"gap_ns":10,
+                "classification":"EXPLAINED_BY_RECURRING_SESSION_CLOSURE",
+            }],
+            "coarse_resolution_method":None,"coarse_evidence_stream_id":None,
+        }],
+        "data_loss_asserted":False,"production_authorized":False,
+    }
+    body["resolution_hash"]=hashlib.sha256(
+        json.dumps(body,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert verify_session_gap_resolution(body)
+
+    broken=dict(body); rows=[dict(x) for x in broken["resolutions"]]
+    rows[0]["session_explained_gap_count"]=0
+    broken["resolutions"]=rows;broken.pop("resolution_hash")
+    broken["resolution_hash"]=hashlib.sha256(
+        json.dumps(broken,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_session_gap_resolution(broken)
