@@ -112,3 +112,13 @@ def test_source_health_plane_has_deterministic_aion_context_identity():
     assert obs['payload']['plane_hash']==plane.plane_hash
     assert obs['event_ns']==110==obs['available_ns'] and obs['ingested_ns']==120
     assert obs['evidence_tier']==1 and obs['quality_flags']==['nexus_source_health']
+
+
+def test_source_health_plane_rejects_rewind_lookahead():
+    import pytest
+    from nexus.source_health import SourceHealthRegistry
+    r=SourceHealthRegistry()
+    r.observe(_e(0,avail=100),received_ns=120)
+    with pytest.raises(ValueError,match='cannot build source-health plane'):
+        r.snapshot(110)
+    assert r.snapshot(120).decision_ns==120
