@@ -57,8 +57,18 @@ class RepresentationPolicy:
             flags.append(QualityFlag.DERIVED_REPRESENTATION.value)
         if self.is_event_driven:
             flags.append(QualityFlag.EVENT_DRIVEN_REPRESENTATION.value)
-        if self.reviewed:
-            flags.append(QualityFlag.CLOCK_POLICY_REVIEWED.value)
+        if not self.reviewed:
+            # A declared representation shape is not permission to invent
+            # decision-time availability. Unreviewed timing always falls back
+            # to the conservative next-source-stamp rule.
+            return BarClockPolicy(
+                source_stamp="conservative_next",
+                cadence_ns=None,
+                availability_delay_ns=self.availability_delay_ns,
+                basis="unreviewed_representation_policy",
+                extra_quality_flags=tuple(flags),
+            )
+        flags.append(QualityFlag.CLOCK_POLICY_REVIEWED.value)
 
         if self.timestamp_semantics == TimestampSemantics.BAR_OPEN:
             return BarClockPolicy(
@@ -66,11 +76,17 @@ class RepresentationPolicy:
                 availability_delay_ns=self.availability_delay_ns,
                 basis="verified_bar_close", extra_quality_flags=tuple(flags),
             )
-        if self.timestamp_semantics in (TimestampSemantics.BAR_CLOSE, TimestampSemantics.EVENT_COMPLETION):
+        if self.timestamp_semantics == TimestampSemantics.BAR_CLOSE:
             return BarClockPolicy(
                 source_stamp="close", cadence_ns=None,
                 availability_delay_ns=self.availability_delay_ns,
                 basis="verified_bar_close", extra_quality_flags=tuple(flags),
+            )
+        if self.timestamp_semantics == TimestampSemantics.EVENT_COMPLETION:
+            return BarClockPolicy(
+                source_stamp="close", cadence_ns=None,
+                availability_delay_ns=self.availability_delay_ns,
+                basis="reviewed_event_completion", extra_quality_flags=tuple(flags),
             )
         return BarClockPolicy(
             source_stamp="conservative_next", cadence_ns=None,
@@ -96,7 +112,8 @@ def robust_representation_consensus(symbol: str, event_ns: int, returns: dict[st
     import numpy as np
     clean={k:float(v) for k,v in returns.items() if math.isfinite(float(v))}
     if not clean:
-        return RepresentationConsensus(symbol,int(event_ns),0.0,0.0,0.0,0,{})
+        nan=float("nan")
+        return RepresentationConsensus(symbol,int(event_ns),nan,nan,nan,0,{})
     vals=np.array(list(clean.values()),dtype=float)
     med=float(np.median(vals)); mad=float(np.median(np.abs(vals-med)))
     scale=max(1.4826*mad,1e-12)
