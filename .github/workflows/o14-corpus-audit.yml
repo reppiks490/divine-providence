@@ -158,6 +158,8 @@ jobs:
                   "symbol": m.identity.symbol,
                   "filename_claim": m.identity.filename_claim,
                   "row_count": m.row_count,
+                  "columns": "|".join(str(x) for x in m.columns),
+                  "duplicate_header_positions": json.dumps(m.metadata.get("duplicate_header_positions", {}), sort_keys=True),
                   "first_event_ns": m.first_event_ns,
                   "last_event_ns": m.last_event_ns,
                   "observed_cadence_ns": m.observed_cadence_ns,
