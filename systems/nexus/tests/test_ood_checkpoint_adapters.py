@@ -56,7 +56,10 @@ def test_checkpoint_top_level_metadata_is_bound_to_state(tmp_path:Path):
     raw=json.loads(p.read_text())
     raw['decision_ns']=11
     p.write_text(json.dumps(raw))
-    assert not ReplayCheckpoint.load(p).verify()
+    import pytest
+    with pytest.raises(ValueError,match='verification'):
+        ReplayCheckpoint.load(p)
+    assert not ReplayCheckpoint.load(p,verify=False).verify()
 
 
 def test_checkpoint_top_level_frame_hash_tamper_fails(tmp_path:Path):
@@ -64,7 +67,10 @@ def test_checkpoint_top_level_frame_hash_tamper_fails(tmp_path:Path):
     s=StatePacket(10,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash='abc')
     cp=ReplayCheckpoint.from_state(s); p=tmp_path/'cp-frame.json'; cp.save(p)
     raw=json.loads(p.read_text());raw['frame_hash']='tampered';p.write_text(json.dumps(raw))
-    assert not ReplayCheckpoint.load(p).verify()
+    import pytest
+    with pytest.raises(ValueError,match='verification'):
+        ReplayCheckpoint.load(p)
+    assert not ReplayCheckpoint.load(p,verify=False).verify()
 
 
 def test_checkpoint_requires_frame_hash_and_finite_state():
@@ -132,3 +138,13 @@ def test_aion_adapter_rejects_silent_ingestion_time_coercion():
         aion_bar_observation(known,ingested_ns=19)
     with pytest.raises(ValueError,match='non-negative integer'):
         aion_bar_observation(known,ingested_ns=20.5)
+
+
+def test_checkpoint_load_rejects_invalid_schema_and_bad_verify_flag(tmp_path:Path):
+    import json,pytest
+    p=tmp_path/'bad.json'
+    p.write_text(json.dumps({"x":1}))
+    with pytest.raises(ValueError,match='schema'):
+        ReplayCheckpoint.load(p)
+    with pytest.raises(TypeError,match='verify'):
+        ReplayCheckpoint.load(p,verify=1)
