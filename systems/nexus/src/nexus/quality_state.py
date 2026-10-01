@@ -22,12 +22,31 @@ class QualityStateEngine:
             raise TypeError("packet must be StatePacket")
         if not isinstance(manifests,Mapping):
             raise TypeError("manifests must be a mapping")
+        for sid,manifest in manifests.items():
+            if not isinstance(sid,str) or not sid:
+                raise ValueError("manifest mapping keys must be non-empty stream ids")
+            if not isinstance(manifest,StreamManifest):
+                raise TypeError(f"manifest for {sid!r} must be StreamManifest")
+            if manifest.identity.stream_id != sid:
+                raise ValueError(
+                    f"manifest mapping key {sid!r} does not match manifest stream_id "
+                    f"{manifest.identity.stream_id!r}"
+                )
         stale=float(stale_after_multiples)
         if not math.isfinite(stale) or stale<=0:
             raise ValueError("stale_after_multiples must be finite and positive")
         if clock_uncertainty_ns is not None and not isinstance(clock_uncertainty_ns,Mapping):
             raise TypeError("clock_uncertainty_ns must be a mapping or None")
-        clock_uncertainty_ns=clock_uncertainty_ns or {};all_ids=sorted(set(manifests)|set(packet.values)|set(packet.missing));states={};stale_ids=[];uncertain=0
+        clock_uncertainty_ns=clock_uncertainty_ns or {}
+        unknown_uncertainty=set(clock_uncertainty_ns)-(
+            set(manifests)|set(packet.values)|set(packet.missing)
+        )
+        if unknown_uncertainty:
+            raise ValueError(
+                "clock_uncertainty_ns contains unknown stream ids: "
+                + ", ".join(sorted(unknown_uncertainty))
+            )
+        all_ids=sorted(set(manifests)|set(packet.values)|set(packet.missing));states={};stale_ids=[];uncertain=0
         for sid in all_ids:
             m=manifests.get(sid);base=quality_score(m) if m is not None else 0.0;cadence=m.observed_cadence_ns if m is not None else None
             age=packet.ages_ns.get(sid);present=sid in packet.values and age is not None
