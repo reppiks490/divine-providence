@@ -332,6 +332,7 @@ class HierarchicalFactorEngine:
         quality_weights: Mapping[str, float] | None = None,
         require_reviewable_identity: bool = True,
         require_authoritative_identity: bool = True,
+        reviewed_registry=None,
     ) -> HierarchicalFusionResult:
         """Build a fail-closed, four-axis representation-safe model plane."""
         grouped:dict[str,list]={}
@@ -354,7 +355,25 @@ class HierarchicalFactorEngine:
             if manifest is None:
                 unresolved.append(str(sid))
                 continue
-            claim = manifest.metadata.get("representation_claim", {})
+            manifest_claim = manifest.metadata.get("representation_claim", {})
+            claim = dict(manifest_claim) if isinstance(manifest_claim,Mapping) else {}
+
+            if reviewed_registry is not None:
+                from .review_registry import ReviewedRepresentationRegistry
+                if not isinstance(reviewed_registry,ReviewedRepresentationRegistry):
+                    raise TypeError("reviewed_registry must be ReviewedRepresentationRegistry or None")
+                record=reviewed_registry.get(sid)
+                if record is not None:
+                    reviewed_claim=record.authoritative_claim_for_manifest(manifest)
+                    if claim.get("authoritative") is True:
+                        keys=("family","price_geometry","sampling_domain","construction")
+                        if any(str(claim.get(k)) != str(reviewed_claim.get(k)) for k in keys):
+                            raise ValueError(
+                                f"conflicting authoritative representation identity for stream {sid}"
+                            )
+                    else:
+                        claim=reviewed_claim
+
             family = str(claim.get("family", "unknown"))
             geometry = str(claim.get("price_geometry", "unknown"))
             construction = str(claim.get("construction", "unknown"))
