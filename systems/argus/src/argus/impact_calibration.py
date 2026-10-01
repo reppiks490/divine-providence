@@ -363,6 +363,100 @@ def calibrate_impact(
     )
 
 
+def _validate_observation(row: ImpactCalibrationObservation) -> None:
+    if not isinstance(row, ImpactCalibrationObservation):
+        raise TypeError(
+            "observations must contain ImpactCalibrationObservation values"
+        )
+    _canonical_id("execution_id", row.execution_id)
+    _nonnegative_ns("curve_event_time_ns", row.curve_event_time_ns)
+    _nonnegative_ns("curve_sequence", row.curve_sequence)
+    if isinstance(row.side, bool) or row.side not in (-1, 1):
+        raise ValueError("calibration side must be +/-1")
+
+    requested = _positive("calibration requested_size", row.requested_size)
+    visible = _positive(
+        "calibration visible_opposite_size",
+        row.visible_opposite_size,
+    )
+    ratio = _positive(
+        "calibration requested_to_visible_ratio",
+        row.requested_to_visible_ratio,
+    )
+    if not _close(ratio, requested / visible):
+        raise ValueError("requested_to_visible_ratio is inconsistent")
+
+    _nonnegative_ns("snapshot_age_ns", row.snapshot_age_ns)
+    _nonnegative_ns("completion_latency_ns", row.completion_latency_ns)
+
+    predicted_fill = _nonnegative(
+        "predicted_fill_fraction",
+        row.predicted_fill_fraction,
+    )
+    realized_fill = _nonnegative(
+        "realized_fill_fraction",
+        row.realized_fill_fraction,
+    )
+    if predicted_fill > 1.0 or realized_fill > 1.0:
+        raise ValueError("fill fractions cannot exceed 1")
+    fill_error = _finite("fill_fraction_error", row.fill_fraction_error)
+    if not _close(fill_error, realized_fill - predicted_fill):
+        raise ValueError("fill_fraction_error is inconsistent")
+
+    predicted_slippage = _nonnegative(
+        "predicted_average_slippage_ticks",
+        row.predicted_average_slippage_ticks,
+    )
+
+    if row.realized_average_slippage_ticks is None:
+        if realized_fill > 1e-12:
+            raise ValueError("positive realized fill requires realized slippage")
+        if (
+            row.slippage_error_ticks is not None
+            or row.absolute_slippage_error_ticks is not None
+            or row.underpredicted_slippage is not None
+        ):
+            raise ValueError("missing realized slippage must have null error fields")
+    else:
+        realized_slippage = _finite(
+            "realized_average_slippage_ticks",
+            row.realized_average_slippage_ticks,
+        )
+        if row.slippage_error_ticks is None:
+            raise ValueError("realized slippage requires slippage_error_ticks")
+        error = _finite("slippage_error_ticks", row.slippage_error_ticks)
+        if not _close(error, realized_slippage - predicted_slippage):
+            raise ValueError("slippage_error_ticks is inconsistent")
+        if row.absolute_slippage_error_ticks is None:
+            raise ValueError(
+                "realized slippage requires absolute_slippage_error_ticks"
+            )
+        absolute = _nonnegative(
+            "absolute_slippage_error_ticks",
+            row.absolute_slippage_error_ticks,
+        )
+        if not _close(absolute, abs(error)):
+            raise ValueError("absolute_slippage_error_ticks is inconsistent")
+        if type(row.underpredicted_slippage) is not bool:
+            raise TypeError("underpredicted_slippage must be bool when filled")
+        if row.underpredicted_slippage != (error > 1e-12):
+            raise ValueError("underpredicted_slippage is inconsistent")
+
+    if type(row.predicted_book_exhausted) is not bool:
+        raise TypeError("predicted_book_exhausted must be bool")
+    if type(row.realized_complete_fill) is not bool:
+        raise TypeError("realized_complete_fill must be bool")
+    if row.realized_complete_fill != _close(realized_fill, 1.0):
+        raise ValueError("realized_complete_fill is inconsistent")
+
+    if row.evidence_tier is not EvidenceTier.TRUE_DEPTH:
+        raise ValueError("calibration observation lost TRUE_DEPTH evidence")
+    if row.assumption != "static_visible_depth_only":
+        raise ValueError("unsupported calibration assumption")
+    if row.execution_authorized or row.production_decision_authorized:
+        raise ValueError("calibration observation unexpectedly carries authority")
+
+
 def summarize_impact_calibration(
     observations: Iterable[ImpactCalibrationObservation],
 ) -> ImpactCalibrationSummary:
@@ -374,19 +468,10 @@ def summarize_impact_calibration(
 
     seen: set[str] = set()
     for row in rows:
-        if not isinstance(row, ImpactCalibrationObservation):
-            raise TypeError(
-                "observations must contain ImpactCalibrationObservation values"
-            )
+        _validate_observation(row)
         if row.execution_id in seen:
             raise ValueError("duplicate execution_id in calibration summary")
         seen.add(row.execution_id)
-        if row.evidence_tier is not EvidenceTier.TRUE_DEPTH:
-            raise ValueError("calibration observation lost TRUE_DEPTH evidence")
-        if row.assumption != "static_visible_depth_only":
-            raise ValueError("unsupported calibration assumption")
-        if row.execution_authorized or row.production_decision_authorized:
-            raise ValueError("calibration observation unexpectedly carries authority")
 
     fill_errors = [row.fill_fraction_error for row in rows]
     slippage_errors = [
