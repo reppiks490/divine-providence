@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import asdict, dataclass
-import hashlib,json
+import hashlib,json,os,tempfile
 from pathlib import Path
 from .contracts import StatePacket
 
@@ -52,7 +52,24 @@ class ReplayCheckpoint:
         return hashlib.sha256(raw).hexdigest()==self.checkpoint_hash
 
     def save(self,path:str|Path):
-        Path(path).write_text(json.dumps(asdict(self),indent=2,sort_keys=True),encoding="utf-8")
+        if not self.verify():
+            raise ValueError("cannot save invalid checkpoint")
+        target=Path(path)
+        target.parent.mkdir(parents=True,exist_ok=True)
+        payload=json.dumps(asdict(self),indent=2,sort_keys=True,allow_nan=False)
+        fd,tmp_name=tempfile.mkstemp(prefix=f".{target.name}.",suffix=".tmp",dir=str(target.parent))
+        try:
+            with os.fdopen(fd,"w",encoding="utf-8",newline="\n") as handle:
+                handle.write(payload)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(tmp_name,target)
+        except Exception:
+            try:
+                os.unlink(tmp_name)
+            except FileNotFoundError:
+                pass
+            raise
 
     @classmethod
     def load(cls,path:str|Path,*,verify:bool=True)->"ReplayCheckpoint":
