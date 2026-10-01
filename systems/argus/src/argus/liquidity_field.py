@@ -137,6 +137,10 @@ def liquidity_field(
 
     if not isinstance(dynamics, DepthDynamics):
         raise TypeError("dynamics must be DepthDynamics")
+    if isinstance(dynamics.event_time_ns, bool) or not isinstance(dynamics.event_time_ns, int) or dynamics.event_time_ns < 0:
+        raise ValueError("event_time_ns must be a non-negative integer")
+    if isinstance(dynamics.sequence, bool) or not isinstance(dynamics.sequence, int) or dynamics.sequence < 0:
+        raise ValueError("sequence must be a non-negative integer")
     if dynamics.evidence_tier is not EvidenceTier.TRUE_DEPTH:
         raise ValueError("liquidity field requires TRUE_DEPTH evidence")
     if isinstance(dynamics.levels, bool) or not isinstance(dynamics.levels, int) or dynamics.levels < 1:
@@ -165,6 +169,8 @@ def liquidity_field(
     ask_total = sum(ask_depth)
     if bid_total <= 0 or ask_total <= 0:
         raise ValueError("liquidity field requires positive two-sided displayed depth")
+    if bid_depth[0] <= 0 or ask_depth[0] <= 0:
+        raise ValueError("liquidity field requires positive displayed depth at both touch buckets")
 
     bid_persistence = _bounded_array(
         "bid_persistence_by_tick",
