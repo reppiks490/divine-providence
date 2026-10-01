@@ -58,6 +58,7 @@ class OrderBlockStudyCohort:
     included_block_ids: tuple[str, ...]
     exclusions: tuple[tuple[str, str], ...]
     administrative_censored: int
+    administrative_censored_block_ids: tuple[str, ...]
 
 
 def _nonnegative_int(name: str, value: int) -> int:
@@ -354,7 +355,7 @@ def lock_study_cohort(
     seen: set[str] = set()
     included: list[OrderBlockSurvivalRecord] = []
     exclusions: list[tuple[str, str]] = []
-    administrative_censored = 0
+    administrative_censored_ids: list[str] = []
 
     for subject in subject_rows:
         _validate_subject(subject)
@@ -393,7 +394,7 @@ def lock_study_cohort(
                 invalidated=False,
                 terminal_state=OrderBlockState.EXPIRED,
             )
-            administrative_censored += 1
+            administrative_censored_ids.append(block_id)
 
         included.append(record)
 
@@ -402,12 +403,15 @@ def lock_study_cohort(
 
     included.sort(key=lambda row: row.block_id)
     exclusions.sort()
+    administrative_censored_ids.sort()
+    administrative_censored = len(administrative_censored_ids)
 
     cohort_payload = {
         "manifest_id": manifest.manifest_id,
         "records": [_record_payload(row) for row in included],
         "exclusions": exclusions,
         "administrative_censored": administrative_censored,
+        "administrative_censored_block_ids": administrative_censored_ids,
     }
     cohort_id = _hash("order-block-cohort", cohort_payload)
 
@@ -418,6 +422,7 @@ def lock_study_cohort(
         included_block_ids=tuple(row.block_id for row in included),
         exclusions=tuple(exclusions),
         administrative_censored=administrative_censored,
+        administrative_censored_block_ids=tuple(administrative_censored_ids),
     )
 
 
@@ -450,12 +455,43 @@ def _validate_cohort(
         or cohort.administrative_censored > len(cohort.records)
     ):
         raise ValueError("administrative_censored is invalid")
+    if (
+        cohort.administrative_censored_block_ids
+        != tuple(sorted(set(cohort.administrative_censored_block_ids)))
+    ):
+        raise ValueError(
+            "administrative_censored_block_ids must be sorted and unique"
+        )
+    if cohort.administrative_censored != len(
+        cohort.administrative_censored_block_ids
+    ):
+        raise ValueError(
+            "administrative_censored does not match censored block IDs"
+        )
+    record_by_id = {row.block_id: row for row in cohort.records}
+    for block_id in cohort.administrative_censored_block_ids:
+        if block_id not in record_by_id:
+            raise ValueError("administratively censored block is not in cohort")
+        row = record_by_id[block_id]
+        if row.invalidated or row.terminal_state is not OrderBlockState.EXPIRED:
+            raise ValueError(
+                "administratively censored block must be an EXPIRED censor record"
+            )
+
+    exclusion_ids = [item[0] for item in cohort.exclusions]
+    if len(exclusion_ids) != len(set(exclusion_ids)):
+        raise ValueError("cohort exclusions contain duplicate block IDs")
+    if set(exclusion_ids) & set(cohort.included_block_ids):
+        raise ValueError("cohort block cannot be both included and excluded")
 
     payload = {
         "manifest_id": cohort.manifest_id,
         "records": [_record_payload(row) for row in cohort.records],
         "exclusions": list(cohort.exclusions),
         "administrative_censored": cohort.administrative_censored,
+        "administrative_censored_block_ids": list(
+            cohort.administrative_censored_block_ids
+        ),
     }
     expected_id = _hash("order-block-cohort", payload)
     if cohort.cohort_id != expected_id:
