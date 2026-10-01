@@ -82,6 +82,7 @@ def _connection(path: str | Path) -> sqlite3.Connection:
 
 def _verify_rows(db: sqlite3.Connection) -> int:
     previous = GENESIS
+    previous_stamp: str | None = None
     count = 0
     for row in db.execute("SELECT * FROM snapshots ORDER BY seq"):
         count += 1
@@ -96,6 +97,8 @@ def _verify_rows(db: sqlite3.Connection) -> int:
                 or stamp != row["received_at"] or row["synthetic"] not in (0, 1)
                 or type(row["http_status"]) is not int or not 100 <= row["http_status"] <= 599):
             raise ValueError(f"invalid snapshot metadata at row {count}")
+        if previous_stamp is not None and stamp < previous_stamp:
+            raise ValueError(f"receipt clock moved backward at row {count}")
         raw_hash = _digest(row["raw_response"])
         identity = _identity(row["environment"], domain, tx, stamp,
                              row["http_status"], bool(row["synthetic"]), raw_hash)
@@ -104,6 +107,7 @@ def _verify_rows(db: sqlite3.Connection) -> int:
                 or expected != row["row_sha256"]):
             raise ValueError(f"snapshot content tampered at row {count}")
         previous = expected
+        previous_stamp = stamp
     return count
 
 
@@ -144,8 +148,12 @@ def _append_snapshot(path: str | Path, *, environment: str, source_domain: int,
         existing = db.execute("SELECT seq, row_sha256 FROM snapshots WHERE identity_sha256=?", (identity,)).fetchone()
         if existing:
             return {"seq": existing["seq"], "row_sha256": existing["row_sha256"], "duplicate": True}
-        head = db.execute("SELECT row_sha256 FROM snapshots ORDER BY seq DESC LIMIT 1").fetchone()
-        previous = head[0] if head else GENESIS
+        head = db.execute(
+            "SELECT received_at,row_sha256 FROM snapshots ORDER BY seq DESC LIMIT 1"
+        ).fetchone()
+        if head is not None and stamp < head["received_at"]:
+            raise ValueError("receipt clock moved backward; snapshot not recorded")
+        previous = head["row_sha256"] if head else GENESIS
         row_hash = _digest(f"{previous}:{identity}".encode("ascii"))
         cursor = db.execute("""INSERT INTO snapshots
             (environment, source_domain, transaction_hash, received_at, http_status,
