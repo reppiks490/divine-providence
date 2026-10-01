@@ -29,7 +29,7 @@ def _quality_adjusted_consensus(
     c = robust_representation_consensus(symbol, event_ns, values)
     if c.representation_count == 0:
         return math.nan, math.nan, math.nan, 0.0
-    if not quality:
+    if quality is None:
         return (
             c.consensus_return,
             c.disagreement,
@@ -40,7 +40,7 @@ def _quality_adjusted_consensus(
     raw = []
     xs = []
     for sid, rw in c.contributions.items():
-        q = float(quality.get(sid, 1.0))
+        q = float(quality.get(sid, 0.0))
         if not math.isfinite(q) or not 0.0 <= q <= 1.0:
             raise ValueError(f"quality weight for {sid!r} must be finite and in [0,1]")
         w = float(rw) * q
@@ -59,7 +59,7 @@ def _quality_adjusted_consensus(
         agreement = float(np.mean(np.abs(x) < max(disagreement, 1e-12)))
     else:
         agreement = float(np.mean(np.sign(x) == np.sign(consensus)))
-    effective = float(sum(float(quality.get(sid,1.0)) for sid in c.contributions))
+    effective = float(sum(float(quality.get(sid,0.0)) for sid in c.contributions))
     return consensus, disagreement, agreement, effective
 
 
