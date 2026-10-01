@@ -206,3 +206,48 @@ def test_neighbor_distance_balances_sources_not_axis_width():
     result = atlas.neighbors(query, k=2, min_shared_axes=1)
     assert "source_distances" in result["neighbors"][0]
     assert set(result["neighbors"][0]["source_distances"]) == {"macro", "wide"}
+
+
+def test_same_time_conflicting_axis_observations_fail_closed():
+    with pytest.raises(ValueError, match="ambiguous same-time observations"):
+        build_fingerprint(20, [
+            obs("x", 1.0, 20, lineage="first"),
+            obs("x", 2.0, 20, lineage="second"),
+        ])
+
+
+def test_neighbor_mask_honors_one_shot_iterables():
+    atlas = AnalogAtlas()
+    candidate_a = build_fingerprint(10, [
+        obs("x", 0.0, 10, source="keep"),
+        obs("y", 100.0, 10, source="drop"),
+    ])
+    candidate_b = build_fingerprint(20, [
+        obs("x", 2.0, 20, source="keep"),
+        obs("y", 0.0, 20, source="drop"),
+    ])
+    atlas.add(candidate_a)
+    atlas.add(candidate_b)
+    query = build_fingerprint(30, [
+        obs("x", 0.1, 30, source="keep"),
+        obs("y", 0.0, 30, source="drop"),
+    ])
+
+    excluded_sources = (name for name in ["drop"])
+    result = atlas.neighbors(
+        query,
+        k=2,
+        min_shared_axes=1,
+        exclude_sources=excluded_sources,
+    )
+    assert result["query_axes"] == ["x"]
+    assert result["neighbors"][0]["fingerprint_id"] == candidate_a.fingerprint_id
+
+    excluded_axes = (name for name in ["y"])
+    result_axes = atlas.neighbors(
+        query,
+        k=2,
+        min_shared_axes=1,
+        exclude_axes=excluded_axes,
+    )
+    assert result_axes["query_axes"] == ["x"]
