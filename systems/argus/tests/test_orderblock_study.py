@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from argus.contracts import EvidenceTier
@@ -359,3 +361,40 @@ def test_subject_identity_strings_are_canonical():
                 ),
             ),
         )
+
+
+def test_manifest_content_identity_is_self_verified():
+    m = manifest()
+    tampered_name = replace(m, study_name="changed-after-lock")
+    with pytest.raises(ValueError, match="manifest_id"):
+        lock_study_cohort(tampered_name, (subject("x"),))
+
+    wrong_schema = replace(m, schema_version="argus-orderblock-study-v999")
+    with pytest.raises(ValueError, match="schema_version"):
+        lock_study_cohort(wrong_schema, (subject("x"),))
+
+
+def test_registered_analysis_rejects_tampered_cohort_content():
+    m = manifest()
+    cohort = lock_study_cohort(m, (subject("a"), subject("b")))
+
+    wrong_ids = replace(
+        cohort,
+        included_block_ids=("b", "a"),
+    )
+    with pytest.raises(ValueError, match="included_block_ids"):
+        registered_kaplan_meier(m, wrong_ids)
+
+    wrong_count = replace(
+        cohort,
+        administrative_censored=1,
+    )
+    with pytest.raises(ValueError, match="cohort_id"):
+        registered_kaplan_meier(m, wrong_count)
+
+    wrong_cohort_id = replace(
+        cohort,
+        cohort_id="order-block-cohort:" + "0" * 64,
+    )
+    with pytest.raises(ValueError, match="cohort_id"):
+        registered_kaplan_meier(m, wrong_cohort_id)
