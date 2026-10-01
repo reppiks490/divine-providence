@@ -339,3 +339,18 @@ def test_explicit_quality_map_does_not_default_missing_streams_to_full_weight():
     )
     assert np.isnan(blocked.iloc[0]["A"])
     assert blocked_coverage.iloc[0]["A"]==0.0
+
+
+def test_hierarchy_requires_sampling_domain_as_fourth_identity_axis():
+    import pytest
+    m=_m("NQ","6")
+    m.metadata["representation_claim"]={
+        "family":"regular_candles",
+        "price_geometry":"standard_ohlc",
+        "construction":"time_bar",
+        "authoritative":True,
+    }
+    returns=pd.DataFrame({m.identity.stream_id:[.01,.01,.01]})
+    d=EnsembleDefinition("H",("NQ",),methods=("equal",),window=2,min_periods=1,rebalance_every=1)
+    with pytest.raises(ValueError,match="representation identity unresolved"):
+        HierarchicalFactorEngine().build_from_manifests(returns,[m],d)
