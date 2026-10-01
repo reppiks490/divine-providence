@@ -285,7 +285,7 @@ class AnalogAtlas:
             raise KeyError("unknown fingerprint")
         settlement = Settlement(fingerprint_id, outcome, available_ns, source_id, verified)
         if settlement.available_ns <= frame.decision_ns:
-            raise ValueError("outcome cannot be available at or before the decision")
+            raise ValueError("outcome must become available after the decision; at or before is invalid")
         existing = self._settlements.get(fingerprint_id)
         if existing is not None and existing != settlement:
             raise ValueError("settlement is immutable")
