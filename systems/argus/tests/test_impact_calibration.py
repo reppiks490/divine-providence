@@ -281,3 +281,19 @@ def test_summary_rejects_duplicates_and_empty_input():
 
     with pytest.raises(ValueError, match="at least one"):
         summarize_impact_calibration(())
+
+
+def test_summary_rejects_tampered_observation_math():
+    obs = calibrate_impact(curve(), execution("tamper-summary"))
+
+    bad_fill = replace(obs, fill_fraction_error=99.0)
+    with pytest.raises(ValueError, match="fill_fraction_error"):
+        summarize_impact_calibration((bad_fill,))
+
+    bad_slippage = replace(obs, slippage_error_ticks=99.0)
+    with pytest.raises(ValueError, match="slippage_error_ticks"):
+        summarize_impact_calibration((bad_slippage,))
+
+    bad_complete = replace(obs, realized_complete_fill=False)
+    with pytest.raises(ValueError, match="realized_complete_fill"):
+        summarize_impact_calibration((bad_complete,))
