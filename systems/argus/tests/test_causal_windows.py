@@ -232,6 +232,55 @@ def test_depth_window_reconstructs_every_visible_state_and_lineage(tmp_path):
     )
 
 
+def test_depth_lineage_tracks_only_dependencies_of_retained_states(tmp_path):
+    journal = EventJournal(tmp_path / "argus.sqlite3")
+    journal.register(depth_contract())
+    first = journal.append(snapshot(1, 10, 11))
+    journal.append(delta(2, 12, 13, price=99.0, size=7.0))
+    replacement = journal.append(
+        snapshot(
+            3,
+            14,
+            15,
+            bids=((99.0, 9.0),),
+            asks=((100.0, 8.0),),
+        )
+    )
+
+    window = depth_window_asof(
+        journal,
+        source_id="depth",
+        at_received_ns=15,
+        limit=1,
+    )
+
+    assert len(window.snapshots) == 1
+    assert window.snapshots[0].sequence == 3
+    assert window.source_row_sha256s == (replacement["row_sha256"],)
+    assert first["row_sha256"] not in window.source_row_sha256s
+
+
+def test_duplicate_raw_snapshot_levels_fail_closed_before_dict_collapse(tmp_path):
+    journal = EventJournal(tmp_path / "argus.sqlite3")
+    journal.register(depth_contract())
+    journal.append(
+        snapshot(
+            1,
+            10,
+            11,
+            bids=((99.0, 5.0), (99.0, 7.0)),
+            asks=((100.0, 4.0),),
+        )
+    )
+
+    with pytest.raises(ValueError, match="duplicate bid price"):
+        depth_window_asof(
+            journal,
+            source_id="depth",
+            at_received_ns=11,
+        )
+
+
 def test_depth_window_never_sees_future_delta(tmp_path):
     journal = EventJournal(tmp_path / "argus.sqlite3")
     journal.register(depth_contract())
