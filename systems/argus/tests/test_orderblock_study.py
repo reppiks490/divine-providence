@@ -286,13 +286,31 @@ def test_registered_analysis_requires_manifest_and_predeclaration():
     strata = registered_evidence_strata(m, cohort)
     assert [item.label for item in strata] == ["TRUE_DEPTH"]
 
-    no_strata = manifest(analysis_plan=("kaplan_meier",))
+    no_strata = manifest(
+        study_name="no-strata",
+        analysis_plan=("kaplan_meier",),
+    )
+    no_strata_cohort = lock_study_cohort(
+        no_strata,
+        (
+            subject("no-strata-event", duration=20, invalidated=True),
+        ),
+    )
     with pytest.raises(ValueError, match="not predeclared"):
-        registered_evidence_strata(no_strata, cohort)
+        registered_evidence_strata(no_strata, no_strata_cohort)
 
-    no_km = manifest(analysis_plan=("evidence_tier_strata",))
+    no_km = manifest(
+        study_name="no-km",
+        analysis_plan=("evidence_tier_strata",),
+    )
+    no_km_cohort = lock_study_cohort(
+        no_km,
+        (
+            subject("no-km-event", duration=20, invalidated=True),
+        ),
+    )
     with pytest.raises(ValueError, match="not predeclared"):
-        registered_kaplan_meier(no_km, cohort)
+        registered_kaplan_meier(no_km, no_km_cohort)
 
 
 def test_cohort_cannot_be_reused_under_different_manifest():
@@ -302,3 +320,13 @@ def test_cohort_cannot_be_reused_under_different_manifest():
 
     with pytest.raises(ValueError, match="not locked under"):
         registered_kaplan_meier(second_manifest, cohort)
+
+
+def test_registered_analysis_type_guards():
+    m = manifest()
+    cohort = lock_study_cohort(m, (subject("x"),))
+
+    with pytest.raises(TypeError, match="manifest"):
+        registered_kaplan_meier({}, cohort)
+    with pytest.raises(TypeError, match="cohort"):
+        registered_kaplan_meier(m, {})
