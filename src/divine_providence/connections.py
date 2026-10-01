@@ -23,7 +23,7 @@ CONNECTIONS: dict[str, Connection] = {c.name: c for c in [
                "NEXUS SiblingInstantRouter -> AION EventStore / ARGUS MicrostructureFeature / ATHENA Provenance / DAEDALUS bridge",
                "One causally atomic NEXUS instant validated against the exact sibling contract modules (loaded by file path)."),
     Connection("nexus-contract-drift", "nexus_contract_drift", ("nexus",),
-               "nexus.contract-drift-snapshot.v1 vs pinned path-independent v1.15 baseline b394df6c... (v0.3 release 1119ef3d... reported)",
+               "nexus.contract-drift-snapshot.v1 vs pinned path-independent v1.16 baseline 65cba148... (v1.15 and v0.3 retained historically)",
                "Per-boundary raw/AST drift of sibling contracts against the baseline PROMETHEUS pins (ADR 0004). Drift is reported, not auto-accepted."),
     Connection("nexus-oracle", "nexus_to_oracle", ("nexus", "oracle"),
                "nexus.market-state.v2 -> oracle.nexus_ingest MetricObservation -> FinancialState",
