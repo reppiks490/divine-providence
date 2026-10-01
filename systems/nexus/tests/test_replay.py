@@ -141,3 +141,22 @@ def test_replay_rejects_coerced_option_types():
         list(ReplayBus().states([event],max_age_ns=1.5))
     with pytest.raises(ValueError,match="max_age_ns"):
         list(ReplayBus().states([event],max_age_ns=True))
+
+
+def test_synthetic_point_rejects_invalid_structure():
+    import pytest
+    from nexus.contracts import SyntheticPoint
+    good=SyntheticPoint(
+        'NEXUS:X',10,1.0,{'a':1.0},{'a':1.0},0.8,('raw:a',)
+    )
+    assert good.confidence==0.8
+    with pytest.raises(ValueError,match='ticker'):
+        SyntheticPoint(' bad ',10,1.0,{'a':1.0},{'a':1.0},0.8,('x',))
+    with pytest.raises(ValueError,match='synthetic value'):
+        SyntheticPoint('X',10,float('nan'),{'a':1.0},{'a':1.0},0.8,('x',))
+    with pytest.raises(ValueError,match='component keys'):
+        SyntheticPoint('X',10,1.0,{'a':1.0},{'b':1.0},0.8,('x',))
+    with pytest.raises(ValueError,match='confidence'):
+        SyntheticPoint('X',10,1.0,{'a':1.0},{'a':1.0},1.1,('x',))
+    with pytest.raises(ValueError,match='lineage'):
+        SyntheticPoint('X',10,1.0,{'a':1.0},{'a':1.0},0.8,())
