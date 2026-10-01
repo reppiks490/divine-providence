@@ -90,6 +90,11 @@ Input subject order does not change cohort identity.
 
 Duplicate block IDs fail closed.
 
+Manifest and cohort objects are self-verified before registered analyses run:
+their schema/content must reproduce their stored content-addressed IDs. A
+manually constructed or mutated dataclass cannot bypass the factory by merely
+copying a manifest ID.
+
 ## Registered analyses
 
 The first allowed analysis-plan entries are:
