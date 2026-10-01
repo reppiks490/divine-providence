@@ -99,3 +99,22 @@ def test_review_triage_artifact_is_semantically_tamper_evident():
         json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
     ).hexdigest()
     assert not verify_representation_review_triage(forged)
+
+
+def test_review_triage_rejects_rehashed_invalid_cluster_identity():
+    out=build_representation_review_triage(_sealed_queue([_candidate()]))
+    forged=json.loads(json.dumps(out))
+    forged["clusters"][0]["stream_ids"]=[""]
+    forged.pop("triage_hash")
+    forged["triage_hash"]=hashlib.sha256(
+        json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_representation_review_triage(forged)
+
+    forged=json.loads(json.dumps(out))
+    forged["clusters"][0]["symbols"]=["NQ1!","NQ1!"]
+    forged.pop("triage_hash")
+    forged["triage_hash"]=hashlib.sha256(
+        json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_representation_review_triage(forged)
