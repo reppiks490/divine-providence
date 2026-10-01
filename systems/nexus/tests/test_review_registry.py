@@ -113,3 +113,30 @@ def test_structured_model_identity_axes_must_be_semantically_coherent():
         _record(**{**common,'sampling_domain':'event','sampling_construction':'provider_native'})
     with pytest.raises(ValueError,match='regular_candles view'):
         _record(**{**common,'price_geometry':'heikin_ashi'})
+
+
+def test_review_registry_persistence_is_atomic_and_schema_strict(tmp_path:Path):
+    reg=ReviewedRepresentationRegistry();r=_record();reg.register(r);reg.activate(r.stream_id,'1')
+    target=tmp_path/'nested'/'registry.json'
+    reg.save(target)
+    assert ReviewedRepresentationRegistry.load(target).get(r.stream_id)==r
+    assert not list(target.parent.glob('*.tmp'))
+
+    body=json.loads(target.read_text())
+    body['unexpected']='authority'
+    core={k:v for k,v in body.items() if k!='registry_hash'}
+    import hashlib
+    body['registry_hash']=hashlib.sha256(
+        json.dumps(core,sort_keys=True,separators=(',',':'),allow_nan=False).encode()
+    ).hexdigest()
+    target.write_text(json.dumps(body))
+    with pytest.raises(ValueError,match='schema shape'):
+        ReviewedRepresentationRegistry.load(target)
+
+
+def test_review_registry_activation_requires_canonical_identity():
+    reg=ReviewedRepresentationRegistry();r=_record();reg.register(r)
+    with pytest.raises(ValueError,match='trimmed'):
+        reg.activate(' '+r.stream_id,'1')
+    with pytest.raises(ValueError,match='trimmed'):
+        reg.activate(r.stream_id,' 1 ')
