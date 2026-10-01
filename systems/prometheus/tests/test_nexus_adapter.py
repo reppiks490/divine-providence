@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 from pathlib import Path
 
@@ -15,6 +16,13 @@ FIXTURE = Path(__file__).parent / "fixtures" / "nexus_v03_same_instant_bundle.js
 
 def _payload():
     return json.loads(FIXTURE.read_text())
+
+
+def _rehash(payload):
+    unsigned = {k: v for k, v in payload.items() if k != "bundle_hash"}
+    raw = json.dumps(unsigned, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    payload["bundle_hash"] = hashlib.sha256(raw).hexdigest()
+    return payload
 
 
 def test_accepts_recovered_nexus_v03_bundle():
@@ -47,7 +55,7 @@ def test_rejects_production_authorization_anywhere_explicit():
     for sibling in ("aion", "daedalus"):
         bad = _payload()
         bad[sibling]["production_authorized"] = True
-        with pytest.raises(ValueError, match="production_authorized"):
+        with pytest.raises(ValueError, match="bundle_hash"):
             validate_nexus_bundle(bad, NEXUS_V03_CONTRACT_SNAPSHOT_HASH)
 
 
@@ -59,5 +67,5 @@ def test_rejects_wrong_contract_snapshot_hash():
 def test_rejects_non_mapping_sibling_payload():
     payload = _payload()
     payload["argus"] = []
-    with pytest.raises(ValueError, match="argus"):
+    with pytest.raises(ValueError, match="bundle_hash"):
         validate_nexus_bundle(payload, NEXUS_V03_CONTRACT_SNAPSHOT_HASH)

@@ -113,3 +113,14 @@ def test_v116_bundle_still_rejects_production_authority_after_valid_rehash():
     result = try_bind_nexus_bundle(payload, CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH)
     assert isinstance(result, FailureCase)
     assert "production_authorized" in result.details
+
+
+
+def test_v116_rejects_non_mapping_sibling_after_valid_rehash():
+    payload = _upgrade_aion_v116_semantics(copy.deepcopy(_load(V115)))
+    payload["athena"]["purpose"] = "fresh-current-fixture"
+    payload["argus"] = []
+    _rehash(payload)
+    result = try_bind_nexus_bundle(payload, CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH)
+    assert isinstance(result, FailureCase)
+    assert "argus" in result.details
