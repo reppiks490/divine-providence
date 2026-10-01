@@ -72,6 +72,26 @@ jobs:
               print("=== " + name + " ===")
               print(json.dumps(connections.check(name), indent=2, sort_keys=True))
           PY
+      - name: Emit current sibling contract snapshot
+        env:
+          PYTHONPATH: systems/nexus/src
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from nexus.contract_sentinel import ContractDriftSnapshot
+          root = Path.cwd()
+          systems = root / "systems"
+          boundaries = {
+              ("AION", "contracts"): systems / "aion" / "aion" / "contracts.py",
+              ("AION", "store"): systems / "aion" / "aion" / "store.py",
+              ("ARGUS", "contracts"): systems / "argus" / "src" / "argus" / "contracts.py",
+              ("ATHENA", "contracts"): systems / "athena" / "src" / "athena" / "contracts.py",
+              ("DAEDALUS", "bridge"): systems / "daedalus" / "src" / "daedalus" / "bridge.py",
+          }
+          snapshot = ContractDriftSnapshot.capture(boundaries, relative_to=systems)
+          print("CURRENT_SIBLING_CONTRACT_SNAPSHOT=" + json.dumps(snapshot.to_dict(), sort_keys=True))
+          PY
       - name: Causal intelligence-fabric connection
         run: python -m divine_providence.cli connect intelligence-fabric
       - name: Hub tests
