@@ -6,6 +6,7 @@ from typing import Any
 from .bookmap import DepthDynamics, depth_dynamics
 from .contracts import BookLevel, BookSnapshot, EvidenceTier, Trade
 from .flow_dynamics import FlowDynamics, flow_dynamics
+from .flow_events import AggressiveRun, aggressive_runs
 from .journal import EventJournal
 from .liquidity_field import LiquidityField, liquidity_field
 
@@ -34,6 +35,7 @@ class CausalMicrostructureSnapshot:
     trade_source_id: str
     book_source_id: str
     flow: FlowDynamics
+    aggressive_runs: tuple[AggressiveRun, ...]
     depth: DepthDynamics
     liquidity: LiquidityField
     trade_latest_received_ns: int
@@ -317,6 +319,11 @@ def microstructure_snapshot_asof(
         tick_size=tick_size,
         allow_inferred=allow_inferred_trade_side,
     )
+    runs = aggressive_runs(
+        list(trades.trades),
+        tick_size=tick_size,
+        allow_inferred=allow_inferred_trade_side,
+    )
     depth_features = depth_dynamics(
         list(depth.snapshots),
         tick_size=tick_size,
@@ -337,6 +344,7 @@ def microstructure_snapshot_asof(
         trade_source_id=trade_source_id,
         book_source_id=book_source_id,
         flow=flow,
+        aggressive_runs=runs,
         depth=depth_features,
         liquidity=liquidity,
         trade_latest_received_ns=trades.latest_received_ns,
