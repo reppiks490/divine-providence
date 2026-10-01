@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 import hashlib
 import json
+import math
 from typing import Iterable
 
 from .contracts import EvidenceTier
@@ -187,8 +188,50 @@ def _validate_subject(subject: OrderBlockStudySubject) -> None:
     _nonempty("asset_id", subject.asset_id)
     _nonempty("lifecycle_revision", subject.lifecycle_revision)
     _nonnegative_int("confirmation_time_ns", subject.confirmation_time_ns)
-    if subject.record.block_id == "":
-        raise ValueError("subject record block_id is required")
+
+    record = subject.record
+    _nonempty("subject record block_id", record.block_id)
+    if isinstance(record.direction, bool) or record.direction not in (-1, 1):
+        raise ValueError("subject record direction must be +/-1")
+    if not isinstance(record.evidence_tier, EvidenceTier):
+        raise TypeError("subject record evidence_tier must be EvidenceTier")
+    if (
+        isinstance(record.duration_ns, bool)
+        or not isinstance(record.duration_ns, int)
+        or record.duration_ns < 0
+    ):
+        raise ValueError("subject record duration_ns must be non-negative integer")
+    if type(record.invalidated) is not bool:
+        raise TypeError("subject record invalidated must be bool")
+    if (
+        isinstance(record.test_count, bool)
+        or not isinstance(record.test_count, int)
+        or record.test_count < 0
+    ):
+        raise ValueError("subject record test_count must be non-negative integer")
+    if (
+        isinstance(record.rejection_count, bool)
+        or not isinstance(record.rejection_count, int)
+        or record.rejection_count < 0
+        or record.rejection_count > record.test_count
+    ):
+        raise ValueError("subject record rejection_count must be in [0, test_count]")
+    if (
+        isinstance(record.max_penetration_fraction, bool)
+        or not isinstance(record.max_penetration_fraction, (int, float))
+        or not math.isfinite(float(record.max_penetration_fraction))
+        or float(record.max_penetration_fraction) < 0
+    ):
+        raise ValueError(
+            "subject record max_penetration_fraction must be finite and non-negative"
+        )
+    expected = (
+        OrderBlockState.INVALIDATED
+        if record.invalidated
+        else OrderBlockState.EXPIRED
+    )
+    if record.terminal_state is not expected:
+        raise ValueError("subject record terminal_state is inconsistent")
 
 
 def _record_payload(record: OrderBlockSurvivalRecord) -> dict:
