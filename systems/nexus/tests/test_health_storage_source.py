@@ -190,3 +190,23 @@ def test_quality_plane_rejects_manifest_alias_and_unknown_uncertainty():
         QualityStateEngine().build(
             state,{sid:m},clock_uncertainty_ns={'other':1}
         )
+
+
+def test_quality_plane_rejects_internally_inconsistent_telemetry():
+    import pytest
+    from nexus.quality_state import StreamQualityState,QualityPlane
+    s=StreamQualityState(
+        's',True,0,10,1.0,1.0,0.0,0,False,()
+    )
+    with pytest.raises(ValueError,match='coverage|aggregate'):
+        QualityPlane(
+            10,{'s':s},0.0,1.0,1.0,0,0.0,0.0,'a'*20
+        )
+    with pytest.raises(ValueError,match='stream mapping'):
+        QualityPlane(
+            10,{'other':s},1.0,1.0,1.0,0,0.0,0.0,'a'*20
+        )
+    with pytest.raises(ValueError,match='digest prefix'):
+        QualityPlane(
+            10,{'s':s},1.0,1.0,1.0,0,0.0,0.0,'bad'
+        )
