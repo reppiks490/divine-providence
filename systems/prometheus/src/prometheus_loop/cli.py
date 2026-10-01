@@ -8,6 +8,7 @@ from typing import Sequence
 from .attestation import AttestationVerificationReceipt, ExternalExecutionAttestation, PluginAttestationPolicy
 from .contracts import CandidateImprovement, LoopKind
 from .fixtures import sample_candidate_profile, sample_observations, sample_plugins
+from .handoff import build_ascension_handoff_export
 from .ids import content_id
 from .memory.store import ResearchMemory
 from .orchestration.loop import HostPluginResult, PrometheusLoop, RunInput
@@ -135,6 +136,7 @@ def _demo(memory_path: Path, *, policy: PluginAttestationPolicy = PluginAttestat
         "experiment_id": result.experiment.artifact_id if result.experiment is not None else None,
         "reused_negative": result.reused_negative,
         "plugin_attestation_policy": policy.value,
+        "plugin_evidence_ids": list(result.plugin_evidence_ids),
         "external_attestation_ids": list(result.external_attestation_ids),
         "attestation_verification_ids": list(result.attestation_verification_ids),
         "attestation_coverage_gaps": list(result.attestation_coverage_gaps),
@@ -157,6 +159,14 @@ def build_parser() -> argparse.ArgumentParser:
     demo.add_argument("--memory", type=Path, required=True, help="path for append-only local research memory")
     strict = subparsers.add_parser("demo-strict-attested", help="run deterministic strict externally-attested fixture")
     strict.add_argument("--memory", type=Path, required=True, help="path for append-only local research memory")
+    handoff = subparsers.add_parser(
+        "export-ascension-handoff",
+        help="export exact PROMETHEUS runtime provenance into ASCENSION's structural handoff contract",
+    )
+    handoff.add_argument("--memory", type=Path, required=True, help="existing append-only PROMETHEUS research memory")
+    handoff.add_argument("--provenance-manifest-id", required=True, help="research-provenance: identifier to export")
+    handoff.add_argument("--plugin-evidence-id", required=True, help="plugin-evidence: identifier bound to that manifest")
+    handoff.add_argument("--output", type=Path, help="optional JSON destination; stdout is always emitted")
     return parser
 
 
@@ -167,6 +177,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
     if args.command == "demo-strict-attested":
         print(json.dumps(_demo(args.memory, policy=PluginAttestationPolicy.REQUIRE_VERIFIED), sort_keys=True))
+        return 0
+    if args.command == "export-ascension-handoff":
+        payload = build_ascension_handoff_export(
+            ResearchMemory(args.memory),
+            provenance_manifest_id=args.provenance_manifest_id,
+            plugin_evidence_id=args.plugin_evidence_id,
+        )
+        rendered = json.dumps(payload, sort_keys=True)
+        if args.output is not None:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(rendered + "\n", encoding="utf-8")
+        print(rendered)
         return 0
     return 2
 
