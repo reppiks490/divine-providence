@@ -119,7 +119,7 @@ def _finite(name: str, value: float) -> float:
 
 
 def _validate_candidate(candidate: OrderBlockCandidate) -> None:
-    if candidate.direction not in (-1, 1):
+    if isinstance(candidate.direction, bool) or candidate.direction not in (-1, 1):
         raise ValueError("candidate direction must be +/-1")
     lower = _finite("candidate lower", candidate.lower)
     upper = _finite("candidate upper", candidate.upper)
@@ -199,6 +199,10 @@ def confirm_order_block(
     at_time_ns: int,
     config: OrderBlockLifecycleConfig = OrderBlockLifecycleConfig(),
 ) -> OrderBlockLifecycle:
+    if not isinstance(lifecycle, OrderBlockLifecycle):
+        raise TypeError("lifecycle must be OrderBlockLifecycle")
+    if not isinstance(config, OrderBlockLifecycleConfig):
+        raise TypeError("config must be OrderBlockLifecycleConfig")
     if lifecycle.state is not OrderBlockState.CREATED:
         raise ValueError("only CREATED blocks can be confirmed")
     if (
@@ -278,6 +282,12 @@ def advance_order_block(
 ) -> OrderBlockLifecycle:
     """Advance one order-block hypothesis with one causal price observation."""
 
+    if not isinstance(lifecycle, OrderBlockLifecycle):
+        raise TypeError("lifecycle must be OrderBlockLifecycle")
+    if not isinstance(observation, OrderBlockObservation):
+        raise TypeError("observation must be OrderBlockObservation")
+    if not isinstance(config, OrderBlockLifecycleConfig):
+        raise TypeError("config must be OrderBlockLifecycleConfig")
     if lifecycle.state in (OrderBlockState.INVALIDATED, OrderBlockState.EXPIRED):
         raise ValueError("terminal order-block lifecycle cannot accept observations")
     if observation.event_time_ns <= lifecycle.last_event_time_ns:
