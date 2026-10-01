@@ -221,7 +221,8 @@ class ReviewedRepresentationRegistry:
     reviewable operation, and prior versions remain addressable for replay.
     """
 
-    SCHEMA="nexus.reviewed-representation-registry.v1"
+    SCHEMA="nexus.reviewed-representation-registry.v2"
+    LEGACY_SCHEMA="nexus.reviewed-representation-registry.v1"
 
     def __init__(self)->None:
         self._records:dict[tuple[str,str],ReviewedRepresentationRecord]={}
@@ -302,7 +303,8 @@ class ReviewedRepresentationRegistry:
         ).hexdigest()
         if supplied != expected:
             raise ValueError("reviewed representation registry hash mismatch")
-        if body.get("schema") != cls.SCHEMA:
+        schema=body.get("schema")
+        if schema not in {cls.SCHEMA,cls.LEGACY_SCHEMA}:
             raise ValueError("unsupported reviewed representation registry schema")
         out=cls()
         try:
@@ -311,9 +313,19 @@ class ReviewedRepresentationRegistry:
                     raise ValueError("reviewed registry record must be an object")
                 row=dict(raw_row)
                 rh=row.pop("record_hash",None)
-                r=ReviewedRepresentationRecord(**row)
-                if rh != r.record_hash:
-                    raise ValueError(f"reviewed record hash mismatch: {r.key}")
+                if schema == cls.LEGACY_SCHEMA:
+                    legacy_hash=hashlib.sha256(
+                        json.dumps(
+                            row,sort_keys=True,separators=(",",":"),allow_nan=False
+                        ).encode()
+                    ).hexdigest()
+                    if rh != legacy_hash:
+                        raise ValueError("legacy reviewed record hash mismatch")
+                    r=ReviewedRepresentationRecord(**row)
+                else:
+                    r=ReviewedRepresentationRecord(**row)
+                    if rh != r.record_hash:
+                        raise ValueError(f"reviewed record hash mismatch: {r.key}")
                 out.register(r)
             for sid,version in body["active"].items():
                 out.activate(sid,version)
