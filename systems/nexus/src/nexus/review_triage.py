@@ -135,6 +135,17 @@ def verify_representation_review_triage(payload: Mapping[str, Any] | None) -> bo
     if not isinstance(clusters,list) or body.get("cluster_count") != len(clusters):
         return False
     counts=Counter();stream_total=0;stream_ids=[]
+    cluster_reason_counts=body.get("review_reason_counts")
+    cluster_evidence_counts=body.get("evidence_requirement_counts")
+    if not isinstance(cluster_reason_counts,Mapping) or not isinstance(cluster_evidence_counts,Mapping):
+        return False
+    for mapping in (cluster_reason_counts,cluster_evidence_counts):
+        if any(
+            not isinstance(k,str) or not k
+            or type(v) is not int or v < 0
+            for k,v in mapping.items()
+        ):
+            return False
     for row in clusters:
         if not isinstance(row,Mapping):
             return False
@@ -147,7 +158,10 @@ def verify_representation_review_triage(payload: Mapping[str, Any] | None) -> bo
         count=row.get("stream_count")
         if (
             not cls or not venue or not isinstance(ids,list) or not ids
+            or any(not isinstance(x,str) or not x for x in ids)
             or not isinstance(symbols,list) or not symbols
+            or any(not isinstance(x,str) or not x for x in symbols)
+            or len(set(symbols)) != len(symbols)
             or type(count) is not int or count < 1 or count != len(ids)
             or len(set(ids)) != len(ids)
             or row.get("authoritative_resolution_required") is not True
@@ -168,4 +182,5 @@ def verify_representation_review_triage(payload: Mapping[str, Any] | None) -> bo
         and body.get("triage_class_counts") == dict(sorted(counts.items()))
         and type(body.get("p2_count")) is int
         and body["p2_count"] >= 0
+        and body.get("cluster_count")==len(clusters)
     )
