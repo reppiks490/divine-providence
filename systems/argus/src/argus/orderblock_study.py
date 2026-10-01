@@ -245,6 +245,89 @@ def _validate_subject(subject: OrderBlockStudySubject) -> None:
         raise ValueError("subject record terminal_state is inconsistent")
 
 
+def _manifest_payload(manifest: OrderBlockStudyManifest) -> dict:
+    return {
+        "schema_version": manifest.schema_version,
+        "study_name": manifest.study_name,
+        "created_time_ns": manifest.created_time_ns,
+        "cohort_start_ns": manifest.cohort_start_ns,
+        "cohort_end_ns": manifest.cohort_end_ns,
+        "followup_cutoff_ns": manifest.followup_cutoff_ns,
+        "lifecycle_revision": manifest.lifecycle_revision,
+        "asset_ids": manifest.asset_ids,
+        "evidence_tiers": [tier.name for tier in manifest.evidence_tiers],
+        "directions": manifest.directions,
+        "analysis_horizon_ns": manifest.analysis_horizon_ns,
+        "analysis_plan": manifest.analysis_plan,
+    }
+
+
+def _validate_manifest(manifest: OrderBlockStudyManifest) -> None:
+    if not isinstance(manifest, OrderBlockStudyManifest):
+        raise TypeError("manifest must be OrderBlockStudyManifest")
+    if manifest.schema_version != STUDY_SCHEMA_VERSION:
+        raise ValueError("unsupported study schema_version")
+
+    if _nonempty("study_name", manifest.study_name) != manifest.study_name:
+        raise ValueError("study_name must be canonical")
+    if _nonempty("lifecycle_revision", manifest.lifecycle_revision) != manifest.lifecycle_revision:
+        raise ValueError("lifecycle_revision must be canonical")
+
+    created = _nonnegative_int("created_time_ns", manifest.created_time_ns)
+    start = _nonnegative_int("cohort_start_ns", manifest.cohort_start_ns)
+    end = _nonnegative_int("cohort_end_ns", manifest.cohort_end_ns)
+    cutoff = _nonnegative_int("followup_cutoff_ns", manifest.followup_cutoff_ns)
+    _positive_int_or_none("analysis_horizon_ns", manifest.analysis_horizon_ns)
+
+    if created > start:
+        raise ValueError("prospective manifest must be created at or before cohort_start_ns")
+    if start >= end:
+        raise ValueError("cohort_start_ns must be before cohort_end_ns")
+    if cutoff < end:
+        raise ValueError("followup_cutoff_ns must be at or after cohort_end_ns")
+
+    if (
+        not manifest.asset_ids
+        or manifest.asset_ids != tuple(sorted(set(manifest.asset_ids)))
+        or any(_nonempty("asset_id", item) != item for item in manifest.asset_ids)
+    ):
+        raise ValueError("asset_ids must be non-empty canonical sorted unique values")
+
+    if (
+        not manifest.evidence_tiers
+        or any(not isinstance(tier, EvidenceTier) for tier in manifest.evidence_tiers)
+        or manifest.evidence_tiers
+        != tuple(sorted(set(manifest.evidence_tiers), key=int))
+    ):
+        raise ValueError(
+            "evidence_tiers must be non-empty canonical sorted unique EvidenceTier values"
+        )
+
+    if (
+        not manifest.directions
+        or any(
+            isinstance(direction, bool) or direction not in (-1, 1)
+            for direction in manifest.directions
+        )
+        or manifest.directions != tuple(sorted(set(manifest.directions)))
+    ):
+        raise ValueError("directions must be non-empty canonical sorted unique +/-1 values")
+
+    if (
+        not manifest.analysis_plan
+        or manifest.analysis_plan != tuple(sorted(set(manifest.analysis_plan)))
+        or any(_nonempty("analysis", item) != item for item in manifest.analysis_plan)
+    ):
+        raise ValueError("analysis_plan must be non-empty canonical sorted unique values")
+    unknown = set(manifest.analysis_plan) - _ALLOWED_ANALYSES
+    if unknown:
+        raise ValueError(f"unsupported analysis plan entries: {sorted(unknown)}")
+
+    expected_id = _hash("order-block-study", _manifest_payload(manifest))
+    if manifest.manifest_id != expected_id:
+        raise ValueError("manifest_id does not match manifest content")
+
+
 def _record_payload(record: OrderBlockSurvivalRecord) -> dict:
     return {
         "block_id": record.block_id,
@@ -265,8 +348,7 @@ def lock_study_cohort(
 ) -> OrderBlockStudyCohort:
     """Apply the predeclared study contract and freeze one deterministic cohort."""
 
-    if not isinstance(manifest, OrderBlockStudyManifest):
-        raise TypeError("manifest must be OrderBlockStudyManifest")
+    _validate_manifest(manifest)
 
     subject_rows = tuple(subjects)
     seen: set[str] = set()
@@ -325,6 +407,7 @@ def lock_study_cohort(
         "manifest_id": manifest.manifest_id,
         "records": [_record_payload(row) for row in included],
         "exclusions": exclusions,
+        "administrative_censored": administrative_censored,
     }
     cohort_id = _hash("order-block-cohort", cohort_payload)
 
@@ -338,16 +421,52 @@ def lock_study_cohort(
     )
 
 
-def registered_kaplan_meier(
+def _validate_cohort(
     manifest: OrderBlockStudyManifest,
     cohort: OrderBlockStudyCohort,
-) -> KaplanMeierCurve:
-    if not isinstance(manifest, OrderBlockStudyManifest):
-        raise TypeError("manifest must be OrderBlockStudyManifest")
+) -> None:
+    _validate_manifest(manifest)
     if not isinstance(cohort, OrderBlockStudyCohort):
         raise TypeError("cohort must be OrderBlockStudyCohort")
     if cohort.manifest_id != manifest.manifest_id:
         raise ValueError("cohort was not locked under this manifest")
+    if not cohort.records:
+        raise ValueError("cohort records are required")
+
+    # Reuse the survival estimator's public fail-closed record validation.
+    kaplan_meier(cohort.records)
+
+    expected_ids = tuple(row.block_id for row in cohort.records)
+    if cohort.included_block_ids != expected_ids:
+        raise ValueError("included_block_ids do not match cohort records")
+    if cohort.included_block_ids != tuple(sorted(cohort.included_block_ids)):
+        raise ValueError("included_block_ids must be sorted")
+    if cohort.exclusions != tuple(sorted(cohort.exclusions)):
+        raise ValueError("cohort exclusions must be sorted")
+    if (
+        isinstance(cohort.administrative_censored, bool)
+        or not isinstance(cohort.administrative_censored, int)
+        or cohort.administrative_censored < 0
+        or cohort.administrative_censored > len(cohort.records)
+    ):
+        raise ValueError("administrative_censored is invalid")
+
+    payload = {
+        "manifest_id": cohort.manifest_id,
+        "records": [_record_payload(row) for row in cohort.records],
+        "exclusions": list(cohort.exclusions),
+        "administrative_censored": cohort.administrative_censored,
+    }
+    expected_id = _hash("order-block-cohort", payload)
+    if cohort.cohort_id != expected_id:
+        raise ValueError("cohort_id does not match cohort content")
+
+
+def registered_kaplan_meier(
+    manifest: OrderBlockStudyManifest,
+    cohort: OrderBlockStudyCohort,
+) -> KaplanMeierCurve:
+    _validate_cohort(manifest, cohort)
     if "kaplan_meier" not in manifest.analysis_plan:
         raise ValueError("kaplan_meier was not predeclared")
     return kaplan_meier(cohort.records)
@@ -357,12 +476,7 @@ def registered_evidence_strata(
     manifest: OrderBlockStudyManifest,
     cohort: OrderBlockStudyCohort,
 ) -> tuple[SurvivalStratum, ...]:
-    if not isinstance(manifest, OrderBlockStudyManifest):
-        raise TypeError("manifest must be OrderBlockStudyManifest")
-    if not isinstance(cohort, OrderBlockStudyCohort):
-        raise TypeError("cohort must be OrderBlockStudyCohort")
-    if cohort.manifest_id != manifest.manifest_id:
-        raise ValueError("cohort was not locked under this manifest")
+    _validate_cohort(manifest, cohort)
     if "evidence_tier_strata" not in manifest.analysis_plan:
         raise ValueError("evidence_tier_strata was not predeclared")
     return survival_by_evidence_tier(cohort.records)
