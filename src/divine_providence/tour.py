@@ -55,9 +55,11 @@ def narrate(t: dict) -> str:
                  + ("no semantic drift" if not drift.get("semantic_drift") else "DRIFT: " + json.dumps(drift.get("items"))))
     obs = ", ".join(f"{o['sibling']}:{o['evidence_tier']}" for o in pro.get("observations", []))
     lines.append(f"[{mark(pro)}] 5. PROMETHEUS binds the same instant ({pro.get('link_state', '?')}) -> {obs or pro.get('refusal')}")
-    lines.append(f"[{mark(asc)}] 6. ASCENSION checks PROMETHEUS's attestation contract: missing fields "
-                 f"{asc.get('missing_attestation_fields', '?')}/{asc.get('missing_receipt_fields', '?')}, "
-                 f"authenticated={asc.get('authenticated')}, transfer={str(asc.get('transfer', '?')).split(':')[0]}")
+    lines.append(f"[{mark(asc)}] 6. PROMETHEUS emits exact runtime provenance bytes into ASCENSION: "
+                 f"status={asc.get('ascension_status', '?')}, "
+                 f"ready_for_adapter={asc.get('ready_for_adapter_v0_4')}, "
+                 f"authenticated={asc.get('authenticated')}, "
+                 f"transfer={str(asc.get('transfer', '?')).split(':')[0]}")
     neg = sm.get("negative_controls", {})
     lines.append(f"[{mark(sm)}] 7. SuperMesh-X witnesses the instant: log {sm.get('log_id', '?')}, size {sm.get('tree_size', '?')}, "
                  f"root {_short(sm.get('root'))}, quorum {sm.get('witness_quorum', '?')}/2; rewrite rejected="

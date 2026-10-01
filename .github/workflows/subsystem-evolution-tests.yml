@@ -8,6 +8,10 @@ on:
       - "systems/athena/**"
       - "systems/prometheus/**"
       - "systems/ascension/**"
+      - "src/divine_providence/drivers/prometheus_to_ascension.py"
+      - "src/divine_providence/connections.py"
+      - "src/divine_providence/tour.py"
+      - "tests/test_hub.py"
       - ".github/workflows/subsystem-evolution-tests.yml"
   pull_request:
     paths:
@@ -16,6 +20,10 @@ on:
       - "systems/athena/**"
       - "systems/prometheus/**"
       - "systems/ascension/**"
+      - "src/divine_providence/drivers/prometheus_to_ascension.py"
+      - "src/divine_providence/connections.py"
+      - "src/divine_providence/tour.py"
+      - "tests/test_hub.py"
       - ".github/workflows/subsystem-evolution-tests.yml"
   workflow_dispatch:
 

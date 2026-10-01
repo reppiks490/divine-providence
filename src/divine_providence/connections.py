@@ -32,8 +32,8 @@ CONNECTIONS: dict[str, Connection] = {c.name: c for c in [
                "SiblingInstantBundle -> prometheus_loop.adapters.nexus -> normalize_nexus_bundle (pinned NEXUS contract identity)",
                "LINKED when PROMETHEUS binds and normalizes the bundle with all fail-closed evidence tiers; with sibling drift it must quarantine (CONTRACT_DRIFT)."),
     Connection("prometheus-ascension", "prometheus_to_ascension", ("prometheus", "ascension"),
-               "prometheus_loop.attestation <-> ASCENSION Sibling Manifest Conformance Kit v0.1 declared profile",
-               "Field-level contract alignment only; authenticated=false and Transfer stays BLOCKED."),
+               "PROMETHEUS strict runtime ResearchProvenanceManifest -> exact byte-bound handoff -> ASCENSION Sibling Manifest Conformance Kit v0.1",
+               "The actual PROMETHEUS runtime path emits a deterministic structural handoff into ASCENSION; authenticated=false and Transfer remains BLOCKED until separately governed trust/transparency evidence exists."),
     Connection("supermesh-witness", "supermesh_witness", ("supermesh_x", "nexus"),
                "NEXUS SiblingInstantBundle + pinned contract baseline -> SuperMesh-X RFC9162WitnessedCheckpointLedger -> GossipReceiptStore",
                "NEXUS artifacts witnessed in SuperMesh-X's quorum-signed append-only transparency log and independently re-verified; "
