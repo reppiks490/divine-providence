@@ -204,6 +204,7 @@ def test_lineaged_calibration_keeps_broker_and_paper_evidence_separate():
     )
 
     assert broker.receipt.market_fill_confirmed is True
+    assert broker.lineage_id.startswith("impact-calibration-lineage:")
     assert broker.calibration.execution_id == broker.receipt.receipt_id
     assert broker.calibration.snapshot_age_ns == 5_000_000_000
     assert broker.calibration.completion_latency_ns == 5_000_000_000
@@ -234,7 +235,7 @@ def test_lineaged_summary_rejects_duplicate_or_tampered_links():
             execution_id="not-the-receipt",
         ),
     )
-    with pytest.raises(ValueError, match="execution_id"):
+    with pytest.raises(ValueError, match="lineage_id"):
         calibration_by_execution_evidence((bad_execution_id,))
 
     bad_fraction = replace(
@@ -244,7 +245,7 @@ def test_lineaged_summary_rejects_duplicate_or_tampered_links():
             realized_fill_fraction=0.5,
         ),
     )
-    with pytest.raises(ValueError, match="realized fill fraction"):
+    with pytest.raises(ValueError, match="lineage_id"):
         calibration_by_execution_evidence((bad_fraction,))
 
 
@@ -272,3 +273,11 @@ def test_icarus_fill_shape_is_exact_and_live_flag_is_boolean():
             decision_time_ns=105_000_000_000,
             observed_time_ns=111_000_000_000,
         )
+
+
+def test_lineaged_calibration_identity_changes_with_execution_evidence():
+    first = calibrate_lineaged_impact(curve(), broker_receipt("broker-fill-1"))
+    second = calibrate_lineaged_impact(curve(), broker_receipt("broker-fill-2"))
+
+    assert first.receipt.receipt_id != second.receipt.receipt_id
+    assert first.lineage_id != second.lineage_id
