@@ -94,5 +94,13 @@ jobs:
           PY
       - name: Causal intelligence-fabric connection
         run: python -m divine_providence.cli connect intelligence-fabric
+      - name: NEXUS tests
+        env:
+          PYTHONPATH: systems/nexus/src
+        run: python -m pytest -q systems/nexus/tests
+      - name: PROMETHEUS tests
+        env:
+          PYTHONPATH: systems/prometheus/src
+        run: python -m pytest -q systems/prometheus/tests
       - name: Hub tests
         run: python -m pytest -q tests
