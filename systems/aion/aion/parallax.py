@@ -118,6 +118,108 @@ def build_fingerprint(decision_ns: int, observations: Iterable[AxisObservation])
     return Fingerprint(decision_ns, axes, _fingerprint_id(decision_ns, axes))
 
 
+def observations_from_frame(frame: dict) -> tuple[AxisObservation, ...]:
+    """Convert one already-gated AION replay frame into auditable normalized axes.
+
+    A malformed frame that contains future-available data is rejected rather than
+    silently clipping it, because that would hide a causality defect upstream.
+    """
+    if not isinstance(frame, dict):
+        raise TypeError("frame must be a dict")
+    decision_ns = frame.get("asof_ns")
+    if type(decision_ns) is not int or decision_ns < 0:
+        raise ValueError("frame requires non-negative asof_ns")
+    frame_hash = _name("frame_hash", str(frame.get("frame_hash") or ""))
+    out: list[AxisObservation] = []
+
+    def add(axis, value, available_ns, source_id, representation_id, lineage_id):
+        if type(available_ns) is not int or available_ns < 0:
+            raise ValueError("frame observation available_ns must be non-negative")
+        if available_ns > decision_ns:
+            raise ValueError("AION frame contains future evidence")
+        out.append(AxisObservation(
+            axis=axis,
+            value=value,
+            available_ns=available_ns,
+            source_id=source_id,
+            representation_id=representation_id,
+            lineage_id=lineage_id,
+        ))
+
+    for row in frame.get("prices", ()):
+        if not isinstance(row, dict):
+            raise TypeError("price rows must be objects")
+        symbol = _name("price symbol", str(row.get("symbol") or ""))
+        rep = _name("representation_id", str(row.get("representation_id") or ""))
+        source = _name("source_id", str(row.get("source_id") or ""))
+        lineage = _name("event_hash", str(row.get("event_hash") or ""))
+        available = row.get("available_ns")
+        values = [row.get(k) for k in ("open", "high", "low", "close")]
+        if any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(float(v)) for v in values):
+            raise ValueError("price row requires finite OHLC")
+        open_, high, low, close = map(float, values)
+        if high < max(open_, close) or low > min(open_, close) or high < low:
+            raise ValueError("price row OHLC is inconsistent")
+        scale = max(abs(close), 1e-12)
+        span = max(high - low, 1e-12)
+        prefix = f"price.{symbol}.{rep}"
+        add(f"{prefix}.body_pct", (close - open_) / scale, available, source, rep, lineage)
+        add(f"{prefix}.range_pct", (high - low) / scale, available, source, rep, lineage)
+        add(f"{prefix}.close_location", (close - low) / span, available, source, rep, lineage)
+
+    for source, book in sorted((frame.get("books") or {}).items()):
+        if not isinstance(book, dict) or book.get("status") != "true_depth":
+            continue
+        source = _name("book source", str(source))
+        age = book.get("age_ns", 0)
+        if type(age) is not int or age < 0 or age > decision_ns:
+            raise ValueError("book age is invalid")
+        available = decision_ns - age
+        lineage = _hash({"frame_hash": frame_hash, "book_source": source, "sequence": book.get("sequence")})
+        imbalance = book.get("imbalance")
+        if isinstance(imbalance, (int, float)) and not isinstance(imbalance, bool) and math.isfinite(float(imbalance)):
+            add(f"book.{source}.imbalance", float(imbalance), available, source, "true_depth", lineage)
+        spread, bid, ask = book.get("spread"), book.get("best_bid"), book.get("best_ask")
+        if all(isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(float(v)) for v in (spread, bid, ask)):
+            mid = (float(bid) + float(ask)) / 2.0
+            if abs(mid) > 1e-12:
+                add(f"book.{source}.spread_pct", float(spread) / mid, available, source, "true_depth", lineage)
+
+    for row in frame.get("macro", ()):
+        if not isinstance(row, dict):
+            raise TypeError("macro rows must be objects")
+        source = _name("macro source", str(row.get("source_id") or ""))
+        available = row.get("available_ns")
+        values = row.get("values") or {}
+        if not isinstance(values, dict):
+            raise TypeError("macro values must be an object")
+        series = _name("macro series", str(values.get("series") or ""))
+        lineage = _hash({
+            "frame_hash": frame_hash,
+            "source": source,
+            "series": series,
+            "period": values.get("period"),
+            "revision": row.get("revision"),
+            "available_ns": available,
+        })
+        for key, value in sorted(values.items()):
+            if key in ("series", "period") or isinstance(value, bool) or not isinstance(value, (int, float)):
+                continue
+            number = float(value)
+            if math.isfinite(number):
+                add(f"macro.{source}.{series}.{key}", number, available, source, "macro", lineage)
+
+    return tuple(sorted(out, key=lambda x: (x.axis, x.available_ns, x.lineage_id)))
+
+
+def fingerprint_from_frame(frame: dict) -> Fingerprint:
+    """Create a PARALLAX fingerprint directly from an AION replay frame."""
+    decision_ns = frame.get("asof_ns") if isinstance(frame, dict) else None
+    if type(decision_ns) is not int:
+        raise ValueError("frame requires asof_ns")
+    return build_fingerprint(decision_ns, observations_from_frame(frame))
+
+
 def mask_fingerprint(
     fingerprint: Fingerprint,
     *,
@@ -237,11 +339,19 @@ class AnalogAtlas:
             shared = sorted(query_axes & set(candidate.values))
             if len(shared) < min_shared_axes:
                 continue
-            squared = sum(
-                ((masked.values[axis] - candidate.values[axis]) / scales[axis]) ** 2
-                for axis in shared
+            # Balance by source/representation family so one very wide sensor cannot
+            # dominate the neighborhood solely because it contributes more columns.
+            grouped: dict[str, list[float]] = {}
+            for axis in shared:
+                z = (masked.values[axis] - candidate.values[axis]) / scales[axis]
+                grouped.setdefault(masked.sources[axis], []).append(z * z)
+            source_distances = {
+                source: math.sqrt(sum(values) / len(values))
+                for source, values in grouped.items()
+            }
+            base_distance = math.sqrt(
+                sum(value * value for value in source_distances.values()) / len(source_distances)
             )
-            base_distance = math.sqrt(squared / len(shared))
             coverage = len(shared) / len(query_axes)
             distance = base_distance / math.sqrt(max(coverage, 1e-12))
             rows.append({
@@ -250,6 +360,7 @@ class AnalogAtlas:
                 "distance": distance,
                 "coverage": coverage,
                 "shared_axes": shared,
+                "source_distances": dict(sorted(source_distances.items())),
             })
         rows.sort(key=lambda x: (x["distance"], -x["coverage"], x["decision_ns"], x["fingerprint_id"]))
         selected = rows[:k]
