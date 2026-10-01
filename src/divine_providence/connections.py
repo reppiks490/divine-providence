@@ -41,6 +41,9 @@ CONNECTIONS: dict[str, Connection] = {c.name: c for c in [
     Connection("intelligence-fabric", "intelligence_fabric", ("nexus", "aion", "argus", "athena"),
                "NEXUS SiblingInstantBundle -> AION EventStore/PARALLAX fingerprint -> ARGUS evidence firewall + ATHENA receipt-time journal",
                "One deterministic instant is persisted, fingerprinted, evidence-tier checked, and admitted to ATHENA only at actual ingestion time; read-only research/advisory path."),
+    Connection("argus-athena-research", "argus_to_athena_research", ("argus", "athena"),
+               "ARGUS argus-orderblock-study-v2 registered survival uncertainty -> ATHENA receipt-time research advisory",
+               "A prospectively locked ARGUS order-block survival study is exported only after its follow-up cutoff and becomes visible to ATHENA only at local ingestion time; research/advisory evidence only."),
 ]}
 
 # Systems with no cross-system contract in their code (verified by import audit and repo-wide
