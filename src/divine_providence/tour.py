@@ -18,6 +18,7 @@ FLOW = ["nexus-siblings", "intelligence-fabric", "nexus-oracle", "nexus-contract
 AUXILIARY = [
     "argus-athena-research",
     "argus-impact-athena-research",
+    "argus-bootstrap-athena-research",
 ]
 
 
@@ -50,6 +51,7 @@ def narrate(t: dict) -> str:
     sib, fabric, ora, drift, pro, asc, sm = (c[n] for n in FLOW)
     research = c["argus-athena-research"]
     impact_research = c["argus-impact-athena-research"]
+    bootstrap_research = c["argus-bootstrap-athena-research"]
     mark = lambda r: "OK " if r.get("ok") else "FAIL"  # noqa: E731
     lines = ["ICARUS / Divine Providence - end-to-end tour  (" + t["generated_at"] + ")", ""]
     lines.append(f"[{mark(sib)}] 1. NEXUS packages one causally atomic market instant "
@@ -66,20 +68,25 @@ def narrate(t: dict) -> str:
                  f"paper={impact_research.get('argus', {}).get('paper_emulator_observations', '?')}, "
                  f"broker={impact_research.get('argus', {}).get('broker_confirmed_observations', '?')}) "
                  f"to ATHENA only after cohort lock and local receipt")
+    lines.append(f"[{mark(bootstrap_research)}] 5. ARGUS publishes pre-registered deterministic bootstrap uncertainty "
+                 f"(confidence={bootstrap_research.get('argus', {}).get('confidence_level', '?')}, "
+                 f"reps={bootstrap_research.get('argus', {}).get('bootstrap_replicates', '?')}, "
+                 f"paper={bootstrap_research.get('argus', {}).get('paper_emulator_observations', '?')}) "
+                 f"to ATHENA as descriptive research only after local receipt")
     feats = ora.get("financial_state_features", {})
-    lines.append(f"[{mark(ora)}] 5. ORACLE turns the {ora.get('packet_contract', '?')} packet into financial state: "
+    lines.append(f"[{mark(ora)}] 6. ORACLE turns the {ora.get('packet_contract', '?')} packet into financial state: "
                  + ", ".join(f"{k}={v}" for k, v in sorted(feats.items())))
-    lines.append(f"[{mark(drift)}] 6. Sibling contracts vs the baseline PROMETHEUS pins ({_short(drift.get('baseline_snapshot_hash'))}): "
+    lines.append(f"[{mark(drift)}] 7. Sibling contracts vs the baseline PROMETHEUS pins ({_short(drift.get('baseline_snapshot_hash'))}): "
                  + ("no semantic drift" if not drift.get("semantic_drift") else "DRIFT: " + json.dumps(drift.get("items"))))
     obs = ", ".join(f"{o['sibling']}:{o['evidence_tier']}" for o in pro.get("observations", []))
-    lines.append(f"[{mark(pro)}] 7. PROMETHEUS binds the same instant ({pro.get('link_state', '?')}) -> {obs or pro.get('refusal')}")
-    lines.append(f"[{mark(asc)}] 8. PROMETHEUS emits exact runtime provenance bytes into ASCENSION: "
+    lines.append(f"[{mark(pro)}] 8. PROMETHEUS binds the same instant ({pro.get('link_state', '?')}) -> {obs or pro.get('refusal')}")
+    lines.append(f"[{mark(asc)}] 9. PROMETHEUS emits exact runtime provenance bytes into ASCENSION: "
                  f"status={asc.get('ascension_status', '?')}, "
                  f"ready_for_adapter={asc.get('ready_for_adapter_v0_4')}, "
                  f"authenticated={asc.get('authenticated')}, "
                  f"transfer={str(asc.get('transfer', '?')).split(':')[0]}")
     neg = sm.get("negative_controls", {})
-    lines.append(f"[{mark(sm)}] 9. SuperMesh-X witnesses the instant: log {sm.get('log_id', '?')}, size {sm.get('tree_size', '?')}, "
+    lines.append(f"[{mark(sm)}] 10. SuperMesh-X witnesses the instant: log {sm.get('log_id', '?')}, size {sm.get('tree_size', '?')}, "
                  f"root {_short(sm.get('root'))}, quorum {sm.get('witness_quorum', '?')}/2; rewrite rejected="
                  f"{bool(neg.get('history_rewrite_rejected'))}, rollback rejected={bool(neg.get('rollback_rejected'))}")
     lines.append("")
