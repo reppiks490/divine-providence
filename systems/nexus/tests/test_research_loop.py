@@ -173,6 +173,7 @@ def test_checkpoint_counts_never_auto_authorize_coverage(tmp_path):
 
 
 def _make_completed_loop(tmp_path):
+    tmp_path.mkdir(parents=True,exist_ok=True)
     archive=tmp_path/"corpus.zip"
     _write_zip(archive)
     state=tmp_path/"state"
