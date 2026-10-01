@@ -10,10 +10,84 @@ class StreamQualityState:
     stream_id:str;present:bool;age_ns:int|None;cadence_ns:int|None;base_quality:float;dynamic_quality:float
     stale_ratio:float|None;clock_uncertainty_ns:int;stale:bool;quality_flags:tuple[str,...]=()
 
+    def __post_init__(self)->None:
+        if not isinstance(self.stream_id,str) or not self.stream_id:
+            raise ValueError("stream_id is required")
+        if type(self.present) is not bool or type(self.stale) is not bool:
+            raise TypeError("present and stale must be bool")
+        if self.age_ns is not None and (type(self.age_ns) is not int or self.age_ns < 0):
+            raise ValueError("age_ns must be a non-negative integer or None")
+        if self.present and self.age_ns is None:
+            raise ValueError("present quality state requires age_ns")
+        if self.cadence_ns is not None and (type(self.cadence_ns) is not int or self.cadence_ns <= 0):
+            raise ValueError("cadence_ns must be a positive integer or None")
+        for name,value in (("base_quality",self.base_quality),("dynamic_quality",self.dynamic_quality)):
+            v=float(value)
+            if not math.isfinite(v) or not 0.0 <= v <= 1.0:
+                raise ValueError(f"{name} must be finite and in [0,1]")
+        if self.stale_ratio is not None and (
+            not math.isfinite(float(self.stale_ratio)) or float(self.stale_ratio) < 0
+        ):
+            raise ValueError("stale_ratio must be finite and non-negative or None")
+        if type(self.clock_uncertainty_ns) is not int or self.clock_uncertainty_ns < 0:
+            raise ValueError("clock_uncertainty_ns must be a non-negative integer")
+        if (
+            not isinstance(self.quality_flags,tuple)
+            or any(not isinstance(x,str) for x in self.quality_flags)
+        ):
+            raise TypeError("quality_flags must be a tuple of strings")
+
 @dataclass(frozen=True)
 class QualityPlane:
     decision_ns:int;streams:Mapping[str,StreamQualityState];coverage:float;mean_quality:float;min_quality:float
     missing_count:int;stale_fraction:float=0.0;uncertain_clock_fraction:float=0.0;missingness_pattern_id:str=""
+
+    def __post_init__(self)->None:
+        if type(self.decision_ns) is not int or self.decision_ns < 0:
+            raise ValueError("decision_ns must be a non-negative integer")
+        if not isinstance(self.streams,Mapping):
+            raise TypeError("streams must be a mapping")
+        for sid,state in self.streams.items():
+            if not isinstance(state,StreamQualityState) or sid != state.stream_id:
+                raise ValueError("quality-plane stream mapping must match state stream_id")
+        n=len(self.streams)
+        present=sum(int(x.present) for x in self.streams.values())
+        stale=sum(int(x.stale) for x in self.streams.values())
+        uncertain=sum(
+            int(x.clock_uncertainty_ns>0 or "stamp_semantics_unknown" in x.quality_flags)
+            for x in self.streams.values()
+        )
+        vals=[x.dynamic_quality for x in self.streams.values()]
+        expected=(
+            present/n if n else 0.0,
+            sum(vals)/n if n else 0.0,
+            min(vals) if vals else 0.0,
+            n-present,
+            stale/n if n else 0.0,
+            uncertain/n if n else 0.0,
+        )
+        actual=(
+            float(self.coverage),float(self.mean_quality),float(self.min_quality),
+            self.missing_count,float(self.stale_fraction),float(self.uncertain_clock_fraction),
+        )
+        if type(self.missing_count) is not int or self.missing_count < 0:
+            raise ValueError("missing_count must be a non-negative integer")
+        if any(not math.isfinite(float(x)) for x in actual if not isinstance(x,int)):
+            raise ValueError("quality-plane aggregate metrics must be finite")
+        for got,want in zip(actual[:3],expected[:3]):
+            if abs(float(got)-float(want)) > 1e-12:
+                raise ValueError("quality-plane aggregate metrics are inconsistent with stream states")
+        if actual[3] != expected[3]:
+            raise ValueError("quality-plane missing_count is inconsistent with stream states")
+        for got,want in zip(actual[4:],expected[4:]):
+            if abs(float(got)-float(want)) > 1e-12:
+                raise ValueError("quality-plane fractions are inconsistent with stream states")
+        if not isinstance(self.missingness_pattern_id,str) or len(self.missingness_pattern_id)!=20:
+            raise ValueError("missingness_pattern_id must be a 20-character digest prefix")
+        try:
+            int(self.missingness_pattern_id,16)
+        except ValueError as exc:
+            raise ValueError("missingness_pattern_id must be hexadecimal") from exc
 
 class QualityStateEngine:
     """Time-varying data-health plane; missingness remains telemetry, never imputed truth."""
