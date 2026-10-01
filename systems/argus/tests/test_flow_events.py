@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from argus.contracts import EvidenceTier, Trade
-from argus.flow_events import aggressive_runs, select_sweep_like_runs
+from argus.flow_events import AggressiveRun, aggressive_runs, select_sweep_like_runs
 
 
 def test_explicit_aggressive_runs_segment_by_side():
@@ -205,3 +207,73 @@ def test_run_input_validation_reuses_flow_dynamics_guards():
             [Trade(1, 100.5, 1.0, 1, 1)],
             tick_size=1.0,
         )
+
+
+def _valid_manual_run():
+    return aggressive_runs(
+        [
+            Trade(1, 100.0, 1.0, 1, 1),
+            Trade(2, 101.0, 2.0, 1, 2),
+        ],
+        tick_size=1.0,
+    )[0]
+
+
+@pytest.mark.parametrize(
+    "change, error",
+    [
+        ({"side": 0}, "run.side"),
+        ({"trade_count": 0}, "trade_count"),
+        ({"distinct_price_levels": 3}, "distinct_price_levels"),
+        ({"end_event_time_ns": 0}, "event time"),
+        ({"duration_ns": 999}, "duration_ns"),
+        ({"max_interarrival_ns": 2}, "max_interarrival_ns"),
+        ({"total_volume": 0.0}, "total_volume"),
+        ({"vwap": float("nan")}, "vwap"),
+        ({"min_price": 102.0}, "min_price"),
+        ({"start_price": 999.0}, "start_price"),
+        ({"end_price": 999.0}, "end_price"),
+        ({"aligned_travel_ticks": 2.0}, "aligned travel"),
+        ({"range_ticks": 2.0}, "run range"),
+        ({"directional_efficiency": 1.1}, "directional_efficiency"),
+        ({"volume_concentration": 1.1}, "volume_concentration"),
+        ({"evidence_tier": EvidenceTier.TRUE_DEPTH}, "aggressive run evidence"),
+    ],
+)
+def test_sweep_filter_rejects_malformed_manual_runs(change, error):
+    run = replace(_valid_manual_run(), **change)
+    with pytest.raises((TypeError, ValueError), match=error):
+        select_sweep_like_runs((run,))
+
+
+def test_sweep_filter_rejects_non_run_values():
+    with pytest.raises(TypeError, match="AggressiveRun"):
+        select_sweep_like_runs(("not-a-run",))
+
+
+def test_single_trade_manual_run_requires_zero_interarrival():
+    run = AggressiveRun(
+        side=1,
+        start_event_time_ns=1,
+        end_event_time_ns=1,
+        start_sequence=1,
+        end_sequence=1,
+        trade_count=1,
+        total_volume=1.0,
+        vwap=100.0,
+        start_price=100.0,
+        end_price=100.0,
+        min_price=100.0,
+        max_price=100.0,
+        distinct_price_levels=1,
+        aligned_travel_ticks=0.0,
+        range_ticks=0.0,
+        path_length_ticks=0.0,
+        directional_efficiency=0.0,
+        duration_ns=0,
+        max_interarrival_ns=1,
+        volume_concentration=1.0,
+        evidence_tier=EvidenceTier.TRUE_TRADE,
+    )
+    with pytest.raises(ValueError, match="zero max_interarrival"):
+        select_sweep_like_runs((run,))
