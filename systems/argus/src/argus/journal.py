@@ -360,7 +360,10 @@ class EventJournal:
             if last is not None:
                 if event.received_time_ns < int(last["received_time_ns"]):
                     raise ValueError("receipt time cannot move backward for a source")
-                if event.event_time_ns < int(last["event_time_ns"]):
+                if (
+                    contract.sequence_policy != "none"
+                    and event.event_time_ns < int(last["event_time_ns"])
+                ):
                     raise ValueError("event time cannot move backward for a sequenced source")
             if event.sequence is not None and last is not None and last["sequence"] is not None:
                 previous = int(last["sequence"])
@@ -472,7 +475,10 @@ class EventJournal:
                 prior_seq, prior_event_ns, prior_received_ns = prior
                 if event.received_time_ns < prior_received_ns:
                     raise ValueError(f"backdated receipt at row {count}")
-                if event.event_time_ns < prior_event_ns:
+                if (
+                    contract.sequence_policy != "none"
+                    and event.event_time_ns < prior_event_ns
+                ):
                     raise ValueError(f"backdated event time at row {count}")
                 if event.sequence is not None and prior_seq is not None:
                     if event.sequence <= prior_seq:

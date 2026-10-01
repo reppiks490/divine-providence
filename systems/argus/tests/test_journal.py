@@ -192,6 +192,43 @@ def test_backdated_receipt_or_event_time_cannot_rewrite_history(tmp_path):
         ))
 
 
+def test_unsequenced_trade_source_accepts_late_event_time_with_newer_receipt(tmp_path):
+    journal = EventJournal(tmp_path / "argus.sqlite3")
+    journal.register(SourceContract(
+        source_id="late-trades",
+        max_evidence_tier=EvidenceTier.TRUE_TRADE,
+        sequence_policy="none",
+        provider_reference="unit-test-provider",
+        capability_reference="authenticated prints without exchange sequence",
+        allowed_kinds=("trade",),
+        identity_verified=True,
+        source_identity_reference="unit-test-provider-contract:v1",
+    ))
+    journal.append(JournalEvent(
+        source_id="late-trades",
+        kind="trade",
+        event_time_ns=100,
+        received_time_ns=200,
+        sequence=None,
+        evidence_tier=EvidenceTier.TRUE_TRADE,
+        payload={"price": 101.0, "size": 1.0, "side": "buy"},
+    ))
+    late = journal.append(JournalEvent(
+        source_id="late-trades",
+        kind="trade",
+        event_time_ns=90,
+        received_time_ns=201,
+        sequence=None,
+        evidence_tier=EvidenceTier.TRUE_TRADE,
+        payload={"price": 100.5, "size": 2.0, "side": "sell"},
+    ))
+    assert late["idempotent"] is False
+    rows = journal.events_asof(201, source_id="late-trades")
+    assert [row["event_time_ns"] for row in rows] == [100, 90]
+    assert [row["received_time_ns"] for row in rows] == [200, 201]
+    assert journal.verify()["verified"] is True
+
+
 def test_hash_chain_detects_content_tamper(tmp_path):
     journal = EventJournal(tmp_path / "argus.sqlite3")
     register_depth(journal)

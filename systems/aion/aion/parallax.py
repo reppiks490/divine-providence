@@ -107,11 +107,12 @@ def build_fingerprint(decision_ns: int, observations: Iterable[AxisObservation])
         if observation.available_ns > decision_ns:
             continue
         previous = latest.get(observation.axis)
-        if previous is None or (observation.available_ns, observation.lineage_id) > (
-            previous.available_ns,
-            previous.lineage_id,
-        ):
+        if previous is None or observation.available_ns > previous.available_ns:
             latest[observation.axis] = observation
+        elif observation.available_ns == previous.available_ns and observation != previous:
+            raise ValueError(
+                f"ambiguous same-time observations for axis {observation.axis!r}"
+            )
     if not latest:
         raise ValueError("no observations were available by decision time")
     axes = tuple(latest[name] for name in sorted(latest))
@@ -322,11 +323,16 @@ class AnalogAtlas:
             raise ValueError("k must be positive")
         if type(min_shared_axes) is not int or min_shared_axes < 1:
             raise ValueError("min_shared_axes must be positive")
+        # Materialize one-shot iterables before testing or reusing them. Otherwise
+        # a generator can be consumed by the truthiness check and silently disable
+        # the requested ablation/mask.
+        exclude_sources = tuple(exclude_sources)
+        exclude_axes = tuple(exclude_axes)
         masked = mask_fingerprint(
             query,
             exclude_sources=exclude_sources,
             exclude_axes=exclude_axes,
-        ) if tuple(exclude_sources) or tuple(exclude_axes) else query
+        ) if exclude_sources or exclude_axes else query
 
         candidates = [
             frame for frame in self._frames.values()

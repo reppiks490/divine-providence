@@ -187,3 +187,23 @@ def test_missing_ood_detector_fails_closed():
     memory.append(OutcomeRecord("a", 1, 2, 1, 1, "labels", True))
     evidence = memory.expert_evidence(2, min_samples=1)
     assert evidence[0].ood_score == 1.0
+
+
+def test_advisory_journal_outputs_cannot_mutate_append_only_state():
+    journal = AdvisoryJournal()
+    result = journal.append(AdvisoryEvent(
+        provenance=provenance(event=10, ingest=12),
+        kind="state",
+        available_ns=12,
+        payload={"nested": {"value": 1}},
+        sequence=1,
+    ))
+    result["body"]["payload"]["nested"]["value"] = 999
+
+    visible = journal.asof(12)
+    assert visible[0]["body"]["payload"]["nested"]["value"] == 1
+    visible[0]["body"]["payload"]["nested"]["value"] = 777
+
+    second_read = journal.asof(12)
+    assert second_read[0]["body"]["payload"]["nested"]["value"] == 1
+    assert journal.verify()["verified"] is True
