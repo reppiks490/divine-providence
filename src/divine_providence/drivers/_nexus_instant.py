@@ -30,7 +30,10 @@ def build():
                                     input_hashes={"NQ": ident.raw_sha256}, code_version="divine-providence-hub")
     health = SourceHealthRegistry()
     health.set_policy(ident.stream_id, SourceSLOPolicy(max_receive_lag_ns_p95=20, max_gap_size=0))
-    health.observe(event, received_ns=170)
+    # This fixture represents evidence that was actually received by the decision instant.
+    # SourceHealthRegistry correctly refuses to project a receipt observed at t=170 back into
+    # the t=160 decision state, so keep the synthetic receipt clock causally aligned here.
+    health.observe(event, received_ns=state.decision_ns)
     plane = health.snapshot(state.decision_ns)
     bundle = SiblingInstantRouter().package(batch=batch, state=state, manifests={ident.stream_id: manifest},
                                             factors=FACTORS, topology=TOPOLOGY, quality=QUALITY, ood=OOD,
