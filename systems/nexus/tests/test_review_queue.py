@@ -53,3 +53,14 @@ def test_review_queue_malformed_confidence_is_p0_not_silently_clean():
     assert row.hypothesis_confidence==0.0
     assert 'cadence_confidence_nonfinite' in row.review_reasons
     assert 'hypothesis_confidence_nonfinite' in row.review_reasons
+
+
+def test_review_queue_handles_nonmapping_hypothesis_as_unknown_p0():
+    m=_m('NQ')
+    m.metadata['representation_hypothesis']='corrupt'
+    q=build_representation_review_queue([m])
+    assert len(q.candidates)==1
+    row=q.candidates[0]
+    assert row.hypothesis_kind=='unknown'
+    assert row.priority in {'P0','P1'}
+    assert 'hypothesis:unknown' in row.review_reasons
