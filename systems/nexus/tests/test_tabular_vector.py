@@ -98,3 +98,15 @@ def test_vector_replay_rejects_coerced_option_types():
         list(VectorReplayBus().merge({"a":[e]},require_available=1))
     with pytest.raises(ValueError,match="max_age_ns"):
         list(VectorReplayBus().states({"a":[e]},max_age_ns=1.5))
+
+
+def test_vector_state_rejects_noncanonical_missing_and_empty_lineage():
+    from nexus.contracts import VectorStatePacket
+    with pytest.raises(ValueError,match='sorted canonically'):
+        VectorStatePacket(10,{}, {}, ('b','a'), {}, {})
+    with pytest.raises(ValueError,match='non-empty stream ids'):
+        VectorStatePacket(10,{}, {}, ('',), {}, {})
+    with pytest.raises(ValueError,match='non-empty string'):
+        VectorStatePacket(
+            10,{'s':{'x':1.0}},{'s':0},(),{'s':0},{'s':''}
+        )
