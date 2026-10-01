@@ -47,6 +47,9 @@ CONNECTIONS: dict[str, Connection] = {c.name: c for c in [
     Connection("argus-impact-athena-research", "argus_impact_to_athena_research", ("argus", "athena"),
                "ARGUS argus-impact-calibration-study-v1 registered evidence-stratified calibration -> ATHENA receipt-time research advisory",
                "A prospectively locked ARGUS impact-calibration study is revalidated, exported only after cohort lock, and admitted to ATHENA only at local ingestion time; paper-emulator evidence is never strengthened into broker-confirmed evidence."),
+    Connection("argus-bootstrap-athena-research", "argus_bootstrap_to_athena_research", ("argus", "athena"),
+               "ARGUS argus-impact-calibration-bootstrap-plan-v1 registered descriptive uncertainty -> ATHENA receipt-time research advisory",
+               "Prospectively registered deterministic percentile uncertainty is revalidated and transported after cohort lock; evidence classes remain separate and descriptive intervals are not mislabeled as hypothesis tests, simultaneous coverage, or causal effects."),
 ]}
 
 # Systems with no cross-system contract in their code (verified by import audit and repo-wide
