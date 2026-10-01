@@ -170,6 +170,10 @@ def test_unknown_aggressor_side_survives_as_unknown_for_flow_downgrade(tmp_path)
     )
     assert result.flow.evidence_tier is EvidenceTier.INFERRED_TRADE
     assert result.depth.evidence_tier is EvidenceTier.TRUE_DEPTH
+    assert result.trade_latest_received_ns == 11
+    assert result.depth_latest_received_ns == 10
+    assert result.trade_staleness_ns == 0
+    assert result.depth_staleness_ns == 1
     assert result.execution_authorized is False
     assert result.production_decision_authorized is False
 
@@ -333,6 +337,10 @@ def test_microstructure_snapshot_binds_feature_evidence_to_journal_rows(tmp_path
         d1["row_sha256"],
         d2["row_sha256"],
     )
+    assert result.trade_latest_received_ns == 13
+    assert result.depth_latest_received_ns == 13
+    assert result.trade_staleness_ns == 0
+    assert result.depth_staleness_ns == 0
     assert result.execution_authorized is False
     assert result.production_decision_authorized is False
 
