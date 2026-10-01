@@ -226,6 +226,7 @@ def _valid_manual_run():
         ({"trade_count": 0}, "trade_count"),
         ({"distinct_price_levels": 3}, "distinct_price_levels"),
         ({"end_event_time_ns": 0}, "event time"),
+        ({"start_sequence": 3, "end_sequence": 2}, "sequence"),
         ({"duration_ns": 999}, "duration_ns"),
         ({"max_interarrival_ns": 2}, "max_interarrival_ns"),
         ({"total_volume": 0.0}, "total_volume"),
@@ -236,7 +237,9 @@ def _valid_manual_run():
         ({"aligned_travel_ticks": 2.0}, "aligned travel"),
         ({"range_ticks": 2.0}, "run range"),
         ({"directional_efficiency": 1.1}, "directional_efficiency"),
+        ({"directional_efficiency": 0.5}, "must match"),
         ({"volume_concentration": 1.1}, "volume_concentration"),
+        ({"volume_concentration": 0.1}, "finite-run minimum"),
         ({"evidence_tier": EvidenceTier.TRUE_DEPTH}, "aggressive run evidence"),
     ],
 )
