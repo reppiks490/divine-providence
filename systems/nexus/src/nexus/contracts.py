@@ -378,8 +378,14 @@ class VectorStatePacket:
         keys=set(self.values)
         if keys != set(self.ages_ns) or keys != set(self.source_sequences) or keys != set(self.lineage):
             raise ValueError("vector state values/ages/source_sequences/lineage keys must match")
-        if not isinstance(self.missing,tuple) or len(set(self.missing)) != len(self.missing):
-            raise ValueError("missing must be a unique tuple")
+        if (
+            not isinstance(self.missing,tuple)
+            or any(not isinstance(x,str) or not x for x in self.missing)
+            or len(set(self.missing)) != len(self.missing)
+        ):
+            raise ValueError("missing must be a unique tuple of non-empty stream ids")
+        if tuple(sorted(self.missing)) != self.missing:
+            raise ValueError("missing stream ids must be sorted canonically")
         if keys & set(self.missing):
             raise ValueError("present vector state values cannot also be missing")
         for sid,fields in self.values.items():
@@ -397,5 +403,5 @@ class VectorStatePacket:
                 raise ValueError(f"vector state age for {sid!r} is invalid")
             if type(seq) is not int or seq < 0:
                 raise ValueError(f"vector state sequence for {sid!r} must be non-negative")
-            if not isinstance(self.lineage[sid],str):
-                raise TypeError(f"vector state lineage for {sid!r} must be a string")
+            if not isinstance(self.lineage[sid],str) or not self.lineage[sid]:
+                raise ValueError(f"vector state lineage for {sid!r} must be a non-empty string")
