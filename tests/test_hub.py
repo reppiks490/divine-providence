@@ -74,10 +74,17 @@ def test_sibling_contracts_match_the_pinned_v116_baseline():
     assert v03[("ATHENA", "contracts")] == "unchanged"
 
 
-def test_prometheus_ascension_link_never_claims_authentication():
+def test_prometheus_ascension_runtime_handoff_is_structural_only():
     r = connections.check("prometheus-ascension")
+    assert r["ok"] is True, r
+    assert r["runtime_export_generated"] is True
+    assert r["ascension_status"] == "STRUCTURALLY_CONFORMANT"
+    assert r["conformant"] is True
+    assert r["ready_for_adapter_v0_4"] is False
     assert r["authenticated"] is False
     assert r["transfer"].startswith("BLOCKED")
+    assert r["execution_authorized"] is False
+    assert r["production_decision_authorized"] is False
 
 
 def test_supermesh_witnesses_nexus_artifacts_and_rejects_rewrites():
