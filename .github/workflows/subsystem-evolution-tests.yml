@@ -6,12 +6,16 @@ on:
       - "systems/aion/**"
       - "systems/argus/**"
       - "systems/athena/**"
+      - "systems/prometheus/**"
+      - "systems/ascension/**"
       - ".github/workflows/subsystem-evolution-tests.yml"
   pull_request:
     paths:
       - "systems/aion/**"
       - "systems/argus/**"
       - "systems/athena/**"
+      - "systems/prometheus/**"
+      - "systems/ascension/**"
       - ".github/workflows/subsystem-evolution-tests.yml"
   workflow_dispatch:
 
