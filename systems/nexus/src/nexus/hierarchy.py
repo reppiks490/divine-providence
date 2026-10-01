@@ -376,11 +376,13 @@ class HierarchicalFactorEngine:
 
             family = str(claim.get("family", "unknown"))
             geometry = str(claim.get("price_geometry", "unknown"))
+            sampling_domain = str(claim.get("sampling_domain", "unknown"))
             construction = str(claim.get("construction", "unknown"))
 
             if require_reviewable_identity and (
                 family in {"unknown", "time_bars_unspecified"}
                 or geometry == "unknown"
+                or sampling_domain == "unknown"
                 or construction == "unknown"
             ):
                 unresolved.append(sid)
