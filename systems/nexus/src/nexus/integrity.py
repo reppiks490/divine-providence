@@ -56,23 +56,36 @@ class IntegrityAssessment:
 
 def assess_manifest(m: StreamManifest, policy: IntegrityPolicy | None = None) -> IntegrityAssessment:
     policy = policy or IntegrityPolicy()
+    if not isinstance(m,StreamManifest):
+        raise TypeError("m must be StreamManifest")
     flags = set(m.quality_flags)
-    rows = max(1, int(m.row_count))
-    invalid = int(m.metadata.get("invalid_timestamp_rows", 0))
-    nonnumeric = int(m.metadata.get("nonnumeric_ohlc_rows", 0))
-    inconsistent = int(m.metadata.get("inconsistent_ohlc_rows", 0))
-    usable = int(m.metadata.get("usable_ohlc_rows", max(0, m.row_count - nonnumeric - inconsistent)))
+    rows = max(1, m.row_count)
+
+    raw_invalid=m.metadata.get("invalid_timestamp_rows",0)
+    raw_nonnumeric=m.metadata.get("nonnumeric_ohlc_rows",0)
+    raw_inconsistent=m.metadata.get("inconsistent_ohlc_rows",0)
+    counters_valid=all(
+        type(v) is int and 0 <= v <= m.row_count
+        for v in (raw_invalid,raw_nonnumeric,raw_inconsistent)
+    )
+    invalid=raw_invalid if type(raw_invalid) is int and raw_invalid >= 0 else 0
+    nonnumeric=raw_nonnumeric if type(raw_nonnumeric) is int and raw_nonnumeric >= 0 else 0
+    inconsistent=raw_inconsistent if type(raw_inconsistent) is int and raw_inconsistent >= 0 else 0
+
+    fallback_usable=max(0,m.row_count-nonnumeric-inconsistent) if counters_valid else 0
+    raw_usable=m.metadata.get("usable_ohlc_rows",fallback_usable)
+    usable=raw_usable if type(raw_usable) is int and raw_usable >= 0 else 0
+    usable_valid=type(raw_usable) is int and 0 <= raw_usable <= m.row_count
 
     metadata_invalid = (
-        m.row_count < 0
-        or invalid < 0
-        or nonnumeric < 0
-        or inconsistent < 0
-        or usable < 0
-        or usable > max(0, int(m.row_count))
+        not counters_valid
+        or not usable_valid
         or not math.isfinite(float(m.cadence_confidence))
         or not 0.0 <= float(m.cadence_confidence) <= 1.0
-        or (m.observed_cadence_ns is not None and int(m.observed_cadence_ns) <= 0)
+        or (
+            m.observed_cadence_ns is not None
+            and (type(m.observed_cadence_ns) is not int or m.observed_cadence_ns <= 0)
+        )
     )
 
     invalid_rate = invalid / max(1, m.row_count + invalid)
@@ -110,15 +123,20 @@ def assess_manifest(m: StreamManifest, policy: IntegrityPolicy | None = None) ->
     for flag in ("claim_mismatch", "cadence_ambiguous", "fractional_time", "repeated_time"):
         if flag in flags:
             warnings.append(flag)
-    hyp = (m.metadata.get("representation_hypothesis") or {}).get("kind")
-    if hyp and hyp != "fixed_time_candidate":
-        warnings.append(f"representation:{hyp}")
+    raw_hyp=m.metadata.get("representation_hypothesis")
+    if raw_hyp is not None and not isinstance(raw_hyp,dict):
+        if "invalid_integrity_metadata" not in blockers:
+            blockers.append("invalid_integrity_metadata")
+    else:
+        hyp=(raw_hyp or {}).get("kind")
+        if hyp and hyp != "fixed_time_candidate":
+            warnings.append(f"representation:{hyp}")
 
     return IntegrityAssessment(
         stream_id=m.identity.stream_id,
         admitted=not blockers,
         quality_score=q,
-        usable_fraction=max(0.0, min(1.0, usable_fraction)),
+        usable_fraction=usable_fraction if not metadata_invalid else 0.0,
         invalid_timestamp_rate=invalid_rate,
         nonnumeric_ohlc_rate=nonnumeric_rate,
         inconsistent_ohlc_rate=inconsistent_rate,
