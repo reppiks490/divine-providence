@@ -15,13 +15,28 @@ from .orderblock_survival import (
     kaplan_meier,
     survival_by_evidence_tier,
 )
+from .survival_uncertainty import (
+    SurvivalUncertaintyBand,
+    kaplan_meier_uncertainty,
+)
 
 
-STUDY_SCHEMA_VERSION = "argus-orderblock-study-v1"
+STUDY_SCHEMA_V1 = "argus-orderblock-study-v1"
+STUDY_SCHEMA_V2 = "argus-orderblock-study-v2"
+# Backwards-compatible alias: legacy factory remains v1.
+STUDY_SCHEMA_VERSION = STUDY_SCHEMA_V1
+LATEST_STUDY_SCHEMA_VERSION = STUDY_SCHEMA_V2
 
-_ALLOWED_ANALYSES = {
-    "kaplan_meier",
-    "evidence_tier_strata",
+_ALLOWED_ANALYSES_BY_SCHEMA = {
+    STUDY_SCHEMA_V1: {
+        "kaplan_meier",
+        "evidence_tier_strata",
+    },
+    STUDY_SCHEMA_V2: {
+        "kaplan_meier",
+        "evidence_tier_strata",
+        "kaplan_meier_uncertainty",
+    },
 }
 
 
@@ -40,6 +55,7 @@ class OrderBlockStudyManifest:
     directions: tuple[int, ...]
     analysis_horizon_ns: int | None
     analysis_plan: tuple[str, ...]
+    confidence_alpha: float | None = None
 
 
 @dataclass(frozen=True)
@@ -73,6 +89,17 @@ def _positive_int_or_none(name: str, value: int | None) -> int | None:
     if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
         raise ValueError(f"{name} must be a positive integer or None")
     return value
+
+
+def _confidence_alpha(value: float) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise TypeError("confidence_alpha must be numeric")
+    out = float(value)
+    if not math.isfinite(out) or not 0.0 < out < 1.0:
+        raise ValueError(
+            "confidence_alpha must be finite and strictly between 0 and 1"
+        )
+    return out
 
 
 def _nonempty(name: str, value: str) -> str:
