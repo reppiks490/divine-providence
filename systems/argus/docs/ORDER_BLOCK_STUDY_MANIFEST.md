@@ -27,9 +27,15 @@ cohort begins:
 The manifest is canonicalized and content-addressed. Input order and duplicate
 configuration entries do not change its identity.
 
-The contract identity also pins its own schema revision:
-`argus-orderblock-study-v1`. This prevents a future cohort-selection code
-revision from silently reinterpreting an old manifest under the same ID.
+The contract identity also pins its own schema revision.
+
+- `argus-orderblock-study-v1` is preserved for exact historical replay.
+- `argus-orderblock-study-v2` adds a predeclared confidence-alpha field and
+  registered Kaplan-Meier uncertainty analysis.
+
+This prevents a future cohort-selection or uncertainty-policy code revision
+from silently reinterpreting an old manifest under the same ID. The v1 payload
+shape is preserved exactly so historical v1 manifest IDs continue to verify.
 
 ## Prospective lock
 
@@ -100,10 +106,18 @@ copying a manifest ID.
 
 ## Registered analyses
 
-The first allowed analysis-plan entries are:
+The v1 allowed analysis-plan entries are:
 
 - `kaplan_meier`
 - `evidence_tier_strata`
+
+The v2 allowed entries add:
+
+- `kaplan_meier_uncertainty`
+
+A v2 manifest pins `confidence_alpha` with `0 < alpha < 1` before the cohort
+begins. Registered uncertainty analysis must use that exact predeclared alpha;
+callers cannot swap confidence levels after seeing the survival curve.
 
 A locked cohort can only run an analysis that was declared in its own manifest.
 A cohort cannot be reused under a different manifest.
@@ -130,8 +144,9 @@ not automatically prove:
 - robustness across assets or regimes;
 - production readiness.
 
-Confidence intervals, matched controls, event-study return definitions and
-multiple-testing policy remain separate research layers.
+Pointwise confidence intervals are available in v2, but matched controls,
+event-study return definitions, simultaneous confidence bands, hypothesis
+testing and multiple-testing policy remain separate research layers.
 
 ## Authority
 

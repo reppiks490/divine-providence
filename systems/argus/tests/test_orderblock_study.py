@@ -7,11 +7,15 @@ import pytest
 from argus.contracts import EvidenceTier
 from argus.orderblock_lifecycle import OrderBlockState
 from argus.orderblock_study import (
+    STUDY_SCHEMA_V1,
+    STUDY_SCHEMA_V2,
     OrderBlockStudySubject,
     create_prospective_manifest,
+    create_prospective_manifest_v2,
     lock_study_cohort,
     registered_evidence_strata,
     registered_kaplan_meier,
+    registered_survival_uncertainty,
 )
 from argus.orderblock_survival import OrderBlockSurvivalRecord
 
@@ -35,6 +39,29 @@ def manifest(**overrides):
     )
     params.update(overrides)
     return create_prospective_manifest(**params)
+
+
+def manifest_v2(**overrides):
+    params = dict(
+        study_name="prospective-nq-order-block-survival-v2",
+        created_time_ns=90,
+        cohort_start_ns=100,
+        cohort_end_ns=200,
+        followup_cutoff_ns=300,
+        lifecycle_revision=REVISION,
+        asset_ids=("NQ", "ES"),
+        evidence_tiers=(EvidenceTier.TRUE_DEPTH, EvidenceTier.TRUE_TRADE),
+        directions=(-1, 1),
+        analysis_horizon_ns=50,
+        confidence_alpha=0.05,
+        analysis_plan=(
+            "kaplan_meier",
+            "evidence_tier_strata",
+            "kaplan_meier_uncertainty",
+        ),
+    )
+    params.update(overrides)
+    return create_prospective_manifest_v2(**params)
 
 
 def record(
@@ -92,7 +119,12 @@ def test_manifest_identity_is_canonical_across_input_order():
     )
 
     assert first == second
-    assert first.schema_version == "argus-orderblock-study-v1"
+    assert first.schema_version == STUDY_SCHEMA_V1
+    assert first.confidence_alpha is None
+    assert first.manifest_id == (
+        "order-block-study:"
+        "e7467ba918e8c3357fb19f4cf1339150c87c94d585a112d0c361d0bb59246e02"
+    )
     assert first.asset_ids == ("ES", "NQ")
     assert first.evidence_tiers == (
         EvidenceTier.TRUE_TRADE,
@@ -426,3 +458,90 @@ def test_administrative_censor_identity_tampering_fails_closed():
     )
     with pytest.raises(ValueError, match="not in cohort"):
         registered_kaplan_meier(m, unknown_id)
+
+
+def test_v2_manifest_pins_uncertainty_alpha_in_identity():
+    first = manifest_v2(confidence_alpha=0.05)
+    second = manifest_v2(confidence_alpha=0.01)
+
+    assert first.schema_version == STUDY_SCHEMA_V2
+    assert first.confidence_alpha == pytest.approx(0.05)
+    assert second.confidence_alpha == pytest.approx(0.01)
+    assert first.manifest_id != second.manifest_id
+    assert "kaplan_meier_uncertainty" in first.analysis_plan
+
+
+@pytest.mark.parametrize("alpha", [0.0, 1.0, -0.1, 1.1, float("nan")])
+def test_v2_manifest_rejects_invalid_confidence_alpha(alpha):
+    with pytest.raises(ValueError, match="confidence_alpha"):
+        manifest_v2(confidence_alpha=alpha)
+
+
+@pytest.mark.parametrize("alpha", [True, "0.05", None])
+def test_v2_manifest_rejects_invalid_confidence_alpha_types(alpha):
+    with pytest.raises(TypeError, match="confidence_alpha"):
+        manifest_v2(confidence_alpha=alpha)
+
+
+def test_v1_manifest_rejects_uncertainty_analysis_and_alpha_tampering():
+    with pytest.raises(ValueError, match="unsupported analysis"):
+        manifest(
+            analysis_plan=(
+                "kaplan_meier",
+                "kaplan_meier_uncertainty",
+            )
+        )
+
+    v1 = manifest()
+    cohort = lock_study_cohort(v1, (subject("legacy"),))
+    tampered = replace(v1, confidence_alpha=0.05)
+    with pytest.raises(ValueError, match="v1 manifest"):
+        registered_kaplan_meier(tampered, cohort)
+
+
+def test_registered_survival_uncertainty_uses_predeclared_alpha():
+    m = manifest_v2(confidence_alpha=0.01)
+    cohort = lock_study_cohort(
+        m,
+        (
+            subject("event", duration=20, invalidated=True),
+            subject("censor", duration=30, invalidated=False),
+        ),
+    )
+    band = registered_survival_uncertainty(m, cohort)
+
+    assert band.alpha == pytest.approx(0.01)
+    assert band.confidence_level == pytest.approx(0.99)
+    assert band.records == 2
+    assert band.invalidations == 1
+    assert band.censored == 1
+
+
+def test_registered_uncertainty_requires_v2_and_predeclaration():
+    v1 = manifest()
+    v1_cohort = lock_study_cohort(v1, (subject("v1"),))
+    with pytest.raises(ValueError, match="requires argus-orderblock-study-v2"):
+        registered_survival_uncertainty(v1, v1_cohort)
+
+    v2_without_uncertainty = manifest_v2(
+        study_name="v2-without-uncertainty",
+        analysis_plan=("kaplan_meier",),
+    )
+    cohort = lock_study_cohort(
+        v2_without_uncertainty,
+        (subject("v2"),),
+    )
+    with pytest.raises(ValueError, match="not predeclared"):
+        registered_survival_uncertainty(
+            v2_without_uncertainty,
+            cohort,
+        )
+
+
+def test_v2_alpha_tampering_breaks_manifest_identity():
+    m = manifest_v2(confidence_alpha=0.05)
+    cohort = lock_study_cohort(m, (subject("x"),))
+    tampered = replace(m, confidence_alpha=0.01)
+
+    with pytest.raises(ValueError, match="manifest_id"):
+        registered_survival_uncertainty(tampered, cohort)

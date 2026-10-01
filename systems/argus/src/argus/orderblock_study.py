@@ -15,13 +15,28 @@ from .orderblock_survival import (
     kaplan_meier,
     survival_by_evidence_tier,
 )
+from .survival_uncertainty import (
+    SurvivalUncertaintyBand,
+    kaplan_meier_uncertainty,
+)
 
 
-STUDY_SCHEMA_VERSION = "argus-orderblock-study-v1"
+STUDY_SCHEMA_V1 = "argus-orderblock-study-v1"
+STUDY_SCHEMA_V2 = "argus-orderblock-study-v2"
+# Backwards-compatible alias: legacy factory remains v1.
+STUDY_SCHEMA_VERSION = STUDY_SCHEMA_V1
+LATEST_STUDY_SCHEMA_VERSION = STUDY_SCHEMA_V2
 
-_ALLOWED_ANALYSES = {
-    "kaplan_meier",
-    "evidence_tier_strata",
+_ALLOWED_ANALYSES_BY_SCHEMA = {
+    STUDY_SCHEMA_V1: {
+        "kaplan_meier",
+        "evidence_tier_strata",
+    },
+    STUDY_SCHEMA_V2: {
+        "kaplan_meier",
+        "evidence_tier_strata",
+        "kaplan_meier_uncertainty",
+    },
 }
 
 
@@ -40,6 +55,7 @@ class OrderBlockStudyManifest:
     directions: tuple[int, ...]
     analysis_horizon_ns: int | None
     analysis_plan: tuple[str, ...]
+    confidence_alpha: float | None = None
 
 
 @dataclass(frozen=True)
@@ -73,6 +89,17 @@ def _positive_int_or_none(name: str, value: int | None) -> int | None:
     if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
         raise ValueError(f"{name} must be a positive integer or None")
     return value
+
+
+def _confidence_alpha(value: float) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise TypeError("confidence_alpha must be numeric")
+    out = float(value)
+    if not math.isfinite(out) or not 0.0 < out < 1.0:
+        raise ValueError(
+            "confidence_alpha must be finite and strictly between 0 and 1"
+        )
+    return out
 
 
 def _nonempty(name: str, value: str) -> str:
@@ -149,7 +176,7 @@ def create_prospective_manifest(
     analyses = tuple(sorted({_nonempty("analysis", item) for item in analysis_plan}))
     if not analyses:
         raise ValueError("at least one analysis is required")
-    unknown = set(analyses) - _ALLOWED_ANALYSES
+    unknown = set(analyses) - _ALLOWED_ANALYSES_BY_SCHEMA[STUDY_SCHEMA_V1]
     if unknown:
         raise ValueError(f"unsupported analysis plan entries: {sorted(unknown)}")
 
@@ -184,6 +211,108 @@ def create_prospective_manifest(
         analysis_horizon_ns=horizon,
         analysis_plan=analyses,
     )
+
+
+def create_prospective_manifest_v2(
+    *,
+    study_name: str,
+    created_time_ns: int,
+    cohort_start_ns: int,
+    cohort_end_ns: int,
+    followup_cutoff_ns: int,
+    lifecycle_revision: str,
+    asset_ids: Iterable[str],
+    evidence_tiers: Iterable[EvidenceTier],
+    directions: Iterable[int] = (-1, 1),
+    analysis_horizon_ns: int | None = None,
+    confidence_alpha: float = 0.05,
+    analysis_plan: Iterable[str] = (
+        "kaplan_meier",
+        "evidence_tier_strata",
+        "kaplan_meier_uncertainty",
+    ),
+) -> OrderBlockStudyManifest:
+    """Create a v2 prospective study with predeclared uncertainty alpha."""
+
+    name = _nonempty("study_name", study_name)
+    revision = _nonempty("lifecycle_revision", lifecycle_revision)
+    created = _nonnegative_int("created_time_ns", created_time_ns)
+    start = _nonnegative_int("cohort_start_ns", cohort_start_ns)
+    end = _nonnegative_int("cohort_end_ns", cohort_end_ns)
+    cutoff = _nonnegative_int("followup_cutoff_ns", followup_cutoff_ns)
+    horizon = _positive_int_or_none("analysis_horizon_ns", analysis_horizon_ns)
+    alpha = _confidence_alpha(confidence_alpha)
+
+    if created > start:
+        raise ValueError("prospective manifest must be created at or before cohort_start_ns")
+    if start >= end:
+        raise ValueError("cohort_start_ns must be before cohort_end_ns")
+    if cutoff < end:
+        raise ValueError("followup_cutoff_ns must be at or after cohort_end_ns")
+
+    assets = tuple(sorted({_nonempty("asset_id", value) for value in asset_ids}))
+    if not assets:
+        raise ValueError("at least one asset_id is required")
+
+    tiers_set: set[EvidenceTier] = set()
+    for tier in evidence_tiers:
+        if not isinstance(tier, EvidenceTier):
+            raise TypeError("evidence_tiers must contain EvidenceTier values")
+        tiers_set.add(tier)
+    if not tiers_set:
+        raise ValueError("at least one evidence tier is required")
+    tiers = tuple(sorted(tiers_set, key=int))
+
+    direction_set: set[int] = set()
+    for direction in directions:
+        if isinstance(direction, bool) or direction not in (-1, 1):
+            raise ValueError("directions may contain only -1 and +1")
+        direction_set.add(int(direction))
+    if not direction_set:
+        raise ValueError("at least one direction is required")
+    direction_values = tuple(sorted(direction_set))
+
+    analyses = tuple(sorted({_nonempty("analysis", item) for item in analysis_plan}))
+    if not analyses:
+        raise ValueError("at least one analysis is required")
+    unknown = set(analyses) - _ALLOWED_ANALYSES_BY_SCHEMA[STUDY_SCHEMA_V2]
+    if unknown:
+        raise ValueError(f"unsupported analysis plan entries: {sorted(unknown)}")
+
+    identity = {
+        "schema_version": STUDY_SCHEMA_V2,
+        "study_name": name,
+        "created_time_ns": created,
+        "cohort_start_ns": start,
+        "cohort_end_ns": end,
+        "followup_cutoff_ns": cutoff,
+        "lifecycle_revision": revision,
+        "asset_ids": assets,
+        "evidence_tiers": [tier.name for tier in tiers],
+        "directions": direction_values,
+        "analysis_horizon_ns": horizon,
+        "analysis_plan": analyses,
+        "confidence_alpha": alpha,
+    }
+    manifest_id = _hash("order-block-study", identity)
+
+    return OrderBlockStudyManifest(
+        manifest_id=manifest_id,
+        schema_version=STUDY_SCHEMA_V2,
+        study_name=name,
+        created_time_ns=created,
+        cohort_start_ns=start,
+        cohort_end_ns=end,
+        followup_cutoff_ns=cutoff,
+        lifecycle_revision=revision,
+        asset_ids=assets,
+        evidence_tiers=tiers,
+        directions=direction_values,
+        analysis_horizon_ns=horizon,
+        analysis_plan=analyses,
+        confidence_alpha=alpha,
+    )
+
 
 
 def _validate_subject(subject: OrderBlockStudySubject) -> None:
@@ -247,7 +376,7 @@ def _validate_subject(subject: OrderBlockStudySubject) -> None:
 
 
 def _manifest_payload(manifest: OrderBlockStudyManifest) -> dict:
-    return {
+    payload = {
         "schema_version": manifest.schema_version,
         "study_name": manifest.study_name,
         "created_time_ns": manifest.created_time_ns,
@@ -261,12 +390,15 @@ def _manifest_payload(manifest: OrderBlockStudyManifest) -> dict:
         "analysis_horizon_ns": manifest.analysis_horizon_ns,
         "analysis_plan": manifest.analysis_plan,
     }
+    if manifest.schema_version == STUDY_SCHEMA_V2:
+        payload["confidence_alpha"] = manifest.confidence_alpha
+    return payload
 
 
 def _validate_manifest(manifest: OrderBlockStudyManifest) -> None:
     if not isinstance(manifest, OrderBlockStudyManifest):
         raise TypeError("manifest must be OrderBlockStudyManifest")
-    if manifest.schema_version != STUDY_SCHEMA_VERSION:
+    if manifest.schema_version not in _ALLOWED_ANALYSES_BY_SCHEMA:
         raise ValueError("unsupported study schema_version")
 
     if _nonempty("study_name", manifest.study_name) != manifest.study_name:
@@ -320,9 +452,18 @@ def _validate_manifest(manifest: OrderBlockStudyManifest) -> None:
         or any(_nonempty("analysis", item) != item for item in manifest.analysis_plan)
     ):
         raise ValueError("analysis_plan must be non-empty canonical sorted unique values")
-    unknown = set(manifest.analysis_plan) - _ALLOWED_ANALYSES
+    unknown = (
+        set(manifest.analysis_plan)
+        - _ALLOWED_ANALYSES_BY_SCHEMA[manifest.schema_version]
+    )
     if unknown:
         raise ValueError(f"unsupported analysis plan entries: {sorted(unknown)}")
+
+    if manifest.schema_version == STUDY_SCHEMA_V1:
+        if manifest.confidence_alpha is not None:
+            raise ValueError("v1 manifest cannot carry confidence_alpha")
+    else:
+        _confidence_alpha(manifest.confidence_alpha)
 
     expected_id = _hash("order-block-study", _manifest_payload(manifest))
     if manifest.manifest_id != expected_id:
@@ -516,3 +657,19 @@ def registered_evidence_strata(
     if "evidence_tier_strata" not in manifest.analysis_plan:
         raise ValueError("evidence_tier_strata was not predeclared")
     return survival_by_evidence_tier(cohort.records)
+
+
+def registered_survival_uncertainty(
+    manifest: OrderBlockStudyManifest,
+    cohort: OrderBlockStudyCohort,
+) -> SurvivalUncertaintyBand:
+    _validate_cohort(manifest, cohort)
+    if manifest.schema_version != STUDY_SCHEMA_V2:
+        raise ValueError(
+            "kaplan_meier_uncertainty requires argus-orderblock-study-v2"
+        )
+    if "kaplan_meier_uncertainty" not in manifest.analysis_plan:
+        raise ValueError("kaplan_meier_uncertainty was not predeclared")
+    alpha = _confidence_alpha(manifest.confidence_alpha)
+    curve = kaplan_meier(cohort.records)
+    return kaplan_meier_uncertainty(curve, alpha=alpha)
