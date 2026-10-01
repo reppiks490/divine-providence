@@ -135,3 +135,63 @@ def test_run_manifest_rejects_invalid_hashes_and_observation_sequence():
         m.aion_observation(sequence=-1)
     with pytest.raises(ValueError,match='ingested_ns'):
         m.aion_observation(ingested_ns=-1)
+
+
+def test_rehashed_genealogy_and_run_cannot_hide_semantic_malformed_state():
+    import dataclasses,hashlib,json
+    _,_,g,m=_built()
+
+    bad_node=dataclasses.replace(g.factors[0],components=('A','A'))
+    factors=(bad_node,*g.factors[1:])
+    payload=FactorGenealogySnapshot._payload(
+        g.schema,factors,g.dependency_edges,g.derivation_hashes
+    )
+    forged=FactorGenealogySnapshot(
+        g.schema,factors,g.dependency_edges,g.derivation_hashes,
+        hashlib.sha256(
+            json.dumps(payload,sort_keys=True,separators=(',',':'),allow_nan=False).encode()
+        ).hexdigest(),
+    )
+    assert not forged.verify()
+
+    bad_run=dataclasses.replace(
+        m,
+        run_id=' r1 ',
+        input_artifacts=(('catalog','1'*64),('catalog','1'*64)),
+    )
+    payload={
+        "schema":bad_run.schema,"run_id":bad_run.run_id,
+        "decision_start_ns":bad_run.decision_start_ns,
+        "decision_end_ns":bad_run.decision_end_ns,
+        "corpus_manifest_hash":bad_run.corpus_manifest_hash,
+        "reviewed_registry_hash":bad_run.reviewed_registry_hash,
+        "genealogy_hash":bad_run.genealogy_hash,
+        "code_version":bad_run.code_version,
+        "input_artifacts":bad_run.input_artifacts,
+        "output_artifacts":bad_run.output_artifacts,
+        "parameters_hash":bad_run.parameters_hash,
+        "derivation_hashes":bad_run.derivation_hashes,
+        "production_authorized":False,
+    }
+    bad_run=dataclasses.replace(
+        bad_run,
+        manifest_hash=hashlib.sha256(
+            json.dumps(payload,sort_keys=True,separators=(',',':'),allow_nan=False).encode()
+        ).hexdigest(),
+    )
+    assert not bad_run.verify()
+
+
+def test_run_manifest_requires_trimmed_run_and_code_identity():
+    import pytest
+    r=FactorRegistry()
+    g=FactorGenealogySnapshot.create(r)
+    common=dict(
+        decision_start_ns=0,decision_end_ns=1,
+        corpus_manifest_hash='c'*64,reviewed_registry_hash='e'*64,
+        genealogy=g,input_artifacts={},output_artifacts={},
+    )
+    with pytest.raises(ValueError,match='run_id'):
+        ResearchRunManifest.create(run_id=' x ',code_version='v1',**common)
+    with pytest.raises(ValueError,match='code_version'):
+        ResearchRunManifest.create(run_id='x',code_version=' v1 ',**common)
