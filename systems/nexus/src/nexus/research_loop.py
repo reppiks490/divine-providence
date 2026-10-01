@@ -411,11 +411,14 @@ def _build_candidates(
         )
     rejected = max(0, usable_entries - admitted_count)
     if rejected:
+        rejected_scope = sorted({s.stream_id for s in sweeps if not s.admitted})
+        if not rejected_scope:
+            raise ValueError("rejected stream count has no provenance-bound stream scope")
         add(
             "integrity_rejections", "P0", 800.0 + rejected,
-            ["integrity_gate"],
-            f"{rejected} usable streams are withheld by the default NEXUS integrity policy.",
-            "Triage blockers by source; repair evidence/contracts rather than weakening the integrity gate globally.",
+            rejected_scope,
+            f"{rejected} usable streams are withheld from the model-admitted plane by integrity or owner policy.",
+            "Triage blockers by source; repair evidence/contracts rather than weakening admission policy globally.",
         )
 
     manifest_by_id = {m.identity.stream_id: m for m in manifests}
