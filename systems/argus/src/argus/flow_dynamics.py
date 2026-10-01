@@ -100,6 +100,9 @@ def flow_dynamics(
     previous_positive_sequence: int | None = None
     for trade in trades:
         _validate_trade(trade)
+        price_ticks = float(trade.price) / tick
+        if abs(price_ticks - round(price_ticks)) > 1e-6:
+            raise ValueError("trade price is not aligned to tick_size")
         if previous_time is not None and trade.event_time_ns < previous_time:
             raise ValueError("trade history must be ordered by event_time_ns")
         previous_time = trade.event_time_ns
