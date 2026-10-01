@@ -79,7 +79,8 @@ def _priority(manifest: StreamManifest) -> tuple[str, int, list[str]]:
         score += 100 + 10 * len(high); reasons.extend(f"flag:{x}" for x in high)
     if medium:
         score += 40 + 5 * len(medium); reasons.extend(f"flag:{x}" for x in medium)
-    hyp = manifest.metadata.get("representation_hypothesis") or {}
+    raw_hyp=manifest.metadata.get("representation_hypothesis")
+    hyp=raw_hyp if isinstance(raw_hyp,dict) else {}
     kind = str(hyp.get("kind", "unknown"))
     confidence = float(hyp.get("confidence", 0.0) or 0.0)
     cadence_confidence=float(manifest.cadence_confidence)
@@ -121,7 +122,8 @@ def build_representation_review_queue(manifests: Iterable[StreamManifest]) -> Re
         flags = set(manifest.quality_flags)
         if manifest.row_count <= 0 or "appledouble" in flags:
             continue
-        hyp = manifest.metadata.get("representation_hypothesis") or {}
+        raw_hyp=manifest.metadata.get("representation_hypothesis")
+        hyp=raw_hyp if isinstance(raw_hyp,dict) else {}
         kind = str(hyp.get("kind", "unknown"))
         confidence = float(hyp.get("confidence", 0.0) or 0.0)
         if not math.isfinite(confidence):
