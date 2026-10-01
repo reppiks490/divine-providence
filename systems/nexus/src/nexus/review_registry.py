@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import hashlib
 import json
+import os
+import tempfile
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -235,6 +237,11 @@ class ReviewedRepresentationRegistry:
         return record.record_hash
 
     def activate(self,stream_id:str,version:str)->str:
+        if (
+            not isinstance(stream_id,str) or not stream_id.strip() or stream_id != stream_id.strip()
+            or not isinstance(version,str) or not version.strip() or version != version.strip()
+        ):
+            raise ValueError("stream_id and version must be non-empty trimmed strings")
         key=(stream_id,version)
         if key not in self._records:raise KeyError(key)
         self._active[stream_id]=version
@@ -259,19 +266,59 @@ class ReviewedRepresentationRegistry:
         return body
 
     def save(self,path:str|Path)->None:
-        Path(path).write_text(json.dumps(self.snapshot(),sort_keys=True,indent=2)+"\n",encoding="utf-8")
+        target=Path(path)
+        target.parent.mkdir(parents=True,exist_ok=True)
+        payload=json.dumps(self.snapshot(),sort_keys=True,indent=2,allow_nan=False)+"\n"
+        fd,tmp_name=tempfile.mkstemp(
+            prefix=f".{target.name}.",suffix=".tmp",dir=str(target.parent)
+        )
+        try:
+            with os.fdopen(fd,"w",encoding="utf-8",newline="\n") as handle:
+                handle.write(payload)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(tmp_name,target)
+        except Exception:
+            try:
+                os.unlink(tmp_name)
+            except FileNotFoundError:
+                pass
+            raise
 
     @classmethod
     def load(cls,path:str|Path)->"ReviewedRepresentationRegistry":
-        body=json.loads(Path(path).read_text(encoding="utf-8"))
-        supplied=body.pop("registry_hash",None)
-        expected=hashlib.sha256(json.dumps(body,sort_keys=True,separators=(",",":")).encode()).hexdigest()
-        if supplied != expected:raise ValueError("reviewed representation registry hash mismatch")
-        if body.get("schema") != cls.SCHEMA:raise ValueError("unsupported reviewed representation registry schema")
+        try:
+            body=json.loads(Path(path).read_text(encoding="utf-8"))
+        except (OSError,json.JSONDecodeError) as exc:
+            raise ValueError("reviewed representation registry is unreadable") from exc
+        if not isinstance(body,dict) or set(body) != {"schema","records","active","registry_hash"}:
+            raise ValueError("reviewed representation registry schema shape is invalid")
+        if not isinstance(body["records"],list) or not isinstance(body["active"],dict):
+            raise ValueError("reviewed representation registry records/active shape is invalid")
+        supplied=body.get("registry_hash")
+        core={k:v for k,v in body.items() if k!="registry_hash"}
+        expected=hashlib.sha256(
+            json.dumps(core,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+        ).hexdigest()
+        if supplied != expected:
+            raise ValueError("reviewed representation registry hash mismatch")
+        if body.get("schema") != cls.SCHEMA:
+            raise ValueError("unsupported reviewed representation registry schema")
         out=cls()
-        for row in body.get("records",[]):
-            rh=row.pop("record_hash",None);r=ReviewedRepresentationRecord(**row)
-            if rh != r.record_hash:raise ValueError(f"reviewed record hash mismatch: {r.key}")
-            out.register(r)
-        for sid,version in body.get("active",{}).items():out.activate(sid,version)
+        try:
+            for raw_row in body["records"]:
+                if not isinstance(raw_row,dict):
+                    raise ValueError("reviewed registry record must be an object")
+                row=dict(raw_row)
+                rh=row.pop("record_hash",None)
+                r=ReviewedRepresentationRecord(**row)
+                if rh != r.record_hash:
+                    raise ValueError(f"reviewed record hash mismatch: {r.key}")
+                out.register(r)
+            for sid,version in body["active"].items():
+                out.activate(sid,version)
+        except (TypeError,ValueError,KeyError) as exc:
+            if isinstance(exc,ValueError):
+                raise
+            raise ValueError("reviewed representation registry content is invalid") from exc
         return out
