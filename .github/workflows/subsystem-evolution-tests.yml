@@ -63,7 +63,9 @@ jobs:
           python -m pip install -e .
       - name: Compile hub and evolved subsystems
         run: python -m compileall -q src systems/aion systems/argus systems/athena
+      - name: Contract drift diagnostic
+        run: python -m divine_providence.drivers.nexus_contract_drift
+      - name: Causal intelligence-fabric connection
+        run: python -m divine_providence.drivers.intelligence_fabric
       - name: Hub tests
         run: python -m pytest -q tests
-      - name: Causal intelligence-fabric connection
-        run: python -m divine_providence.cli connect intelligence-fabric
