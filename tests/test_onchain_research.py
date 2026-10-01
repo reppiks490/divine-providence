@@ -60,6 +60,16 @@ def test_verify_detects_content_tamper(tmp_path):
         clock.asof(db, **QUERY, decision_time=LATE)
 
 
+def test_receipt_clock_rollback_is_rejected_instead_of_backdating_history(tmp_path):
+    db = tmp_path / "clock.sqlite"
+    add(db, LATE, body("pending_confirmations"))
+    with pytest.raises(ValueError, match="receipt clock moved backward"):
+        add(db, EARLY, body("complete", attestation=ATTESTATION))
+    assert clock.verify(db)["rows"] == 1
+    observation = clock.timeline(db, **QUERY)[0]
+    assert observation["received_at"].startswith("2026-01-01T01:00:00")
+
+
 def test_same_payload_at_new_receipt_is_a_new_observation(tmp_path):
     db = tmp_path / "clock.sqlite"
     raw = body("pending_confirmations")
