@@ -73,3 +73,22 @@ def test_reviewed_record_rejects_invalid_semantic_metadata():
         _record(volume_semantics='')
     with pytest.raises(TypeError,match='record'):
         ReviewedRepresentationRegistry().register(object())
+
+
+def test_structured_model_identity_requires_exact_bytes_and_all_axes():
+    with pytest.raises(ValueError,match='raw_sha256'):
+        _record(
+            chart_view_family='regular_candles',
+            price_geometry='standard_ohlc',
+            sampling_domain='time',
+            sampling_construction='time_bar',
+        )
+    with pytest.raises(ValueError,match='structured model identity'):
+        _record(
+            raw_sha256='b'*64,
+            chart_view_family='regular_candles',
+            price_geometry='standard_ohlc',
+            sampling_domain='time',
+        )
+    with pytest.raises(ValueError,match='raw_sha256'):
+        _record(raw_sha256='bad')
