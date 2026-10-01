@@ -66,3 +66,34 @@ knowledge; ATHENA cannot see the artifact until ingestion time.
 This path is intentionally separate from the live NEXUS instant fabric. It
 does not convert retrospective study evidence into live market truth, broker
 authority, or a production decision.
+
+
+## Verified ARGUS impact-calibration -> ATHENA research sidepath
+
+The hub connection `argus-impact-athena-research` verifies a separate
+prospective calibration-study path:
+
+```text
+ARGUS impact-calibration-study-v1
+  -> locked evidence-stratified cohort
+  -> registered evidence_stratified_summary
+  -> argus-impact-calibration-research-v1 envelope
+  -> publication only after cohort lock
+  -> ATHENA AdvisoryJournal
+  -> local receipt-time visibility
+```
+
+The deterministic hub fixture intentionally uses
+`ICARUS_PAPER_EMULATOR` evidence only. It does not fabricate broker-confirmed
+execution evidence merely to exercise the bridge.
+
+The export preserves the study manifest/cohort identities, impact/calibration
+revisions, execution-source revisions, evidence strata, exclusions, timing
+boundaries, and authority flags. Paper-emulator and broker-confirmed calibration
+summaries remain separate.
+
+Publication time is not treated as local knowledge; ATHENA cannot expose the
+artifact until ingestion time.
+
+This is research/advisory evidence only and does not grant broker, order, or
+production-decision authority.
