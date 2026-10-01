@@ -6,6 +6,7 @@ authority.
 """
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import asdict, dataclass
 import hashlib
 import json
@@ -88,7 +89,7 @@ class AdvisoryJournal:
         event_id = _digest(body)
         if event_id in self._event_ids:
             row = next(x for x in self._rows if x["event_id"] == event_id)
-            return {**row, "idempotent": True}
+            return {**deepcopy(row), "idempotent": True}
 
         key = (event.provenance.source_id, event.provenance.representation_id)
         gap_before = 0
@@ -114,14 +115,14 @@ class AdvisoryJournal:
         }
         self._rows.append(row)
         self._event_ids.add(event_id)
-        return {**row, "idempotent": False}
+        return {**deepcopy(row), "idempotent": False}
 
     def asof(self, at_ns: int) -> list[dict[str, Any]]:
         if type(at_ns) is not int or at_ns < 0:
             raise ValueError("at_ns must be non-negative")
         # Local ingestion is the hard causality boundary; an earlier provider
         # publication/availability claim cannot make evidence visible before receipt.
-        return [dict(x) for x in self._rows if x["known_ns"] <= at_ns]
+        return [deepcopy(x) for x in self._rows if x["known_ns"] <= at_ns]
 
     def frame(
         self,
