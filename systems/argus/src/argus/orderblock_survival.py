@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from typing import Iterable
 
 from .contracts import EvidenceTier
@@ -113,8 +114,13 @@ def _validated_records(
             or row.rejection_count > row.test_count
         ):
             raise ValueError("rejection_count must be in [0, test_count]")
-        if row.max_penetration_fraction < 0:
-            raise ValueError("max_penetration_fraction must be non-negative")
+        if (
+            isinstance(row.max_penetration_fraction, bool)
+            or not isinstance(row.max_penetration_fraction, (int, float))
+            or not math.isfinite(float(row.max_penetration_fraction))
+            or float(row.max_penetration_fraction) < 0
+        ):
+            raise ValueError("max_penetration_fraction must be finite and non-negative")
         expected_state = (
             OrderBlockState.INVALIDATED
             if row.invalidated
