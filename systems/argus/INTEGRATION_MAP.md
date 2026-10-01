@@ -97,3 +97,39 @@ artifact until ingestion time.
 
 This is research/advisory evidence only and does not grant broker, order, or
 production-decision authority.
+
+
+## Verified ARGUS bootstrap-uncertainty -> ATHENA research sidepath
+
+The hub connection `argus-bootstrap-athena-research` verifies transport of the
+separately pre-registered impact-calibration bootstrap addendum:
+
+```text
+ARGUS impact-calibration-study-v1
+  -> impact-calibration-bootstrap-plan-v1
+  -> locked evidence-stratified cohort
+  -> deterministic nonparametric percentile intervals
+  -> argus-impact-calibration-uncertainty-research-v1
+  -> publication only after cohort lock
+  -> ATHENA AdvisoryJournal
+  -> local receipt-time visibility
+```
+
+The hub fixture intentionally remains `ICARUS_PAPER_EMULATOR` only. It does
+not fabricate broker-confirmed fills to make uncertainty appear stronger.
+
+The export preserves the study manifest ID, cohort ID, bootstrap plan ID,
+confidence alpha, replicate count, deterministic seed, metric set, evidence
+strata, and authority flags.
+
+The interval contract explicitly states:
+
+- simultaneous coverage = false;
+- multiplicity adjusted = false;
+- hypothesis test = false;
+- causal effect estimate = false.
+
+ATHENA cannot expose the artifact before local ingestion time.
+
+This remains descriptive research/advisory evidence and grants no execution or
+production-decision authority.
