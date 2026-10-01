@@ -89,6 +89,23 @@ def test_argus_registered_survival_research_reaches_athena_at_receipt_time():
     assert r["production_decision_authorized"] is False
 
 
+def test_argus_impact_calibration_study_reaches_athena_at_receipt_time():
+    r = connections.check("argus-impact-athena-research")
+    assert r["ok"] is True, r
+    assert r["study_schema_version"] == "argus-impact-calibration-study-v1"
+    assert r["argus"]["paper_only_fixture"] is True
+    assert r["argus"]["broker_confirmed_observations"] == 0
+    assert r["argus"]["paper_emulator_observations"] == 1
+    assert r["argus"]["event_time_ns"] < r["argus"]["study_lock_time_ns"]
+    assert r["argus"]["study_lock_time_ns"] < r["athena"]["ingestion_time_ns"]
+    assert r["athena"]["receipt_time_gated"] is True
+    assert r["athena"]["admitted_events"] == 1
+    assert r["athena"]["abstain_required"] is False
+    assert r["execution_authorized"] is False
+    assert r["production_authorized"] is False
+    assert r["production_decision_authorized"] is False
+
+
 def test_prometheus_ascension_runtime_handoff_is_structural_only():
     r = connections.check("prometheus-ascension")
     assert r["ok"] is True, r
