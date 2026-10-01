@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://icarus-aion.local/contracts/prediction.v2.schema.json",
+  "title": "AION research prediction v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "decision_ns", "horizon_ns", "model_id", "symbol", "forecast", "confidence", "abstain", "frame_hash", "reason_codes", "evidence_hashes", "event_ledger_cutoff", "gap_ledger_cutoff", "plane", "execution_authorized", "performance_eligible", "recorded_ns", "issuance_class"],
+  "properties": {
+    "schema": {"const": 2},
+    "decision_ns": {"type": "integer", "minimum": 0},
+    "horizon_ns": {"type": "integer", "minimum": 1},
+    "model_id": {"type": "string", "minLength": 1},
+    "symbol": {"type": "string", "minLength": 1},
+    "forecast": {"type": ["number", "null"]},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "abstain": {"type": "boolean"},
+    "frame_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "reason_codes": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "evidence_hashes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "event_ledger_cutoff": {"type": "integer", "minimum": 0},
+    "gap_ledger_cutoff": {"type": "integer", "minimum": 0},
+    "plane": {"enum": ["research", "shadow"]},
+    "execution_authorized": {"const": false},
+    "performance_eligible": {"const": false},
+    "recorded_ns": {"type": "integer", "minimum": 0},
+    "issuance_class": {"enum": ["retrospective_replay", "prospective_local_unattested"]}
+  }
+}

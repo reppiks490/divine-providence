@@ -48,6 +48,8 @@ def install(store: EventStore) -> dict:
          "asks": [[20128.25, 62], [20128.5, 34], [20128.75, 85]]}, Tier.TRUE_DEPTH, seq=1, available_offset=171)
     add("DEMO:NQ:book", "book-2", "book_delta", 190,
         {"side": "bid", "price": 20127.75, "size": 152, "action": "set"}, Tier.TRUE_DEPTH, seq=2, available_offset=191)
+    add("DEMO:NQ:book", "book-3", "book_delta", 230,
+        {"side": "bid", "price": 20127.75, "size": 149, "action": "set"}, Tier.TRUE_DEPTH, seq=3, available_offset=231)
     for i, side in enumerate(("buy", "buy", "sell", "buy", "sell"), start=1):
         add("DEMO:NQ:trades", f"trade-{i}", "trade", 172 + i * 8,
             {"price": 20128 + i * .25, "size": (4, 7, 3, 9, 2)[i - 1], "side": side},

@@ -1,6 +1,9 @@
 # PARALLAX — AION's multi-view market atlas
 
-Status: **proposal for owner review**, 2026-09-23. No PARALLAX feature code has been built. This extends the existing AION/Icarus work; it does not create another execution system or replace the current models.
+Status: **proposed market-state atlas**, 2026-09-23. A research-only archive
+inventory is implemented as the first provenance step (ADR-0003). No
+fingerprint, analog retrieval, predictive model, or execution path has been
+built. This extends AION/Icarus; it does not replace the current models.
 
 ## The idea
 
@@ -10,7 +13,7 @@ The operator gets a navigable atlas: scrub a past instant, see its position amon
 
 ## Corpus audit at the accessible checkpoint
 
-`reppiks490/multi-level-csv` was available locally at commit `ce82124352762c14eb33836a5c894bc3a2a71dfe`. Nine ZIPs contain **626 usable CSV entries**, after excluding 626 `__MACOSX` resource-fork `.csv` sidecars. Byte-exact SHA-256 leaves **513 distinct contents** and 113 repeated entries. Their data contain roughly **12,588,290 rows** excluding headers. There are 32 distinct filename asset prefixes; the six newer candidate batches contain 177 equity/sensor CSVs. Some archives have NQ/ES/YM futures, metals, BTC, VIX/VXN, TNX, DXY and equities. **157 files repeat column names** within the same header, and 21 lack the common `time,open,high,low,close` prefix. These facts are an archive audit, not evidence of 800 accessible files or 513 economically independent series. The user expects roughly 800; locate and reconcile the remaining files against the live GitHub repositories before declaring full coverage.
+`reppiks490/multi-level-csv` at `ce82124352762c14eb33836a5c894bc3a2a71dfe` has nine ZIPs with **626 usable CSV entries**, excluding 626 `__MACOSX` resource-fork sidecars. Their data contain roughly **12,588,290 rows** excluding headers, and 157 files repeat column names. A second public repository, `reppiks490/csv-data-multi-chart-type` at `a482e7d1801fa7fa5aec093960097c0051c0403c`, contributes one ZIP with **33 usable CSV entries**, another 33 sidecars, roughly **1,199,340 rows**, and 26 duplicate-header files. Across both repositories, the accessible checkpoint is **ten ZIPs, 659 usable CSV archive entries, 542 distinct byte-exact SHA-256 contents** (117 repeated entries), roughly **13,787,630 data rows**, and 183 entries with duplicate column names. The second archive has 29 byte-distinct contents absent from the first nine. This is an archive audit, not evidence of 800 accessible files or 542 economically independent series. The owner expects roughly 800; reconcile the remainder before claiming complete coverage. The second archive includes ETHUSD: inventory its provenance, but keep it out of Icarus model or engine work under `ASTRA_DO_NOT.md` unless the owner changes that restriction.
 
 The provider, chart transform, timezone, native timestamp meaning, first-known availability, contract roll, volume semantics and indicator provenance are **not proved by the filename**. `1M` can be monthly, `1 2` an export variant, and `1000T` a chart setting rather than authenticated tick data. A repeated timestamp can be a valid separate bar. Preserve the original ZIP/member, row number and every duplicate header occurrence by position. File hashes deduplicate exact bytes for analysis without deleting lineage entries.
 
@@ -29,11 +32,11 @@ Today each export can become a separate chart or feature, allowing duplicates, t
 
 ## Initial delivery and acceptance
 
-- First reconcile the **expected ~800** with the accessible 626 entries, producing one versioned manifest of all archive/member hashes, physical entry counts, exact-byte duplicates, symbol/representation/clock claims, header positions, coverage and unresolved identities. This manifest belongs beside raw archives in `multi-level-csv`; raw licensed material stays out of code history.
+- First reconcile the **expected ~800** with the accessible 659 entries across both repositories, producing one versioned manifest of all archive/member hashes, physical entry counts, exact-byte duplicates, symbol/representation/clock claims, header positions, coverage and unresolved identities. Place a manifest beside each repository's existing raw archive, with cross-repository references; raw licensed material stays out of code history beyond the existing archives.
 - Implement only on a reviewed additive branch in the shared `Icarus`/AION architecture after checking live Claude Code work and sibling contracts. Start with NQ, ES and a small reviewed candidate/risk-sensor subset, then scale the same adapter across every verified CSV. No rewrite of Pulse, Icarus execution or existing protected research.
 - Test repeated timestamps, ambiguous chart suffixes, duplicated headers, non-OHLC series, missing availability, near-duplicate data, stock-vs-futures identity, corrections, horizon leakage, costs, and scenario labels. Show one complete as-of example with exact source rows and reproducible frame and model hashes.
 - Gate any predictive claim on DAEDALUS-approved era-blocked walk-forward and untouched holdout, simple baselines, cost sensitivity, calibration, subgroup robustness and later shadow evidence. Report abstention and failure rates. Preserve a research-only result if these gates fail.
 
 ## Shared-agent handoff
 
-Once GitHub is connected, publish this proposal and versioned contracts to the canonical shared `reppiks490/Icarus` development repository, source manifests to `reppiks490/multi-level-csv`, and a pointer from `AGENTS.md`/`CLAUDE.md`/`docs/CURRENT.md` so Claude Code, Codex and other agents read the same decision, exact commit, tests, data hashes and remaining gaps. Review the live private DAEDALUS, ATHENA and ARGUS repositories before their owner adapters are changed. This local document and its portable archive are the interim shared handoff; a GitHub publish has **not** occurred.
+Publish this proposal and versioned contracts to a canonical shared development branch, with an additive pointer in `Icarus` after review, so Claude Code, Codex and other agents can read the same decisions, exact commits, tests, data hashes and remaining gaps. Review the live private DAEDALUS, ATHENA and ARGUS repositories before their owner adapters are changed. Browser access to GitHub as `reppiks490` was confirmed on 2026-09-23; publication status and target commit must be updated after any actual remote write.

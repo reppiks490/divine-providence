@@ -4,6 +4,12 @@ AION is an isolated, read-only market memory for the Icarus intelligence stack. 
 
 **Status:** working research foundation and synthetic cockpit. No sibling repository has been modified or connected to a live broker. No model has been certified, no live depth feed is present, and no trading performance is claimed. This repository's `docs/CURRENT.md` is the current handoff.
 
+Forecast records now preserve event/gap ledger cutoffs and label retrospective
+issuance. `EventStore.frozen_frame(prediction_id)` reconstructs the cited
+decision frame after later imports. Settlements remain **unverified inputs**,
+not performance evidence; neither they nor PARALLAX inventory may authorize a
+trade.
+
 ## Run the time machine
 
 Python 3.11+; the core and cockpit use the standard library.
@@ -64,4 +70,16 @@ Icarus owns execution and paper fill telemetry. DAEDALUS owns protected research
 
 Read [`AGENTS.md`](AGENTS.md), [`docs/CURRENT.md`](docs/CURRENT.md), and [`docs/DECISIONS/ADR-0001.md`](docs/DECISIONS/ADR-0001.md) before extending this build.
 
-The proposed CSV-first extension is [`PARALLAX`](docs/PARALLAX-PROPOSAL.md). It has not been implemented or published to a shared GitHub repository.
+The proposed CSV-first extension is [`PARALLAX`](docs/PARALLAX-PROPOSAL.md). It has not been implemented. The proposal audits 659 usable CSV archive entries across the two accessible CSV repositories; see `docs/CURRENT.md` for the precise checkpoint and publication state.
+
+PARALLAX now has an **inventory-only** first slice. It does not yet have a
+market-state model or analog search. To generate a local provenance manifest:
+
+```bash
+python -m aion.parallax_manifest path/to/chart-archive.zip --output artifacts/parallax-inventory.json
+```
+
+The JSON retains each physical archive/member and repeated header position;
+all source-identity, availability, and execution flags remain false. Keep the
+local manifest out of Git because it contains filesystem paths and source
+details. See [ADR-0003](docs/DECISIONS/ADR-0003.md).

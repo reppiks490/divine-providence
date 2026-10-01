@@ -5,6 +5,7 @@ build/
 dist/
 *.egg-info/
 run/
+artifacts/
 *.sqlite3
 *.sqlite3-wal
 *.sqlite3-shm

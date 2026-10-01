@@ -110,6 +110,8 @@ class Observation:
             raise ValueError("observation cannot be available before its event")
         if self.available_ns > self.ingested_ns:
             raise ValueError("availability cannot be after ingestion")
+        if self.availability_basis == "observed_receipt" and self.available_ns != self.ingested_ns:
+            raise ValueError("observed receipt availability must equal ingestion time")
         if self.published_ns is not None:
             _ns(self.published_ns, "published_ns")
             if self.published_ns > self.available_ns:
@@ -156,6 +158,8 @@ def validate_source_event(source: SourceSpec, event: Observation) -> None:
         raise ValueError("synthetic data must be labeled")
     if source.origin == "synthetic" and event.availability_basis != "synthetic":
         raise ValueError("synthetic source must retain its synthetic label")
+    if source.origin != "synthetic" and (event.availability_basis == "synthetic" or "synthetic" in event.quality_flags):
+        raise ValueError("synthetic event requires a synthetic source manifest")
     p = event.payload
     def number(key, *, positive=False, nonnegative=False):
         v = p.get(key)
@@ -189,7 +193,10 @@ def validate_source_event(source: SourceSpec, event: Observation) -> None:
         number("price"); size = number("size", nonnegative=True)
         if p["action"] == "set" and size == 0:
             raise ValueError("set delta cannot have zero size")
-    elif event.kind == "macro" and not isinstance(p.get("series"), str):
-        raise ValueError("macro observation requires a series identity")
+    elif event.kind == "macro":
+        if not isinstance(p.get("series"), str) or not p["series"]:
+            raise ValueError("macro observation requires a series identity")
+        if source.origin != "synthetic" and (not isinstance(p.get("period"), str) or not p["period"]):
+            raise ValueError("real macro observation requires a period identity")
     elif event.kind == "schedule" and not isinstance(p.get("name"), str):
         raise ValueError("schedule requires a named event")
