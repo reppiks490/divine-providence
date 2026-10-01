@@ -7,6 +7,7 @@ from .bookmap import DepthDynamics, depth_dynamics
 from .contracts import BookLevel, BookSnapshot, EvidenceTier, Trade
 from .flow_dynamics import FlowDynamics, flow_dynamics
 from .journal import EventJournal
+from .liquidity_field import LiquidityField, liquidity_field
 
 
 @dataclass(frozen=True)
@@ -34,6 +35,7 @@ class CausalMicrostructureSnapshot:
     book_source_id: str
     flow: FlowDynamics
     depth: DepthDynamics
+    liquidity: LiquidityField
     trade_latest_received_ns: int
     depth_latest_received_ns: int
     trade_staleness_ns: int
@@ -286,6 +288,7 @@ def microstructure_snapshot_asof(
     trade_limit: int | None = 256,
     depth_limit: int | None = 64,
     depth_levels: int = 10,
+    liquidity_near_ticks: int | None = None,
     allow_inferred_trade_side: bool = True,
 ) -> CausalMicrostructureSnapshot:
     """Build the current ARGUS feature pair from receipt-time journal evidence."""
@@ -319,6 +322,15 @@ def microstructure_snapshot_asof(
         tick_size=tick_size,
         levels=validated_depth_levels,
     )
+    near_ticks = (
+        min(3, validated_depth_levels)
+        if liquidity_near_ticks is None
+        else liquidity_near_ticks
+    )
+    liquidity = liquidity_field(
+        depth_features,
+        near_ticks=near_ticks,
+    )
 
     return CausalMicrostructureSnapshot(
         at_received_ns=at_received_ns,
@@ -326,6 +338,7 @@ def microstructure_snapshot_asof(
         book_source_id=book_source_id,
         flow=flow,
         depth=depth_features,
+        liquidity=liquidity,
         trade_latest_received_ns=trades.latest_received_ns,
         depth_latest_received_ns=depth.latest_received_ns,
         trade_staleness_ns=at_received_ns - trades.latest_received_ns,

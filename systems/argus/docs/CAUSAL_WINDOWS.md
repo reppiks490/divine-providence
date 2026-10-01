@@ -47,6 +47,7 @@ CausalMicrostructureSnapshot carries both lineage sets together with:
 - depth-source staleness at decision time;
 - FlowDynamics;
 - DepthDynamics;
+- LiquidityField;
 - execution_authorized=false;
 - production_decision_authorized=false.
 
@@ -55,8 +56,9 @@ used source receipt time.
 
 ## Feature construction
 
-microstructure_snapshot_asof builds the current flow/depth feature pair from
-these causal journal windows.
+microstructure_snapshot_asof builds the current flow/depth/liquidity feature
+bundle from these causal journal windows. The liquidity-field near-touch window
+defaults to min(3, depth_levels) and may be set explicitly.
 
 It does not fetch future rows, reorder late evidence, repair unresolved gaps, or
 upgrade evidence tiers. It also does not grant trading, promotion, broker, or
