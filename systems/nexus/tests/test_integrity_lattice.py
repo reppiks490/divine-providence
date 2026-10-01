@@ -116,3 +116,26 @@ def test_clock_lattice_rejects_pre_event_availability():
     )
     with pytest.raises(ClockPolicyError,match="precedes event time"):
         lat.native_boundaries([bad])
+
+
+def test_integrity_rejects_coerced_counter_types_without_throwing():
+    for value in (1.5,"2",True):
+        m=manifest(metadata={
+            "usable_ohlc_rows":99,
+            "nonnumeric_ohlc_rows":value,
+            "inconsistent_ohlc_rows":0,
+        })
+        a=assess_manifest(m)
+        assert not a.admitted
+        assert "invalid_integrity_metadata" in a.blockers
+        assert a.usable_fraction==0.0
+
+    m=manifest(metadata={
+        "usable_ohlc_rows":"99",
+        "nonnumeric_ohlc_rows":0,
+        "inconsistent_ohlc_rows":0,
+        "representation_hypothesis":"not-a-mapping",
+    })
+    a=assess_manifest(m)
+    assert not a.admitted
+    assert "invalid_integrity_metadata" in a.blockers
