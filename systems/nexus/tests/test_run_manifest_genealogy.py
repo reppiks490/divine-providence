@@ -141,7 +141,19 @@ def test_rehashed_genealogy_and_run_cannot_hide_semantic_malformed_state():
     import dataclasses,hashlib,json
     _,_,g,m=_built()
 
-    bad_node=dataclasses.replace(g.factors[0],components=('A','A'))
+    # Bypass the hardened constructor deliberately to emulate a forged
+    # deserialized object whose outer hash was recomputed after semantic tampering.
+    original=g.factors[0]
+    bad_node=object.__new__(type(original))
+    for name,value in (
+        ('name',original.name),
+        ('version',original.version),
+        ('components',('A','A')),
+        ('method',original.method),
+        ('dependencies',original.dependencies),
+        ('spec_hash',original.spec_hash),
+    ):
+        object.__setattr__(bad_node,name,value)
     factors=(bad_node,*g.factors[1:])
     payload=FactorGenealogySnapshot._payload(
         g.schema,factors,g.dependency_edges,g.derivation_hashes
