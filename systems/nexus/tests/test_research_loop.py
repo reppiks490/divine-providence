@@ -7,7 +7,6 @@ from nexus.research_loop import AdvancedCSVResearchLoop, AdvancedLoopConfig, Cov
 
 
 def _write_zip(path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
     rows = [
         ["time", "open", "high", "low", "close", "Volume"],
         [1700000000, 100, 101, 99, 100, 10],
@@ -174,6 +173,7 @@ def test_checkpoint_counts_never_auto_authorize_coverage(tmp_path):
 
 
 def _make_completed_loop(tmp_path):
+    tmp_path.mkdir(parents=True,exist_ok=True)
     archive=tmp_path/"corpus.zip"
     _write_zip(archive)
     state=tmp_path/"state"

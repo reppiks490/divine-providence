@@ -109,9 +109,9 @@ def test_checkpoint_is_deterministic_and_tamper_evident(tmp_path: Path):
     d = json.loads(path.read_text())
     d["state"]["values"]["a"] = 2.0
     path.write_text(json.dumps(d))
-    with pytest.raises(ValueError, match="integrity/semantic verification"):
+    with pytest.raises(ValueError,match='integrity/semantic'):
         ReplayCheckpoint.load(path)
-    assert not ReplayCheckpoint.load(path, verify=False).verify()
+    assert not ReplayCheckpoint.load(path,verify=False).verify()
 
 
 def test_dynamic_quality_plane_tracks_missingness_and_age():

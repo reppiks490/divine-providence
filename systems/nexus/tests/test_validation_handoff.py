@@ -361,3 +361,25 @@ def test_handoff_verifier_rejects_rehashed_source_evidence_scope_escape():
         json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
     ).hexdigest()
     assert not verify_daedalus_validation_handoff(forged)
+
+
+def test_operational_dependencies_are_not_misrepresented_as_daedalus_stream_candidates():
+    m=_manifest()
+    operational={
+        "candidate_id":"integrity-op",
+        "family":"integrity_rejections",
+        "priority":"P0",
+        "score":801.0,
+        "scope":["integrity_gate"],
+        "rationale":"upstream integrity dependency",
+        "required_next_test":"repair evidence",
+        "descriptive_only":True,
+        "production_authorized":False,
+    }
+    handoff=build_daedalus_validation_handoff(
+        [m],[operational],admitted_ids={m.identity.stream_id},
+        corpus_manifest_hash='d'*64,source_iteration=1,loop_code_version='x',
+    )
+    assert handoff["candidates"]==[]
+    assert handoff["upstream_operational_dependency_counts"]=={"integrity_rejections":1}
+    assert handoff["upstream_operational_dependencies"][0]["scope"]==["integrity_gate"]
