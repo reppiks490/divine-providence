@@ -92,3 +92,32 @@ def test_source_evidence_requires_verified_triage_and_detects_semantic_forgery()
         json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
     ).hexdigest()
     assert not verify_representation_source_evidence(forged)
+
+
+def test_source_evidence_rejects_rehashed_claim_semantic_forgery():
+    clusters=[{
+        "triage_class":"FIXED_TIME_CADENCE_MATCH_REQUIRES_EXPORT_PROVENANCE",
+        "venue":"CME","symbols":["NQ1!"],"stream_ids":["a"],
+        "stream_count":1,"filename_claim":"1S",
+        "observed_cadence_ns":1_000_000_000,
+        "quality_flags":[],"authoritative_resolution_required":True,
+        "auto_resolved":False,
+    }]
+    out=build_representation_source_evidence(_seal_triage(clusters))
+    assert verify_representation_source_evidence(out)
+
+    forged=json.loads(json.dumps(out))
+    forged["clusters"][0]["source_evidence"]["chart_type_standard_time_based"]="AUTHORITATIVE_SUPPORTED"
+    forged.pop("evidence_hash")
+    forged["evidence_hash"]=hashlib.sha256(
+        json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_representation_source_evidence(forged)
+
+    forged=json.loads(json.dumps(out))
+    forged["clusters"][0]["standard_time_based_cadence_compatible"]=False
+    forged.pop("evidence_hash")
+    forged["evidence_hash"]=hashlib.sha256(
+        json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_representation_source_evidence(forged)
