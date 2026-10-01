@@ -21,6 +21,12 @@ BEHAVIOR_FAMILIES = frozenset({
 
 SEMANTICS_BLOCKED_FAMILIES = frozenset({"sampling_gap_sensitivity"})
 REPRESENTATION_BLOCKED_FAMILIES = frozenset({"representation_family_disagreement"})
+OPERATIONAL_FAMILIES = frozenset({
+    "corpus_recovery",
+    "owner_coverage_gap",
+    "representation_review",
+    "integrity_rejections",
+})
 
 
 def _candidate_dict(candidate: Any) -> dict[str, Any]:
@@ -187,10 +193,18 @@ def build_daedalus_validation_handoff(
         raise ValueError("corpus_manifest_hash must be a SHA-256 hex digest") from exc
 
     manifest_rows = list(manifests)
-    candidate_rows = [_candidate_dict(c) for c in candidates]
-    candidate_ids=[str(c.get("candidate_id") or "") for c in candidate_rows]
+    all_candidate_rows = [_candidate_dict(c) for c in candidates]
+    candidate_ids=[str(c.get("candidate_id") or "") for c in all_candidate_rows]
     if any(not x for x in candidate_ids) or len(set(candidate_ids)) != len(candidate_ids):
         raise ValueError("candidate_id values must be non-empty and unique")
+    operational_rows=[
+        c for c in all_candidate_rows
+        if str(c.get("family") or "") in OPERATIONAL_FAMILIES
+    ]
+    candidate_rows=[
+        c for c in all_candidate_rows
+        if str(c.get("family") or "") not in OPERATIONAL_FAMILIES
+    ]
     if representation_lineage_resolution is not None and not verify_representation_lineage_resolution(representation_lineage_resolution):
         raise ValueError("invalid or tampered representation-lineage resolution artifact")
     if session_gap_resolution is not None and not verify_session_gap_resolution(session_gap_resolution):
@@ -369,6 +383,10 @@ def build_daedalus_validation_handoff(
         "candidate_family_counts": dict(sorted(family_counts.items())),
         "route_counts": dict(sorted(route_counts.items())),
         "candidates": handoff_candidates,
+        "upstream_operational_dependency_counts": dict(sorted(
+            Counter(str(x.get("family") or "unknown") for x in operational_rows).items()
+        )),
+        "upstream_operational_dependencies": operational_rows,
         "statistical_promotion_performed": False,
         "protected_holdout_spent": False,
         "production_authorized": False,
@@ -423,8 +441,32 @@ def verify_daedalus_validation_handoff(payload: Mapping[str, Any] | None) -> boo
         return False
 
     rows=body.get("candidates")
-    if not isinstance(rows,list):
+    operational=body.get("upstream_operational_dependencies")
+    operational_counts=body.get("upstream_operational_dependency_counts")
+    if not isinstance(rows,list) or not isinstance(operational,list) or not isinstance(operational_counts,Mapping):
         return False
+    operational_ids=[]
+    recomputed_operational=Counter()
+    for candidate in operational:
+        if not isinstance(candidate,Mapping):
+            return False
+        cid=str(candidate.get("candidate_id") or "")
+        family=str(candidate.get("family") or "")
+        scope=candidate.get("scope")
+        if (
+            not cid or family not in OPERATIONAL_FAMILIES
+            or not isinstance(scope,list) or not scope
+            or any(not str(x) for x in scope)
+            or candidate.get("production_authorized") is not False
+        ):
+            return False
+        operational_ids.append(cid)
+        recomputed_operational[family]+=1
+    if len(set(operational_ids)) != len(operational_ids):
+        return False
+    if dict(sorted(recomputed_operational.items())) != dict(operational_counts):
+        return False
+
     ids=[];families=Counter();routes=Counter()
     for row in rows:
         if not isinstance(row,Mapping) or row.get("production_authorized") is not False:
@@ -520,6 +562,8 @@ def verify_daedalus_validation_handoff(payload: Mapping[str, Any] | None) -> boo
         elif row.get("clean_confirmation_rule") is not None:
             return False
     if len(set(ids))!=len(ids):
+        return False
+    if set(ids) & set(operational_ids):
         return False
     return (
         body.get("candidate_family_counts")==dict(sorted(families.items()))
