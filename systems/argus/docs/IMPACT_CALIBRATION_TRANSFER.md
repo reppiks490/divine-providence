@@ -157,3 +157,45 @@ This is offline research. It is not a live ICARUS decision-path computation.
 
 Even a fully compatible transfer audit does not authorize model promotion or a
 broker order.
+
+
+## Research export contract
+
+`argus.impact_calibration_transfer_research_export` provides
+`argus-impact-calibration-transfer-research-v1`.
+
+Before export it recomputes the registered transfer audit, so manifest, cohort,
+execution-receipt, calibration-lineage and transfer-plan validation all run
+again.
+
+The envelope preserves:
+
+- manifest, cohort and transfer-plan IDs;
+- impact-model and calibration revisions;
+- exact execution-source revisions;
+- confidence alpha, deterministic seed and bootstrap replicate count;
+- predeclared metric tolerances;
+- broker and paper eligible sample sizes by metric;
+- paper-minus-broker estimates and percentile intervals;
+- per-metric and aggregate tolerance outcomes;
+- explicit non-promotion and authority flags.
+
+Publication cannot precede the locked cohort. A downstream consumer must still
+gate local visibility on ingestion time.
+
+## ATHENA integration status
+
+The export contract is transport-ready, but no always-green hub driver
+fabricates broker-confirmed market fills merely to exercise the happy path.
+
+The current deterministic hub fixtures have genuine paper-emulator provenance
+but no genuine broker-confirmed execution source. Therefore the transfer export
+remains an ARGUS research contract until a broker-backed fixture or recorded
+broker-confirmed dataset with valid lineage is available.
+
+Synthetic broker rows may be used inside isolated unit tests to exercise the
+contract code path, but they are explicitly test fixtures and are not emitted
+as empirical ATHENA research evidence.
+
+This is intentional fail-closed behavior: lack of broker evidence is represented
+as lack of broker evidence, not silently repaired by relabeling paper fills.
