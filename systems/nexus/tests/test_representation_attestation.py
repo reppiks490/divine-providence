@@ -186,3 +186,36 @@ def test_attestation_requires_evidence_digest_and_status_is_tamper_evident():
     tampered=dict(good)
     tampered["resolved_by_attestation_count"]=0
     assert not verify_representation_attestation_status(tampered)
+
+
+def test_attestation_status_rejects_rehashed_missing_resolved_evidence():
+    import hashlib,json
+    m=_manifest()
+    good=build_representation_attestation_status([m],_queue(m),_valid(m))
+    assert verify_representation_attestation_status(good)
+    row=dict(good["streams"][0])
+    row.pop("accepted_evidence_sha256")
+    forged=dict(good)
+    forged["streams"]=[row]
+    forged.pop("status_hash")
+    forged["status_hash"]=hashlib.sha256(
+        json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_representation_attestation_status(forged)
+
+
+def test_attestation_status_rejects_rehashed_dimension_loss():
+    import hashlib,json
+    m=_manifest()
+    good=build_representation_attestation_status([m],_queue(m),_valid(m))
+    row=dict(good["streams"][0])
+    dims=dict(row["accepted_dimensions"])
+    dims.pop("session_definition")
+    row["accepted_dimensions"]=dims
+    forged=dict(good)
+    forged["streams"]=[row]
+    forged.pop("status_hash")
+    forged["status_hash"]=hashlib.sha256(
+        json.dumps(forged,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    assert not verify_representation_attestation_status(forged)
