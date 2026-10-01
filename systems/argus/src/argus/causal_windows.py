@@ -212,7 +212,7 @@ def depth_window_asof(
             bids = {float(price): float(size) for price, size in payload["bids"]}
             asks = {float(price): float(size) for price, size in payload["asks"]}
             have_snapshot = True
-            contributing_hashes = [str(row["row_sha256"])]
+            contributing_hashes.append(str(row["row_sha256"]))
         else:
             if not have_snapshot:
                 continue
