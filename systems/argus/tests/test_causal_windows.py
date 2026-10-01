@@ -411,6 +411,8 @@ def test_microstructure_snapshot_binds_feature_evidence_to_journal_rows(tmp_path
     assert len(result.depth.bid_depth_by_tick) == 2
     assert len(result.depth.ask_depth_by_tick) == 2
     assert result.depth.evidence_tier is EvidenceTier.TRUE_DEPTH
+    assert result.liquidity.evidence_tier is EvidenceTier.TRUE_DEPTH
+    assert result.liquidity.near_ticks == 2
     assert result.flow.event_time_ns == 12
     assert result.depth.event_time_ns == 12
     assert result.trade_row_sha256s == (
@@ -477,4 +479,53 @@ def test_inference_control_requires_boolean(tmp_path):
             at_received_ns=11,
             tick_size=1.0,
             allow_inferred_trade_side="yes",
+        )
+
+
+def test_causal_snapshot_exposes_configurable_liquidity_near_window(tmp_path):
+    journal = EventJournal(tmp_path / "argus.sqlite3")
+    journal.register(trade_contract())
+    journal.register(depth_contract())
+    journal.append(trade(1, 10, 11))
+    journal.append(
+        snapshot(
+            1,
+            10,
+            11,
+            bids=((99.0, 5.0), (98.0, 3.0), (97.0, 2.0)),
+            asks=((100.0, 4.0), (101.0, 3.0), (102.0, 3.0)),
+        )
+    )
+
+    result = microstructure_snapshot_asof(
+        journal,
+        trade_source_id="trades",
+        book_source_id="depth",
+        at_received_ns=11,
+        tick_size=1.0,
+        depth_levels=3,
+        liquidity_near_ticks=1,
+    )
+
+    assert result.liquidity.near_ticks == 1
+    assert result.liquidity.bid_near_touch_depth == pytest.approx(5.0)
+    assert result.liquidity.ask_near_touch_depth == pytest.approx(4.0)
+
+
+def test_invalid_liquidity_near_window_fails_closed(tmp_path):
+    journal = EventJournal(tmp_path / "argus.sqlite3")
+    journal.register(trade_contract())
+    journal.register(depth_contract())
+    journal.append(trade(1, 10, 11))
+    journal.append(snapshot(1, 10, 11))
+
+    with pytest.raises(ValueError, match="near_ticks"):
+        microstructure_snapshot_asof(
+            journal,
+            trade_source_id="trades",
+            book_source_id="depth",
+            at_received_ns=11,
+            tick_size=1.0,
+            depth_levels=2,
+            liquidity_near_ticks=3,
         )
