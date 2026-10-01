@@ -73,6 +73,9 @@ For an included block, observable follow-up is capped by:
 If the recorded terminal outcome occurs strictly after that cap, the study
 record is administratively censored at the cap.
 
+The cohort receipt stores both the administrative-censor count and the exact
+sorted block IDs that were censored by this rule.
+
 An invalidation exactly at the cap remains observed.
 
 This prevents later information from leaking past the study's declared data
