@@ -27,6 +27,10 @@ cohort begins:
 The manifest is canonicalized and content-addressed. Input order and duplicate
 configuration entries do not change its identity.
 
+The contract identity also pins its own schema revision:
+`argus-orderblock-study-v1`. This prevents a future cohort-selection code
+revision from silently reinterpreting an old manifest under the same ID.
+
 ## Prospective lock
 
 A manifest must be created at or before `cohort_start_ns`.
