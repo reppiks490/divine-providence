@@ -69,8 +69,7 @@ def _causal_rows(
             gap_active = True
         body = row["body"]
         if (
-            gap_active
-            and body["kind"] == "book_snapshot"
+            body["kind"] == "book_snapshot"
             and "provider_recovery" in tuple(body.get("quality_flags", ()))
         ):
             gap_active = False
