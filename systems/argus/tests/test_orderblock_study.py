@@ -187,6 +187,7 @@ def test_followup_is_administratively_censored_at_predeclared_horizon():
     assert rows["natural-censor"].duration_ns == 30
     assert rows["natural-censor"].invalidated is False
     assert locked.administrative_censored == 1
+    assert locked.administrative_censored_block_ids == ("late-event",)
 
 
 def test_followup_cutoff_can_be_tighter_than_analysis_horizon():
@@ -204,6 +205,7 @@ def test_followup_cutoff_can_be_tighter_than_analysis_horizon():
     assert row.duration_ns == 20
     assert row.invalidated is False
     assert locked.administrative_censored == 1
+    assert locked.administrative_censored_block_ids == ("near-end",)
 
 
 def test_event_exactly_at_followup_cap_remains_observed():
@@ -217,6 +219,7 @@ def test_event_exactly_at_followup_cap_remains_observed():
     assert row.duration_ns == 50
     assert row.invalidated is True
     assert locked.administrative_censored == 0
+    assert locked.administrative_censored_block_ids == ()
 
 
 def test_cohort_identity_is_independent_of_subject_input_order():
@@ -389,7 +392,7 @@ def test_registered_analysis_rejects_tampered_cohort_content():
         cohort,
         administrative_censored=1,
     )
-    with pytest.raises(ValueError, match="cohort_id"):
+    with pytest.raises(ValueError, match="administrative_censored"):
         registered_kaplan_meier(m, wrong_count)
 
     wrong_cohort_id = replace(
@@ -398,3 +401,28 @@ def test_registered_analysis_rejects_tampered_cohort_content():
     )
     with pytest.raises(ValueError, match="cohort_id"):
         registered_kaplan_meier(m, wrong_cohort_id)
+
+
+def test_administrative_censor_identity_tampering_fails_closed():
+    m = manifest(analysis_horizon_ns=10)
+    cohort = lock_study_cohort(
+        m,
+        (
+            subject("late", duration=20, invalidated=True),
+        ),
+    )
+    assert cohort.administrative_censored_block_ids == ("late",)
+
+    missing_id = replace(
+        cohort,
+        administrative_censored_block_ids=(),
+    )
+    with pytest.raises(ValueError, match="administrative_censored"):
+        registered_kaplan_meier(m, missing_id)
+
+    unknown_id = replace(
+        cohort,
+        administrative_censored_block_ids=("unknown",),
+    )
+    with pytest.raises(ValueError, match="not in cohort"):
+        registered_kaplan_meier(m, unknown_id)
