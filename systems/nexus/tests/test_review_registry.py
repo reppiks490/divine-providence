@@ -92,3 +92,24 @@ def test_structured_model_identity_requires_exact_bytes_and_all_axes():
         )
     with pytest.raises(ValueError,match='raw_sha256'):
         _record(raw_sha256='bad')
+
+
+def test_structured_model_identity_axes_must_be_semantically_coherent():
+    common=dict(
+        raw_sha256='b'*64,
+        chart_view_family='regular_candles',
+        price_geometry='standard_ohlc',
+        sampling_domain='time',
+        sampling_construction='time_bar',
+    )
+    good=_record(**common)
+    assert good.authoritative_claim_for_manifest
+
+    with pytest.raises(ValueError,match='time_bar construction'):
+        _record(**{**common,'sampling_domain':'event'})
+    with pytest.raises(ValueError,match='tick construction'):
+        _record(**{**common,'sampling_domain':'time','sampling_construction':'tick'})
+    with pytest.raises(ValueError,match='time-bar representation kind'):
+        _record(**{**common,'sampling_domain':'event','sampling_construction':'provider_native'})
+    with pytest.raises(ValueError,match='regular_candles view'):
+        _record(**{**common,'price_geometry':'heikin_ashi'})
