@@ -1,6 +1,6 @@
 import pytest
 
-from aion.parallax import AnalogAtlas, AxisObservation, build_fingerprint, mask_fingerprint
+from aion.parallax import AnalogAtlas, AxisObservation, build_fingerprint, fingerprint_from_frame, mask_fingerprint, observations_from_frame
 
 
 def obs(axis, value, available, source="s", representation="r", lineage=None):
@@ -110,3 +110,99 @@ def test_masks_and_settlements_fail_closed():
 def test_nonfinite_axes_rejected():
     with pytest.raises(ValueError, match="finite"):
         obs("x", float("nan"), 1)
+
+
+def test_aion_frame_adapter_preserves_lineage_and_normalizes_price_geometry():
+    frame = {
+        "asof_ns": 100,
+        "frame_hash": "f" * 64,
+        "source_count": 2,
+        "synthetic": False,
+        "evidence_hashes": ["a" * 64, "b" * 64],
+        "prices": [{
+            "symbol": "NQ",
+            "representation_id": "clock:1m",
+            "source_id": "nq-bars",
+            "event_ns": 90,
+            "available_ns": 95,
+            "open": 100.0,
+            "high": 103.0,
+            "low": 99.0,
+            "close": 102.0,
+            "event_hash": "a" * 64,
+        }],
+        "books": {
+            "nq-depth": {
+                "status": "true_depth",
+                "sequence": 7,
+                "best_bid": 101.75,
+                "best_ask": 102.0,
+                "spread": 0.25,
+                "imbalance": 0.2,
+                "age_ns": 2,
+            }
+        },
+        "macro": [{
+            "source_id": "macro-fed",
+            "available_ns": 80,
+            "revision": 1,
+            "values": {"series": "DXY", "period": "2026-09", "value": 97.5},
+        }],
+    }
+    observations = observations_from_frame(frame)
+    assert all(x.available_ns <= frame["asof_ns"] for x in observations)
+    fingerprint = fingerprint_from_frame(frame)
+    assert fingerprint.decision_ns == 100
+    assert fingerprint.values["price.NQ.clock:1m.body_pct"] == pytest.approx(2 / 102)
+    assert fingerprint.values["book.nq-depth.imbalance"] == pytest.approx(0.2)
+    assert fingerprint.values["macro.macro-fed.DXY.value"] == pytest.approx(97.5)
+    assert fingerprint.sources["price.NQ.clock:1m.body_pct"] == "nq-bars"
+
+
+def test_aion_frame_adapter_rejects_future_evidence_instead_of_hiding_it():
+    frame = {
+        "asof_ns": 100,
+        "frame_hash": "f" * 64,
+        "prices": [{
+            "symbol": "NQ",
+            "representation_id": "clock:1m",
+            "source_id": "nq-bars",
+            "available_ns": 101,
+            "open": 100.0,
+            "high": 101.0,
+            "low": 99.0,
+            "close": 100.5,
+            "event_hash": "a" * 64,
+        }],
+        "books": {},
+        "macro": [],
+    }
+    with pytest.raises(ValueError, match="future evidence"):
+        fingerprint_from_frame(frame)
+
+
+def test_neighbor_distance_balances_sources_not_axis_width():
+    atlas = AnalogAtlas()
+    query = build_fingerprint(30, [
+        obs("price.a", 0.0, 30, source="wide"),
+        obs("price.b", 0.0, 30, source="wide"),
+        obs("price.c", 0.0, 30, source="wide"),
+        obs("macro.x", 0.0, 30, source="macro"),
+    ])
+    candidate_wide_close = build_fingerprint(10, [
+        obs("price.a", 0.1, 10, source="wide"),
+        obs("price.b", 0.1, 10, source="wide"),
+        obs("price.c", 0.1, 10, source="wide"),
+        obs("macro.x", 10.0, 10, source="macro"),
+    ])
+    candidate_balanced = build_fingerprint(20, [
+        obs("price.a", 1.0, 20, source="wide"),
+        obs("price.b", 1.0, 20, source="wide"),
+        obs("price.c", 1.0, 20, source="wide"),
+        obs("macro.x", 0.1, 20, source="macro"),
+    ])
+    atlas.add(candidate_wide_close)
+    atlas.add(candidate_balanced)
+    result = atlas.neighbors(query, k=2, min_shared_axes=1)
+    assert "source_distances" in result["neighbors"][0]
+    assert set(result["neighbors"][0]["source_distances"]) == {"macro", "wide"}
