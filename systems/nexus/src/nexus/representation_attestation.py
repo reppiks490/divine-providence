@@ -271,6 +271,11 @@ def build_representation_attestation_status(
                     for x in (valid_att.get("evidence_sources") or [])
                     if isinstance(x,str) and _known(x)
                 }),
+                "accepted_evidence_sha256":sorted({
+                    _norm(valid_att.get("evidence_sha256")).lower()
+                    for valid_att,_ in valid
+                    if _SHA256_RE.fullmatch(_norm(valid_att.get("evidence_sha256")).lower())
+                }),
                 "accepted_dimensions":{
                     name:_norm(dimensions.get(name)) for name in required
                 },
@@ -344,6 +349,16 @@ def verify_representation_attestation_status(payload: Mapping[str, Any] | None) 
     streams=body.get("streams")
     if not isinstance(streams,list):
         return False
+    allowed_statuses={
+        "WAITING_EXPORT_SPECIFIC_ATTESTATION",
+        "BLOCKED_STREAM_ID_COLLISION",
+        "BLOCKED_MANIFEST_NOT_FOUND",
+        "BLOCKED_ATTESTATION_CONFLICT",
+        "REJECTED_ATTESTATION_IDENTITY_MISMATCH",
+        "BLOCKED_ATTESTATION_EVIDENCE_INCOMPLETE",
+        "BLOCKED_ATTESTATION_DIMENSIONS_INCOMPLETE",
+        "RESOLVED_BY_EXACT_STREAM_ATTESTATION",
+    }
     ids=[]
     resolved=[]
     counts=Counter()
@@ -352,16 +367,62 @@ def verify_representation_attestation_status(payload: Mapping[str, Any] | None) 
             return False
         sid=_norm(row.get("stream_id"))
         status=_norm(row.get("status"))
-        if not sid or not status:
+        if not sid or status not in allowed_statuses:
             return False
         ids.append(sid);counts[status]+=1
+
+        required=row.get("required_dimensions")
+        missing=row.get("missing_dimensions")
+        if not isinstance(required,list) or any(not _known(x) for x in required):
+            return False
+        if len(set(required)) != len(required):
+            return False
+        if not isinstance(missing,list) or any(str(x) not in required for x in missing):
+            return False
+        att_count=row.get("attestation_count")
+        if type(att_count) is not int or att_count < 0:
+            return False
+        valid_count=row.get("valid_attestation_count",0)
+        if type(valid_count) is not int or valid_count < 0 or valid_count > att_count:
+            return False
+
+        raw_sha=_norm(row.get("raw_sha256")).lower()
+        if raw_sha and not _SHA256_RE.fullmatch(raw_sha):
+            return False
+
         if status=="RESOLVED_BY_EXACT_STREAM_ATTESTATION":
             resolved.append(sid)
             if row.get("production_authorized") is not False:
                 return False
-            if row.get("identity_errors") or row.get("evidence_errors") or row.get("missing_dimensions"):
+            if row.get("identity_errors") or row.get("evidence_errors") or missing:
                 return False
-            if int(row.get("valid_attestation_count") or 0) < 1:
+            if valid_count < 1 or not raw_sha or not _norm(row.get("source_path")):
+                return False
+            sources=row.get("accepted_evidence_sources")
+            digests=row.get("accepted_evidence_sha256")
+            dims=row.get("accepted_dimensions")
+            if (
+                not isinstance(sources,list) or not sources
+                or any(not isinstance(x,str) or not _known(x) for x in sources)
+                or len(set(sources)) != len(sources)
+                or not isinstance(digests,list) or not digests
+                or any(not isinstance(x,str) or not _SHA256_RE.fullmatch(x.lower()) for x in digests)
+                or len(set(digests)) != len(digests)
+                or not isinstance(dims,Mapping)
+                or set(dims) != set(required)
+                or any(not _known(dims.get(name)) for name in required)
+                or _norm(dims.get("timestamp_semantics")).upper()
+                   not in {"BAR_OPEN","BAR_CLOSE","EVENT_COMPLETION"}
+                or not _known(row.get("reviewed_by"))
+                or not _norm(row.get("reviewed_at"))
+            ):
+                return False
+            try:
+                datetime.fromisoformat(_norm(row.get("reviewed_at")).replace("Z","+00:00"))
+            except ValueError:
+                return False
+        elif status=="WAITING_EXPORT_SPECIFIC_ATTESTATION":
+            if att_count != 0 or set(missing) != set(required):
                 return False
     if len(set(ids)) != len(ids):
         return False
@@ -375,4 +436,8 @@ def verify_representation_attestation_status(payload: Mapping[str, Any] | None) 
         and sorted(body.get("resolved_stream_ids") or [])==sorted(resolved)
         and body.get("status_counts")==dict(sorted(counts.items()))
         and body.get("statistical_promotion_performed") is False
+        and body.get("general_documentation_alone_can_resolve_p0") is False
+        and body.get("copy_or_sibling_attestation_inheritance_allowed") is False
+        and body.get("resolution_rule")
+            == "exact stream identity + reviewed evidence source/digest + all causal representation dimensions"
     )
