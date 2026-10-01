@@ -155,3 +155,16 @@ def test_quality_scoring_fails_closed_on_corrupt_telemetry():
         dynamic_state_quality(base_score=1.0,age_ns=0,cadence_ns=10.0)
     with pytest.raises(TypeError,match='missing'):
         dynamic_state_quality(base_score=1.0,age_ns=0,cadence_ns=10,missing=1)
+
+
+def test_quality_plane_rejects_nonfinite_or_coerced_configuration():
+    import pytest
+    state=StatePacket(100,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash='f')
+    for value in (float('nan'),float('inf'),0,-1):
+        with pytest.raises(ValueError,match='stale_after_multiples'):
+            QualityStateEngine().build(state,{'a':_m()},stale_after_multiples=value)
+    for value in (1.5,True,-1):
+        with pytest.raises(ValueError,match='non-negative integer'):
+            QualityStateEngine().build(
+                state,{'a':_m()},clock_uncertainty_ns={'a':value}
+            )
