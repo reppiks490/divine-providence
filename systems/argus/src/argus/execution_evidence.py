@@ -51,6 +51,7 @@ class ExecutionEvidenceReceipt:
 
 @dataclass(frozen=True)
 class LineagedImpactCalibrationObservation:
+    lineage_id: str
     receipt: ExecutionEvidenceReceipt
     calibration: ImpactCalibrationObservation
     execution_authorized: bool = False
@@ -470,6 +471,48 @@ def lineaged_realized_execution(
     )
 
 
+def _calibration_identity(
+    calibration: ImpactCalibrationObservation,
+) -> dict[str, Any]:
+    return {
+        "execution_id": calibration.execution_id,
+        "curve_event_time_ns": calibration.curve_event_time_ns,
+        "curve_sequence": calibration.curve_sequence,
+        "side": calibration.side,
+        "requested_size": calibration.requested_size,
+        "visible_opposite_size": calibration.visible_opposite_size,
+        "requested_to_visible_ratio": calibration.requested_to_visible_ratio,
+        "snapshot_age_ns": calibration.snapshot_age_ns,
+        "completion_latency_ns": calibration.completion_latency_ns,
+        "predicted_fill_fraction": calibration.predicted_fill_fraction,
+        "realized_fill_fraction": calibration.realized_fill_fraction,
+        "fill_fraction_error": calibration.fill_fraction_error,
+        "predicted_average_slippage_ticks": calibration.predicted_average_slippage_ticks,
+        "realized_average_slippage_ticks": calibration.realized_average_slippage_ticks,
+        "slippage_error_ticks": calibration.slippage_error_ticks,
+        "absolute_slippage_error_ticks": calibration.absolute_slippage_error_ticks,
+        "underpredicted_slippage": calibration.underpredicted_slippage,
+        "predicted_book_exhausted": calibration.predicted_book_exhausted,
+        "realized_complete_fill": calibration.realized_complete_fill,
+        "evidence_tier": calibration.evidence_tier.name,
+        "assumption": calibration.assumption,
+        "execution_authorized": calibration.execution_authorized,
+        "production_decision_authorized": calibration.production_decision_authorized,
+    }
+
+
+def _lineage_id(
+    receipt: ExecutionEvidenceReceipt,
+    calibration: ImpactCalibrationObservation,
+) -> str:
+    return "impact-calibration-lineage:" + _digest(
+        {
+            "receipt_id": receipt.receipt_id,
+            "calibration": _calibration_identity(calibration),
+        }
+    )
+
+
 def calibrate_lineaged_impact(
     curve: DepthImpactCurve,
     receipt: ExecutionEvidenceReceipt,
@@ -482,6 +525,7 @@ def calibrate_lineaged_impact(
         lineaged_realized_execution(receipt),
     )
     return LineagedImpactCalibrationObservation(
+        lineage_id=_lineage_id(receipt, calibration),
         receipt=receipt,
         calibration=calibration,
     )
@@ -517,6 +561,8 @@ def calibration_by_execution_evidence(
         calibration = row.calibration
         if not isinstance(calibration, ImpactCalibrationObservation):
             raise TypeError("calibration must be ImpactCalibrationObservation")
+        if row.lineage_id != _lineage_id(row.receipt, calibration):
+            raise ValueError("lineage_id does not match receipt/calibration content")
         if calibration.execution_id != row.receipt.receipt_id:
             raise ValueError("calibration execution_id does not match receipt")
         if calibration.side != row.receipt.side:
