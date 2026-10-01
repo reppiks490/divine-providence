@@ -176,7 +176,7 @@ def create_prospective_manifest(
     analyses = tuple(sorted({_nonempty("analysis", item) for item in analysis_plan}))
     if not analyses:
         raise ValueError("at least one analysis is required")
-    unknown = set(analyses) - _ALLOWED_ANALYSES
+    unknown = set(analyses) - _ALLOWED_ANALYSES_BY_SCHEMA[STUDY_SCHEMA_V1]
     if unknown:
         raise ValueError(f"unsupported analysis plan entries: {sorted(unknown)}")
 
@@ -211,6 +211,108 @@ def create_prospective_manifest(
         analysis_horizon_ns=horizon,
         analysis_plan=analyses,
     )
+
+
+def create_prospective_manifest_v2(
+    *,
+    study_name: str,
+    created_time_ns: int,
+    cohort_start_ns: int,
+    cohort_end_ns: int,
+    followup_cutoff_ns: int,
+    lifecycle_revision: str,
+    asset_ids: Iterable[str],
+    evidence_tiers: Iterable[EvidenceTier],
+    directions: Iterable[int] = (-1, 1),
+    analysis_horizon_ns: int | None = None,
+    confidence_alpha: float = 0.05,
+    analysis_plan: Iterable[str] = (
+        "kaplan_meier",
+        "evidence_tier_strata",
+        "kaplan_meier_uncertainty",
+    ),
+) -> OrderBlockStudyManifest:
+    """Create a v2 prospective study with predeclared uncertainty alpha."""
+
+    name = _nonempty("study_name", study_name)
+    revision = _nonempty("lifecycle_revision", lifecycle_revision)
+    created = _nonnegative_int("created_time_ns", created_time_ns)
+    start = _nonnegative_int("cohort_start_ns", cohort_start_ns)
+    end = _nonnegative_int("cohort_end_ns", cohort_end_ns)
+    cutoff = _nonnegative_int("followup_cutoff_ns", followup_cutoff_ns)
+    horizon = _positive_int_or_none("analysis_horizon_ns", analysis_horizon_ns)
+    alpha = _confidence_alpha(confidence_alpha)
+
+    if created > start:
+        raise ValueError("prospective manifest must be created at or before cohort_start_ns")
+    if start >= end:
+        raise ValueError("cohort_start_ns must be before cohort_end_ns")
+    if cutoff < end:
+        raise ValueError("followup_cutoff_ns must be at or after cohort_end_ns")
+
+    assets = tuple(sorted({_nonempty("asset_id", value) for value in asset_ids}))
+    if not assets:
+        raise ValueError("at least one asset_id is required")
+
+    tiers_set: set[EvidenceTier] = set()
+    for tier in evidence_tiers:
+        if not isinstance(tier, EvidenceTier):
+            raise TypeError("evidence_tiers must contain EvidenceTier values")
+        tiers_set.add(tier)
+    if not tiers_set:
+        raise ValueError("at least one evidence tier is required")
+    tiers = tuple(sorted(tiers_set, key=int))
+
+    direction_set: set[int] = set()
+    for direction in directions:
+        if isinstance(direction, bool) or direction not in (-1, 1):
+            raise ValueError("directions may contain only -1 and +1")
+        direction_set.add(int(direction))
+    if not direction_set:
+        raise ValueError("at least one direction is required")
+    direction_values = tuple(sorted(direction_set))
+
+    analyses = tuple(sorted({_nonempty("analysis", item) for item in analysis_plan}))
+    if not analyses:
+        raise ValueError("at least one analysis is required")
+    unknown = set(analyses) - _ALLOWED_ANALYSES_BY_SCHEMA[STUDY_SCHEMA_V2]
+    if unknown:
+        raise ValueError(f"unsupported analysis plan entries: {sorted(unknown)}")
+
+    identity = {
+        "schema_version": STUDY_SCHEMA_V2,
+        "study_name": name,
+        "created_time_ns": created,
+        "cohort_start_ns": start,
+        "cohort_end_ns": end,
+        "followup_cutoff_ns": cutoff,
+        "lifecycle_revision": revision,
+        "asset_ids": assets,
+        "evidence_tiers": [tier.name for tier in tiers],
+        "directions": direction_values,
+        "analysis_horizon_ns": horizon,
+        "analysis_plan": analyses,
+        "confidence_alpha": alpha,
+    }
+    manifest_id = _hash("order-block-study", identity)
+
+    return OrderBlockStudyManifest(
+        manifest_id=manifest_id,
+        schema_version=STUDY_SCHEMA_V2,
+        study_name=name,
+        created_time_ns=created,
+        cohort_start_ns=start,
+        cohort_end_ns=end,
+        followup_cutoff_ns=cutoff,
+        lifecycle_revision=revision,
+        asset_ids=assets,
+        evidence_tiers=tiers,
+        directions=direction_values,
+        analysis_horizon_ns=horizon,
+        analysis_plan=analyses,
+        confidence_alpha=alpha,
+    )
+
 
 
 def _validate_subject(subject: OrderBlockStudySubject) -> None:
