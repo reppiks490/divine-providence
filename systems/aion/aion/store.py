@@ -6,6 +6,7 @@ from pathlib import Path
 import json
 import math
 import sqlite3
+import time
 
 from .contracts import Observation, SourceSpec, canonical, digest, validate_source_event
 
@@ -118,18 +119,29 @@ class EventStore:
                     raise ValueError("conflicting immutable source event")
                 con.commit()
                 return {"position": old["position"], "event_hash": old["event_hash"], "idempotent": True}
-            latest_revision = con.execute("SELECT revision,available_ns FROM events WHERE source_id=? AND source_event_id=? ORDER BY revision DESC LIMIT 1",
+            latest_revision = con.execute("SELECT revision,available_ns,body FROM events WHERE source_id=? AND source_event_id=? ORDER BY revision DESC LIMIT 1",
                                           (event.source_id, event.source_event_id)).fetchone()
             if latest_revision is not None:
                 if event.revision <= latest_revision["revision"] or event.available_ns <= latest_revision["available_ns"]:
                     raise ValueError("revision and its availability must increase")
                 if source.sequence_policy != "none":
                     raise ValueError("sequenced-stream corrections require a reviewed provider adapter")
+                prior_event = json.loads(latest_revision["body"])
+                if any(prior_event[key] != getattr(event, key) for key in ("kind", "event_ns", "plane")):
+                    raise ValueError("revision cannot change fact identity")
             last = con.execute("SELECT sequence,available_ns FROM events WHERE source_id=? AND sequence IS NOT NULL ORDER BY position DESC LIMIT 1",
                                (event.source_id,)).fetchone()
-            gap = con.execute("SELECT 1 FROM source_gaps WHERE source_id=?", (event.source_id,)).fetchone()
+            gap = con.execute("SELECT * FROM source_gaps WHERE source_id=?", (event.source_id,)).fetchone()
             if gap and not recovery:
                 raise GapError("source gap unresolved; authenticated recovery snapshot required")
+            if gap and recovery:
+                gap_transition = con.execute(
+                    "SELECT available_ns FROM source_gap_history WHERE source_id=? AND state='gap' ORDER BY position DESC LIMIT 1",
+                    (event.source_id,),
+                ).fetchone()
+                if (not gap_transition or event.available_ns <= gap_transition["available_ns"]
+                        or event.sequence < gap["observed_sequence"]):
+                    raise GapError("recovery must follow the observed gap in time and sequence")
             if source.sequence_policy != "none" and last and event.available_ns < last["available_ns"]:
                 raise ValueError("sequenced source availability reversed")
             if source.sequence_policy != "none" and last and event.sequence <= last["sequence"]:
@@ -159,11 +171,15 @@ class EventStore:
             return {"position": cursor.lastrowid, "event_hash": event_hash, "idempotent": False}
 
     def asof(self, timestamp_ns: int, *, symbol: str | None = None, plane: str | None = None,
-             include_revisions: bool = False) -> list[dict]:
+             include_revisions: bool = False, max_position: int | None = None) -> list[dict]:
         if type(timestamp_ns) is not int or timestamp_ns < 0:
             raise ValueError("as-of time must be nonnegative integer nanoseconds")
+        if max_position is not None and (type(max_position) is not int or max_position < 0):
+            raise ValueError("invalid event ledger cutoff")
         sql = "SELECT * FROM events WHERE available_ns<=?"
         args: list = [timestamp_ns]
+        if max_position is not None:
+            sql += " AND position<=?"; args.append(max_position)
         if symbol is not None:
             sql += " AND symbol=?"; args.append(symbol)
         if plane is not None:
@@ -193,12 +209,18 @@ class EventStore:
         with self._db() as con:
             return [dict(row) for row in con.execute("SELECT * FROM source_gaps ORDER BY source_id")]
 
-    def gaps_asof(self, timestamp_ns: int) -> list[dict]:
+    def gaps_asof(self, timestamp_ns: int, *, max_position: int | None = None) -> list[dict]:
         if type(timestamp_ns) is not int or timestamp_ns < 0:
             raise ValueError("as-of time must be nonnegative integer nanoseconds")
+        if max_position is not None and (type(max_position) is not int or max_position < 0):
+            raise ValueError("invalid gap ledger cutoff")
+        sql = "SELECT * FROM source_gap_history WHERE available_ns<=?"
+        args: list[int] = [timestamp_ns]
+        if max_position is not None:
+            sql += " AND position<=?"; args.append(max_position)
+        sql += " ORDER BY available_ns,position"
         with self._db() as con:
-            rows = con.execute("SELECT * FROM source_gap_history WHERE available_ns<=? ORDER BY available_ns,position",
-                               (timestamp_ns,)).fetchall()
+            rows = con.execute(sql, args).fetchall()
         latest = {row["source_id"]: row for row in rows}
         return [dict(row) for source_id, row in sorted(latest.items()) if row["state"] == "gap"]
 
@@ -251,25 +273,52 @@ class EventStore:
             raise ValueError("a nonempty unique evidence set is required")
         with self._db() as con:
             con.execute("BEGIN IMMEDIATE")
+            recorded_ns = time.time_ns()
+            event_cutoff = con.execute("SELECT COALESCE(MAX(position),0) FROM events").fetchone()[0]
+            gap_cutoff = con.execute("SELECT COALESCE(MAX(position),0) FROM source_gap_history").fetchone()[0]
             placeholders = ",".join("?" for _ in evidence_hashes)
-            rows = con.execute(f"SELECT event_hash,available_ns FROM events WHERE event_hash IN ({placeholders})", evidence_hashes).fetchall()
+            rows = con.execute(f"SELECT event_hash,available_ns,ingested_ns FROM events WHERE event_hash IN ({placeholders})", evidence_hashes).fetchall()
             if len(rows) != len(evidence_hashes) or any(r["available_ns"] > decision_ns for r in rows):
                 raise ValueError("prediction references unknown or future evidence")
             from .replay import frame
-            actual_frame = frame(self, decision_ns)
+            actual_frame = frame(self, decision_ns, max_event_position=event_cutoff,
+                                 max_gap_position=gap_cutoff)
             if frame_hash != actual_frame["frame_hash"] or not set(evidence_hashes).issubset(actual_frame["evidence_hashes"]):
                 raise ValueError("prediction frame differs from decision-time evidence")
-            body = {"schema": 1, "decision_ns": decision_ns, "horizon_ns": horizon_ns,
+            issuance_class = ("prospective_local_unattested"
+                              if decision_ns <= recorded_ns < horizon_ns
+                              and all(r["ingested_ns"] <= decision_ns for r in rows)
+                              else "retrospective_replay")
+            core = {"schema": 2, "decision_ns": decision_ns, "horizon_ns": horizon_ns,
                     "model_id": model_id, "symbol": symbol, "forecast": forecast,
                     "confidence": confidence, "abstain": abstain,
                     "frame_hash": frame_hash,
                     "reason_codes": reason_codes, "evidence_hashes": sorted(evidence_hashes),
-                    "plane": plane, "execution_authorized": False}
-            prediction_id = digest(body)
+                    "event_ledger_cutoff": event_cutoff, "gap_ledger_cutoff": gap_cutoff,
+                    "plane": plane, "execution_authorized": False, "performance_eligible": False}
+            prediction_id = digest(core)
+            body = {**core, "recorded_ns": recorded_ns, "issuance_class": issuance_class}
             con.execute("INSERT OR IGNORE INTO predictions VALUES (?,?,?,?)",
                         (prediction_id, decision_ns, horizon_ns, canonical(body)))
+            stored = con.execute("SELECT body FROM predictions WHERE prediction_id=?", (prediction_id,)).fetchone()
             con.commit()
-        return {"prediction_id": prediction_id, **body}
+        return {"prediction_id": prediction_id, **json.loads(stored["body"])}
+
+    def frozen_frame(self, prediction_id: str) -> dict:
+        with self._db() as con:
+            row = con.execute("SELECT body FROM predictions WHERE prediction_id=?", (prediction_id,)).fetchone()
+        if not row:
+            raise ValueError("unknown prediction")
+        prediction = json.loads(row["body"])
+        if prediction.get("schema") != 2:
+            raise ValueError("legacy prediction has no reconstructible ledger cutoff")
+        from .replay import frame
+        result = frame(self, prediction["decision_ns"],
+                       max_event_position=prediction["event_ledger_cutoff"],
+                       max_gap_position=prediction["gap_ledger_cutoff"])
+        if result["frame_hash"] != prediction["frame_hash"]:
+            raise ValueError("frozen prediction frame integrity mismatch")
+        return result
 
     def settle(self, prediction_id: str, *, outcome_ns: int, realized_move: float,
                costs: float | None = None, slippage: float | None = None,
@@ -289,7 +338,8 @@ class EventStore:
                 raise ValueError("prediction missing or horizon incomplete")
             body = {"prediction_id": prediction_id, "outcome_ns": outcome_ns,
                     "realized_move": realized_move, "costs": costs, "slippage": slippage,
-                    "outcome_reference": outcome_reference, "execution_authorized": False}
+                    "outcome_reference": outcome_reference, "outcome_verified": False,
+                    "performance_eligible": False, "execution_authorized": False}
             encoded = canonical(body)
             old = con.execute("SELECT body FROM settlements WHERE prediction_id=?", (prediction_id,)).fetchone()
             if old and old["body"] != encoded:

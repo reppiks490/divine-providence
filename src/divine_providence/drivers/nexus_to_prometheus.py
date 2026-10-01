@@ -1,6 +1,6 @@
-"""NEXUS v1.15 same-instant bundle -> PROMETHEUS NEXUS adapter -> normalized observations.
+"""NEXUS current same-instant bundle -> PROMETHEUS NEXUS adapter -> normalized observations.
 
-PROMETHEUS binds only under a contract identity it pins (ADR 0002/0004). The hub presents
+PROMETHEUS binds only under a contract identity it pins (ADR 0002/0004/0005). The hub presents
 the recorded baseline identity when the live sibling boundaries show no semantic drift from
 it, and otherwise presents the live snapshot's own identity, which PROMETHEUS must quarantine
 (CONTRACT_DRIFT).

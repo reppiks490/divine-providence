@@ -23,7 +23,7 @@ CONNECTIONS: dict[str, Connection] = {c.name: c for c in [
                "NEXUS SiblingInstantRouter -> AION EventStore / ARGUS MicrostructureFeature / ATHENA Provenance / DAEDALUS bridge",
                "One causally atomic NEXUS instant validated against the exact sibling contract modules (loaded by file path)."),
     Connection("nexus-contract-drift", "nexus_contract_drift", ("nexus",),
-               "nexus.contract-drift-snapshot.v1 vs pinned path-independent v1.15 baseline b394df6c... (v0.3 release 1119ef3d... reported)",
+               "nexus.contract-drift-snapshot.v1 vs pinned path-independent v1.16 baseline 65cba148... (v1.15 and v0.3 retained historically)",
                "Per-boundary raw/AST drift of sibling contracts against the baseline PROMETHEUS pins (ADR 0004). Drift is reported, not auto-accepted."),
     Connection("nexus-oracle", "nexus_to_oracle", ("nexus", "oracle"),
                "nexus.market-state.v2 -> oracle.nexus_ingest MetricObservation -> FinancialState",
@@ -38,6 +38,9 @@ CONNECTIONS: dict[str, Connection] = {c.name: c for c in [
                "NEXUS SiblingInstantBundle + pinned contract baseline -> SuperMesh-X RFC9162WitnessedCheckpointLedger -> GossipReceiptStore",
                "NEXUS artifacts witnessed in SuperMesh-X's quorum-signed append-only transparency log and independently re-verified; "
                "history rewrite and rollback must be rejected. Evidence only, no authority."),
+    Connection("intelligence-fabric", "intelligence_fabric", ("nexus", "aion", "argus", "athena"),
+               "NEXUS SiblingInstantBundle -> AION EventStore/PARALLAX fingerprint -> ARGUS evidence firewall + ATHENA receipt-time journal",
+               "One deterministic instant is persisted, fingerprinted, evidence-tier checked, and admitted to ATHENA only at actual ingestion time; read-only research/advisory path."),
 ]}
 
 # Systems with no cross-system contract in their code (verified by import audit and repo-wide

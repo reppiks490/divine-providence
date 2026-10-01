@@ -1,15 +1,36 @@
+import hashlib
 import json
 
 import pytest
 from pathlib import Path
 
-from prometheus_loop.adapters.nexus import NEXUS_V03_CONTRACT_SNAPSHOT_HASH
+from prometheus_loop.adapters.nexus import CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH
 from prometheus_loop.contracts import LoopKind
 from prometheus_loop.fixtures import sample_candidate_profile, sample_observations, sample_plugins
 from prometheus_loop.memory.store import ResearchMemory
 from prometheus_loop.orchestration.loop import HostPluginResult, NexusRunInput, PrometheusLoop, RunInput
 
 FIXTURE = Path(__file__).parent / "fixtures" / "nexus_v03_same_instant_bundle.json"
+
+
+def _current_payload():
+    payload = json.loads(FIXTURE.read_text())
+    specs = {row["source_id"]: row for row in payload["aion"]["source_specs"]}
+    for observation in payload["aion"]["observations"]:
+        if specs[observation["source_id"]].get("origin") == "nexus_derived":
+            observation["availability_basis"] = "derived_at_decision"
+            observation["quality_flags"] = [
+                flag for flag in observation.get("quality_flags", [])
+                if flag != "synthetic"
+            ]
+    return payload
+
+
+def _rehash(payload):
+    unsigned = {key: value for key, value in payload.items() if key != "bundle_hash"}
+    raw = json.dumps(unsigned, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    payload["bundle_hash"] = hashlib.sha256(raw).hexdigest()
+    return payload
 
 
 def _completed(plugin_id: str):
@@ -49,15 +70,16 @@ def test_loop_persists_diagnoses_and_lineage(tmp_path):
 
 
 def test_nexus_run_lineage_binds_nexus_contract_fingerprint(tmp_path):
-    payload = json.loads(FIXTURE.read_text())
+    payload = _current_payload()
     payload["athena"]["factors"]["risk"] = 0.9
+    _rehash(payload)
     memory = ResearchMemory(tmp_path / "memory.jsonl")
     run = PrometheusLoop(memory).run_nexus(
         NexusRunInput(
             run_kind=LoopKind.FORGE,
             objective="research sibling contract disagreement with source-backed architecture validation",
             bundle=payload,
-            contract_snapshot_hash=NEXUS_V03_CONTRACT_SNAPSHOT_HASH,
+            contract_snapshot_hash=CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH,
             plugin_inventory=_plugins(),
             plugin_results=(_completed("deep-research"), _completed("exa")),
             candidate_profile=sample_candidate_profile(),
@@ -67,7 +89,7 @@ def test_nexus_run_lineage_binds_nexus_contract_fingerprint(tmp_path):
     )
     record = memory.find_by_id(run.lineage_manifest_id)
     fingerprints = {name: value for name, value in record["payload"]["contract_fingerprints"]}
-    assert fingerprints["NEXUS"] == NEXUS_V03_CONTRACT_SNAPSHOT_HASH
+    assert fingerprints["NEXUS"] == CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH
     assert fingerprints["plugin:deep-research"]
     assert fingerprints["plugin:exa"]
 

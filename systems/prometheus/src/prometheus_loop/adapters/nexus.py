@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+import hashlib
+import json
 from typing import Any
 
 from ..contracts import FailureCase
@@ -19,18 +21,55 @@ NEXUS_V03_CONTRACT_SNAPSHOT_HASH = "1119ef3d9b561dc89668a9768893a2b1ab09cd542ffd
 # NEXUS-handoff receiver API (reviewed: 166 lines added, none changed).
 NEXUS_V115_CONTRACT_SNAPSHOT_HASH = "b394df6cf80ddbac014f4024222469b169178fadd7c26f4a597aed58671b5bb3"
 
-# Identities a caller may bind under. The v0.3 pin stays accepted so recorded
-# historical bundles replay; new bundles use the current pin.
-CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH = NEXUS_V115_CONTRACT_SNAPSHOT_HASH
-PINNED_NEXUS_CONTRACT_SNAPSHOT_HASHES = frozenset({NEXUS_V03_CONTRACT_SNAPSHOT_HASH, NEXUS_V115_CONTRACT_SNAPSHOT_HASH})
+# Path-independent NEXUS v1.16 sibling contract snapshot (ADR 0005). This is the
+# reviewed current contract after AION's causal evidence hardening and explicit
+# derived_at_decision semantics.
+NEXUS_V116_CONTRACT_SNAPSHOT_HASH = "65cba148bc5df86bd4b660ba15b14e6c58c113fa00fecdf3e22ea745a13ffe9a"
 
-# The v0.3 identity binds only these recorded bundles (the recovered v0.3 same-instant
-# bundle), so a fresh bundle cannot be labelled with the historical contract identity.
-HISTORICAL_V03_BUNDLE_HASHES = frozenset({"f750e97f123be8419a252d3f6810db66efb6427ff9f78483e74cea2a818d7373"})
+# Historical pins remain accepted only for the exact recorded bundles that were
+# produced under them. Fresh bundles must use the current v1.16 identity.
+CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH = NEXUS_V116_CONTRACT_SNAPSHOT_HASH
+PINNED_NEXUS_CONTRACT_SNAPSHOT_HASHES = frozenset({
+    NEXUS_V03_CONTRACT_SNAPSHOT_HASH,
+    NEXUS_V115_CONTRACT_SNAPSHOT_HASH,
+    NEXUS_V116_CONTRACT_SNAPSHOT_HASH,
+})
+HISTORICAL_BUNDLE_HASHES_BY_CONTRACT = {
+    NEXUS_V03_CONTRACT_SNAPSHOT_HASH: frozenset({
+        "f750e97f123be8419a252d3f6810db66efb6427ff9f78483e74cea2a818d7373",
+    }),
+    NEXUS_V115_CONTRACT_SNAPSHOT_HASH: frozenset({
+        "f5ed5c3b161b8403162383081c0ad1155242a802981788016e76dd7d8f3fcffd",
+    }),
+}
+RECORDED_HISTORICAL_CONTRACT_BY_BUNDLE_HASH = {
+    bundle_hash: contract_hash
+    for contract_hash, bundle_hashes in HISTORICAL_BUNDLE_HASHES_BY_CONTRACT.items()
+    for bundle_hash in bundle_hashes
+}
 
 
 def _is_sha256(value: object) -> bool:
     return isinstance(value, str) and len(value) == 64 and all(ch in "0123456789abcdef" for ch in value.lower())
+
+
+_TOP_LEVEL_KEYS = frozenset({
+    "decision_ns", "frame_hash", "bundle_hash", "aion", "argus", "athena",
+    "daedalus", "production_authorized",
+})
+
+
+def _recompute_bundle_hash(payload: Mapping[str, Any]) -> str:
+    if set(payload) != _TOP_LEVEL_KEYS:
+        missing = sorted(_TOP_LEVEL_KEYS - set(payload))
+        extra = sorted(set(payload) - _TOP_LEVEL_KEYS)
+        raise ValueError(f"NEXUS bundle top-level shape mismatch; missing={missing}, extra={extra}")
+    unsigned = {key: payload[key] for key in _TOP_LEVEL_KEYS if key != "bundle_hash"}
+    try:
+        raw = json.dumps(unsigned, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    except (TypeError, ValueError) as exc:
+        raise ValueError("NEXUS bundle must be finite canonical JSON") from exc
+    return hashlib.sha256(raw).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -57,6 +96,37 @@ def _reject_production_authority(name: str, payload: Mapping[str, Any]) -> None:
         raise ValueError(f"{name} production_authorized must remain false")
 
 
+def _validate_v116_aion_semantics(aion: Mapping[str, Any]) -> None:
+    specs_raw = aion.get("source_specs")
+    observations = aion.get("observations")
+    if not isinstance(specs_raw, list) or not isinstance(observations, list):
+        raise ValueError("v1.16 AION payload requires source_specs and observations arrays")
+    specs: dict[str, Mapping[str, Any]] = {}
+    for raw in specs_raw:
+        if not isinstance(raw, Mapping) or not isinstance(raw.get("source_id"), str):
+            raise ValueError("v1.16 AION source spec is malformed")
+        specs[raw["source_id"]] = raw
+    for observation in observations:
+        if not isinstance(observation, Mapping):
+            raise ValueError("v1.16 AION observation is malformed")
+        source_id = observation.get("source_id")
+        spec = specs.get(source_id)
+        if spec is None:
+            raise ValueError("v1.16 AION observation has no matching source spec")
+        basis = observation.get("availability_basis")
+        flags = observation.get("quality_flags", [])
+        if spec.get("origin") == "nexus_derived":
+            if (
+                observation.get("kind") != "context"
+                or basis != "derived_at_decision"
+                or observation.get("event_ns") != observation.get("available_ns")
+                or (isinstance(flags, list) and "synthetic" in flags)
+            ):
+                raise ValueError("v1.16 nexus_derived AION context must use derived_at_decision semantics")
+        elif basis == "derived_at_decision":
+            raise ValueError("v1.16 derived_at_decision requires a nexus_derived source")
+
+
 def validate_nexus_bundle(
     payload: Mapping[str, Any],
     contract_snapshot_hash: str,
@@ -77,8 +147,16 @@ def validate_nexus_bundle(
     bundle_hash = payload.get("bundle_hash")
     if not _is_sha256(bundle_hash):
         raise ValueError("bundle_hash must be a SHA-256 hex digest")
-    if contract_snapshot_hash == NEXUS_V03_CONTRACT_SNAPSHOT_HASH and bundle_hash not in HISTORICAL_V03_BUNDLE_HASHES:
-        raise ValueError("v0.3 contract identity only replays recorded historical bundles; bind new bundles under the current pin")
+    expected_bundle_hash = _recompute_bundle_hash(payload)
+    if bundle_hash != expected_bundle_hash:
+        raise ValueError("bundle_hash does not match canonical NEXUS bundle content")
+    recorded_contract = RECORDED_HISTORICAL_CONTRACT_BY_BUNDLE_HASH.get(bundle_hash)
+    if recorded_contract is not None and contract_snapshot_hash != recorded_contract:
+        raise ValueError("recorded historical bundle must retain its original contract identity")
+    if contract_snapshot_hash != CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH:
+        allowed = HISTORICAL_BUNDLE_HASHES_BY_CONTRACT.get(contract_snapshot_hash, frozenset())
+        if bundle_hash not in allowed:
+            raise ValueError("historical contract identity only replays recorded historical bundles; bind new bundles under the current pin")
 
     aion = _require_mapping(payload, "aion")
     argus = _require_mapping(payload, "argus")
@@ -91,6 +169,8 @@ def validate_nexus_bundle(
         ("daedalus", daedalus),
     ):
         _reject_production_authority(name, sibling_payload)
+    if contract_snapshot_hash == NEXUS_V116_CONTRACT_SNAPSHOT_HASH:
+        _validate_v116_aion_semantics(aion)
 
     return NexusBundleBinding(
         decision_ns=decision_ns,

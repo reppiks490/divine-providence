@@ -48,3 +48,29 @@ def test_market_state_and_sibling_adapters_reject_malformed_boundary_values():
         aion_derivation_source_spec(
             product_id='p',product_version='1',spec_hash='bad',code_version='v'
         )
+
+
+
+def test_nexus_derived_aion_context_uses_derived_at_decision_not_synthetic():
+    from nexus.adapters import aion_derivation_observation, aion_source_health_observation
+    from nexus.lineage import DerivationRecord
+    from nexus.source_health import SourceHealthRegistry
+
+    derivation = DerivationRecord.create(
+        product_id="NEXUS:RISK", product_version="1", decision_ns=160,
+        spec_hash="a" * 64, input_hashes={"NQ": "b" * 64}, code_version="test",
+    )
+    derived = aion_derivation_observation(derivation, ingested_ns=175)
+    assert derived["kind"] == "context"
+    assert derived["event_ns"] == 160 == derived["available_ns"]
+    assert derived["ingested_ns"] == 175
+    assert derived["availability_basis"] == "derived_at_decision"
+    assert "synthetic" not in derived["quality_flags"]
+
+    plane = SourceHealthRegistry().snapshot(160)
+    health = aion_source_health_observation(plane, ingested_ns=175)
+    assert health["kind"] == "context"
+    assert health["event_ns"] == 160 == health["available_ns"]
+    assert health["ingested_ns"] == 175
+    assert health["availability_basis"] == "derived_at_decision"
+    assert "synthetic" not in health["quality_flags"]

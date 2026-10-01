@@ -74,11 +74,15 @@ def _book(records: list[dict], invalid: bool) -> dict:
 
 
 def frame(store: EventStore, at_ns: int, *, symbol: str | None = None,
-          flow_window_ns: int = 60_000_000_000, scenario: Scenario | None = None) -> dict:
+          flow_window_ns: int = 60_000_000_000, depth_freshness_ns: int = 15_000_000_000,
+          scenario: Scenario | None = None, max_event_position: int | None = None,
+          max_gap_position: int | None = None) -> dict:
     """Produce one immutable-input as-of snapshot; scenarios are visibly synthetic."""
     if type(flow_window_ns) is not int or flow_window_ns <= 0:
         raise ValueError("positive flow window required")
-    items = store.asof(at_ns, symbol=symbol)
+    if type(depth_freshness_ns) is not int or depth_freshness_ns <= 0:
+        raise ValueError("positive depth freshness required")
+    items = store.asof(at_ns, symbol=symbol, max_position=max_event_position)
     if scenario:
         items = [i for i in items if i["source"] not in scenario.suppress_sources]
     synthetic_sources = sorted(source_id for source_id in {i["source"] for i in items}
@@ -106,7 +110,7 @@ def frame(store: EventStore, at_ns: int, *, symbol: str | None = None,
         elif k.startswith("book_"):
             book_events[item["source"]].append(item)
         elif k == "macro":
-            key = f"{item['source']}:{e['payload'].get('series', e['source_event_id'])}"
+            key = (item["source"], e["payload"]["series"], e["payload"].get("period", "synthetic-unspecified"))
             if key not in macro or (e["available_ns"], item["position"]) > (macro[key]["available_ns"], macro[key]["position"]):
                 macro[key] = {"source_id": item["source"], "symbol": item["symbol"],
                               "event_ns": e["event_ns"], "available_ns": e["available_ns"],
@@ -131,10 +135,17 @@ def frame(store: EventStore, at_ns: int, *, symbol: str | None = None,
         flow[ticker] = {"buy": buys, "sell": sells, "unknown": unknown,
                         "delta": buys - sells, "evidence_tier": EvidenceTier.TRUE_TRADE,
                         "observations": len(rows)}
-    gaps = {r["source_id"] for r in store.gaps_asof(at_ns)
+    gaps = {r["source_id"] for r in store.gaps_asof(at_ns, max_position=max_gap_position)
             if (symbol is None or store.source(r["source_id"]).symbol == symbol)
             and (scenario is None or r["source_id"] not in scenario.suppress_sources)}
     books = {source: _book(rows, source in gaps) for source, rows in book_events.items()}
+    for source, book in books.items():
+        if book["status"] == "true_depth":
+            last_available = max(row["event"]["available_ns"] for row in book_events[source])
+            age = at_ns - last_available
+            book["age_ns"] = age
+            if age > depth_freshness_ns:
+                book.update(status="stale_depth", bids=[], asks=[], imbalance=None)
     for source in gaps:
         if source not in books and (symbol is None or store.source(source).symbol == symbol):
             books[source] = _book([], True)
@@ -146,7 +157,7 @@ def frame(store: EventStore, at_ns: int, *, symbol: str | None = None,
               "source_count": len({i["source"] for i in items}),
               "atlas": build_atlas(items, at_ns),
               "evidence_hashes": [i["event_hash"] for i in items],
-              "quality": {"gap_sources": sorted(gaps), "missing_depth": not bool(books),
+              "quality": {"gap_sources": sorted(gaps), "missing_depth": not any(book["status"] == "true_depth" for book in books.values()),
                           "missing_true_trades": not bool(flow), "synthetic_sources": synthetic_sources,
                           "suppressed_sources": list(scenario.suppress_sources) if scenario else []},
               "synthetic": scenario is not None or bool(synthetic_sources),
