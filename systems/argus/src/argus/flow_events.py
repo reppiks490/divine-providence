@@ -167,6 +167,91 @@ def _finite_nonnegative(name: str, value: float) -> float:
     return out
 
 
+def _finite_positive(name: str, value: float) -> float:
+    out = _finite_nonnegative(name, value)
+    if out <= 0:
+        raise ValueError(f"{name} must be positive")
+    return out
+
+
+def _validate_run(run: AggressiveRun) -> None:
+    if not isinstance(run, AggressiveRun):
+        raise TypeError("runs must contain AggressiveRun values")
+    if isinstance(run.side, bool) or run.side not in (-1, 1):
+        raise ValueError("run.side must be -1 or +1")
+    for name, value in (
+        ("start_event_time_ns", run.start_event_time_ns),
+        ("end_event_time_ns", run.end_event_time_ns),
+        ("start_sequence", run.start_sequence),
+        ("end_sequence", run.end_sequence),
+        ("trade_count", run.trade_count),
+        ("distinct_price_levels", run.distinct_price_levels),
+        ("duration_ns", run.duration_ns),
+        ("max_interarrival_ns", run.max_interarrival_ns),
+    ):
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            raise ValueError(f"{name} must be a non-negative integer")
+    if run.trade_count < 1:
+        raise ValueError("trade_count must be positive")
+    if run.distinct_price_levels < 1 or run.distinct_price_levels > run.trade_count:
+        raise ValueError("distinct_price_levels must be between 1 and trade_count")
+    if run.end_event_time_ns < run.start_event_time_ns:
+        raise ValueError("run event time cannot move backward")
+    if run.duration_ns != run.end_event_time_ns - run.start_event_time_ns:
+        raise ValueError("duration_ns must match run event-time span")
+    if run.trade_count == 1 and run.max_interarrival_ns != 0:
+        raise ValueError("single-trade run must have zero max_interarrival_ns")
+    if run.max_interarrival_ns > run.duration_ns:
+        raise ValueError("max_interarrival_ns cannot exceed duration_ns")
+
+    total_volume = _finite_positive("total_volume", run.total_volume)
+    vwap = _finite_positive("vwap", run.vwap)
+    start_price = _finite_positive("start_price", run.start_price)
+    end_price = _finite_positive("end_price", run.end_price)
+    min_price = _finite_positive("min_price", run.min_price)
+    max_price = _finite_positive("max_price", run.max_price)
+    aligned = _finite_nonnegative(
+        "abs(aligned_travel_ticks)",
+        abs(run.aligned_travel_ticks),
+    )
+    range_ticks = _finite_nonnegative("range_ticks", run.range_ticks)
+    path_ticks = _finite_nonnegative("path_length_ticks", run.path_length_ticks)
+    efficiency = _finite_nonnegative(
+        "directional_efficiency",
+        run.directional_efficiency,
+    )
+    concentration = _finite_positive(
+        "volume_concentration",
+        run.volume_concentration,
+    )
+
+    if min_price > max_price:
+        raise ValueError("min_price cannot exceed max_price")
+    if not min_price <= start_price <= max_price:
+        raise ValueError("start_price must lie inside run price range")
+    if not min_price <= end_price <= max_price:
+        raise ValueError("end_price must lie inside run price range")
+    if not min_price <= vwap <= max_price:
+        raise ValueError("vwap must lie inside run price range")
+    if aligned > range_ticks + 1e-12:
+        raise ValueError("aligned travel cannot exceed run range")
+    if range_ticks > path_ticks + 1e-12:
+        raise ValueError("run range cannot exceed path length")
+    if efficiency > 1:
+        raise ValueError("directional_efficiency must be <= 1")
+    if concentration > 1:
+        raise ValueError("volume_concentration must be <= 1")
+    if total_volume <= 0:
+        raise ValueError("total_volume must be positive")
+    if run.evidence_tier not in (
+        EvidenceTier.TRUE_TRADE,
+        EvidenceTier.INFERRED_TRADE,
+    ):
+        raise ValueError(
+            "aggressive run evidence must be TRUE_TRADE or INFERRED_TRADE"
+        )
+
+
 def select_sweep_like_runs(
     runs: tuple[AggressiveRun, ...] | list[AggressiveRun],
     *,
@@ -212,8 +297,7 @@ def select_sweep_like_runs(
 
     selected: list[AggressiveRun] = []
     for run in runs:
-        if not isinstance(run, AggressiveRun):
-            raise TypeError("runs must contain AggressiveRun values")
+        _validate_run(run)
         if run.trade_count < min_trade_count:
             continue
         if run.distinct_price_levels < min_distinct_price_levels:
