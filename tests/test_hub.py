@@ -74,6 +74,21 @@ def test_sibling_contracts_match_the_pinned_v116_baseline():
     assert v03[("ATHENA", "contracts")] == "unchanged"
 
 
+def test_argus_registered_survival_research_reaches_athena_at_receipt_time():
+    r = connections.check("argus-athena-research")
+    assert r["ok"] is True, r
+    assert r["study_schema_version"] == "argus-orderblock-study-v2"
+    assert r["confidence_alpha"] == pytest.approx(0.05)
+    assert r["argus"]["event_time_ns"] < r["athena"]["ingestion_time_ns"]
+    assert r["athena"]["receipt_time_gated"] is True
+    assert r["athena"]["admitted_events"] == 1
+    assert r["athena"]["abstain_required"] is False
+    assert r["argus"]["input_evidence_tiers"] == ["TRUE_DEPTH"]
+    assert r["execution_authorized"] is False
+    assert r["production_authorized"] is False
+    assert r["production_decision_authorized"] is False
+
+
 def test_prometheus_ascension_runtime_handoff_is_structural_only():
     r = connections.check("prometheus-ascension")
     assert r["ok"] is True, r
