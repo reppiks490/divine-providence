@@ -106,6 +106,29 @@ def test_argus_impact_calibration_study_reaches_athena_at_receipt_time():
     assert r["production_decision_authorized"] is False
 
 
+def test_argus_bootstrap_uncertainty_reaches_athena_at_receipt_time():
+    r = connections.check("argus-bootstrap-athena-research")
+    assert r["ok"] is True, r
+    assert r["bootstrap_plan_schema_version"] == (
+        "argus-impact-calibration-bootstrap-plan-v1"
+    )
+    assert r["argus"]["paper_only_fixture"] is True
+    assert r["argus"]["broker_confirmed_observations"] == 0
+    assert r["argus"]["paper_emulator_observations"] == 2
+    assert r["argus"]["confidence_level"] == pytest.approx(0.95)
+    assert r["argus"]["bootstrap_replicates"] == 200
+    assert r["argus"]["simultaneous_coverage"] is False
+    assert r["argus"]["multiplicity_adjusted"] is False
+    assert r["argus"]["hypothesis_test"] is False
+    assert r["argus"]["event_time_ns"] < r["argus"]["study_lock_time_ns"]
+    assert r["argus"]["study_lock_time_ns"] < r["athena"]["ingestion_time_ns"]
+    assert r["athena"]["receipt_time_gated"] is True
+    assert r["athena"]["admitted_events"] == 1
+    assert r["execution_authorized"] is False
+    assert r["production_authorized"] is False
+    assert r["production_decision_authorized"] is False
+
+
 def test_prometheus_ascension_runtime_handoff_is_structural_only():
     r = connections.check("prometheus-ascension")
     assert r["ok"] is True, r
