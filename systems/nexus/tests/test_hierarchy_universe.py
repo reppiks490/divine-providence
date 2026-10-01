@@ -253,3 +253,72 @@ def test_universe_rejects_coerced_symbol_cap():
         build_factor_universe([_m("A","a")],max_streams_per_symbol=1.5)
     with pytest.raises(ValueError,match="max_streams_per_symbol"):
         build_factor_universe([_m("A","a")],max_streams_per_symbol=True)
+
+
+def test_reviewed_registry_can_authorize_exact_bytes_for_model_plane():
+    from nexus.review_registry import ReviewedRepresentationRecord,ReviewedRepresentationRegistry
+    m=_m("NQ","9")
+    m.metadata["representation_claim"]={
+        "family":"regular_candles",
+        "price_geometry":"standard_ohlc",
+        "sampling_domain":"time",
+        "construction":"time_bar",
+        "authoritative":False,
+    }
+    record=ReviewedRepresentationRecord(
+        stream_id=m.identity.stream_id,
+        version="1",
+        canonical_instrument="NQ",
+        asset_class="futures",
+        representation_class="regular-1m",
+        kind="time_bar",
+        timestamp_semantics="bar_close",
+        review_evidence_sha256="e"*64,
+        reviewed_by="human-review",
+        venue="X",
+        raw_sha256=m.identity.raw_sha256,
+        chart_view_family="regular_candles",
+        price_geometry="standard_ohlc",
+        sampling_domain="time",
+        sampling_construction="time_bar",
+        native_setting="1m",
+    )
+    registry=ReviewedRepresentationRegistry()
+    registry.register(record);registry.activate(m.identity.stream_id,"1")
+    returns=pd.DataFrame({m.identity.stream_id:[.01,.01,.01,.01]})
+    d=EnsembleDefinition("H",("NQ",),methods=("equal",),window=2,min_periods=1,rebalance_every=1)
+    result=HierarchicalFactorEngine().build_from_manifests(
+        returns,[m],d,reviewed_registry=registry
+    )
+    assert list(result.symbol_returns.columns)==["NQ"]
+
+
+def test_reviewed_registry_model_authority_is_exact_byte_bound():
+    import pytest
+    from nexus.review_registry import ReviewedRepresentationRecord,ReviewedRepresentationRegistry
+    m=_m("NQ","8")
+    record=ReviewedRepresentationRecord(
+        stream_id=m.identity.stream_id,
+        version="1",
+        canonical_instrument="NQ",
+        asset_class="futures",
+        representation_class="regular-1m",
+        kind="time_bar",
+        timestamp_semantics="bar_close",
+        review_evidence_sha256="e"*64,
+        reviewed_by="human-review",
+        venue="X",
+        raw_sha256="7"*64,
+        chart_view_family="regular_candles",
+        price_geometry="standard_ohlc",
+        sampling_domain="time",
+        sampling_construction="time_bar",
+    )
+    registry=ReviewedRepresentationRegistry()
+    registry.register(record);registry.activate(m.identity.stream_id,"1")
+    returns=pd.DataFrame({m.identity.stream_id:[.01,.01,.01]})
+    d=EnsembleDefinition("H",("NQ",),methods=("equal",),window=2,min_periods=1,rebalance_every=1)
+    with pytest.raises(ValueError,match="raw_sha256"):
+        HierarchicalFactorEngine().build_from_manifests(
+            returns,[m],d,reviewed_registry=registry
+        )
