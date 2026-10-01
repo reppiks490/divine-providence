@@ -274,7 +274,10 @@ def microstructure_snapshot_asof(
     """Build the current ARGUS feature pair from receipt-time journal evidence."""
 
     validated_depth_levels = _positive_limit("depth_levels", depth_levels)
-    assert validated_depth_levels is not None
+    if validated_depth_levels is None:
+        raise ValueError("depth_levels must be a positive integer")
+    if type(allow_inferred_trade_side) is not bool:
+        raise TypeError("allow_inferred_trade_side must be bool")
 
     trades = trade_window_asof(
         journal,
