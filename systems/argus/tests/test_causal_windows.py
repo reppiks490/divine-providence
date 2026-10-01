@@ -280,6 +280,38 @@ def test_unresolved_depth_gap_fails_closed_until_provider_recovery(tmp_path):
     assert recovered.source_row_sha256s == (recovery["row_sha256"],)
 
 
+def test_provider_recovery_resets_history_even_without_observed_gap(tmp_path):
+    journal = EventJournal(tmp_path / "argus.sqlite3")
+    journal.register(depth_contract())
+    journal.append(snapshot(1, 10, 11))
+    journal.append(delta(2, 12, 13, price=99.0, size=7.0))
+    recovery = journal.append(
+        snapshot(
+            3,
+            14,
+            15,
+            bids=((99.0, 6.0),),
+            asks=((100.0, 5.0),),
+            flags=("provider_recovery",),
+        )
+    )
+    after = journal.append(delta(4, 16, 17, price=99.0, size=8.0))
+
+    window = depth_window_asof(
+        journal,
+        source_id="depth",
+        at_received_ns=17,
+    )
+
+    assert [item.sequence for item in window.snapshots] == [3, 4]
+    assert window.snapshots[0].bids[0].size == 6.0
+    assert window.snapshots[1].bids[0].size == 8.0
+    assert window.source_row_sha256s == (
+        recovery["row_sha256"],
+        after["row_sha256"],
+    )
+
+
 def test_depth_delta_without_baseline_snapshot_is_not_silently_promoted(tmp_path):
     journal = EventJournal(tmp_path / "argus.sqlite3")
     journal.register(depth_contract())
