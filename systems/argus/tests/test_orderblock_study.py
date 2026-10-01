@@ -90,6 +90,7 @@ def test_manifest_identity_is_canonical_across_input_order():
     )
 
     assert first == second
+    assert first.schema_version == "argus-orderblock-study-v1"
     assert first.asset_ids == ("ES", "NQ")
     assert first.evidence_tiers == (
         EvidenceTier.TRUE_TRADE,
@@ -330,3 +331,31 @@ def test_registered_analysis_type_guards():
         registered_kaplan_meier({}, cohort)
     with pytest.raises(TypeError, match="cohort"):
         registered_kaplan_meier(m, {})
+
+
+def test_subject_identity_strings_are_canonical():
+    m = manifest()
+    with pytest.raises(ValueError, match="asset_id"):
+        lock_study_cohort(
+            m,
+            (
+                OrderBlockStudySubject(
+                    record=record("spaced-asset"),
+                    asset_id=" NQ ",
+                    confirmation_time_ns=120,
+                    lifecycle_revision=REVISION,
+                ),
+            ),
+        )
+    with pytest.raises(ValueError, match="lifecycle_revision"):
+        lock_study_cohort(
+            m,
+            (
+                OrderBlockStudySubject(
+                    record=record("spaced-revision"),
+                    asset_id="NQ",
+                    confirmation_time_ns=120,
+                    lifecycle_revision=f" {REVISION} ",
+                ),
+            ),
+        )
