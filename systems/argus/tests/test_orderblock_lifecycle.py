@@ -228,3 +228,26 @@ def test_invalid_lifecycle_config_fails_closed(kwargs, error):
 def test_invalid_observation_fails_closed(kwargs, error):
     with pytest.raises((TypeError, ValueError), match=error):
         OrderBlockObservation(**kwargs)
+
+
+def test_lifecycle_api_rejects_malformed_types():
+    lifecycle = create_order_block_lifecycle(candidate())
+    observation = OrderBlockObservation(event_time_ns=11, low=99.8, high=100.2, close=100.1)
+
+    with pytest.raises(TypeError, match="lifecycle"):
+        confirm_order_block("bad", at_time_ns=11)
+
+    with pytest.raises(TypeError, match="config"):
+        confirm_order_block(lifecycle, at_time_ns=11, config={})
+
+    confirmed_lifecycle = confirm_order_block(lifecycle, at_time_ns=11)
+
+    with pytest.raises(TypeError, match="observation"):
+        advance_order_block(confirmed_lifecycle, {})
+
+    with pytest.raises(TypeError, match="config"):
+        advance_order_block(
+            confirmed_lifecycle,
+            observation,
+            config={},
+        )
