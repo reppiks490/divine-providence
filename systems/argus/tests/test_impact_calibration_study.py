@@ -403,7 +403,7 @@ def test_cohort_tampering_breaks_identity_or_membership():
         lock_time_ns=260,
     )
 
-    with pytest.raises(ValueError, match="cohort_id"):
+    with pytest.raises(ValueError, match="broker_confirmed_count"):
         registered_evidence_stratified_summary(
             m,
             replace(cohort, broker_confirmed_count=99),
