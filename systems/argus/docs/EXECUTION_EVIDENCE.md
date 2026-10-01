@@ -72,9 +72,14 @@ Important semantics:
 `calibrate_lineaged_impact` preserves the entire immutable execution receipt
 next to the existing impact-calibration observation.
 
+The combined receipt + calibration observation also receives its own
+content-addressed `impact-calibration-lineage` ID. Mutating either side of the
+pair invalidates that lineage receipt.
+
 Before evidence-stratified aggregation, ARGUS verifies:
 
 - receipt content identity;
+- combined calibration-lineage identity;
 - execution ID binding;
 - side and requested-size binding;
 - realized fill-fraction binding;
