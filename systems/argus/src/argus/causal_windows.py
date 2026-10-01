@@ -268,9 +268,13 @@ def microstructure_snapshot_asof(
     tick_size: float,
     trade_limit: int | None = 256,
     depth_limit: int | None = 64,
+    depth_levels: int = 10,
     allow_inferred_trade_side: bool = True,
 ) -> CausalMicrostructureSnapshot:
     """Build the current ARGUS feature pair from receipt-time journal evidence."""
+
+    validated_depth_levels = _positive_limit("depth_levels", depth_levels)
+    assert validated_depth_levels is not None
 
     trades = trade_window_asof(
         journal,
@@ -293,7 +297,7 @@ def microstructure_snapshot_asof(
     depth_features = depth_dynamics(
         list(depth.snapshots),
         tick_size=tick_size,
-        levels=10,
+        levels=validated_depth_levels,
     )
 
     return CausalMicrostructureSnapshot(
