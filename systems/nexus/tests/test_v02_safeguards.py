@@ -159,3 +159,18 @@ def test_aion_adapter_rejects_impossible_known_availability():
     bad=BarEvent('s',20,0,1,1,1,1,None,'x',available_ns=10,availability_basis='verified_bar_close')
     with pytest.raises(ValueError,match='before event'):
         aion_bar_observation(bad)
+
+
+def test_checkpoint_save_rejects_invalid_object_and_creates_parent_atomically(tmp_path:Path):
+    import dataclasses
+    s=StatePacket(20,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash='f')
+    cp=ReplayCheckpoint.from_state(s)
+    target=tmp_path/'nested'/'cp.json'
+    cp.save(target)
+    assert ReplayCheckpoint.load(target).verify()
+    assert not list(target.parent.glob('*.tmp'))
+
+    bad=dataclasses.replace(cp,checkpoint_hash='0'*64)
+    with pytest.raises(ValueError,match='invalid checkpoint'):
+        bad.save(tmp_path/'bad.json')
+    assert not (tmp_path/'bad.json').exists()
