@@ -34,6 +34,10 @@ class CausalMicrostructureSnapshot:
     book_source_id: str
     flow: FlowDynamics
     depth: DepthDynamics
+    trade_latest_received_ns: int
+    depth_latest_received_ns: int
+    trade_staleness_ns: int
+    depth_staleness_ns: int
     trade_row_sha256s: tuple[str, ...]
     depth_row_sha256s: tuple[str, ...]
     execution_authorized: bool = False
@@ -299,6 +303,10 @@ def microstructure_snapshot_asof(
         book_source_id=book_source_id,
         flow=flow,
         depth=depth_features,
+        trade_latest_received_ns=trades.latest_received_ns,
+        depth_latest_received_ns=depth.latest_received_ns,
+        trade_staleness_ns=at_received_ns - trades.latest_received_ns,
+        depth_staleness_ns=at_received_ns - depth.latest_received_ns,
         trade_row_sha256s=trades.source_row_sha256s,
         depth_row_sha256s=depth.source_row_sha256s,
         execution_authorized=False,
