@@ -202,7 +202,8 @@ def depth_window_asof(
     asks: dict[float, float] = {}
     have_snapshot = False
     snapshots: list[BookSnapshot] = []
-    contributing_hashes: list[str] = []
+    snapshot_dependencies: list[tuple[str, ...]] = []
+    active_hashes: list[str] = []
     latest_received_ns: int | None = None
 
     for row in book_rows:
@@ -212,10 +213,16 @@ def depth_window_asof(
         payload = body["payload"]
 
         if body["kind"] == "book_snapshot":
-            bids = {float(price): float(size) for price, size in payload["bids"]}
-            asks = {float(price): float(size) for price, size in payload["asks"]}
+            bid_pairs = [(float(price), float(size)) for price, size in payload["bids"]]
+            ask_pairs = [(float(price), float(size)) for price, size in payload["asks"]]
+            if len({price for price, _ in bid_pairs}) != len(bid_pairs):
+                raise ValueError("duplicate bid price in raw depth snapshot")
+            if len({price for price, _ in ask_pairs}) != len(ask_pairs):
+                raise ValueError("duplicate ask price in raw depth snapshot")
+            bids = dict(bid_pairs)
+            asks = dict(ask_pairs)
             have_snapshot = True
-            contributing_hashes.append(str(row["row_sha256"]))
+            active_hashes = [str(row["row_sha256"])]
         else:
             if not have_snapshot:
                 continue
@@ -227,7 +234,7 @@ def depth_window_asof(
                 levels.pop(price, None)
             else:
                 levels[price] = size
-            contributing_hashes.append(str(row["row_sha256"]))
+            active_hashes.append(str(row["row_sha256"]))
 
         if not have_snapshot:
             continue
@@ -242,6 +249,7 @@ def depth_window_asof(
                 asks=asks,
             )
         )
+        snapshot_dependencies.append(tuple(active_hashes))
         latest_received_ns = int(row["received_time_ns"])
 
     if not snapshots or latest_received_ns is None:
@@ -249,13 +257,22 @@ def depth_window_asof(
 
     if limit is not None:
         snapshots = snapshots[-limit:]
+        snapshot_dependencies = snapshot_dependencies[-limit:]
+
+    lineage: list[str] = []
+    seen_hashes: set[str] = set()
+    for dependencies in snapshot_dependencies:
+        for row_hash in dependencies:
+            if row_hash not in seen_hashes:
+                lineage.append(row_hash)
+                seen_hashes.add(row_hash)
 
     return DepthWindow(
         source_id=source_id,
         at_received_ns=at_received_ns,
         latest_received_ns=latest_received_ns,
         snapshots=tuple(snapshots),
-        source_row_sha256s=tuple(contributing_hashes),
+        source_row_sha256s=tuple(lineage),
     )
 
 
