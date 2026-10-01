@@ -394,7 +394,8 @@ def test_invalid_window_limits_fail_closed(tmp_path, limit):
         )
 
 
-def test_invalid_depth_levels_fail_closed(tmp_path):
+@pytest.mark.parametrize("depth_levels", [0, -1, True, None])
+def test_invalid_depth_levels_fail_closed(tmp_path, depth_levels):
     journal = EventJournal(tmp_path / "argus.sqlite3")
     journal.register(trade_contract())
     journal.register(depth_contract())
@@ -408,5 +409,23 @@ def test_invalid_depth_levels_fail_closed(tmp_path):
             book_source_id="depth",
             at_received_ns=11,
             tick_size=1.0,
-            depth_levels=0,
+            depth_levels=depth_levels,
+        )
+
+
+def test_inference_control_requires_boolean(tmp_path):
+    journal = EventJournal(tmp_path / "argus.sqlite3")
+    journal.register(trade_contract())
+    journal.register(depth_contract())
+    journal.append(trade(1, 10, 11))
+    journal.append(snapshot(1, 10, 11))
+
+    with pytest.raises(TypeError, match="allow_inferred_trade_side"):
+        microstructure_snapshot_asof(
+            journal,
+            trade_source_id="trades",
+            book_source_id="depth",
+            at_received_ns=11,
+            tick_size=1.0,
+            allow_inferred_trade_side="yes",
         )
