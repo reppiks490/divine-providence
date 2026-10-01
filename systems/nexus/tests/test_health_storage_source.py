@@ -6,19 +6,27 @@ from nexus.sources import IterableMarketSource
 from nexus.storage import NpyColumnarBarStore, ParquetBarStore
 
 
-def _m(sid='csv:X:a'):
-    return StreamManifest(StreamIdentity('csv','X','Y','1','csv_export','x.csv','a'*64),10,['time','open','high','low','close'],0,9,10,1.0,0,0,0,quality_flags=[])
+def _m(sid='a'):
+    raw=('b'*64) if sid=='b' else ('a'*64)
+    return StreamManifest(
+        StreamIdentity('csv','X','Y','1','csv_export',f'{sid}.csv',raw),
+        10,['time','open','high','low','close'],0,9,10,1.0,0,0,0,quality_flags=[]
+    )
 
 
 def test_dynamic_health_tracks_missing_and_stale_without_imputation():
     m1=_m('a'); m2=_m('b')
-    # stream ids in mapping are the canonical ids that the state uses
-    state=StatePacket(100,{'a':1.0},{'a':35},('b',),{'a':1},{'a':'x'},frame_hash='f')
-    h=QualityStateEngine().build(state,{'a':m1,'b':m2},stale_after_multiples=2.0)
+    s1=m1.identity.stream_id;s2=m2.identity.stream_id
+    state=StatePacket(
+        100,{s1:1.0},{s1:35},(s2,),{s1:1},{s1:'x'},frame_hash='f'
+    )
+    h=QualityStateEngine().build(
+        state,{s1:m1,s2:m2},stale_after_multiples=2.0
+    )
     assert h.missing_count==1
     assert h.stale_fraction==0.5
-    assert h.streams['b'].dynamic_quality==0.0
-    assert 'b' not in state.values  # health never fills a market value
+    assert h.streams[s2].dynamic_quality==0.0
+    assert s2 not in state.values  # health never fills a market value
 
 
 def test_npy_columnar_roundtrip_and_tamper_detection(tmp_path:Path):
@@ -96,9 +104,10 @@ def test_npy_store_rejects_out_of_order_input_instead_of_sorting(tmp_path:Path):
 
 def test_quality_plane_rejects_negative_clock_uncertainty():
     import pytest
-    state=StatePacket(100,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash='f')
+    m=_m();sid=m.identity.stream_id
+    state=StatePacket(100,{sid:1.0},{sid:0},(),{sid:1},{sid:'x'},frame_hash='f')
     with pytest.raises(ValueError,match='clock_uncertainty_ns'):
-        QualityStateEngine().build(state,{'a':_m()},clock_uncertainty_ns={'a':-1})
+        QualityStateEngine().build(state,{sid:m},clock_uncertainty_ns={sid:-1})
 
 
 def test_iterable_source_rejects_manifest_stream_mismatch_and_merges_quality():
@@ -159,12 +168,25 @@ def test_quality_scoring_fails_closed_on_corrupt_telemetry():
 
 def test_quality_plane_rejects_nonfinite_or_coerced_configuration():
     import pytest
-    state=StatePacket(100,{'a':1.0},{'a':0},(),{'a':1},{'a':'x'},frame_hash='f')
+    m=_m();sid=m.identity.stream_id
+    state=StatePacket(100,{sid:1.0},{sid:0},(),{sid:1},{sid:'x'},frame_hash='f')
     for value in (float('nan'),float('inf'),0,-1):
         with pytest.raises(ValueError,match='stale_after_multiples'):
-            QualityStateEngine().build(state,{'a':_m()},stale_after_multiples=value)
+            QualityStateEngine().build(state,{sid:m},stale_after_multiples=value)
     for value in (1.5,True,-1):
         with pytest.raises(ValueError,match='non-negative integer'):
             QualityStateEngine().build(
-                state,{'a':_m()},clock_uncertainty_ns={'a':value}
+                state,{sid:m},clock_uncertainty_ns={sid:value}
             )
+
+
+def test_quality_plane_rejects_manifest_alias_and_unknown_uncertainty():
+    import pytest
+    m=_m();sid=m.identity.stream_id
+    state=StatePacket(100,{sid:1.0},{sid:0},(),{sid:1},{sid:'x'},frame_hash='f')
+    with pytest.raises(ValueError,match='does not match manifest stream_id'):
+        QualityStateEngine().build(state,{'alias':m})
+    with pytest.raises(ValueError,match='unknown stream ids'):
+        QualityStateEngine().build(
+            state,{sid:m},clock_uncertainty_ns={'other':1}
+        )
