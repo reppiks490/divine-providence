@@ -10,7 +10,7 @@ from .contracts import BarEvent, DataPlane, StreamManifest
 CONTRACT_VERSION="nexus.market-state.v2"
 _AION_AVAILABILITY_BASES={
     "observed_receipt","attested_release","verified_bar_close",
-    "reviewed_event_completion","synthetic",
+    "derived_at_decision","synthetic",
 }
 
 
@@ -353,7 +353,7 @@ def aion_derivation_observation(
         "revision":1,"kind":"context","event_ns":decision_ns,
         "available_ns":decision_ns,"ingested_ns":ingestion,"evidence_tier":1,
         "payload":derivation.to_dict(),"plane":"research","published_ns":None,
-        "sequence":seq,"quality_flags":list(quality_flags),"availability_basis":"synthetic",
+        "sequence":seq,"quality_flags":list(quality_flags),"availability_basis":"derived_at_decision",
     }
 
 
@@ -385,5 +385,5 @@ def aion_source_health_observation(health_plane,*,ingested_ns:int|None=None)->di
         "revision":1,"kind":"context","event_ns":decision_ns,
         "available_ns":decision_ns,"ingested_ns":ing,"evidence_tier":1,
         "payload":payload,"plane":"research","published_ns":None,"sequence":None,
-        "quality_flags":["nexus_source_health"],"availability_basis":"synthetic",
+        "quality_flags":["nexus_source_health"],"availability_basis":"derived_at_decision",
     }

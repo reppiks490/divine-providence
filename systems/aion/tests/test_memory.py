@@ -297,5 +297,51 @@ class MemoryTests(unittest.TestCase):
         self.assertFalse(branch["comparison"]["empirical_counterfactual_fill"])
 
 
+    def test_derived_at_decision_context_is_not_synthetic_and_can_persist_later(self):
+        source = SourceSpec(
+            "nexus-derived", "nexus.factor.v1", "NEXUS", ("context",), Tier.CANDLE_PROXY,
+            hashlib.sha256(b"nexus-derived").hexdigest(), sequence_policy="none",
+            origin="nexus_derived", license_reference="inherits-inputs",
+            evidence_reference="derivation:test",
+        )
+        self.store.register(source)
+        event = Observation(
+            "nexus-derived", "factor:1", 1, "context", 20, 20, 25,
+            Tier.CANDLE_PROXY, {"factor": 0.5}, availability_basis="derived_at_decision",
+        )
+        self.store.append(event)
+        row = self.store.asof(20)[0]["event"]
+        self.assertEqual(row["availability_basis"], "derived_at_decision")
+        self.assertEqual(row["ingested_ns"], 25)
+        self.assertNotIn("synthetic", row["quality_flags"])
+
+    def test_derived_at_decision_fails_closed_for_wrong_kind_clock_or_source(self):
+        with self.assertRaisesRegex(ValueError, "restricted to context"):
+            Observation(
+                "x", "x", 1, "bar", 20, 20, 20, Tier.CANDLE_PROXY,
+                {"open": 1, "high": 1, "low": 1, "close": 1},
+                availability_basis="derived_at_decision",
+            )
+        with self.assertRaisesRegex(ValueError, "event_ns == available_ns"):
+            Observation(
+                "x", "x", 1, "context", 19, 20, 20, Tier.CANDLE_PROXY,
+                {"factor": 1}, availability_basis="derived_at_decision",
+            )
+
+        source = SourceSpec(
+            "historical", "context:v1", "NEXUS", ("context",), Tier.CANDLE_PROXY,
+            hashlib.sha256(b"historical").hexdigest(), sequence_policy="none",
+            origin="historical_csv", license_reference="reviewed",
+            evidence_reference="file:test",
+        )
+        self.store.register(source)
+        event = Observation(
+            "historical", "factor:1", 1, "context", 20, 20, 20,
+            Tier.CANDLE_PROXY, {"factor": 1}, availability_basis="derived_at_decision",
+        )
+        with self.assertRaisesRegex(ValueError, "nexus_derived"):
+            self.store.append(event)
+
+
 if __name__ == "__main__":
     unittest.main()

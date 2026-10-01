@@ -19,6 +19,6 @@
     "published_ns": {"type": ["integer", "null"], "minimum": 0},
     "sequence": {"type": ["integer", "null"], "minimum": 0},
     "quality_flags": {"type": "array", "items": {"type": "string", "maxLength": 80}},
-    "availability_basis": {"enum": ["observed_receipt", "attested_release", "verified_bar_close", "synthetic"]}
+    "availability_basis": {"enum": ["observed_receipt", "attested_release", "verified_bar_close", "derived_at_decision", "synthetic"]}
   }
 }
