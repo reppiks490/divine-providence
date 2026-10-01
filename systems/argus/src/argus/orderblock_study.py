@@ -17,6 +17,8 @@ from .orderblock_survival import (
 )
 
 
+STUDY_SCHEMA_VERSION = "argus-orderblock-study-v1"
+
 _ALLOWED_ANALYSES = {
     "kaplan_meier",
     "evidence_tier_strata",
@@ -26,6 +28,7 @@ _ALLOWED_ANALYSES = {
 @dataclass(frozen=True)
 class OrderBlockStudyManifest:
     manifest_id: str
+    schema_version: str
     study_name: str
     created_time_ns: int
     cohort_start_ns: int
@@ -150,6 +153,7 @@ def create_prospective_manifest(
         raise ValueError(f"unsupported analysis plan entries: {sorted(unknown)}")
 
     identity = {
+        "schema_version": STUDY_SCHEMA_VERSION,
         "study_name": name,
         "created_time_ns": created,
         "cohort_start_ns": start,
@@ -166,6 +170,7 @@ def create_prospective_manifest(
 
     return OrderBlockStudyManifest(
         manifest_id=manifest_id,
+        schema_version=STUDY_SCHEMA_VERSION,
         study_name=name,
         created_time_ns=created,
         cohort_start_ns=start,
@@ -185,8 +190,14 @@ def _validate_subject(subject: OrderBlockStudySubject) -> None:
         raise TypeError("subjects must contain OrderBlockStudySubject values")
     if not isinstance(subject.record, OrderBlockSurvivalRecord):
         raise TypeError("subject record must be OrderBlockSurvivalRecord")
-    _nonempty("asset_id", subject.asset_id)
-    _nonempty("lifecycle_revision", subject.lifecycle_revision)
+    canonical_asset = _nonempty("asset_id", subject.asset_id)
+    canonical_revision = _nonempty("lifecycle_revision", subject.lifecycle_revision)
+    if canonical_asset != subject.asset_id:
+        raise ValueError("subject asset_id must not contain surrounding whitespace")
+    if canonical_revision != subject.lifecycle_revision:
+        raise ValueError(
+            "subject lifecycle_revision must not contain surrounding whitespace"
+        )
     _nonnegative_int("confirmation_time_ns", subject.confirmation_time_ns)
 
     record = subject.record
