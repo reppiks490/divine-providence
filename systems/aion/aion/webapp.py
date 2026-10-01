@@ -21,6 +21,17 @@ def _number(value, default=0):
 def handler_for(store: EventStore):
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
+            host = self.headers.get("Host", "").lower()
+            allowed_hosts = {"127.0.0.1", "localhost", f"127.0.0.1:{self.server.server_port}",
+                             f"localhost:{self.server.server_port}"}
+            if host not in allowed_hosts:
+                body = b'{"error":"invalid host"}'
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
             try:
                 url = urlsplit(self.path)
                 query = parse_qs(url.query)

@@ -55,15 +55,23 @@ def test_prometheus_binds_fresh_nexus_bundle_only_without_drift():
         assert tiers["ARGUS"] == "CANDLE_PROXY" and tiers["DAEDALUS"] == "RESEARCH_CANDIDATE_ONLY"
 
 
-def test_sibling_contracts_match_the_pinned_v115_baseline():
+def test_sibling_contracts_match_the_pinned_v116_baseline():
     r = connections.check("nexus-contract-drift")
     assert r["ok"] is True and r["semantic_drift"] is False, r
+    assert r["baseline_snapshot_hash"] == "65cba148bc5df86bd4b660ba15b14e6c58c113fa00fecdf3e22ea745a13ffe9a"
     assert {i["status"] for i in r["items"]} == {"unchanged"}
-    # Byte-identical boundaries stay "unchanged" against the older release too (interpreter-independent);
-    # only the reviewed, additive DAEDALUS bridge differs from v0.3.
+
+    v115 = {(i["sibling"], i["role"]): i["status"] for i in r["vs_v115"]["items"]}
+    assert v115[("AION", "contracts")] == "semantic_change"
+    assert v115[("AION", "store")] == "semantic_change"
+    assert {v for k, v in v115.items() if k not in {("AION", "contracts"), ("AION", "store")}} == {"unchanged"}
+
     v03 = {(i["sibling"], i["role"]): i["status"] for i in r["vs_v03_release"]["items"]}
-    assert v03.pop(("DAEDALUS", "bridge")) == "semantic_change"
-    assert set(v03.values()) == {"unchanged"}
+    assert v03[("AION", "contracts")] == "semantic_change"
+    assert v03[("AION", "store")] == "semantic_change"
+    assert v03[("DAEDALUS", "bridge")] == "semantic_change"
+    assert v03[("ARGUS", "contracts")] == "unchanged"
+    assert v03[("ATHENA", "contracts")] == "unchanged"
 
 
 def test_prometheus_ascension_link_never_claims_authentication():

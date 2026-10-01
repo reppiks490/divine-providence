@@ -110,14 +110,21 @@ class Observation:
             raise ValueError("observation cannot be available before its event")
         if self.available_ns > self.ingested_ns:
             raise ValueError("availability cannot be after ingestion")
+        if self.availability_basis == "observed_receipt" and self.available_ns != self.ingested_ns:
+            raise ValueError("observed receipt availability must equal ingestion time")
         if self.published_ns is not None:
             _ns(self.published_ns, "published_ns")
             if self.published_ns > self.available_ns:
                 raise ValueError("publication cannot follow claimed availability")
         if self.sequence is not None and (type(self.sequence) is not int or self.sequence < 0):
             raise ValueError("invalid source-local sequence")
-        if self.availability_basis not in ("observed_receipt", "attested_release", "verified_bar_close", "synthetic"):
+        if self.availability_basis not in ("observed_receipt", "attested_release", "verified_bar_close", "derived_at_decision", "synthetic"):
             raise ValueError("unknown availability basis")
+        if self.availability_basis == "derived_at_decision":
+            if self.kind != "context":
+                raise ValueError("derived_at_decision is restricted to context observations")
+            if self.event_ns != self.available_ns:
+                raise ValueError("derived_at_decision requires event_ns == available_ns")
         if not isinstance(self.payload, dict) or any(not isinstance(k, str) for k in self.payload):
             raise ValueError("payload must be an object")
         canonical(self.payload)
@@ -154,8 +161,12 @@ def validate_source_event(source: SourceSpec, event: Observation) -> None:
         raise ValueError("sequenced source requires source-local sequence")
     if event.availability_basis == "synthetic" and "synthetic" not in event.quality_flags:
         raise ValueError("synthetic data must be labeled")
+    if event.availability_basis == "derived_at_decision" and source.origin != "nexus_derived":
+        raise ValueError("derived_at_decision requires a nexus_derived source")
     if source.origin == "synthetic" and event.availability_basis != "synthetic":
         raise ValueError("synthetic source must retain its synthetic label")
+    if source.origin != "synthetic" and (event.availability_basis == "synthetic" or "synthetic" in event.quality_flags):
+        raise ValueError("synthetic event requires a synthetic source manifest")
     p = event.payload
     def number(key, *, positive=False, nonnegative=False):
         v = p.get(key)
@@ -189,7 +200,10 @@ def validate_source_event(source: SourceSpec, event: Observation) -> None:
         number("price"); size = number("size", nonnegative=True)
         if p["action"] == "set" and size == 0:
             raise ValueError("set delta cannot have zero size")
-    elif event.kind == "macro" and not isinstance(p.get("series"), str):
-        raise ValueError("macro observation requires a series identity")
+    elif event.kind == "macro":
+        if not isinstance(p.get("series"), str) or not p["series"]:
+            raise ValueError("macro observation requires a series identity")
+        if source.origin != "synthetic" and (not isinstance(p.get("period"), str) or not p["period"]):
+            raise ValueError("real macro observation requires a period identity")
     elif event.kind == "schedule" and not isinstance(p.get("name"), str):
         raise ValueError("schedule requires a named event")

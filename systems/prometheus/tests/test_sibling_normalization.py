@@ -1,10 +1,12 @@
 import copy
+import hashlib
 import json
 from pathlib import Path
 
 import pytest
 
 from prometheus_loop.adapters.nexus import (
+    CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH,
     NEXUS_V03_CONTRACT_SNAPSHOT_HASH,
     validate_nexus_bundle,
 )
@@ -17,8 +19,28 @@ def _payload():
     return json.loads(FIXTURE.read_text())
 
 
-def _observations(payload=None):
-    binding = validate_nexus_bundle(payload or _payload(), NEXUS_V03_CONTRACT_SNAPSHOT_HASH)
+def _current_payload():
+    payload = _payload()
+    specs = {row["source_id"]: row for row in payload["aion"]["source_specs"]}
+    for observation in payload["aion"]["observations"]:
+        if specs[observation["source_id"]].get("origin") == "nexus_derived":
+            observation["availability_basis"] = "derived_at_decision"
+            observation["quality_flags"] = [
+                flag for flag in observation.get("quality_flags", [])
+                if flag != "synthetic"
+            ]
+    return payload
+
+
+def _rehash(payload):
+    unsigned = {key: value for key, value in payload.items() if key != "bundle_hash"}
+    raw = json.dumps(unsigned, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    payload["bundle_hash"] = hashlib.sha256(raw).hexdigest()
+    return payload
+
+
+def _observations(payload=None, contract_snapshot_hash=NEXUS_V03_CONTRACT_SNAPSHOT_HASH):
+    binding = validate_nexus_bundle(payload or _payload(), contract_snapshot_hash)
     return normalize_nexus_bundle(binding)
 
 
@@ -62,19 +84,21 @@ def test_rejects_sibling_decision_instant_mismatch():
         ("athena", ("decision_ns",)),
         ("daedalus", ("candidate", "decision_ns")),
     ):
-        payload = _payload()
+        payload = _current_payload()
         target = payload[sibling]
         for key in path[:-1]:
             target = target[key]
         target[path[-1]] = 159
-        binding = validate_nexus_bundle(payload, NEXUS_V03_CONTRACT_SNAPSHOT_HASH)
+        _rehash(payload)
+        binding = validate_nexus_bundle(payload, CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH)
         with pytest.raises(ValueError, match="decision_ns"):
             normalize_nexus_bundle(binding)
 
 
 def test_missing_optional_comparison_dimension_remains_missing():
-    payload = _payload()
+    payload = _current_payload()
     del payload["athena"]["ood"]["novelty"]
-    observations = _observations(payload)
+    _rehash(payload)
+    observations = _observations(payload, CURRENT_NEXUS_CONTRACT_SNAPSHOT_HASH)
     athena = next(o for o in observations if o.sibling == "ATHENA")
     assert "ood:novelty" not in dict(athena.dimensions)

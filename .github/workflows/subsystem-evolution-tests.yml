@@ -1,0 +1,108 @@
+name: subsystem-evolution-tests
+
+on:
+  push:
+    paths:
+      - "systems/aion/**"
+      - "systems/argus/**"
+      - "systems/athena/**"
+      - ".github/workflows/subsystem-evolution-tests.yml"
+  pull_request:
+    paths:
+      - "systems/aion/**"
+      - "systems/argus/**"
+      - "systems/athena/**"
+      - ".github/workflows/subsystem-evolution-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: subsystem-evolution-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  causal-subsystems:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        system: [aion, argus, athena]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: systems/${{ matrix.system }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install pytest
+      - name: Compile
+        run: python -m compileall -q .
+      - name: Test
+        run: python -m pytest -q
+
+  intelligence-fabric:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install hub
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+      - name: Compile hub and evolved subsystems
+        run: python -m compileall -q src systems/aion systems/argus systems/athena
+      - name: Connection diagnostics
+        run: |
+          python - <<'PY'
+          import json
+          from divine_providence import connections
+          for name in ("nexus-contract-drift", "nexus-siblings", "nexus-oracle", "nexus-prometheus", "supermesh-witness"):
+              print("=== " + name + " ===")
+              print(json.dumps(connections.check(name), indent=2, sort_keys=True))
+          PY
+      - name: Emit current sibling contract snapshot
+        env:
+          PYTHONPATH: systems/nexus/src
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from nexus.contract_sentinel import ContractDriftSnapshot
+          root = Path.cwd()
+          systems = root / "systems"
+          boundaries = {
+              ("AION", "contracts"): systems / "aion" / "aion" / "contracts.py",
+              ("AION", "store"): systems / "aion" / "aion" / "store.py",
+              ("ARGUS", "contracts"): systems / "argus" / "src" / "argus" / "contracts.py",
+              ("ATHENA", "contracts"): systems / "athena" / "src" / "athena" / "contracts.py",
+              ("DAEDALUS", "bridge"): systems / "daedalus" / "src" / "daedalus" / "bridge.py",
+          }
+          snapshot = ContractDriftSnapshot.capture(boundaries, relative_to=systems)
+          print("CURRENT_SIBLING_CONTRACT_SNAPSHOT=" + json.dumps(snapshot.to_dict(), sort_keys=True))
+          PY
+      - name: Causal intelligence-fabric connection
+        run: python -m divine_providence.cli connect intelligence-fabric
+      - name: NEXUS tests
+        working-directory: systems/nexus
+        env:
+          PYTHONPATH: src
+        run: python -m pytest -q tests
+      - name: PROMETHEUS tests
+        working-directory: systems/prometheus
+        env:
+          PYTHONPATH: src
+        run: python -m pytest -q tests
+      - name: Hub tests
+        run: python -m pytest -q tests
