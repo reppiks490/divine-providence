@@ -100,6 +100,13 @@ class ReviewedRepresentationRecord:
             or self.native_setting != self.native_setting.strip()
         ):
             raise ValueError("native_setting must be a non-empty trimmed string or None")
+        if all(x is not None for x in structured):
+            domain=str(self.sampling_domain).lower()
+            construction=str(self.sampling_construction).lower()
+            if construction == "time_bar" and domain != "time":
+                raise ValueError("time_bar construction requires time sampling_domain")
+            if construction in {"tick","range"} and domain != "event":
+                raise ValueError(f"{construction} construction requires event sampling_domain")
         if type(self.executable) is not bool or type(self.continuous_contract) is not bool:
             raise TypeError("executable and continuous_contract must be bool")
         if type(self.availability_delay_ns) is not int or self.availability_delay_ns < 0:
@@ -120,6 +127,20 @@ class ReviewedRepresentationRecord:
             availability_delay_ns=self.availability_delay_ns,
             reviewed=True,
         )
+        if all(x is not None for x in structured):
+            domain=str(self.sampling_domain).lower()
+            if kind in {RepresentationKind.TIME_BAR,RepresentationKind.DERIVED_TIME_BAR} and domain != "time":
+                raise ValueError("time-bar representation kind requires time sampling_domain")
+            if kind in {RepresentationKind.EVENT_BAR,RepresentationKind.DERIVED_EVENT_BAR} and domain != "event":
+                raise ValueError("event-bar representation kind requires event sampling_domain")
+            family=str(self.chart_view_family).lower()
+            geometry=str(self.price_geometry).lower()
+            if family == "regular_candles" and geometry != "standard_ohlc":
+                raise ValueError("regular_candles view requires standard_ohlc price_geometry")
+            if family == "heikin_ashi" and geometry != "heikin_ashi":
+                raise ValueError("heikin_ashi view requires heikin_ashi price_geometry")
+            if family == "renko" and geometry != "renko":
+                raise ValueError("renko view requires renko price_geometry")
         if self.executable:
             if sem == TimestampSemantics.UNKNOWN:
                 raise ValueError("execution-safe review cannot retain unknown timestamp semantics")
