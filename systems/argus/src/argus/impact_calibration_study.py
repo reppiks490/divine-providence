@@ -16,6 +16,22 @@ from .execution_evidence import (
 
 SCHEMA_VERSION = "argus-impact-calibration-study-v1"
 _ALLOWED_ANALYSES = {"evidence_stratified_summary"}
+_ALLOWED_EVIDENCE_KINDS = (
+    ExecutionEvidenceKind.BROKER_CONFIRMED,
+    ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+)
+_ALLOWED_EXCLUSION_REASONS = {
+    "impact_model_revision_mismatch",
+    "calibration_revision_mismatch",
+    "symbol_not_in_manifest",
+    "execution_evidence_not_in_manifest",
+    "execution_source_revision_not_in_manifest",
+    "decision_before_cohort",
+    "decision_at_or_after_cohort_end",
+    "execution_observed_after_cutoff",
+    "snapshot_age_exceeds_manifest",
+    "completion_latency_exceeds_manifest",
+}
 
 
 @dataclass(frozen=True)
@@ -259,8 +275,14 @@ def create_impact_calibration_study_manifest(
         raise ValueError(
             "at least one execution evidence kind is required"
         )
+    unsupported_kinds = kinds_set - set(_ALLOWED_EVIDENCE_KINDS)
+    if unsupported_kinds:
+        raise ValueError(
+            "unsupported execution evidence kinds for study schema v1: "
+            f"{sorted(kind.value for kind in unsupported_kinds)}"
+        )
     kinds = tuple(
-        kind for kind in ExecutionEvidenceKind if kind in kinds_set
+        kind for kind in _ALLOWED_EVIDENCE_KINDS if kind in kinds_set
     )
 
     source_revisions = _canonical_source_revisions(
@@ -365,10 +387,14 @@ def _validate_manifest(
             not isinstance(kind, ExecutionEvidenceKind)
             for kind in manifest.evidence_kinds
         )
+        or any(
+            kind not in _ALLOWED_EVIDENCE_KINDS
+            for kind in manifest.evidence_kinds
+        )
         or manifest.evidence_kinds
         != tuple(
             kind
-            for kind in ExecutionEvidenceKind
+            for kind in _ALLOWED_EVIDENCE_KINDS
             if kind in set(manifest.evidence_kinds)
         )
     ):
@@ -736,6 +762,10 @@ def _validate_cohort(
         )
     if cohort.exclusions != tuple(sorted(cohort.exclusions)):
         raise ValueError("cohort exclusions must be sorted")
+    for lineage_id, reason in cohort.exclusions:
+        _text("excluded lineage_id", lineage_id)
+        if reason not in _ALLOWED_EXCLUSION_REASONS:
+            raise ValueError("cohort contains unknown exclusion reason")
 
     exclusion_ids = [item[0] for item in cohort.exclusions]
     if len(exclusion_ids) != len(set(exclusion_ids)):
