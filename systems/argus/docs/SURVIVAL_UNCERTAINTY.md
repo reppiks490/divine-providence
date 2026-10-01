@@ -107,10 +107,12 @@ uninformative. That is evidence about uncertainty, not a reason to suppress it.
 
 ## Prospective research discipline
 
-The confidence level should ultimately be part of a predeclared study analysis
-contract before results are inspected. The current uncertainty API accepts an
-explicit `alpha` so the prospective-study schema can pin it in a later
-revision without changing the estimator semantics.
+The v2 prospective-study contract now pins `confidence_alpha` before the
+cohort begins and can predeclare `kaplan_meier_uncertainty` as a registered
+analysis. Registered uncertainty analysis is required to use that exact alpha.
+
+The legacy v1 study schema remains verifiable for historical replay but cannot
+predeclare or execute the registered uncertainty analysis.
 
 ## Authority
 
