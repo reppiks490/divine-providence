@@ -322,3 +322,20 @@ def test_reviewed_registry_model_authority_is_exact_byte_bound():
         HierarchicalFactorEngine().build_from_manifests(
             returns,[m],d,reviewed_registry=registry
         )
+
+
+def test_explicit_quality_map_does_not_default_missing_streams_to_full_weight():
+    r=pd.DataFrame({"A:reviewed":[0.01],"A:unscored":[1.0]})
+    fused,_,_,coverage=fuse_representations_by_symbol(
+        r,{"A:reviewed":"A","A:unscored":"A"},
+        quality_weights={"A:reviewed":1.0},
+    )
+    assert fused.iloc[0]["A"]==0.01
+    assert coverage.iloc[0]["A"]==0.5
+
+    blocked,_,_,blocked_coverage=fuse_representations_by_symbol(
+        r,{"A:reviewed":"A","A:unscored":"A"},
+        quality_weights={},
+    )
+    assert np.isnan(blocked.iloc[0]["A"])
+    assert blocked_coverage.iloc[0]["A"]==0.0
