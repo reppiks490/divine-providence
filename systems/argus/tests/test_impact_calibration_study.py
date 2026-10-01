@@ -427,6 +427,29 @@ def test_cohort_tampering_breaks_identity_or_membership():
         registered_evidence_stratified_summary(m, tampered)
 
 
+def test_cohort_rejects_unknown_exclusion_reason():
+    m = manifest(
+        evidence_kinds=(ExecutionEvidenceKind.BROKER_CONFIRMED,),
+        execution_source_revisions=(
+            ("broker/example-adapter", BROKER_COMMIT),
+        ),
+    )
+    good = subject("good")
+    excluded = subject("excluded", symbol="ES")
+    cohort = lock_impact_calibration_study_cohort(
+        m,
+        (good, excluded),
+        lock_time_ns=260,
+    )
+    bad = replace(
+        cohort,
+        exclusions=((excluded.row.lineage_id, "invented_reason"),),
+    )
+
+    with pytest.raises(ValueError, match="unknown exclusion reason"):
+        registered_evidence_stratified_summary(m, bad)
+
+
 def test_authority_escalation_is_rejected():
     m = manifest()
     cohort = lock_impact_calibration_study_cohort(
