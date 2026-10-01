@@ -112,6 +112,8 @@ def aggressive_runs(
     Unresolved tick-rule side zero breaks a run and is not silently assigned.
     """
 
+    if type(allow_inferred) is not bool:
+        raise TypeError("allow_inferred must be bool")
     if not trades:
         return ()
     validated = flow_dynamics(
