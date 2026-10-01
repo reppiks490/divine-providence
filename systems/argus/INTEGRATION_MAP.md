@@ -12,6 +12,7 @@
 ```text
 Historical/Research Data ──> DAEDALUS ──research evidence────┐
 Live Trades/Depth ─────────> ARGUS ─────microstructure───────┤
+ARGUS prospective research ─────────────> ATHENA advisory────┤
 Icarus telemetry ────────────────────────────────────────────┤
 Cross-asset/state feeds ────────────────────────────────────> ATHENA
                                                              │
@@ -41,3 +42,27 @@ ARGUS execution-safe microstructure features ───────────�
   athena-supervisory-fabric/
   argus-microstructure-os/
 ```
+
+
+## Verified ARGUS -> ATHENA research sidepath
+
+The hub connection `argus-athena-research` now verifies a separate
+retrospective research path:
+
+```text
+ARGUS v2 prospective study
+  -> registered Kaplan-Meier uncertainty
+  -> argus-athena-research-v1 envelope
+  -> publication only after follow-up cutoff
+  -> ATHENA AdvisoryJournal
+  -> local receipt-time visibility
+```
+
+The envelope preserves manifest/cohort IDs, lifecycle revision, evidence tiers,
+predeclared confidence alpha, administrative-censor lineage, and explicit
+research-only authority flags. Publication time is not treated as local
+knowledge; ATHENA cannot see the artifact until ingestion time.
+
+This path is intentionally separate from the live NEXUS instant fabric. It
+does not convert retrospective study evidence into live market truth, broker
+authority, or a production decision.
