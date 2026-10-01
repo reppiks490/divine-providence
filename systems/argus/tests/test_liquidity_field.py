@@ -222,3 +222,23 @@ def test_all_normalized_outputs_are_bounded():
     assert -1.0 <= result.ask_near_resilience <= 1.0
     assert math.isfinite(result.bid_dispersion_ticks)
     assert math.isfinite(result.ask_dispersion_ticks)
+
+
+def test_invalid_event_identity_is_rejected():
+    base = dynamics()
+    bad_time = DepthDynamics(**{**base.__dict__, "event_time_ns": -1})
+    with pytest.raises(ValueError, match="event_time_ns"):
+        liquidity_field(bad_time, near_ticks=2)
+
+    bad_sequence = DepthDynamics(**{**base.__dict__, "sequence": -1})
+    with pytest.raises(ValueError, match="sequence"):
+        liquidity_field(bad_sequence, near_ticks=2)
+
+
+def test_positive_touch_depth_is_required_even_if_far_depth_exists():
+    bad = dynamics(
+        bid=(0.0, 50.0, 50.0, 0.0),
+        ask=(0.0, 40.0, 60.0, 0.0),
+    )
+    with pytest.raises(ValueError, match="touch buckets"):
+        liquidity_field(bad, near_ticks=2)
