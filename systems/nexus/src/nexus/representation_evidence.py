@@ -10,6 +10,19 @@ from .review_triage import verify_representation_review_triage
 
 SCHEMA = "nexus.representation-source-evidence.v1"
 
+AUTHORITATIVE_DIMENSIONS = [
+    "TradingView timeframe-string syntax",
+    "general TradingView Pine bar-open time semantics",
+    "general TradingView chart-data export behavior",
+]
+REMAINING_DIMENSIONS = [
+    "filename-to-chart-timeframe provenance",
+    "CSV time-column mapping to Pine time/time_close/event completion",
+    "chart type (standard time-based vs non-standard/derived)",
+    "export-specific timezone/session setting",
+    "export-specific volume semantics when volume is present",
+]
+
 # Reviewed public, first-party documentation. These references support only the
 # specific claims named below; they are not blanket authority for a particular
 # CSV's chart type, export settings, timestamp field semantics, or volume field.
@@ -187,18 +200,8 @@ def build_representation_source_evidence(review_triage: Mapping[str, Any]) -> di
         "standard_timeframe_cadence_compatible_stream_count": exact_streams,
         "standard_timeframe_cadence_incompatible_stream_count": incompatible_streams,
         "clusters": evidence_rows,
-        "authoritative_dimensions_resolved": [
-            "TradingView timeframe-string syntax",
-            "general TradingView Pine bar-open time semantics",
-            "general TradingView chart-data export behavior",
-        ],
-        "dimensions_still_requiring_export_specific_evidence": [
-            "filename-to-chart-timeframe provenance",
-            "CSV time-column mapping to Pine time/time_close/event completion",
-            "chart type (standard time-based vs non-standard/derived)",
-            "export-specific timezone/session setting",
-            "export-specific volume semantics when volume is present",
-        ],
+        "authoritative_dimensions_resolved": list(AUTHORITATIVE_DIMENSIONS),
+        "dimensions_still_requiring_export_specific_evidence": list(REMAINING_DIMENSIONS),
         "auto_resolved_count": 0,
         "production_authorized": False,
     }
@@ -242,6 +245,7 @@ def verify_representation_source_evidence(payload: Mapping[str, Any] | None) -> 
         if (
             type(count) is not int or count < 1
             or not isinstance(ids,list) or len(ids)!=count or len(set(ids))!=len(ids)
+            or any(not isinstance(x,str) or not x for x in ids)
             or comparison not in {
                 "UNRESOLVED","EXACT_CADENCE_MATCH",
                 "OBSERVED_FASTER_THAN_STANDARD_TIMEFRAME_CLAIM",
@@ -252,6 +256,46 @@ def verify_representation_source_evidence(payload: Mapping[str, Any] | None) -> 
             or row.get("production_authorized") is not False
         ):
             return False
+
+        expected_compatible = (
+            True if comparison=="EXACT_CADENCE_MATCH"
+            else False if comparison in {
+                "OBSERVED_FASTER_THAN_STANDARD_TIMEFRAME_CLAIM",
+                "OBSERVED_SLOWER_THAN_STANDARD_TIMEFRAME_CLAIM",
+            }
+            else None
+        )
+        if row.get("standard_time_based_cadence_compatible") is not expected_compatible:
+            return False
+
+        source=row.get("source_evidence")
+        expected_source={
+            "timeframe_string_semantics":
+                "AUTHORITATIVE_SUPPORTED"
+                if row.get("reviewed_timeframe_claim_seconds") is not None
+                else "UNRESOLVED",
+            "export_is_loaded_chart_data":"AUTHORITATIVE_SUPPORTED",
+            "pine_time_is_bar_open_timestamp":"AUTHORITATIVE_SUPPORTED_GENERAL_RULE",
+            "filename_was_generated_from_chart_timeframe":"NOT_DIRECTLY_ATTESTED",
+            "csv_time_column_equals_pine_time":"NOT_DIRECTLY_ATTESTED",
+            "chart_type_standard_time_based":"NOT_ATTESTED",
+            "timezone_session_for_this_export":"NOT_ATTESTED_BY_THESE_SOURCES",
+            "volume_semantics_for_this_export":"NOT_ATTESTED_BY_THESE_SOURCES",
+        }
+        if source != expected_source:
+            return False
+
+        claim_seconds=row.get("reviewed_timeframe_claim_seconds")
+        if claim_seconds is not None and (
+            type(claim_seconds) is not int or claim_seconds <= 0
+        ):
+            return False
+        observed=row.get("observed_cadence_ns")
+        if observed is not None and (type(observed) is not int or observed <= 0):
+            return False
+        if _comparison(claim_seconds,observed) != comparison:
+            return False
+
         cluster_counts[comparison]+=1
         stream_counts[comparison]+=count
         total+=count
@@ -266,4 +310,6 @@ def verify_representation_source_evidence(payload: Mapping[str, Any] | None) -> 
         and body.get("comparison_stream_counts")==dict(sorted(stream_counts.items()))
         and body.get("standard_timeframe_cadence_compatible_stream_count")==exact
         and body.get("standard_timeframe_cadence_incompatible_stream_count")==incompatible
+        and body.get("authoritative_dimensions_resolved")==AUTHORITATIVE_DIMENSIONS
+        and body.get("dimensions_still_requiring_export_specific_evidence")==REMAINING_DIMENSIONS
     )
