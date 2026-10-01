@@ -286,6 +286,36 @@ class SyntheticPoint:
     confidence: float
     lineage: tuple[str, ...]
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.ticker,str) or not self.ticker.strip() or self.ticker != self.ticker.strip():
+            raise ValueError("ticker must be a non-empty trimmed string")
+        if type(self.event_ns) is not int or self.event_ns < 0:
+            raise ValueError("event_ns must be a non-negative integer")
+        if not math.isfinite(float(self.value)):
+            raise ValueError("synthetic value must be finite")
+        if not isinstance(self.component_values,dict) or not self.component_values:
+            raise ValueError("component_values must be a non-empty dict")
+        if not isinstance(self.weights,dict) or set(self.weights) != set(self.component_values):
+            raise ValueError("weights must be a dict with exactly the component keys")
+        for key,value in self.component_values.items():
+            if not isinstance(key,str) or not key:
+                raise ValueError("component ids must be non-empty strings")
+            if not math.isfinite(float(value)):
+                raise ValueError(f"component value for {key!r} must be finite")
+            weight=self.weights[key]
+            if not math.isfinite(float(weight)):
+                raise ValueError(f"weight for {key!r} must be finite")
+        conf=float(self.confidence)
+        if not math.isfinite(conf) or not 0.0 <= conf <= 1.0:
+            raise ValueError("confidence must be finite and in [0,1]")
+        if (
+            not isinstance(self.lineage,tuple)
+            or not self.lineage
+            or any(not isinstance(x,str) or not x for x in self.lineage)
+            or len(set(self.lineage)) != len(self.lineage)
+        ):
+            raise ValueError("lineage must be a non-empty unique tuple of identifiers")
+
 @dataclass(frozen=True, slots=True)
 class VectorEvent:
     """Generic numeric market/context event with position-stable field identities."""
