@@ -39,6 +39,12 @@ class ReviewedRepresentationRecord:
     continuous_contract: bool = False
     roll_policy: str | None = None
     notes: str = ""
+    raw_sha256: str | None = None
+    chart_view_family: str | None = None
+    price_geometry: str | None = None
+    sampling_domain: str | None = None
+    sampling_construction: str | None = None
+    native_setting: str | None = None
 
     def __post_init__(self) -> None:
         for name,value in (
@@ -68,6 +74,32 @@ class ReviewedRepresentationRecord:
                 raise ValueError(f"invalid timezone: {self.timezone}") from exc
         if not _is_sha256(self.review_evidence_sha256):
             raise ValueError("review_evidence_sha256 must be a SHA-256 digest")
+        if self.raw_sha256 is not None and not _is_sha256(self.raw_sha256):
+            raise ValueError("raw_sha256 must be a SHA-256 digest or None")
+        structured = (
+            self.chart_view_family,
+            self.price_geometry,
+            self.sampling_domain,
+            self.sampling_construction,
+        )
+        if any(x is not None for x in structured):
+            if not all(
+                isinstance(x,str) and x.strip() and x == x.strip()
+                and x.lower() not in {"unknown","unresolved"}
+                for x in structured
+            ):
+                raise ValueError(
+                    "structured model identity requires non-empty reviewed "
+                    "chart_view_family, price_geometry, sampling_domain and sampling_construction"
+                )
+            if self.raw_sha256 is None:
+                raise ValueError("structured model identity requires exact raw_sha256 binding")
+        if self.native_setting is not None and (
+            not isinstance(self.native_setting,str)
+            or not self.native_setting.strip()
+            or self.native_setting != self.native_setting.strip()
+        ):
+            raise ValueError("native_setting must be a non-empty trimmed string or None")
         if type(self.executable) is not bool or type(self.continuous_contract) is not bool:
             raise TypeError("executable and continuous_contract must be bool")
         if type(self.availability_delay_ns) is not int or self.availability_delay_ns < 0:
@@ -129,6 +161,34 @@ class ReviewedRepresentationRecord:
             availability_delay_ns=self.availability_delay_ns,
             reviewed=True,
         )
+
+    def authoritative_claim_for_manifest(self, manifest) -> dict:
+        """Return a four-axis authoritative claim only for the exact reviewed bytes."""
+        if self.raw_sha256 is None or not all((
+            self.chart_view_family,self.price_geometry,
+            self.sampling_domain,self.sampling_construction,
+        )):
+            raise ValueError("reviewed record lacks exact-byte structured model identity")
+        if manifest.identity.stream_id != self.stream_id:
+            raise ValueError("reviewed record stream_id does not match manifest")
+        if manifest.identity.raw_sha256.lower() != self.raw_sha256.lower():
+            raise ValueError("reviewed record raw_sha256 does not match manifest bytes")
+        if self.venue is not None and manifest.identity.venue != self.venue:
+            raise ValueError("reviewed record venue does not match manifest")
+        return {
+            "family": self.chart_view_family,
+            "price_geometry": self.price_geometry,
+            "sampling_domain": self.sampling_domain,
+            "construction": self.sampling_construction,
+            "setting": self.native_setting,
+            "schema_tags": [],
+            "confidence": 1.0,
+            "reasons": ["reviewed_registry_exact_byte_binding"],
+            "authoritative": True,
+            "review_record_hash": self.record_hash,
+            "review_evidence_sha256": self.review_evidence_sha256,
+            "review_version": self.version,
+        }
 
 
 class ReviewedRepresentationRegistry:
