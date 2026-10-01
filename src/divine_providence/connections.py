@@ -38,6 +38,9 @@ CONNECTIONS: dict[str, Connection] = {c.name: c for c in [
                "NEXUS SiblingInstantBundle + pinned contract baseline -> SuperMesh-X RFC9162WitnessedCheckpointLedger -> GossipReceiptStore",
                "NEXUS artifacts witnessed in SuperMesh-X's quorum-signed append-only transparency log and independently re-verified; "
                "history rewrite and rollback must be rejected. Evidence only, no authority."),
+    Connection("intelligence-fabric", "intelligence_fabric", ("nexus", "aion", "argus", "athena"),
+               "NEXUS SiblingInstantBundle -> AION EventStore/PARALLAX fingerprint -> ARGUS evidence firewall + ATHENA receipt-time journal",
+               "One deterministic instant is persisted, fingerprinted, evidence-tier checked, and admitted to ATHENA only at actual ingestion time; read-only research/advisory path."),
 ]}
 
 # Systems with no cross-system contract in their code (verified by import audit and repo-wide
