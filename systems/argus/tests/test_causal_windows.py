@@ -355,9 +355,12 @@ def test_microstructure_snapshot_binds_feature_evidence_to_journal_rows(tmp_path
         book_source_id="depth",
         at_received_ns=13,
         tick_size=1.0,
+        depth_levels=2,
     )
 
     assert result.flow.evidence_tier is EvidenceTier.TRUE_TRADE
+    assert len(result.depth.bid_depth_by_tick) == 2
+    assert len(result.depth.ask_depth_by_tick) == 2
     assert result.depth.evidence_tier is EvidenceTier.TRUE_DEPTH
     assert result.flow.event_time_ns == 12
     assert result.depth.event_time_ns == 12
@@ -388,4 +391,22 @@ def test_invalid_window_limits_fail_closed(tmp_path, limit):
             source_id="trades",
             at_received_ns=11,
             limit=limit,
+        )
+
+
+def test_invalid_depth_levels_fail_closed(tmp_path):
+    journal = EventJournal(tmp_path / "argus.sqlite3")
+    journal.register(trade_contract())
+    journal.register(depth_contract())
+    journal.append(trade(1, 10, 11))
+    journal.append(snapshot(1, 10, 11))
+
+    with pytest.raises(ValueError, match="depth_levels"):
+        microstructure_snapshot_asof(
+            journal,
+            trade_source_id="trades",
+            book_source_id="depth",
+            at_received_ns=11,
+            tick_size=1.0,
+            depth_levels=0,
         )
