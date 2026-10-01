@@ -51,21 +51,7 @@ class ExecutionEvidenceReceipt:
 
 @dataclass(frozen=True)
 class LineagedImpactCalibrationObservation:
-    receipt_id: str
-    evidence_kind: ExecutionEvidenceKind
-    source_system: str
-    source_repo: str
-    source_commit: str
-    source_run_id: str
-    source_execution_id: str
-    symbol: str
-    observed_time_ns: int
-    source_payload_sha256: str
-    broker_name: str | None
-    broker_order_id: str | None
-    broker_fill_id: str | None
-    market_fill_confirmed: bool
-    broker_confirmed: bool
+    receipt: ExecutionEvidenceReceipt
     calibration: ImpactCalibrationObservation
     execution_authorized: bool = False
     production_decision_authorized: bool = False
@@ -496,21 +482,7 @@ def calibrate_lineaged_impact(
         lineaged_realized_execution(receipt),
     )
     return LineagedImpactCalibrationObservation(
-        receipt_id=receipt.receipt_id,
-        evidence_kind=receipt.evidence_kind,
-        source_system=receipt.source_system,
-        source_repo=receipt.source_repo,
-        source_commit=receipt.source_commit,
-        source_run_id=receipt.source_run_id,
-        source_execution_id=receipt.source_execution_id,
-        symbol=receipt.symbol,
-        observed_time_ns=receipt.observed_time_ns,
-        source_payload_sha256=receipt.source_payload_sha256,
-        broker_name=receipt.broker_name,
-        broker_order_id=receipt.broker_order_id,
-        broker_fill_id=receipt.broker_fill_id,
-        market_fill_confirmed=receipt.market_fill_confirmed,
-        broker_confirmed=receipt.broker_confirmed,
+        receipt=receipt,
         calibration=calibration,
     )
 
@@ -534,22 +506,50 @@ def calibration_by_execution_evidence(
             raise TypeError(
                 "rows must contain LineagedImpactCalibrationObservation values"
             )
-        if row.receipt_id in seen:
+        validate_execution_evidence_receipt(row.receipt)
+        if row.receipt.receipt_id in seen:
             raise ValueError("duplicate receipt_id in lineaged calibration")
-        seen.add(row.receipt_id)
+        seen.add(row.receipt.receipt_id)
 
         if row.execution_authorized or row.production_decision_authorized:
             raise ValueError("lineaged calibration unexpectedly carries authority")
-        if row.evidence_kind is ExecutionEvidenceKind.BROKER_CONFIRMED:
-            if not row.market_fill_confirmed or not row.broker_confirmed:
-                raise ValueError("broker lineaged calibration flags are inconsistent")
-        elif row.evidence_kind is ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR:
-            if row.market_fill_confirmed or row.broker_confirmed:
-                raise ValueError("paper lineaged calibration cannot claim confirmation")
-        else:
-            raise TypeError("unknown execution evidence kind")
 
-        grouped.setdefault(row.evidence_kind, []).append(row)
+        calibration = row.calibration
+        if not isinstance(calibration, ImpactCalibrationObservation):
+            raise TypeError("calibration must be ImpactCalibrationObservation")
+        if calibration.execution_id != row.receipt.receipt_id:
+            raise ValueError("calibration execution_id does not match receipt")
+        if calibration.side != row.receipt.side:
+            raise ValueError("calibration side does not match receipt")
+        if not math.isclose(
+            calibration.requested_size,
+            row.receipt.requested_size,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ):
+            raise ValueError("calibration requested_size does not match receipt")
+        expected_fraction = (
+            row.receipt.filled_size / row.receipt.requested_size
+        )
+        if not math.isclose(
+            calibration.realized_fill_fraction,
+            expected_fraction,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ):
+            raise ValueError("calibration realized fill fraction does not match receipt")
+        expected_age = (
+            row.receipt.decision_time_ns - calibration.curve_event_time_ns
+        )
+        if expected_age < 0 or calibration.snapshot_age_ns != expected_age:
+            raise ValueError("calibration snapshot age does not match receipt")
+        expected_latency = (
+            row.receipt.completion_time_ns - row.receipt.decision_time_ns
+        )
+        if calibration.completion_latency_ns != expected_latency:
+            raise ValueError("calibration completion latency does not match receipt")
+
+        grouped.setdefault(row.receipt.evidence_kind, []).append(row)
 
     strata: list[ImpactCalibrationEvidenceStratum] = []
     for kind in ExecutionEvidenceKind:
