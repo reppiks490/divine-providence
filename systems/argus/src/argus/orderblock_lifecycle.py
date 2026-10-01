@@ -6,7 +6,7 @@ import hashlib
 import json
 import math
 
-from .contracts import OrderBlockCandidate
+from .contracts import EvidenceTier, OrderBlockCandidate
 from .orderblocks import composite_score
 
 
@@ -132,6 +132,9 @@ def _validate_candidate(candidate: OrderBlockCandidate) -> None:
     ):
         raise ValueError("candidate origin_time_ns must be a non-negative integer")
 
+    if not isinstance(candidate.evidence_tier, EvidenceTier):
+        raise TypeError("candidate evidence_tier must be EvidenceTier")
+
     for name in (
         "impulse_score",
         "flow_score",
@@ -204,6 +207,17 @@ def confirm_order_block(
         or at_time_ns < lifecycle.last_event_time_ns
     ):
         raise ValueError("confirmation time cannot precede lifecycle time")
+
+    if (
+        config.max_age_ns is not None
+        and at_time_ns - lifecycle.created_time_ns >= config.max_age_ns
+    ):
+        return replace(
+            lifecycle,
+            state=OrderBlockState.EXPIRED,
+            last_event_time_ns=at_time_ns,
+            last_reason="expired_before_confirmation",
+        )
 
     score = composite_score(lifecycle.candidate)
     if score < config.minimum_confirmation_score:
