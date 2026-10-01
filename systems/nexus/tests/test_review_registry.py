@@ -140,3 +140,46 @@ def test_review_registry_activation_requires_canonical_identity():
         reg.activate(' '+r.stream_id,'1')
     with pytest.raises(ValueError,match='trimmed'):
         reg.activate(r.stream_id,' 1 ')
+
+
+def test_review_registry_loads_verified_v1_and_migrates_to_v2(tmp_path:Path):
+    import hashlib
+    r=_record()
+    legacy_row={
+        "stream_id":r.stream_id,
+        "version":r.version,
+        "canonical_instrument":r.canonical_instrument,
+        "asset_class":r.asset_class,
+        "representation_class":r.representation_class,
+        "kind":r.kind,
+        "timestamp_semantics":r.timestamp_semantics,
+        "review_evidence_sha256":r.review_evidence_sha256,
+        "reviewed_by":r.reviewed_by,
+        "fixed_interval_ns":r.fixed_interval_ns,
+        "availability_delay_ns":r.availability_delay_ns,
+        "venue":r.venue,
+        "timezone":r.timezone,
+        "volume_semantics":r.volume_semantics,
+        "executable":r.executable,
+        "continuous_contract":r.continuous_contract,
+        "roll_policy":r.roll_policy,
+        "notes":r.notes,
+    }
+    legacy_row["record_hash"]=hashlib.sha256(
+        json.dumps(
+            legacy_row,sort_keys=True,separators=(',',':'),allow_nan=False
+        ).encode()
+    ).hexdigest()
+    core={
+        "schema":"nexus.reviewed-representation-registry.v1",
+        "records":[legacy_row],
+        "active":{r.stream_id:r.version},
+    }
+    body=dict(core)
+    body["registry_hash"]=hashlib.sha256(
+        json.dumps(core,sort_keys=True,separators=(',',':'),allow_nan=False).encode()
+    ).hexdigest()
+    path=tmp_path/'legacy.json';path.write_text(json.dumps(body))
+    migrated=ReviewedRepresentationRegistry.load(path)
+    assert migrated.get(r.stream_id).stream_id==r.stream_id
+    assert migrated.snapshot()["schema"]=="nexus.reviewed-representation-registry.v2"
