@@ -197,6 +197,12 @@ def _validate_run(run: AggressiveRun) -> None:
         raise ValueError("distinct_price_levels must be between 1 and trade_count")
     if run.end_event_time_ns < run.start_event_time_ns:
         raise ValueError("run event time cannot move backward")
+    if (
+        run.start_sequence > 0
+        and run.end_sequence > 0
+        and run.end_sequence < run.start_sequence
+    ):
+        raise ValueError("run sequence cannot move backward")
     if run.duration_ns != run.end_event_time_ns - run.start_event_time_ns:
         raise ValueError("duration_ns must match run event-time span")
     if run.trade_count == 1 and run.max_interarrival_ns != 0:
@@ -239,8 +245,20 @@ def _validate_run(run: AggressiveRun) -> None:
         raise ValueError("run range cannot exceed path length")
     if efficiency > 1:
         raise ValueError("directional_efficiency must be <= 1")
+    expected_efficiency = aligned / path_ticks if path_ticks > 0 else 0.0
+    if not math.isclose(
+        efficiency,
+        expected_efficiency,
+        rel_tol=1e-9,
+        abs_tol=1e-9,
+    ):
+        raise ValueError(
+            "directional_efficiency must match aligned travel / path length"
+        )
     if concentration > 1:
         raise ValueError("volume_concentration must be <= 1")
+    if concentration + 1e-12 < 1.0 / run.trade_count:
+        raise ValueError("volume_concentration is below the finite-run minimum")
     if total_volume <= 0:
         raise ValueError("total_volume must be positive")
     if run.evidence_tier not in (
