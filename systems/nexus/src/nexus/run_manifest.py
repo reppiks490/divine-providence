@@ -34,6 +34,29 @@ class FactorGenealogyNode:
     dependencies: tuple[tuple[str, str], ...]
     spec_hash: str
 
+    def __post_init__(self) -> None:
+        for field_name,value in (("name",self.name),("version",self.version),("method",self.method)):
+            if not isinstance(value,str) or not value.strip() or value != value.strip():
+                raise ValueError(f"{field_name} must be a non-empty trimmed string")
+        if (
+            not isinstance(self.components,tuple) or not self.components
+            or any(not isinstance(x,str) or not x.strip() or x != x.strip() for x in self.components)
+            or len(set(self.components)) != len(self.components)
+        ):
+            raise ValueError("components must be a non-empty unique tuple of trimmed identifiers")
+        if (
+            not isinstance(self.dependencies,tuple)
+            or any(
+                not isinstance(x,tuple) or len(x)!=2
+                or any(not isinstance(v,str) or not v.strip() or v != v.strip() for v in x)
+                for x in self.dependencies
+            )
+            or len(set(self.dependencies)) != len(self.dependencies)
+        ):
+            raise ValueError("dependencies must be unique trimmed (name, version) pairs")
+        if not _is_sha256(self.spec_hash):
+            raise ValueError("spec_hash must be a SHA-256 hex digest")
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
@@ -85,6 +108,14 @@ class FactorGenealogySnapshot:
 
     def verify(self) -> bool:
         if self.schema != "nexus.factor-genealogy.v1" or not _is_sha256(self.genealogy_hash):
+            return False
+        try:
+            for node in self.factors:
+                FactorGenealogyNode(
+                    node.name,node.version,tuple(node.components),node.method,
+                    tuple(node.dependencies),node.spec_hash,
+                )
+        except (TypeError,ValueError):
             return False
         if tuple(sorted(self.derivation_hashes)) != self.derivation_hashes:
             return False
@@ -147,14 +178,14 @@ class ResearchRunManifest:
         parameters: Mapping[str, Any] | None = None,
         derivations: Iterable[DerivationRecord] = (),
     ) -> "ResearchRunManifest":
-        if not isinstance(run_id,str) or not run_id.strip():
-            raise ValueError("run_id is required")
+        if not isinstance(run_id,str) or not run_id.strip() or run_id != run_id.strip():
+            raise ValueError("run_id must be a non-empty trimmed string")
         if type(decision_start_ns) is not int or type(decision_end_ns) is not int:
             raise TypeError("decision interval must use integer nanoseconds")
         if decision_start_ns < 0 or decision_end_ns < decision_start_ns:
             raise ValueError("invalid decision interval")
-        if not isinstance(code_version,str) or not code_version.strip():
-            raise ValueError("code_version is required")
+        if not isinstance(code_version,str) or not code_version.strip() or code_version != code_version.strip():
+            raise ValueError("code_version must be a non-empty trimmed string")
         for name,value in (
             ("corpus_manifest_hash",corpus_manifest_hash),
             ("reviewed_registry_hash",reviewed_registry_hash),
@@ -211,12 +242,16 @@ class ResearchRunManifest:
     def verify(self) -> bool:
         if (
             self.schema != "nexus.research-run.v1"
-            or not self.run_id
+            or not isinstance(self.run_id,str)
+            or not self.run_id.strip()
+            or self.run_id != self.run_id.strip()
             or type(self.decision_start_ns) is not int
             or type(self.decision_end_ns) is not int
             or self.decision_start_ns < 0
             or self.decision_end_ns < self.decision_start_ns
-            or not self.code_version
+            or not isinstance(self.code_version,str)
+            or not self.code_version.strip()
+            or self.code_version != self.code_version.strip()
             or self.production_authorized is not False
         ):
             return False
@@ -231,6 +266,19 @@ class ResearchRunManifest:
             return False
         if tuple(sorted(self.output_artifacts)) != self.output_artifacts:
             return False
+        for artifacts in (self.input_artifacts,self.output_artifacts):
+            names=[]
+            for row in artifacts:
+                if (
+                    not isinstance(row,tuple) or len(row)!=2
+                    or not isinstance(row[0],str) or not row[0].strip()
+                    or row[0] != row[0].strip()
+                    or not _is_sha256(row[1])
+                ):
+                    return False
+                names.append(row[0])
+            if len(set(names)) != len(names):
+                return False
         if tuple(sorted(self.derivation_hashes)) != self.derivation_hashes:
             return False
         if len(set(self.derivation_hashes)) != len(self.derivation_hashes):
