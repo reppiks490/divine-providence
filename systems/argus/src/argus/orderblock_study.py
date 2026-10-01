@@ -331,6 +331,10 @@ def registered_kaplan_meier(
     manifest: OrderBlockStudyManifest,
     cohort: OrderBlockStudyCohort,
 ) -> KaplanMeierCurve:
+    if not isinstance(manifest, OrderBlockStudyManifest):
+        raise TypeError("manifest must be OrderBlockStudyManifest")
+    if not isinstance(cohort, OrderBlockStudyCohort):
+        raise TypeError("cohort must be OrderBlockStudyCohort")
     if cohort.manifest_id != manifest.manifest_id:
         raise ValueError("cohort was not locked under this manifest")
     if "kaplan_meier" not in manifest.analysis_plan:
@@ -342,6 +346,10 @@ def registered_evidence_strata(
     manifest: OrderBlockStudyManifest,
     cohort: OrderBlockStudyCohort,
 ) -> tuple[SurvivalStratum, ...]:
+    if not isinstance(manifest, OrderBlockStudyManifest):
+        raise TypeError("manifest must be OrderBlockStudyManifest")
+    if not isinstance(cohort, OrderBlockStudyCohort):
+        raise TypeError("cohort must be OrderBlockStudyCohort")
     if cohort.manifest_id != manifest.manifest_id:
         raise ValueError("cohort was not locked under this manifest")
     if "evidence_tier_strata" not in manifest.analysis_plan:
