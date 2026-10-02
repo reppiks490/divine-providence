@@ -649,6 +649,13 @@ def test_cluster_plan_and_cohort_tampering_fail_closed():
     m, c = study()
     p = plan(m)
 
+    with pytest.raises(ValueError, match="predates manifest"):
+        registered_cluster_transfer_compatibility(
+            replace(p, created_time_ns=89),
+            m,
+            c,
+        )
+
     with pytest.raises(ValueError, match="plan_id"):
         registered_cluster_transfer_compatibility(
             replace(
