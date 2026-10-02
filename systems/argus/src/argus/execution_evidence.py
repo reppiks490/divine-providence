@@ -297,6 +297,21 @@ def _receipt_identity(receipt: ExecutionEvidenceReceipt) -> dict[str, Any]:
     }
 
 
+def _source_execution_identity(
+    receipt: ExecutionEvidenceReceipt,
+) -> tuple[str, str, str, str, str, str]:
+    """Canonical namespace for one upstream execution event."""
+
+    return (
+        receipt.evidence_kind.value,
+        receipt.source_system,
+        receipt.source_repo,
+        receipt.source_commit,
+        receipt.source_run_id,
+        receipt.source_execution_id,
+    )
+
+
 def validate_execution_evidence_receipt(
     receipt: ExecutionEvidenceReceipt,
 ) -> None:
@@ -541,6 +556,9 @@ def calibration_by_execution_evidence(
         raise ValueError("at least one lineaged calibration observation is required")
 
     seen: set[str] = set()
+    seen_source_executions: set[
+        tuple[str, str, str, str, str, str]
+    ] = set()
     grouped: dict[
         ExecutionEvidenceKind,
         list[LineagedImpactCalibrationObservation],
@@ -554,6 +572,13 @@ def calibration_by_execution_evidence(
         if row.receipt.receipt_id in seen:
             raise ValueError("duplicate receipt_id in lineaged calibration")
         seen.add(row.receipt.receipt_id)
+
+        source_execution = _source_execution_identity(row.receipt)
+        if source_execution in seen_source_executions:
+            raise ValueError(
+                "duplicate source execution identity in lineaged calibration"
+            )
+        seen_source_executions.add(source_execution)
 
         if row.execution_authorized or row.production_decision_authorized:
             raise ValueError("lineaged calibration unexpectedly carries authority")
