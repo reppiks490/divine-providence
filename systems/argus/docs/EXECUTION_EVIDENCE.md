@@ -67,6 +67,51 @@ Important semantics:
 - quantity is treated as the filled instruction quantity of the emulator, not
   proof that equivalent real market size was executable.
 
+## Durable ICARUS journal adapter
+
+`receipt_from_icarus_journal_fill` accepts the current durable
+`Journal.fills` row shape from ICARUS:
+
+```text
+id, run_id, live, symbol, ts, entry_id, side, qty, price,
+kind, comment, profit, position_after
+```
+
+This adapter was defined only after inspecting the actual ICARUS runtime
+journal/fill structures. It does not reinterpret closed `trades` rows as
+execution fills.
+
+Important semantics:
+
+- `run_id` must be a positive runtime identity; legacy rows carrying the
+  migration default `run_id=0` fail closed because they cannot prove a unique
+  source run;
+- `ts` remains the emulator completion/event time in whole seconds and is
+  converted to nanoseconds;
+- the journal does not persist the original order-decision timestamp, so
+  `decision_time_ns` remains a mandatory separately proven input rather than
+  being inferred from fill time;
+- `observed_time_ns` is also supplied by the ingestion boundary and must not
+  precede completion;
+- SQLite row `id` is preserved in the source payload but is not treated as the
+  execution's semantic identity.
+
+The source execution ID is instead a SHA-256 over the exact fields used by
+ICARUS's durable fill uniqueness rule:
+
+```text
+run_id, symbol, ts, entry_id, side, qty, price, kind, comment, position_after
+```
+
+If the same durable fill is re-represented with a different SQLite row ID,
+profit annotation, or observation timestamp, its receipt can change while its
+upstream source-execution identity remains the same. The execution-identity
+firewall therefore rejects double-counting it.
+
+As with the in-memory adapter, `live=1` means the paper engine processed the
+fill during a live engine epoch. It is still
+`ICARUS_PAPER_EMULATOR`, never `BROKER_CONFIRMED`.
+
 ## Lineaged calibration
 
 `calibrate_lineaged_impact` preserves the entire immutable execution receipt
@@ -101,12 +146,14 @@ calibration quality.
 
 ## Remaining limitation
 
-The current ICARUS paper fill record is sufficient to preserve a simulated fill
-outcome but not the original pending-order decision timestamp. Until ICARUS
-persists that timing directly, the caller must supply decision time from a
-separately proven order-decision record.
+Both current ICARUS paper representations preserve simulated fill outcomes but
+not the original pending-order decision timestamp. The in-memory fill includes
+its bar index; the durable journal row does not. Neither field is equivalent to
+the order-decision timestamp.
 
-ARGUS does not infer it from fill time.
+Until ICARUS persists that timing directly, the caller must supply
+`decision_time_ns` from a separately proven order-decision record. ARGUS does
+not infer it from fill time, bar index, trade close time, or journal row order.
 
 ## Authority
 
