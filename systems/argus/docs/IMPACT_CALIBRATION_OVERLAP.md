@@ -103,6 +103,7 @@ Interpretation:
 
 Each load-band/covariate cell reports:
 
+- broker and paper source-run cluster counts;
 - broker and paper observation counts;
 - bin counts and probabilities;
 - absolute probability gap in every bin;
@@ -117,17 +118,26 @@ predeclared limit.
 
 The aggregate audit passes only when every registered cell passes.
 
-## Minimum sample floor
+## Minimum support floors
 
-The plan independently requires
+The overlap plan independently requires
 `min_observations_per_kind_per_band`.
 
-If either broker-confirmed or paper-emulator evidence has too few observations
-inside a load band, the audit fails closed rather than reporting a fragile
-histogram comparison.
+The referenced load-cluster transfer plan also supplies
+`min_clusters_per_kind_per_band`. Before any overlap histogram is reported,
+each evidence class inside the load band must satisfy both the observation floor
+and that registered source-run cluster floor.
 
-This is only a schema floor. It is not a statement that the minimum is
-statistically sufficient for every scientific claim.
+A reused `source_run_id` inside one evidence class must resolve to the same
+`source_system`, `source_repo`, and `source_commit`. Cross-lineage run-ID
+collisions fail closed, including rows that may be ineligible for a transfer
+metric but are still present in the overlap population.
+
+This prevents many rows from one source run from masquerading as broad support
+and prevents unrelated runs from being silently merged by identifier.
+
+These are schema floors, not claims that the resulting sample is statistically
+sufficient for every scientific conclusion.
 
 ## Binding to the transfer analysis
 
