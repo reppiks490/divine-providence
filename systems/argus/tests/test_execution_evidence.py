@@ -258,6 +258,44 @@ def test_lineaged_summary_rejects_duplicate_source_execution_identity():
         calibration_by_execution_evidence((first, second))
 
 
+def test_source_execution_identity_is_symbol_scoped():
+    nq_receipt = broker_receipt("broker-fill-1")
+    es_receipt = create_execution_evidence_receipt(
+        evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+        source_system="example-broker",
+        source_repo="broker/example-adapter",
+        source_commit=BROKER_COMMIT,
+        source_run_id="session-1",
+        source_execution_id="broker-fill-1",
+        symbol="ES",
+        decision_time_ns=105_000_000_000,
+        completion_time_ns=110_000_000_000,
+        observed_time_ns=111_000_000_000,
+        side=1,
+        requested_size=5.0,
+        filled_size=5.0,
+        average_price=101.5,
+        source_payload={
+            "order_id": "order-es-1",
+            "fill_id": "broker-fill-1",
+            "qty": 5,
+            "symbol": "ES",
+        },
+        broker_name="Example Broker",
+        broker_order_id="order-es-1",
+        broker_fill_id="broker-fill-1",
+    )
+
+    rows = (
+        calibrate_lineaged_impact(curve(), nq_receipt),
+        calibrate_lineaged_impact(curve(), es_receipt),
+    )
+    strata = calibration_by_execution_evidence(rows)
+
+    assert len(strata) == 1
+    assert strata[0].observations == 2
+
+
 def test_lineaged_summary_rejects_duplicate_or_tampered_links():
     row = calibrate_lineaged_impact(curve(), broker_receipt())
 
