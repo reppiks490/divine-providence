@@ -379,6 +379,45 @@ def test_minimum_remaining_clusters_fails_closed():
         )
 
 
+def test_leave_one_cluster_preserves_transfer_observation_floor():
+    manifest, cohort, _ = build_study(
+        fragile_high=False,
+        clusters_per_band=3,
+    )
+    transfer_plan = create_prospective_load_cluster_transfer_plan(
+        manifest,
+        created_time_ns=95,
+        load_bands=BANDS,
+        metrics=(METRIC,),
+        tolerances={
+            ("low-load", METRIC): 3.0,
+            ("high-load", METRIC): 5.0,
+        },
+        confidence_alpha=0.05,
+        bootstrap_replicates=200,
+        bootstrap_seed=7,
+        min_clusters_per_kind_per_band=2,
+        min_metric_observations_per_kind_per_band=3,
+    )
+    plan = influence_plan(
+        manifest,
+        transfer_plan,
+        min_after=2,
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="low-load mean_slippage_error_ticks leaves fewer than 3 "
+        "broker observations after one-cluster deletion",
+    ):
+        registered_load_cluster_influence_audit(
+            plan,
+            transfer_plan,
+            manifest,
+            cohort,
+        )
+
+
 def test_plan_transfer_plan_and_cohort_tampering_fail_closed():
     manifest, cohort, transfer_plan = build_study()
     plan = influence_plan(manifest, transfer_plan)
