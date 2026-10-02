@@ -188,7 +188,7 @@ def test_icarus_journal_fill_adapter_matches_durable_schema_and_stays_paper():
     assert receipt.source_system == "icarus-paper-emulator"
     assert receipt.source_repo == "reppiks490/Icarus"
     assert receipt.source_run_id == "1700000000"
-    assert receipt.source_execution_id.startswith("icarus-journal-fill:")
+    assert receipt.source_execution_id.startswith("icarus-paper-fill:")
     assert receipt.completion_time_ns == 110_000_000_000
     assert receipt.symbol == "NQ"
     assert receipt.side == 1
@@ -198,6 +198,36 @@ def test_icarus_journal_fill_adapter_matches_durable_schema_and_stays_paper():
     assert receipt.market_fill_confirmed is False
     assert receipt.broker_confirmed is False
     validate_execution_evidence_receipt(receipt)
+
+
+def test_icarus_in_memory_and_journal_views_share_execution_identity():
+    in_memory = receipt_from_icarus_paper_fill(
+        paper_fill(),
+        source_commit=ICARUS_COMMIT,
+        source_run_id="1700000000",
+        symbol="NQ",
+        decision_time_ns=105_000_000_000,
+        observed_time_ns=111_000_000_000,
+    )
+    durable = receipt_from_icarus_journal_fill(
+        journal_fill(run_id=1_700_000_000),
+        source_commit=ICARUS_COMMIT,
+        decision_time_ns=105_000_000_000,
+        observed_time_ns=111_000_000_000,
+    )
+
+    assert in_memory.receipt_id != durable.receipt_id
+    assert in_memory.source_execution_id == durable.source_execution_id
+
+    rows = (
+        calibrate_lineaged_impact(curve(), in_memory),
+        calibrate_lineaged_impact(curve(), durable),
+    )
+    with pytest.raises(
+        ValueError,
+        match="duplicate source execution identity",
+    ):
+        calibration_by_execution_evidence(rows)
 
 
 def test_icarus_journal_fill_identity_uses_durable_unique_index_semantics():
