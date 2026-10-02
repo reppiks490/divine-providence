@@ -254,6 +254,15 @@ def test_cluster_plan_requires_both_evidence_kinds_and_pre_registration():
         plan(broker_only)
 
     m = manifest()
+    with pytest.raises(ValueError, match="cannot predate manifest"):
+        create_prospective_cluster_transfer_plan(
+            m,
+            created_time_ns=89,
+            metrics=("mean_slippage_error_ticks",),
+            tolerances={"mean_slippage_error_ticks": 0.5},
+            bootstrap_replicates=200,
+        )
+
     with pytest.raises(ValueError, match="at or before cohort_start"):
         create_prospective_cluster_transfer_plan(
             m,
