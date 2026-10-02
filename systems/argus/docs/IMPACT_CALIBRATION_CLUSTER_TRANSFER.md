@@ -46,8 +46,13 @@ Version 1 fixes clustering to the execution receipt's `source_run_id`.
 
 The cluster field is not selected after results are visible.
 
-Within each evidence class, eligible observations are grouped by source run.
-Cluster identifiers are sorted canonically before deterministic resampling.
+Within each evidence class, a reused `source_run_id` must also resolve to the
+same `source_system`, `source_repo`, and `source_commit`. A collision across
+execution-source lineage fails closed instead of silently merging unrelated
+runs into one bootstrap cluster.
+
+Eligible observations are then grouped by source run. Cluster identifiers are
+sorted canonically before deterministic resampling.
 
 ## Supported metrics
 
