@@ -322,6 +322,14 @@ def create_prospective_overlap_plan(
         "created_time_ns",
         created_time_ns,
     )
+    if created < manifest.created_time_ns:
+        raise ValueError(
+            "overlap plan cannot predate manifest created_time_ns"
+        )
+    if created < transfer_plan.created_time_ns:
+        raise ValueError(
+            "overlap plan cannot predate load-cluster transfer plan"
+        )
     if created > manifest.cohort_start_ns:
         raise ValueError(
             "overlap plan must be created at or before cohort_start_ns"
@@ -396,6 +404,10 @@ def _validate_plan(
         "created_time_ns",
         plan.created_time_ns,
     )
+    if created < manifest.created_time_ns:
+        raise ValueError("overlap plan predates manifest creation")
+    if created < transfer_plan.created_time_ns:
+        raise ValueError("overlap plan predates transfer-plan creation")
     if created > manifest.cohort_start_ns:
         raise ValueError("overlap plan creation is not prospective")
 
