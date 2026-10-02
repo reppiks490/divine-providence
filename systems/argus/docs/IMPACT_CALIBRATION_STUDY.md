@@ -98,6 +98,12 @@ More importantly, the same execution receipt cannot be counted twice against
 two different impact curves in one study. Duplicate execution receipts also
 fail closed.
 
+The cohort additionally requires upstream source-execution identity to be
+unique within its exact evidence-class/system/repository/commit/run namespace.
+Two distinct content-addressed receipts that both claim to represent the same
+source execution therefore fail closed instead of being counted as two
+observations.
+
 ## Minimum evidence per stratum
 
 Every evidence class declared in the manifest must meet the predeclared minimum
