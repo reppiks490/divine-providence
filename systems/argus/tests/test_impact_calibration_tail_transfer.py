@@ -221,6 +221,15 @@ def test_tail_plan_requires_both_evidence_classes_and_valid_policy():
         plan(broker_only)
 
     m = manifest()
+    with pytest.raises(ValueError, match="cannot predate manifest"):
+        create_prospective_tail_transfer_plan(
+            m,
+            created_time_ns=89,
+            metric="slippage_error_ticks",
+            quantile_tolerances=((0.9, 1.0),),
+            bootstrap_replicates=200,
+        )
+
     with pytest.raises(ValueError, match="at or before cohort_start"):
         create_prospective_tail_transfer_plan(
             m,
