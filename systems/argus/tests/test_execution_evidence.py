@@ -424,6 +424,43 @@ def test_lineaged_summary_rejects_duplicate_source_execution_identity():
         calibration_by_execution_evidence((first, second))
 
 
+def test_source_execution_identity_survives_adapter_revision_changes():
+    first_receipt = broker_receipt("broker-fill-1")
+    revised_adapter_receipt = create_execution_evidence_receipt(
+        evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+        source_system="example-broker",
+        source_repo="broker/revised-adapter",
+        source_commit="b" * 40,
+        source_run_id="session-1",
+        source_execution_id="broker-fill-1",
+        symbol="NQ",
+        decision_time_ns=105_000_000_000,
+        completion_time_ns=110_000_000_000,
+        observed_time_ns=112_000_000_000,
+        side=1,
+        requested_size=5.0,
+        filled_size=5.0,
+        average_price=101.5,
+        source_payload={
+            "order_id": "order-1",
+            "fill_id": "broker-fill-1",
+            "adapter_revision": 2,
+        },
+        broker_name="Example Broker",
+        broker_order_id="order-1",
+        broker_fill_id="broker-fill-1",
+    )
+
+    assert first_receipt.receipt_id != revised_adapter_receipt.receipt_id
+
+    rows = (
+        calibrate_lineaged_impact(curve(), first_receipt),
+        calibrate_lineaged_impact(curve(), revised_adapter_receipt),
+    )
+    with pytest.raises(ValueError, match="duplicate source execution identity"):
+        calibration_by_execution_evidence(rows)
+
+
 def test_source_execution_identity_is_symbol_scoped():
     nq_receipt = broker_receipt("broker-fill-1")
     es_receipt = create_execution_evidence_receipt(
