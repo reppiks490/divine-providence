@@ -11,6 +11,7 @@
   "receipt_schema": "icarus-interface-event-v1",
   "consumer_surface": "MCP Evolution and Adaptive Brain observability",
   "authority_ceiling": "RESEARCH",
+  "cross_repository_execution_authorized": false,
   "execution_authorized": false,
   "production_decision_authorized": false,
   "broker_substitution_authorized": false,
