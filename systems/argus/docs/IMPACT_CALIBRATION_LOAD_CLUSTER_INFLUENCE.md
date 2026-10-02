@@ -32,7 +32,7 @@ content-addresses:
 - maximum allowed absolute leave-one-cluster shift for every load-band/metric
   pair.
 
-The influence plan must be registered at or before the study cohort starts.
+The influence plan cannot predate either the study manifest or the referenced load-cluster transfer plan, and it must be registered at or before the study cohort starts.
 
 The shift limits are therefore not chosen after seeing which run is influential.
 
