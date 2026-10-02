@@ -445,6 +445,13 @@ def test_plan_and_cohort_tampering_fail_closed_before_resampling():
         metrics=("mean_slippage_error_ticks",),
     )
 
+    with pytest.raises(ValueError, match="predates manifest"):
+        registered_bootstrap_uncertainty(
+            replace(plan, created_time_ns=89),
+            m,
+            c,
+        )
+
     with pytest.raises(ValueError, match="plan_id"):
         registered_bootstrap_uncertainty(
             replace(plan, bootstrap_seed=99),
