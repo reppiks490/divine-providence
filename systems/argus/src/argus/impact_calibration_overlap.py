@@ -67,6 +67,7 @@ class OverlapBin:
 class OverlapCovariateResult:
     band_label: str
     covariate: str
+    covariate_timing: str
     broker_clusters: int
     paper_clusters: int
     broker_observations: int
@@ -478,6 +479,17 @@ def _source_run_cluster_count(
     return len(namespaces)
 
 
+def _covariate_timing(covariate: str) -> str:
+    if covariate in {
+        "requested_to_visible_ratio",
+        "snapshot_age_ns",
+    }:
+        return "decision_time"
+    if covariate == "completion_latency_ns":
+        return "post_decision_realized"
+    raise ValueError(f"unsupported overlap covariate {covariate!r}")
+
+
 def _covariate_value(
     row: LineagedImpactCalibrationObservation,
     covariate: str,
@@ -652,6 +664,7 @@ def registered_overlap_audit(
                 OverlapCovariateResult(
                     band_label=label,
                     covariate=covariate,
+                    covariate_timing=_covariate_timing(covariate),
                     broker_clusters=broker_clusters,
                     paper_clusters=paper_clusters,
                     broker_observations=broker_n,
