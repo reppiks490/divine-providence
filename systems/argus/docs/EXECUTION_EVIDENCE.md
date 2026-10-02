@@ -61,6 +61,9 @@ Important semantics:
 
 - `ts` is the emulator fill bar/event time in whole seconds and is converted to
   nanoseconds for ARGUS;
+- `source_run_id` must be the canonical positive decimal value of ICARUS's
+  runtime `run_id = int(time.time())`; arbitrary labels and leading-zero aliases
+  fail closed so the in-memory view can bind to the same durable journal run;
 - the current fill row does not preserve the original order-decision time, so
   the adapter requires it explicitly rather than inventing it;
 - `live=true` remains paper-emulator evidence;
