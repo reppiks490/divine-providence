@@ -38,7 +38,9 @@ The packet preserves:
 - fixed cluster field `source_run_id`;
 - load-band definitions;
 - metric set;
-- minimum remaining-cluster requirement;
+- parent transfer plan's `min_clusters_per_kind_per_band`;
+- influence plan's minimum remaining-cluster requirement, which cannot relax
+  that parent cluster floor;
 - parent transfer plan's `min_metric_observations_per_kind_per_band`, which
   every leave-one-run remainder must still satisfy;
 - per-band/per-metric shift tolerances;
