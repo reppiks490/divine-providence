@@ -308,6 +308,8 @@ def test_overlap_export_preserves_identity_support_and_authority_boundaries():
     assert packet["cohort_id"] == cohort.cohort_id
     assert packet["load_cluster_transfer_plan_id"] == transfer.plan_id
     assert packet["overlap_plan_id"] == overlap.plan_id
+    assert packet["min_clusters_per_kind_per_band"] == 2
+    assert packet["min_observations_per_kind_per_band"] == 4
     assert packet["support_metric"] == (
         "empirical_binned_total_variation"
     )
