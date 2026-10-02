@@ -312,7 +312,7 @@ def _source_execution_identity(
         return (
             receipt.evidence_kind.value,
             "broker",
-            str(receipt.broker_name),
+            str(receipt.broker_name).casefold(),
             str(receipt.broker_order_id),
             str(receipt.broker_fill_id),
             receipt.symbol,
@@ -320,7 +320,7 @@ def _source_execution_identity(
     return (
         receipt.evidence_kind.value,
         "source",
-        receipt.source_system,
+        receipt.source_system.casefold(),
         receipt.source_run_id,
         receipt.source_execution_id,
         receipt.symbol,
