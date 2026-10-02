@@ -79,7 +79,7 @@ pair invalidates that lineage receipt.
 Before evidence-stratified aggregation, ARGUS verifies:
 
 - receipt content identity;
-- uniqueness of the upstream execution identity within its evidence/source/run namespace, so two different receipt representations cannot double-count one source execution;
+- uniqueness of the upstream execution identity within its evidence/source/run/symbol namespace, so two different receipt representations cannot double-count one source execution while independent symbols remain distinct;
 - combined calibration-lineage identity;
 - execution ID binding;
 - side and requested-size binding;
