@@ -79,13 +79,20 @@ pair invalidates that lineage receipt.
 Execution identity deliberately does not include `source_repo` or
 `source_commit`. Those fields remain mandatory immutable provenance and are
 still pinned by prospective study manifests, but changing adapter repository or
-revision does not manufacture a new upstream execution when evidence class,
-source system, source run, symbol, and source execution ID are unchanged.
+revision cannot manufacture a new upstream execution.
+
+For `BROKER_CONFIRMED`, upstream identity is keyed from evidence class,
+broker name, broker order ID, broker fill ID, and symbol. An adapter-local
+`source_execution_id` rename therefore cannot duplicate one externally
+confirmed fill.
+
+For `ICARUS_PAPER_EMULATOR`, upstream identity is keyed from evidence class,
+source system, source run ID, source execution ID, and symbol.
 
 Before evidence-stratified aggregation, ARGUS verifies:
 
 - receipt content identity;
-- uniqueness of the upstream execution identity within its evidence/source-system/run/symbol namespace, so two different receipt representations cannot double-count one source execution while independent symbols remain distinct;
+- uniqueness of the upstream execution identity using broker order/fill lineage for broker evidence and source-system/run/execution lineage for paper evidence, so two receipt representations cannot double-count one execution while independent symbols remain distinct;
 - combined calibration-lineage identity;
 - execution ID binding;
 - side and requested-size binding;
