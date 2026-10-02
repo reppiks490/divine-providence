@@ -99,7 +99,7 @@ two different impact curves in one study. Duplicate execution receipts also
 fail closed.
 
 The cohort additionally requires upstream source-execution identity to be
-unique within its exact evidence-class/system/repository/commit/run namespace.
+unique within its exact evidence-class/system/repository/commit/run/symbol namespace.
 Two distinct content-addressed receipts that both claim to represent the same
 source execution therefore fail closed instead of being counted as two
 observations.
