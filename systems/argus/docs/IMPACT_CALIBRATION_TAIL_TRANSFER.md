@@ -168,3 +168,45 @@ This is offline research and does not run on ICARUS's live decision hot path.
 
 Passing every tail tolerance does not authorize model promotion or a broker
 order.
+
+
+## Research export contract
+
+`argus.impact_calibration_tail_transfer_research_export` provides
+`argus-impact-calibration-tail-transfer-research-v1`.
+
+Before export, ARGUS recomputes the registered tail-transfer analysis. The
+envelope preserves:
+
+- study manifest and locked cohort IDs;
+- tail-transfer plan ID and schema;
+- exact impact-model, calibration and execution-source revisions;
+- metric, quantiles and predeclared tolerances;
+- confidence alpha, deterministic seed and bootstrap replicate count;
+- paper and broker eligible sample sizes;
+- observed paper-minus-broker quantile gaps;
+- percentile bounds and per-quantile tolerance outcomes;
+- explicit non-promotion and authority flags.
+
+The export explicitly states that it is not multiplicity adjusted, does not
+provide familywise coverage, is not a formal equivalence or hypothesis test,
+and does not authorize broker substitution.
+
+Publication cannot precede the cohort lock. Any downstream consumer must still
+wait for local ingestion time before treating the packet as available.
+
+## ATHENA integration status
+
+The tail-transfer export is transport-ready, but no hub driver invents
+broker-confirmed market fills to manufacture a successful cross-system demo.
+
+The deterministic hub currently has paper-emulator provenance but no genuine
+broker-confirmed execution fixture with externally valid lineage. Therefore the
+tail-transfer export remains an ARGUS research contract until such broker
+evidence exists.
+
+Synthetic broker-confirmed objects are limited to isolated unit tests of the
+contract code path and are not emitted as empirical ATHENA advisory evidence.
+
+This preserves the evidence firewall instead of turning missing broker truth
+into fabricated integration success.
