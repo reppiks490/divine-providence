@@ -74,9 +74,14 @@ No broker and paper observations are pooled.
 The influence plan requires
 `min_clusters_after_drop_per_kind`.
 
-If removing one source run would leave fewer than that number of clusters in
-either evidence class, the audit fails closed instead of reporting a fragile
-sensitivity result from an underspecified remainder.
+That value cannot be lower than the parent load-cluster transfer plan's
+registered `min_clusters_per_kind_per_band`. The sensitivity layer therefore
+cannot quietly relax the cluster floor that governed the baseline transfer
+analysis.
+
+If removing one source run would leave fewer than the registered remaining
+cluster floor in either evidence class, the audit fails closed instead of
+reporting a fragile sensitivity result from an underspecified remainder.
 
 The audit also preserves the parent load-cluster transfer plan's registered
 `min_metric_observations_per_kind_per_band`. Every leave-one-run subset must
