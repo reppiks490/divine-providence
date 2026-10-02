@@ -326,9 +326,13 @@ def test_overlap_audit_detects_high_load_covariate_shift():
     assert low_latency.total_variation_distance == pytest.approx(0.0)
     assert low_snapshot.support_adequate is True
     assert low_latency.support_adequate is True
+    assert low_snapshot.covariate_timing == "decision_time"
+    assert low_latency.covariate_timing == "post_decision_realized"
 
     assert high_snapshot.total_variation_distance == pytest.approx(1.0)
     assert high_latency.total_variation_distance == pytest.approx(1.0)
+    assert high_snapshot.covariate_timing == "decision_time"
+    assert high_latency.covariate_timing == "post_decision_realized"
     assert high_snapshot.overlap_coefficient == pytest.approx(0.0)
     assert high_latency.overlap_coefficient == pytest.approx(0.0)
     assert high_snapshot.support_adequate is False
