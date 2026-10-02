@@ -34,7 +34,7 @@ It never pools the two evidence classes.
 - deterministic bootstrap seed;
 - minimum realized-slippage observations required in each evidence class.
 
-The plan must be registered at or before the study cohort starts.
+The plan cannot predate the referenced study manifest and must be registered at or before the study cohort starts.
 
 The referenced study manifest must include both:
 
