@@ -33,7 +33,7 @@ ARGUS therefore supports a separate transfer audit that resamples complete
 - minimum eligible clusters required in each execution-evidence class;
 - minimum eligible observations required in each execution-evidence class.
 
-The plan must be registered at or before the study cohort starts.
+The plan cannot predate the referenced study manifest and must be registered at or before the study cohort starts.
 
 The study manifest must include both:
 
