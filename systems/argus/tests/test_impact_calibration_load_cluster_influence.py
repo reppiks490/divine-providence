@@ -264,6 +264,30 @@ def test_plan_is_prospective_content_addressed_and_deterministic():
 def test_plan_must_be_registered_before_cohort_and_cover_every_cell():
     manifest, _, transfer_plan = build_study()
 
+    with pytest.raises(ValueError, match="cannot predate manifest"):
+        create_prospective_load_cluster_influence_plan(
+            manifest,
+            transfer_plan,
+            created_time_ns=89,
+            min_clusters_after_drop_per_kind=2,
+            max_abs_shift_tolerances={
+                ("low-load", METRIC): 0.25,
+                ("high-load", METRIC): 0.75,
+            },
+        )
+
+    with pytest.raises(ValueError, match="cannot predate load-cluster"):
+        create_prospective_load_cluster_influence_plan(
+            manifest,
+            transfer_plan,
+            created_time_ns=94,
+            min_clusters_after_drop_per_kind=2,
+            max_abs_shift_tolerances={
+                ("low-load", METRIC): 0.25,
+                ("high-load", METRIC): 0.75,
+            },
+        )
+
     with pytest.raises(ValueError, match="at or before cohort_start"):
         create_prospective_load_cluster_influence_plan(
             manifest,
