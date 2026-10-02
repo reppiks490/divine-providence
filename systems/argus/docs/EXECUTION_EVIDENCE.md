@@ -82,12 +82,14 @@ still pinned by prospective study manifests, but changing adapter repository or
 revision cannot manufacture a new upstream execution.
 
 For `BROKER_CONFIRMED`, upstream identity is keyed from evidence class,
-broker name, broker order ID, broker fill ID, and symbol. An adapter-local
-`source_execution_id` rename therefore cannot duplicate one externally
-confirmed fill.
+case-normalized broker name, broker order ID, broker fill ID, and symbol. An
+adapter-local `source_execution_id` rename or broker-name casing change
+therefore cannot duplicate one externally confirmed fill.
 
 For `ICARUS_PAPER_EMULATOR`, upstream identity is keyed from evidence class,
-source system, source run ID, source execution ID, and symbol.
+case-normalized source system, source run ID, source execution ID, and symbol.
+Representation-only casing of the source-system label cannot mint a second
+execution.
 
 Before evidence-stratified aggregation, ARGUS verifies:
 
