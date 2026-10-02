@@ -69,7 +69,7 @@ For each load-band/metric pair:
 
 No broker and paper observations are pooled.
 
-## Minimum remaining clusters
+## Minimum remaining evidence
 
 The influence plan requires
 `min_clusters_after_drop_per_kind`.
@@ -77,6 +77,12 @@ The influence plan requires
 If removing one source run would leave fewer than that number of clusters in
 either evidence class, the audit fails closed instead of reporting a fragile
 sensitivity result from an underspecified remainder.
+
+The audit also preserves the parent load-cluster transfer plan's registered
+`min_metric_observations_per_kind_per_band`. Every leave-one-run subset must
+still contain at least that many eligible observations in the affected evidence
+class. A deletion that preserves enough clusters but drops below the registered
+observation floor also fails closed.
 
 This makes the procedure useful as a domination guardrail rather than a
 mechanical delete-one calculation.
