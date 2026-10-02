@@ -197,6 +197,11 @@ def create_prospective_load_cluster_influence_plan(
         "min_clusters_after_drop_per_kind",
         min_clusters_after_drop_per_kind,
     )
+    if minimum < transfer_plan.min_clusters_per_kind_per_band:
+        raise ValueError(
+            "min_clusters_after_drop_per_kind cannot be below the parent "
+            "load-cluster transfer plan's min_clusters_per_kind_per_band"
+        )
 
     tolerances = _canonical_shift_tolerances(
         transfer_plan,
@@ -272,10 +277,15 @@ def _validate_plan(
             "load-cluster influence plan creation is not prospective"
         )
 
-    _positive_int(
+    minimum = _positive_int(
         "min_clusters_after_drop_per_kind",
         plan.min_clusters_after_drop_per_kind,
     )
+    if minimum < transfer_plan.min_clusters_per_kind_per_band:
+        raise ValueError(
+            "min_clusters_after_drop_per_kind cannot be below the parent "
+            "load-cluster transfer plan's min_clusters_per_kind_per_band"
+        )
 
     tolerance_map = {
         (band, metric): tolerance
