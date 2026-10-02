@@ -383,6 +383,43 @@ def validate_execution_evidence_receipt(
         raise ValueError("receipt_id does not match receipt content")
 
 
+def _icarus_paper_execution_id(
+    *,
+    source_run_id: str,
+    symbol: str,
+    ts: int,
+    entry_id: str,
+    side: str,
+    qty: int,
+    price: float,
+    kind: str,
+    comment: str,
+    position_after: int,
+) -> str:
+    """Canonical identity shared by ICARUS in-memory and journal fill views.
+
+    The fields intentionally match the durable Journal.fills uniqueness
+    semantics. Representation-only fields such as SQLite row id, bar index,
+    live flag and profit annotation are excluded so the same paper execution
+    observed through two ICARUS surfaces cannot be counted twice.
+    """
+
+    semantic_identity = {
+        "schema": "icarus-paper-execution-identity-v1",
+        "run_id": str(source_run_id),
+        "symbol": symbol,
+        "ts": ts,
+        "entry_id": entry_id,
+        "side": side,
+        "qty": int(qty),
+        "price": float(price),
+        "kind": kind,
+        "comment": comment,
+        "position_after": position_after,
+    }
+    return "icarus-paper-fill:" + _digest(semantic_identity)
+
+
 def receipt_from_icarus_paper_fill(
     fill: Mapping[str, Any],
     *,
@@ -436,10 +473,12 @@ def receipt_from_icarus_paper_fill(
     qty = _positive("fill qty", fill["qty"])
     if not float(qty).is_integer():
         raise ValueError("fill qty must be a whole number")
+    qty_int = int(qty)
     price = _positive("fill price", fill["price"])
-    _text("fill kind", fill["kind"])
+    kind = _text("fill kind", fill["kind"])
     if not isinstance(fill["comment"], str):
         raise TypeError("fill comment must be a string")
+    comment = fill["comment"]
     if fill["profit"] is not None:
         _finite("fill profit", fill["profit"])
     pos = fill["pos"]
@@ -449,8 +488,18 @@ def receipt_from_icarus_paper_fill(
         raise TypeError("fill live must be bool")
 
     completion_ns = ts * 1_000_000_000
-    source_execution_id = (
-        f"{source_run_id}:{entry_id}:{bar}:{fill_side}:{fill['kind']}:{pos}"
+    asset = _text("symbol", symbol, max_len=64).upper()
+    source_execution_id = _icarus_paper_execution_id(
+        source_run_id=source_run_id,
+        symbol=asset,
+        ts=ts,
+        entry_id=entry_id,
+        side=fill_side,
+        qty=qty_int,
+        price=price,
+        kind=kind,
+        comment=comment,
+        position_after=pos,
     )
 
     return create_execution_evidence_receipt(
@@ -460,13 +509,13 @@ def receipt_from_icarus_paper_fill(
         source_commit=source_commit,
         source_run_id=source_run_id,
         source_execution_id=source_execution_id,
-        symbol=symbol,
+        symbol=asset,
         decision_time_ns=decision_time_ns,
         completion_time_ns=completion_ns,
         observed_time_ns=observed_time_ns,
         side=1 if fill_side == "buy" else -1,
-        requested_size=qty,
-        filled_size=qty,
+        requested_size=qty_int,
+        filled_size=qty_int,
         average_price=price,
         source_payload=dict(fill),
     )
@@ -565,21 +614,17 @@ def receipt_from_icarus_journal_fill(
     if isinstance(position_after, bool) or not isinstance(position_after, int):
         raise ValueError("journal fill position_after must be an integer")
 
-    semantic_identity = {
-        "schema": "icarus-journal-fill-identity-v1",
-        "run_id": run_id,
-        "symbol": symbol,
-        "ts": ts,
-        "entry_id": entry_id,
-        "side": fill_side,
-        "qty": qty,
-        "price": price,
-        "kind": kind,
-        "comment": comment,
-        "position_after": position_after,
-    }
-    source_execution_id = (
-        "icarus-journal-fill:" + _digest(semantic_identity)
+    source_execution_id = _icarus_paper_execution_id(
+        source_run_id=str(run_id),
+        symbol=symbol,
+        ts=ts,
+        entry_id=entry_id,
+        side=fill_side,
+        qty=qty,
+        price=price,
+        kind=kind,
+        comment=comment,
+        position_after=position_after,
     )
 
     return create_execution_evidence_receipt(
