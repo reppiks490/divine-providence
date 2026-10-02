@@ -32,6 +32,7 @@ def test_icarus_federation_contract_is_receipt_only_and_non_executing():
         "MCP Evolution and Adaptive Brain observability"
     )
     assert contract["authority_ceiling"] == "RESEARCH"
+    assert contract["cross_repository_execution_authorized"] is False
     assert contract["execution_authorized"] is False
     assert contract["production_decision_authorized"] is False
     assert contract["broker_substitution_authorized"] is False
