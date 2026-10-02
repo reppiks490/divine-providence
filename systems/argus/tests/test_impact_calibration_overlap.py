@@ -351,6 +351,36 @@ def test_overlap_audit_detects_high_load_covariate_shift():
 def test_overlap_plan_rejects_posthoc_or_non_exhaustive_design():
     m, transfer, _ = study()
 
+    with pytest.raises(ValueError, match="cannot predate manifest"):
+        create_prospective_overlap_plan(
+            m,
+            transfer,
+            created_time_ns=89,
+            covariates=("snapshot_age_ns",),
+            covariate_bins={
+                "snapshot_age_ns": ((0.0, None),),
+            },
+            max_total_variation={
+                ("low-load", "snapshot_age_ns"): 0.5,
+                ("high-load", "snapshot_age_ns"): 0.5,
+            },
+        )
+
+    with pytest.raises(ValueError, match="cannot predate load-cluster"):
+        create_prospective_overlap_plan(
+            m,
+            transfer,
+            created_time_ns=94,
+            covariates=("snapshot_age_ns",),
+            covariate_bins={
+                "snapshot_age_ns": ((0.0, None),),
+            },
+            max_total_variation={
+                ("low-load", "snapshot_age_ns"): 0.5,
+                ("high-load", "snapshot_age_ns"): 0.5,
+            },
+        )
+
     with pytest.raises(ValueError, match="at or before cohort_start"):
         create_prospective_overlap_plan(
             m,
