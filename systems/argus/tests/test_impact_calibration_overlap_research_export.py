@@ -335,6 +335,12 @@ def test_overlap_export_preserves_identity_support_and_authority_boundaries():
     }
     assert rows[
         ("low-load", "snapshot_age_ns")
+    ]["broker_clusters"] == 2
+    assert rows[
+        ("low-load", "snapshot_age_ns")
+    ]["paper_clusters"] == 2
+    assert rows[
+        ("low-load", "snapshot_age_ns")
     ]["total_variation_distance"] == pytest.approx(0.0)
     assert rows[
         ("high-load", "snapshot_age_ns")
