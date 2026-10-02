@@ -55,7 +55,19 @@ Version 1 supports:
 
 These are already bound into the realized impact-calibration lineage.
 
-The overlap layer does not introduce a new post-hoc data source.
+Their timing is not interchangeable:
+
+- `requested_to_visible_ratio` is labeled `decision_time`;
+- `snapshot_age_ns` is labeled `decision_time`;
+- `completion_latency_ns` is labeled `post_decision_realized`.
+
+A completion-latency overlap result is therefore a descriptive realized-outcome
+support diagnostic. It must not be treated as a predecision covariate,
+confounder adjustment, or feature that could have been known when the original
+order decision was made.
+
+The overlap layer does not introduce a new post-hoc data source, but it preserves
+this timing distinction explicitly in every result.
 
 ## Exhaustive bins
 
