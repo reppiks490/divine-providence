@@ -810,6 +810,147 @@ def test_load_cluster_rejects_source_run_id_collision_across_lineage():
         registered_load_cluster_transfer_compatibility(p, m, c)
 
 
+def test_load_cluster_rejects_cross_band_source_run_lineage_collision():
+    other_commit = "3" * 40
+    m = create_impact_calibration_study_manifest(
+        study_name="load-cluster-cross-band-lineage-collision",
+        created_time_ns=90,
+        cohort_start_ns=110,
+        cohort_end_ns=200,
+        observation_cutoff_ns=250,
+        impact_model_revision="impact-v1",
+        calibration_revision="calibration-v1",
+        symbols=("NQ",),
+        evidence_kinds=(
+            ExecutionEvidenceKind.BROKER_CONFIRMED,
+            ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+        ),
+        execution_source_revisions=(
+            ("broker/example-adapter", BROKER_COMMIT),
+            ("broker/other-adapter", other_commit),
+            ("reppiks490/Icarus", ICARUS_COMMIT),
+        ),
+        min_observations_per_stratum=4,
+        max_snapshot_age_ns=50,
+        max_completion_latency_ns=50,
+    )
+
+    def broker_subject(
+        execution_id,
+        repo,
+        commit,
+        run_id,
+        *,
+        visible_size,
+        sequence,
+    ):
+        receipt_value = create_execution_evidence_receipt(
+            evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+            source_system="example-broker",
+            source_repo=repo,
+            source_commit=commit,
+            source_run_id=run_id,
+            source_execution_id=execution_id,
+            symbol="NQ",
+            decision_time_ns=120,
+            completion_time_ns=130,
+            observed_time_ns=140,
+            side=1,
+            requested_size=5.0,
+            filled_size=5.0,
+            average_price=101.5,
+            source_payload={"fill_id": execution_id, "run_id": run_id},
+            broker_name="Example Broker",
+            broker_order_id=f"order-{execution_id}",
+            broker_fill_id=execution_id,
+        )
+        return ImpactCalibrationStudySubject(
+            row=calibrate_lineaged_impact(
+                curve(visible_size=visible_size, sequence=sequence),
+                receipt_value,
+            ),
+            impact_model_revision="impact-v1",
+            calibration_revision="calibration-v1",
+        )
+
+    c = lock_impact_calibration_study_cohort(
+        m,
+        (
+            broker_subject(
+                "b-low-alias",
+                "broker/example-adapter",
+                BROKER_COMMIT,
+                "reused-across-bands",
+                visible_size=50.0,
+                sequence=120,
+            ),
+            broker_subject(
+                "b-high-alias",
+                "broker/other-adapter",
+                other_commit,
+                "reused-across-bands",
+                visible_size=10.0,
+                sequence=121,
+            ),
+            subject(
+                ExecutionEvidenceKind.BROKER_CONFIRMED,
+                "b-low-b",
+                price=101.3,
+                visible_size=50.0,
+                sequence=122,
+                run_id="broker-low-b",
+            ),
+            subject(
+                ExecutionEvidenceKind.BROKER_CONFIRMED,
+                "b-high-b",
+                price=102.2,
+                visible_size=10.0,
+                sequence=123,
+                run_id="broker-high-b",
+            ),
+            subject(
+                ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+                "p-low-a",
+                price=101.2,
+                visible_size=50.0,
+                sequence=130,
+                run_id="paper-low-a",
+            ),
+            subject(
+                ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+                "p-low-b",
+                price=101.3,
+                visible_size=50.0,
+                sequence=131,
+                run_id="paper-low-b",
+            ),
+            subject(
+                ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+                "p-high-a",
+                price=101.4,
+                visible_size=10.0,
+                sequence=132,
+                run_id="paper-high-a",
+            ),
+            subject(
+                ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+                "p-high-b",
+                price=101.5,
+                visible_size=10.0,
+                sequence=133,
+                run_id="paper-high-b",
+            ),
+        ),
+        lock_time_ns=260,
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="source_run_id collision across execution-source lineage",
+    ):
+        registered_load_cluster_transfer_compatibility(plan(m), m, c)
+
+
 def test_plan_and_cohort_tampering_fail_closed():
     m, c = study()
     p = plan(m)
