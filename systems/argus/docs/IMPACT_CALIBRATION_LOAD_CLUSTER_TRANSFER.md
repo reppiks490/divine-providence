@@ -47,7 +47,9 @@ content-addresses:
 - minimum eligible observations required in each evidence class inside every
   load band.
 
-The plan must be registered at or before the study cohort starts.
+The plan cannot predate the referenced study manifest and must be registered
+at or before the study cohort starts. This makes the declared plan chronology
+internally consistent before any cohort outcome can be observed.
 
 The study manifest must predeclare both:
 
@@ -83,6 +85,13 @@ Version 1 fixes the cluster field to the immutable execution receipt's
 `source_run_id`.
 
 The cluster field is not selected after results are visible.
+
+Across the complete cohort within each evidence class, a reused
+`source_run_id` must resolve to the same `source_system`, `source_repo`, and
+`source_commit`. This validation happens before load-band partitioning, so a
+run identifier cannot evade the lineage check by colliding only across different
+load bands. A collision across execution-source lineage fails closed rather than
+silently treating unrelated runs as one experimental cluster.
 
 For each load band, evidence class and metric:
 
@@ -238,8 +247,6 @@ path.
 
 Passing every load-cluster tolerance does not authorize model promotion or a
 broker order.
-
-
 ## Research export contract
 
 `argus.impact_calibration_load_cluster_transfer_research_export` provides
@@ -289,3 +296,4 @@ the contract path and are not emitted as empirical ATHENA advisory evidence.
 
 This preserves both the execution-evidence firewall and the load-conditioned
 pseudoreplication guardrail.
+
