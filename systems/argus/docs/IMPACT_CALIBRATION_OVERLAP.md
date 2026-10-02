@@ -40,7 +40,7 @@ paper/broker calibration as a comparable research population.
 - maximum allowed total-variation distance for every load-band/covariate cell;
 - minimum observations required in each evidence class inside every load band.
 
-The plan must be registered at or before the study cohort starts.
+The plan cannot predate either the study manifest or the referenced load-cluster transfer plan, and it must be registered at or before the study cohort starts.
 
 Bin boundaries and support tolerances therefore cannot be selected after the
 paper/broker distributions are visible.
