@@ -229,7 +229,9 @@ The export preserves:
 - exact impact-model, calibration and execution-source revisions;
 - registered covariates and their exhaustive fixed bins;
 - predeclared total-variation limits;
-- minimum observation requirements;
+- parent load-cluster source-run minimums;
+- overlap observation minimums;
+- broker and paper source-run cluster counts;
 - broker and paper bin counts and probabilities;
 - total-variation distance;
 - overlap coefficient;
