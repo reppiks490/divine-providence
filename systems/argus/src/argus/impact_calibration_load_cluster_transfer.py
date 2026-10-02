@@ -588,11 +588,26 @@ def _clusters(
         str,
         list[LineagedImpactCalibrationObservation],
     ] = {}
+    namespaces: dict[str, tuple[str, str, str]] = {}
     for row in rows:
         if not _eligible(metric, row):
             continue
+        cluster_id = row.receipt.source_run_id
+        namespace = (
+            row.receipt.source_system,
+            row.receipt.source_repo,
+            row.receipt.source_commit,
+        )
+        existing = namespaces.get(cluster_id)
+        if existing is None:
+            namespaces[cluster_id] = namespace
+        elif existing != namespace:
+            raise ValueError(
+                "source_run_id collision across execution-source lineage: "
+                f"{cluster_id!r}"
+            )
         grouped.setdefault(
-            row.receipt.source_run_id,
+            cluster_id,
             [],
         ).append(row)
 
