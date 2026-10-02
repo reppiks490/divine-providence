@@ -166,6 +166,9 @@ def export_registered_overlap_audit(
             for label, covariate, maximum
             in overlap_plan.max_total_variation
         ],
+        "min_clusters_per_kind_per_band": (
+            transfer_plan.min_clusters_per_kind_per_band
+        ),
         "min_observations_per_kind_per_band": (
             overlap_plan.min_observations_per_kind_per_band
         ),
@@ -206,6 +209,7 @@ def export_registered_overlap_audit(
             "broker_and_paper_evidence_required",
             "load_stratified",
             "source_run_dependence_preserved_by_baseline_audit",
+            "source_run_cluster_floor_preserved_in_overlap",
             "evidence_classes_not_pooled",
         ],
         "advisory_only": True,
