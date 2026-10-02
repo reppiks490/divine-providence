@@ -147,6 +147,14 @@ def export_registered_overlap_audit(
         "overlap_plan_schema_version": overlap_plan.schema_version,
         "overlap_plan_id": overlap_plan.plan_id,
         "covariates": list(overlap_plan.covariates),
+        "covariate_timing": {
+            covariate: (
+                "post_decision_realized"
+                if covariate == "completion_latency_ns"
+                else "decision_time"
+            )
+            for covariate in overlap_plan.covariates
+        },
         "covariate_bins": {
             covariate: [
                 {
@@ -210,6 +218,7 @@ def export_registered_overlap_audit(
             "load_stratified",
             "source_run_dependence_preserved_by_baseline_audit",
             "source_run_cluster_floor_preserved_in_overlap",
+            "covariate_timing_explicit",
             "evidence_classes_not_pooled",
         ],
         "advisory_only": True,
