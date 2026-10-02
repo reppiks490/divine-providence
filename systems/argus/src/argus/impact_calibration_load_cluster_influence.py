@@ -180,6 +180,14 @@ def create_prospective_load_cluster_influence_plan(
     _validate_transfer_plan(transfer_plan, manifest)
 
     created = _nonnegative_ns("created_time_ns", created_time_ns)
+    if created < manifest.created_time_ns:
+        raise ValueError(
+            "influence plan cannot predate manifest created_time_ns"
+        )
+    if created < transfer_plan.created_time_ns:
+        raise ValueError(
+            "influence plan cannot predate load-cluster transfer plan"
+        )
     if created > manifest.cohort_start_ns:
         raise ValueError(
             "influence plan must be created at or before cohort_start_ns"
@@ -251,6 +259,14 @@ def _validate_plan(
         )
 
     created = _nonnegative_ns("created_time_ns", plan.created_time_ns)
+    if created < manifest.created_time_ns:
+        raise ValueError(
+            "load-cluster influence plan predates manifest creation"
+        )
+    if created < transfer_plan.created_time_ns:
+        raise ValueError(
+            "load-cluster influence plan predates transfer-plan creation"
+        )
     if created > manifest.cohort_start_ns:
         raise ValueError(
             "load-cluster influence plan creation is not prospective"
