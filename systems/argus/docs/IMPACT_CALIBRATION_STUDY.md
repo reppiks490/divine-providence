@@ -147,7 +147,8 @@ Before registered analysis, ARGUS revalidates:
 - execution-receipt identity;
 - receipt-plus-calibration lineage identity;
 - model/calibration revisions;
-- source repository/commit;
+- source repository/commit provenance;
+- upstream source-execution uniqueness independent of adapter revision;
 - symbol/evidence class;
 - cohort timing;
 - observation cutoff;
