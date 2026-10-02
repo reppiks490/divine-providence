@@ -103,10 +103,17 @@ ICARUS's durable fill uniqueness rule:
 run_id, symbol, ts, entry_id, side, qty, price, kind, comment, position_after
 ```
 
-If the same durable fill is re-represented with a different SQLite row ID,
-profit annotation, or observation timestamp, its receipt can change while its
-upstream source-execution identity remains the same. The execution-identity
-firewall therefore rejects double-counting it.
+The in-memory chart/runtime adapter now uses this same canonical identity. Its
+extra `bar` field, boolean `live` flag, and profit annotation are treated as
+representation metadata rather than independent execution identity. Therefore
+the same ICARUS paper fill observed once through `recent_fills` and again
+through the durable SQLite journal resolves to one upstream source execution.
+
+If that fill is re-represented with a different SQLite row ID, chart bar index,
+live flag, profit annotation, or observation timestamp, its receipt can change
+while its upstream source-execution identity remains the same. The
+execution-identity firewall therefore rejects double-counting it across either
+one representation or both ICARUS surfaces.
 
 As with the in-memory adapter, `live=1` means the paper engine processed the
 fill during a live engine epoch. It is still
