@@ -76,10 +76,16 @@ The combined receipt + calibration observation also receives its own
 content-addressed `impact-calibration-lineage` ID. Mutating either side of the
 pair invalidates that lineage receipt.
 
+Execution identity deliberately does not include `source_repo` or
+`source_commit`. Those fields remain mandatory immutable provenance and are
+still pinned by prospective study manifests, but changing adapter repository or
+revision does not manufacture a new upstream execution when evidence class,
+source system, source run, symbol, and source execution ID are unchanged.
+
 Before evidence-stratified aggregation, ARGUS verifies:
 
 - receipt content identity;
-- uniqueness of the upstream execution identity within its evidence/source/run/symbol namespace, so two different receipt representations cannot double-count one source execution while independent symbols remain distinct;
+- uniqueness of the upstream execution identity within its evidence/source-system/run/symbol namespace, so two different receipt representations cannot double-count one source execution while independent symbols remain distinct;
 - combined calibration-lineage identity;
 - execution ID binding;
 - side and requested-size binding;
