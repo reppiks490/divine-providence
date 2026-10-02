@@ -175,6 +175,13 @@ Until ICARUS persists that timing directly, the caller must supply
 `decision_time_ns` from a separately proven order-decision record. ARGUS does
 not infer it from fill time, bar index, trade close time, or journal row order.
 
+The current ICARUS journal also assigns `run_id = int(time.time())`, so runtime
+identity has one-second resolution. ARGUS preserves that durable identity but
+cannot reconstruct two process starts that ICARUS itself aliased into the same
+second-level run ID. A future ICARUS runtime-provenance change should use a
+collision-resistant per-process run identifier; this ARGUS PR deliberately does
+not modify the separately owned engine/runtime scope.
+
 ## Authority
 
 Neither receipt class grants order authority.
