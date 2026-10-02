@@ -503,15 +503,26 @@ def registered_load_cluster_influence_audit(
                 ]
             ] = []
 
+            min_observations_after_drop = (
+                transfer_plan.min_metric_observations_per_kind_per_band
+            )
+
             for index, (cluster_id, _) in enumerate(broker_clusters):
                 kept = tuple(
                     cluster
                     for j, cluster in enumerate(broker_clusters)
                     if j != index
                 )
+                kept_rows = _flatten(kept)
+                if len(kept_rows) < min_observations_after_drop:
+                    raise ValueError(
+                        f"{band_label} {metric} leaves fewer than "
+                        f"{min_observations_after_drop} broker observations "
+                        "after one-cluster deletion"
+                    )
                 broker_value = _metric_value(
                     metric,
-                    _flatten(kept),
+                    kept_rows,
                 )
                 gap = full_paper_value - broker_value
                 candidates.append(
@@ -529,9 +540,16 @@ def registered_load_cluster_influence_audit(
                     for j, cluster in enumerate(paper_clusters)
                     if j != index
                 )
+                kept_rows = _flatten(kept)
+                if len(kept_rows) < min_observations_after_drop:
+                    raise ValueError(
+                        f"{band_label} {metric} leaves fewer than "
+                        f"{min_observations_after_drop} paper observations "
+                        "after one-cluster deletion"
+                    )
                 paper_value = _metric_value(
                     metric,
-                    _flatten(kept),
+                    kept_rows,
                 )
                 gap = paper_value - full_broker_value
                 candidates.append(
