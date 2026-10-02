@@ -586,6 +586,33 @@ def _metric_function(
     )
 
 
+def _validate_source_run_namespaces(
+    rows: Iterable[LineagedImpactCalibrationObservation],
+) -> None:
+    """Reject run identifiers that alias different source lineage."""
+
+    namespaces: dict[
+        tuple[ExecutionEvidenceKind, str],
+        tuple[str, str, str],
+    ] = {}
+    for row in rows:
+        receipt = row.receipt
+        key = (receipt.evidence_kind, receipt.source_run_id)
+        namespace = (
+            receipt.source_system,
+            receipt.source_repo,
+            receipt.source_commit,
+        )
+        existing = namespaces.get(key)
+        if existing is None:
+            namespaces[key] = namespace
+        elif existing != namespace:
+            raise ValueError(
+                "source_run_id collision across execution-source lineage: "
+                f"{receipt.source_run_id!r}"
+            )
+
+
 def _clusters(
     rows: tuple[LineagedImpactCalibrationObservation, ...],
     metric: str,
@@ -726,6 +753,9 @@ def registered_load_cluster_transfer_compatibility(
 
     # Revalidate prospective study, receipts and calibration lineage first.
     registered_evidence_stratified_summary(manifest, cohort)
+    _validate_source_run_namespaces(
+        subject.row for subject in cohort.subjects
+    )
 
     rows_by_band_kind: dict[
         tuple[str, ExecutionEvidenceKind],
