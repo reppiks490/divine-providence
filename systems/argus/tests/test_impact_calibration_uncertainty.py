@@ -224,6 +224,13 @@ def test_bootstrap_plan_is_prospective_content_addressed_and_deterministic():
 def test_bootstrap_plan_must_be_registered_before_cohort_and_fail_bad_policy():
     m = broker_manifest()
 
+    with pytest.raises(ValueError, match="cannot predate manifest"):
+        create_prospective_bootstrap_plan(
+            m,
+            created_time_ns=89,
+            bootstrap_replicates=200,
+        )
+
     with pytest.raises(ValueError, match="at or before cohort_start"):
         create_prospective_bootstrap_plan(
             m,
