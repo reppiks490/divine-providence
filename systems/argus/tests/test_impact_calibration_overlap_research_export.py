@@ -313,6 +313,10 @@ def test_overlap_export_preserves_identity_support_and_authority_boundaries():
     assert packet["support_metric"] == (
         "empirical_binned_total_variation"
     )
+    assert packet["covariate_timing"] == {
+        "snapshot_age_ns": "decision_time",
+        "completion_latency_ns": "post_decision_realized",
+    }
 
     assert packet["formal_equivalence_test"] is False
     assert packet["propensity_score"] is False
@@ -345,6 +349,9 @@ def test_overlap_export_preserves_identity_support_and_authority_boundaries():
     assert rows[
         ("high-load", "snapshot_age_ns")
     ]["total_variation_distance"] == pytest.approx(1.0)
+    assert rows[
+        ("high-load", "completion_latency_ns")
+    ]["covariate_timing"] == "post_decision_realized"
     assert rows[
         ("high-load", "completion_latency_ns")
     ]["support_adequate"] is False
