@@ -33,6 +33,8 @@ MCP Evolution and Adaptive Brain observability.
 
 The federation ceiling is `RESEARCH`.
 
+`cross_repository_execution_authorized=false`
+
 `execution_authorized=false`
 
 `production_decision_authorized=false`
