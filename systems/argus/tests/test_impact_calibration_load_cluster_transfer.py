@@ -284,6 +284,21 @@ def test_plan_requires_both_evidence_kinds_and_pre_registration():
         plan(broker_only)
 
     m = manifest()
+    with pytest.raises(ValueError, match="cannot predate manifest"):
+        create_prospective_load_cluster_transfer_plan(
+            m,
+            created_time_ns=89,
+            load_bands=BANDS,
+            metrics=("mean_slippage_error_ticks",),
+            tolerances={
+                ("low-load", "mean_slippage_error_ticks"): 1.0,
+                ("high-load", "mean_slippage_error_ticks"): 1.0,
+            },
+            bootstrap_replicates=200,
+            min_clusters_per_kind_per_band=2,
+            min_metric_observations_per_kind_per_band=2,
+        )
+
     with pytest.raises(ValueError, match="at or before"):
         create_prospective_load_cluster_transfer_plan(
             m,
