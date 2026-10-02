@@ -417,6 +417,36 @@ def test_same_source_execution_cannot_be_counted_as_two_receipts():
         )
 
 
+def test_cohort_rejects_same_source_execution_across_adapter_revisions():
+    revised_commit = "3" * 40
+    first = subject("same-source-execution", price=101.5)
+    revised = subject(
+        "same-source-execution",
+        price=101.5,
+        source_repo="broker/revised-adapter",
+        source_commit=revised_commit,
+        observed=141,
+    )
+    assert first.row.receipt.receipt_id != revised.row.receipt.receipt_id
+
+    m = manifest(
+        evidence_kinds=(ExecutionEvidenceKind.BROKER_CONFIRMED,),
+        execution_source_revisions=(
+            ("broker/example-adapter", BROKER_COMMIT),
+            ("broker/revised-adapter", revised_commit),
+        ),
+    )
+    with pytest.raises(
+        ValueError,
+        match="duplicate source execution identity",
+    ):
+        lock_impact_calibration_study_cohort(
+            m,
+            (first, revised),
+            lock_time_ns=260,
+        )
+
+
 def test_cohort_tampering_breaks_identity_or_membership():
     m = manifest()
     cohort = lock_impact_calibration_study_cohort(
