@@ -397,6 +397,23 @@ def validate_execution_evidence_receipt(
         raise ValueError("receipt_id does not match receipt content")
 
 
+def _icarus_runtime_run_id(value: str) -> str:
+    """Validate the exact decimal ICARUS runtime run_id representation."""
+
+    run_id = _text("source_run_id", value)
+    if (
+        not run_id.isascii()
+        or not run_id.isdigit()
+        or int(run_id) <= 0
+        or str(int(run_id)) != run_id
+    ):
+        raise ValueError(
+            "source_run_id must be the canonical positive decimal ICARUS "
+            "runtime run_id"
+        )
+    return run_id
+
+
 def _icarus_paper_execution_id(
     *,
     source_run_id: str,
@@ -503,8 +520,9 @@ def receipt_from_icarus_paper_fill(
 
     completion_ns = ts * 1_000_000_000
     asset = _text("symbol", symbol, max_len=64).upper()
+    runtime_run_id = _icarus_runtime_run_id(source_run_id)
     source_execution_id = _icarus_paper_execution_id(
-        source_run_id=source_run_id,
+        source_run_id=runtime_run_id,
         symbol=asset,
         ts=ts,
         entry_id=entry_id,
@@ -521,7 +539,7 @@ def receipt_from_icarus_paper_fill(
         source_system="icarus-paper-emulator",
         source_repo="reppiks490/Icarus",
         source_commit=source_commit,
-        source_run_id=source_run_id,
+        source_run_id=runtime_run_id,
         source_execution_id=source_execution_id,
         symbol=asset,
         decision_time_ns=decision_time_ns,
