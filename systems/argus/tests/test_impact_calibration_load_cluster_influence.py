@@ -408,13 +408,7 @@ def test_influence_plan_cannot_relax_parent_cluster_floor():
         fragile_high=False,
         clusters_per_band=3,
     )
-    transfer_plan = replace(
-        transfer_plan,
-        min_clusters_per_kind_per_band=3,
-    )
-
-    # Re-content-addressing is intentionally not available by mutation; build a
-    # valid parent plan with the stricter floor instead.
+    # Build a valid parent plan with a stricter registered cluster floor.
     transfer_plan = create_prospective_load_cluster_transfer_plan(
         manifest,
         created_time_ns=95,
