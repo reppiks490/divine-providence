@@ -227,7 +227,8 @@ The export preserves:
 - load-cluster transfer plan ID and schema;
 - overlap plan ID and schema;
 - exact impact-model, calibration and execution-source revisions;
-- registered covariates and their exhaustive fixed bins;
+- registered covariates, their explicit decision-time versus
+  post-decision-realized timing labels, and their exhaustive fixed bins;
 - predeclared total-variation limits;
 - parent load-cluster source-run minimums;
 - overlap observation minimums;
