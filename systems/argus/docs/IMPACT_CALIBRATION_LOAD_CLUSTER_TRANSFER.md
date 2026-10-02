@@ -47,7 +47,9 @@ content-addresses:
 - minimum eligible observations required in each evidence class inside every
   load band.
 
-The plan must be registered at or before the study cohort starts.
+The plan cannot predate the referenced study manifest and must be registered
+at or before the study cohort starts. This makes the declared plan chronology
+internally consistent before any cohort outcome can be observed.
 
 The study manifest must predeclare both:
 
