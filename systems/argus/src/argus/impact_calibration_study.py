@@ -512,7 +512,7 @@ def lock_impact_calibration_study_cohort(
     seen_lineage: set[str] = set()
     seen_receipts: set[str] = set()
     seen_source_executions: set[
-        tuple[str, str, str, str, str, str, str]
+        tuple[str, str, str, str, str]
     ] = set()
     included: list[ImpactCalibrationStudySubject] = []
     exclusions: list[tuple[str, str]] = []
