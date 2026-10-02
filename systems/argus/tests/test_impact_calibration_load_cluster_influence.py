@@ -403,6 +403,50 @@ def test_minimum_remaining_clusters_fails_closed():
         )
 
 
+def test_influence_plan_cannot_relax_parent_cluster_floor():
+    manifest, _, transfer_plan = build_study(
+        fragile_high=False,
+        clusters_per_band=3,
+    )
+    transfer_plan = replace(
+        transfer_plan,
+        min_clusters_per_kind_per_band=3,
+    )
+
+    # Re-content-addressing is intentionally not available by mutation; build a
+    # valid parent plan with the stricter floor instead.
+    transfer_plan = create_prospective_load_cluster_transfer_plan(
+        manifest,
+        created_time_ns=95,
+        load_bands=BANDS,
+        metrics=(METRIC,),
+        tolerances={
+            ("low-load", METRIC): 3.0,
+            ("high-load", METRIC): 5.0,
+        },
+        confidence_alpha=0.05,
+        bootstrap_replicates=200,
+        bootstrap_seed=7,
+        min_clusters_per_kind_per_band=3,
+        min_metric_observations_per_kind_per_band=2,
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="cannot be below the parent.*min_clusters_per_kind_per_band",
+    ):
+        create_prospective_load_cluster_influence_plan(
+            manifest,
+            transfer_plan,
+            created_time_ns=96,
+            min_clusters_after_drop_per_kind=2,
+            max_abs_shift_tolerances={
+                ("low-load", METRIC): 0.25,
+                ("high-load", METRIC): 0.75,
+            },
+        )
+
+
 def test_leave_one_cluster_preserves_transfer_observation_floor():
     manifest, cohort, _ = build_study(
         fragile_high=False,
