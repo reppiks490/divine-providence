@@ -193,3 +193,47 @@ hot path.
 
 Passing every cluster-bootstrap tolerance does not authorize model promotion or
 a broker order.
+
+
+## Research export contract
+
+`argus.impact_calibration_cluster_transfer_research_export` provides
+`argus-impact-calibration-cluster-transfer-research-v1`.
+
+Before export, ARGUS recomputes the registered source-run cluster transfer
+analysis. The envelope preserves:
+
+- study manifest and locked cohort IDs;
+- cluster-transfer plan ID and schema;
+- fixed cluster field `source_run_id`;
+- exact impact-model, calibration and execution-source revisions;
+- metric set and tolerances;
+- confidence alpha, deterministic seed and bootstrap replicate count;
+- predeclared minimum cluster and observation counts;
+- broker and paper eligible cluster counts;
+- broker and paper eligible observation counts;
+- paper-minus-broker estimates and cluster-bootstrap intervals;
+- aggregate and per-metric tolerance outcomes;
+- explicit non-promotion and authority flags.
+
+The export explicitly states that it is not a formal equivalence test, does not
+claim a small-sample cluster guarantee, is not multiplicity adjusted, does not
+provide familywise coverage, does not estimate a causal effect, does not
+promote paper evidence and does not authorize broker substitution.
+
+Publication cannot precede cohort lock. Downstream local availability must
+still wait for ingestion time.
+
+## ATHENA integration status
+
+The cluster-transfer export is transport-ready, but the deterministic hub does
+not have a genuine broker-confirmed execution fixture with externally valid
+lineage.
+
+No ATHENA happy-path driver therefore fabricates broker-confirmed observations
+to make the cross-system path appear complete.
+
+Synthetic broker-confirmed objects are restricted to isolated unit tests of the
+contract code path and are not emitted as empirical ATHENA advisory evidence.
+
+This preserves the evidence firewall and the pseudoreplication guardrail.
