@@ -445,7 +445,16 @@ def test_overlap_rejects_cross_lineage_source_run_collision():
         max_completion_latency_ns=100,
     )
 
-    def broker_subject(execution_id, repo, commit, run_id, sequence):
+    def broker_subject(
+        execution_id,
+        repo,
+        commit,
+        run_id,
+        sequence,
+        *,
+        visible_size,
+        filled=5.0,
+    ):
         receipt_value = create_execution_evidence_receipt(
             evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
             source_system="example-broker",
@@ -459,16 +468,20 @@ def test_overlap_rejects_cross_lineage_source_run_collision():
             observed_time_ns=140,
             side=1,
             requested_size=5.0,
-            filled_size=5.0,
-            average_price=101.5,
-            source_payload={"fill_id": execution_id, "run_id": run_id},
+            filled_size=filled,
+            average_price=None if filled == 0 else 101.5,
+            source_payload={
+                "fill_id": execution_id,
+                "run_id": run_id,
+                "filled": filled,
+            },
             broker_name="Example Broker",
             broker_order_id=f"order-{execution_id}",
             broker_fill_id=execution_id,
         )
         return ImpactCalibrationStudySubject(
             row=calibrate_lineaged_impact(
-                curve(visible_size=50.0, sequence=sequence),
+                curve(visible_size=visible_size, sequence=sequence),
                 receipt_value,
             ),
             impact_model_revision="impact-v1",
@@ -476,19 +489,23 @@ def test_overlap_rejects_cross_lineage_source_run_collision():
         )
 
     rows = (
+        # Two metric-eligible broker clusters per band satisfy the parent
+        # load-cluster transfer audit.
         broker_subject(
             "b-low-a",
             "broker/example-adapter",
             BROKER_COMMIT,
-            "reused-low-run",
+            "b-low-a",
             201,
+            visible_size=50.0,
         ),
         broker_subject(
             "b-low-b",
-            "broker/other-adapter",
-            other_commit,
-            "reused-low-run",
+            "broker/example-adapter",
+            BROKER_COMMIT,
+            "b-low-b",
             202,
+            visible_size=50.0,
         ),
         broker_subject(
             "b-high-a",
@@ -496,6 +513,7 @@ def test_overlap_rejects_cross_lineage_source_run_collision():
             BROKER_COMMIT,
             "b-high-a",
             203,
+            visible_size=10.0,
         ),
         broker_subject(
             "b-high-b",
@@ -503,6 +521,28 @@ def test_overlap_rejects_cross_lineage_source_run_collision():
             BROKER_COMMIT,
             "b-high-b",
             204,
+            visible_size=10.0,
+        ),
+        # These zero-fill rows are ineligible for the slippage transfer
+        # metric but are still part of the overlap population. Their reused
+        # run ID must not silently merge across source revisions.
+        broker_subject(
+            "b-zero-a",
+            "broker/example-adapter",
+            BROKER_COMMIT,
+            "reused-low-run",
+            205,
+            visible_size=50.0,
+            filled=0.0,
+        ),
+        broker_subject(
+            "b-zero-b",
+            "broker/other-adapter",
+            other_commit,
+            "reused-low-run",
+            206,
+            visible_size=50.0,
+            filled=0.0,
         ),
         subject(
             ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
@@ -546,20 +586,20 @@ def test_overlap_rejects_cross_lineage_source_run_collision():
         rows,
         lock_time_ns=260,
     )
-    metric = "mean_fill_fraction_error"
+    metric = "mean_slippage_error_ticks"
     transfer = create_prospective_load_cluster_transfer_plan(
         m,
         created_time_ns=95,
         load_bands=LOAD_BANDS,
         metrics=(metric,),
         tolerances={
-            ("low-load", metric): 1.0,
-            ("high-load", metric): 1.0,
+            ("low-load", metric): 5.0,
+            ("high-load", metric): 5.0,
         },
         confidence_alpha=0.05,
         bootstrap_replicates=200,
         bootstrap_seed=7,
-        min_clusters_per_kind_per_band=1,
+        min_clusters_per_kind_per_band=2,
         min_metric_observations_per_kind_per_band=2,
     )
     plan = create_prospective_overlap_plan(
