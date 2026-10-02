@@ -84,6 +84,11 @@ Version 1 fixes the cluster field to the immutable execution receipt's
 
 The cluster field is not selected after results are visible.
 
+Inside each evidence class and load band, a reused `source_run_id` must resolve
+to the same `source_system`, `source_repo`, and `source_commit`. A collision
+across execution-source lineage fails closed rather than silently combining
+unrelated runs into one cluster.
+
 For each load band, evidence class and metric:
 
 1. filter rows into the predeclared load band;
