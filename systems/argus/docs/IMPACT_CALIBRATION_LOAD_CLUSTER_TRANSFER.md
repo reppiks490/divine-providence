@@ -86,10 +86,12 @@ Version 1 fixes the cluster field to the immutable execution receipt's
 
 The cluster field is not selected after results are visible.
 
-Inside each evidence class and load band, a reused `source_run_id` must resolve
-to the same `source_system`, `source_repo`, and `source_commit`. A collision
-across execution-source lineage fails closed rather than silently combining
-unrelated runs into one cluster.
+Across the complete cohort within each evidence class, a reused
+`source_run_id` must resolve to the same `source_system`, `source_repo`, and
+`source_commit`. This validation happens before load-band partitioning, so a
+run identifier cannot evade the lineage check by colliding only across different
+load bands. A collision across execution-source lineage fails closed rather than
+silently treating unrelated runs as one experimental cluster.
 
 For each load band, evidence class and metric:
 
