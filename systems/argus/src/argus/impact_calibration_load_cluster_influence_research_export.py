@@ -144,6 +144,9 @@ def export_registered_load_cluster_influence(
             for label, lower, upper in transfer_plan.load_bands
         ],
         "metrics": list(transfer_plan.metrics),
+        "min_clusters_per_kind_per_band": (
+            transfer_plan.min_clusters_per_kind_per_band
+        ),
         "min_clusters_after_drop_per_kind": (
             plan.min_clusters_after_drop_per_kind
         ),
