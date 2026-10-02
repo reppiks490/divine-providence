@@ -299,14 +299,19 @@ def _receipt_identity(receipt: ExecutionEvidenceReceipt) -> dict[str, Any]:
 
 def _source_execution_identity(
     receipt: ExecutionEvidenceReceipt,
-) -> tuple[str, str, str, str, str, str, str]:
-    """Canonical namespace for one upstream execution event."""
+) -> tuple[str, str, str, str, str]:
+    """Canonical namespace for one upstream execution event.
+
+    Repository and commit identify the representation/provenance implementation,
+    not the upstream execution itself. Keeping them out of this key prevents the
+    same source event from being counted again merely because an adapter was
+    revised or moved while its source-system/run/execution identity stayed the
+    same.
+    """
 
     return (
         receipt.evidence_kind.value,
         receipt.source_system,
-        receipt.source_repo,
-        receipt.source_commit,
         receipt.source_run_id,
         receipt.symbol,
         receipt.source_execution_id,
@@ -558,7 +563,7 @@ def calibration_by_execution_evidence(
 
     seen: set[str] = set()
     seen_source_executions: set[
-        tuple[str, str, str, str, str, str, str]
+        tuple[str, str, str, str, str]
     ] = set()
     grouped: dict[
         ExecutionEvidenceKind,
