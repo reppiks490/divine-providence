@@ -370,6 +370,13 @@ def test_transfer_plan_and_cohort_tampering_fail_closed():
     )
     p = plan(m, tolerance=1.0)
 
+    with pytest.raises(ValueError, match="predates manifest"):
+        registered_transfer_compatibility(
+            replace(p, created_time_ns=89),
+            m,
+            c,
+        )
+
     with pytest.raises(ValueError, match="plan_id"):
         registered_transfer_compatibility(
             replace(
