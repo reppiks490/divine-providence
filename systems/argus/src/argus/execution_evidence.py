@@ -299,22 +299,31 @@ def _receipt_identity(receipt: ExecutionEvidenceReceipt) -> dict[str, Any]:
 
 def _source_execution_identity(
     receipt: ExecutionEvidenceReceipt,
-) -> tuple[str, str, str, str, str]:
+) -> tuple[str, str, str, str, str, str]:
     """Canonical namespace for one upstream execution event.
 
-    Repository and commit identify the representation/provenance implementation,
-    not the upstream execution itself. Keeping them out of this key prevents the
-    same source event from being counted again merely because an adapter was
-    revised or moved while its source-system/run/execution identity stayed the
-    same.
+    Adapter repository/commit identify representation provenance, not the
+    execution itself. Broker-confirmed evidence therefore keys identity from
+    external broker order/fill lineage, while paper evidence keys from its
+    source-system/run/execution lineage.
     """
 
+    if receipt.evidence_kind is ExecutionEvidenceKind.BROKER_CONFIRMED:
+        return (
+            receipt.evidence_kind.value,
+            "broker",
+            str(receipt.broker_name),
+            str(receipt.broker_order_id),
+            str(receipt.broker_fill_id),
+            receipt.symbol,
+        )
     return (
         receipt.evidence_kind.value,
+        "source",
         receipt.source_system,
         receipt.source_run_id,
-        receipt.symbol,
         receipt.source_execution_id,
+        receipt.symbol,
     )
 
 
@@ -563,7 +572,7 @@ def calibration_by_execution_evidence(
 
     seen: set[str] = set()
     seen_source_executions: set[
-        tuple[str, str, str, str, str]
+        tuple[str, str, str, str, str, str]
     ] = set()
     grouped: dict[
         ExecutionEvidenceKind,
