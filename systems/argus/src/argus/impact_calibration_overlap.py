@@ -67,6 +67,8 @@ class OverlapBin:
 class OverlapCovariateResult:
     band_label: str
     covariate: str
+    broker_clusters: int
+    paper_clusters: int
     broker_observations: int
     paper_observations: int
     bins: tuple[OverlapBin, ...]
@@ -442,6 +444,28 @@ def _validate_plan(
         )
 
 
+def _source_run_cluster_count(
+    rows: tuple[LineagedImpactCalibrationObservation, ...],
+) -> int:
+    namespaces: dict[str, tuple[str, str, str]] = {}
+    for row in rows:
+        cluster_id = row.receipt.source_run_id
+        namespace = (
+            row.receipt.source_system,
+            row.receipt.source_repo,
+            row.receipt.source_commit,
+        )
+        existing = namespaces.get(cluster_id)
+        if existing is None:
+            namespaces[cluster_id] = namespace
+        elif existing != namespace:
+            raise ValueError(
+                "source_run_id collision across execution-source lineage: "
+                f"{cluster_id!r}"
+            )
+    return len(namespaces)
+
+
 def _covariate_value(
     row: LineagedImpactCalibrationObservation,
     covariate: str,
@@ -545,6 +569,19 @@ def registered_overlap_audit(
                 )
             ]
         )
+        broker_clusters = _source_run_cluster_count(broker_rows)
+        paper_clusters = _source_run_cluster_count(paper_rows)
+        cluster_minimum = transfer_plan.min_clusters_per_kind_per_band
+        if (
+            broker_clusters < cluster_minimum
+            or paper_clusters < cluster_minimum
+        ):
+            raise ValueError(
+                f"{label} overlap audit requires at least {cluster_minimum} "
+                "source_run_id clusters in both evidence kinds; "
+                f"got broker={broker_clusters}, paper={paper_clusters}"
+            )
+
         minimum = plan.min_observations_per_kind_per_band
         if len(broker_rows) < minimum or len(paper_rows) < minimum:
             raise ValueError(
@@ -603,6 +640,8 @@ def registered_overlap_audit(
                 OverlapCovariateResult(
                     band_label=label,
                     covariate=covariate,
+                    broker_clusters=broker_clusters,
+                    paper_clusters=paper_clusters,
                     broker_observations=broker_n,
                     paper_observations=paper_n,
                     bins=tuple(details),
