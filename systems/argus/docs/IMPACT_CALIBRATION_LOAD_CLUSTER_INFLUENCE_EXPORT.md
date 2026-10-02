@@ -39,6 +39,8 @@ The packet preserves:
 - load-band definitions;
 - metric set;
 - minimum remaining-cluster requirement;
+- parent transfer plan's `min_metric_observations_per_kind_per_band`, which
+  every leave-one-run remainder must still satisfy;
 - per-band/per-metric shift tolerances;
 - exact model/calibration/source revisions;
 - every influence result, including the worst evidence kind and source run;
