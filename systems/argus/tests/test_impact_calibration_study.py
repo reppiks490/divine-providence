@@ -395,6 +395,28 @@ def test_same_execution_receipt_cannot_be_counted_against_two_curves():
         )
 
 
+def test_same_source_execution_cannot_be_counted_as_two_receipts():
+    first = subject("same-source-execution", price=101.5)
+    second = subject("same-source-execution", price=101.75)
+    assert first.row.receipt.receipt_id != second.row.receipt.receipt_id
+
+    m = manifest(
+        evidence_kinds=(ExecutionEvidenceKind.BROKER_CONFIRMED,),
+        execution_source_revisions=(
+            ("broker/example-adapter", BROKER_COMMIT),
+        ),
+    )
+    with pytest.raises(
+        ValueError,
+        match="duplicate source execution identity",
+    ):
+        lock_impact_calibration_study_cohort(
+            m,
+            (first, second),
+            lock_time_ns=260,
+        )
+
+
 def test_cohort_tampering_breaks_identity_or_membership():
     m = manifest()
     cohort = lock_impact_calibration_study_cohort(
