@@ -336,8 +336,14 @@ def test_overlap_audit_detects_high_load_covariate_shift():
     assert audit.all_support_adequate is False
 
     for row in audit.results:
-        assert sum(bin_.broker_probability for bin_ in row.bins) == pytest.approx(1.0)
-        assert sum(bin_.paper_probability for bin_ in row.bins) == pytest.approx(1.0)
+        assert row.broker_clusters == 2
+        assert row.paper_clusters == 2
+        assert sum(
+            bin_.broker_probability for bin_ in row.bins
+        ) == pytest.approx(1.0)
+        assert sum(
+            bin_.paper_probability for bin_ in row.bins
+        ) == pytest.approx(1.0)
         assert row.execution_authorized is False
         assert row.production_decision_authorized is False
 
@@ -405,6 +411,175 @@ def test_overlap_minimum_is_enforced_inside_each_load_band():
     with pytest.raises(
         ValueError,
         match="low-load overlap audit requires at least 5",
+    ):
+        registered_overlap_audit(
+            plan,
+            m,
+            transfer,
+            cohort,
+        )
+
+
+def test_overlap_rejects_cross_lineage_source_run_collision():
+    other_commit = "3" * 40
+    m = create_impact_calibration_study_manifest(
+        study_name="overlap-source-run-collision",
+        created_time_ns=90,
+        cohort_start_ns=110,
+        cohort_end_ns=200,
+        observation_cutoff_ns=250,
+        impact_model_revision="impact-v1",
+        calibration_revision="calibration-v1",
+        symbols=("NQ",),
+        evidence_kinds=(
+            ExecutionEvidenceKind.BROKER_CONFIRMED,
+            ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+        ),
+        execution_source_revisions=(
+            ("broker/example-adapter", BROKER_COMMIT),
+            ("broker/other-adapter", other_commit),
+            ("reppiks490/Icarus", ICARUS_COMMIT),
+        ),
+        min_observations_per_stratum=4,
+        max_snapshot_age_ns=100,
+        max_completion_latency_ns=100,
+    )
+
+    def broker_subject(execution_id, repo, commit, run_id, sequence):
+        receipt_value = create_execution_evidence_receipt(
+            evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+            source_system="example-broker",
+            source_repo=repo,
+            source_commit=commit,
+            source_run_id=run_id,
+            source_execution_id=execution_id,
+            symbol="NQ",
+            decision_time_ns=120,
+            completion_time_ns=130,
+            observed_time_ns=140,
+            side=1,
+            requested_size=5.0,
+            filled_size=5.0,
+            average_price=101.5,
+            source_payload={"fill_id": execution_id, "run_id": run_id},
+            broker_name="Example Broker",
+            broker_order_id=f"order-{execution_id}",
+            broker_fill_id=execution_id,
+        )
+        return ImpactCalibrationStudySubject(
+            row=calibrate_lineaged_impact(
+                curve(visible_size=50.0, sequence=sequence),
+                receipt_value,
+            ),
+            impact_model_revision="impact-v1",
+            calibration_revision="calibration-v1",
+        )
+
+    rows = (
+        broker_subject(
+            "b-low-a",
+            "broker/example-adapter",
+            BROKER_COMMIT,
+            "reused-low-run",
+            201,
+        ),
+        broker_subject(
+            "b-low-b",
+            "broker/other-adapter",
+            other_commit,
+            "reused-low-run",
+            202,
+        ),
+        broker_subject(
+            "b-high-a",
+            "broker/example-adapter",
+            BROKER_COMMIT,
+            "b-high-a",
+            203,
+        ),
+        broker_subject(
+            "b-high-b",
+            "broker/example-adapter",
+            BROKER_COMMIT,
+            "b-high-b",
+            204,
+        ),
+        subject(
+            ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+            "p-low-a",
+            run_id="p-low-a",
+            visible_size=50.0,
+            sequence=211,
+            decision=120,
+            completion=130,
+        ),
+        subject(
+            ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+            "p-low-b",
+            run_id="p-low-b",
+            visible_size=50.0,
+            sequence=212,
+            decision=130,
+            completion=140,
+        ),
+        subject(
+            ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+            "p-high-a",
+            run_id="p-high-a",
+            visible_size=10.0,
+            sequence=213,
+            decision=120,
+            completion=130,
+        ),
+        subject(
+            ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+            "p-high-b",
+            run_id="p-high-b",
+            visible_size=10.0,
+            sequence=214,
+            decision=130,
+            completion=140,
+        ),
+    )
+    cohort = lock_impact_calibration_study_cohort(
+        m,
+        rows,
+        lock_time_ns=260,
+    )
+    metric = "mean_fill_fraction_error"
+    transfer = create_prospective_load_cluster_transfer_plan(
+        m,
+        created_time_ns=95,
+        load_bands=LOAD_BANDS,
+        metrics=(metric,),
+        tolerances={
+            ("low-load", metric): 1.0,
+            ("high-load", metric): 1.0,
+        },
+        confidence_alpha=0.05,
+        bootstrap_replicates=200,
+        bootstrap_seed=7,
+        min_clusters_per_kind_per_band=1,
+        min_metric_observations_per_kind_per_band=2,
+    )
+    plan = create_prospective_overlap_plan(
+        m,
+        transfer,
+        created_time_ns=95,
+        covariates=("snapshot_age_ns",),
+        covariate_bins={
+            "snapshot_age_ns": ((0.0, None),),
+        },
+        max_total_variation={
+            ("low-load", "snapshot_age_ns"): 1.0,
+            ("high-load", "snapshot_age_ns"): 1.0,
+        },
+        min_observations_per_kind_per_band=2,
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="source_run_id collision across execution-source lineage",
     ):
         registered_overlap_audit(
             plan,
