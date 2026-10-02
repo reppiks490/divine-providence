@@ -258,6 +258,8 @@ def test_export_preserves_identity_and_sensitivity_boundary():
     assert packet["load_cluster_transfer_plan_id"] == transfer_plan.plan_id
     assert packet["influence_plan_id"] == influence_plan.plan_id
     assert packet["cluster_field"] == "source_run_id"
+    assert packet["min_clusters_per_kind_per_band"] == 2
+    assert packet["min_clusters_after_drop_per_kind"] == 2
     assert packet["min_metric_observations_per_kind_per_band"] == 2
     assert packet["sensitivity_method"] == (
         "leave_one_source_run_cluster_out"
