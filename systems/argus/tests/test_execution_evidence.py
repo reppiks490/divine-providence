@@ -222,6 +222,42 @@ def test_lineaged_calibration_keeps_broker_and_paper_evidence_separate():
     assert strata[1].broker_confirmed is False
 
 
+def test_lineaged_summary_rejects_duplicate_source_execution_identity():
+    first_receipt = broker_receipt("broker-fill-1")
+    second_receipt = create_execution_evidence_receipt(
+        evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+        source_system="example-broker",
+        source_repo="broker/example-adapter",
+        source_commit=BROKER_COMMIT,
+        source_run_id="session-1",
+        source_execution_id="broker-fill-1",
+        symbol="NQ",
+        decision_time_ns=105_000_000_000,
+        completion_time_ns=110_000_000_000,
+        observed_time_ns=111_000_000_000,
+        side=1,
+        requested_size=5.0,
+        filled_size=5.0,
+        average_price=101.75,
+        source_payload={
+            "order_id": "order-1",
+            "fill_id": "broker-fill-1",
+            "qty": 5,
+            "representation_revision": 2,
+        },
+        broker_name="Example Broker",
+        broker_order_id="order-1",
+        broker_fill_id="broker-fill-1",
+    )
+    assert first_receipt.receipt_id != second_receipt.receipt_id
+
+    first = calibrate_lineaged_impact(curve(), first_receipt)
+    second = calibrate_lineaged_impact(curve(), second_receipt)
+
+    with pytest.raises(ValueError, match="duplicate source execution identity"):
+        calibration_by_execution_evidence((first, second))
+
+
 def test_lineaged_summary_rejects_duplicate_or_tampered_links():
     row = calibrate_lineaged_impact(curve(), broker_receipt())
 
