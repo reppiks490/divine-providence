@@ -147,6 +147,9 @@ def export_registered_load_cluster_influence(
         "min_clusters_after_drop_per_kind": (
             plan.min_clusters_after_drop_per_kind
         ),
+        "min_metric_observations_per_kind_per_band": (
+            transfer_plan.min_metric_observations_per_kind_per_band
+        ),
         "max_abs_shift_tolerances": [
             {
                 "band_label": band,
