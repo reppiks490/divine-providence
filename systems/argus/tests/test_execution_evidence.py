@@ -10,6 +10,7 @@ from argus.execution_evidence import (
     calibrate_lineaged_impact,
     calibration_by_execution_evidence,
     create_execution_evidence_receipt,
+    receipt_from_icarus_journal_fill,
     receipt_from_icarus_paper_fill,
     validate_execution_evidence_receipt,
 )
@@ -76,6 +77,24 @@ def paper_fill(*, live=True):
         "profit": None,
         "pos": 5,
         "live": live,
+    }
+
+
+def journal_fill(*, row_id=17, run_id=1_700_000_000, live=1):
+    return {
+        "id": row_id,
+        "run_id": run_id,
+        "live": live,
+        "symbol": "NQ",
+        "ts": 110,
+        "entry_id": "TrendL",
+        "side": "buy",
+        "qty": 5,
+        "price": 101.25,
+        "kind": "entry",
+        "comment": "TrendL",
+        "profit": None,
+        "position_after": 5,
     }
 
 
@@ -154,6 +173,123 @@ def test_icarus_paper_adapter_requires_decision_time_instead_of_inventing_it():
             symbol="NQ",
             decision_time_ns=111_000_000_000,
             observed_time_ns=112_000_000_000,
+        )
+
+
+def test_icarus_journal_fill_adapter_matches_durable_schema_and_stays_paper():
+    receipt = receipt_from_icarus_journal_fill(
+        journal_fill(),
+        source_commit=ICARUS_COMMIT,
+        decision_time_ns=105_000_000_000,
+        observed_time_ns=111_000_000_000,
+    )
+
+    assert receipt.evidence_kind is ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR
+    assert receipt.source_system == "icarus-paper-emulator"
+    assert receipt.source_repo == "reppiks490/Icarus"
+    assert receipt.source_run_id == "1700000000"
+    assert receipt.source_execution_id.startswith("icarus-journal-fill:")
+    assert receipt.completion_time_ns == 110_000_000_000
+    assert receipt.symbol == "NQ"
+    assert receipt.side == 1
+    assert receipt.requested_size == 5.0
+    assert receipt.filled_size == 5.0
+    assert receipt.average_price == 101.25
+    assert receipt.market_fill_confirmed is False
+    assert receipt.broker_confirmed is False
+    validate_execution_evidence_receipt(receipt)
+
+
+def test_icarus_journal_fill_identity_uses_durable_unique_index_semantics():
+    first = receipt_from_icarus_journal_fill(
+        journal_fill(row_id=17),
+        source_commit=ICARUS_COMMIT,
+        decision_time_ns=105_000_000_000,
+        observed_time_ns=111_000_000_000,
+    )
+    replayed_representation = receipt_from_icarus_journal_fill(
+        {
+            **journal_fill(row_id=99),
+            "profit": 12.5,
+        },
+        source_commit=ICARUS_COMMIT,
+        decision_time_ns=105_000_000_000,
+        observed_time_ns=112_000_000_000,
+    )
+
+    assert first.receipt_id != replayed_representation.receipt_id
+    assert (
+        first.source_execution_id
+        == replayed_representation.source_execution_id
+    )
+
+    rows = (
+        calibrate_lineaged_impact(curve(), first),
+        calibrate_lineaged_impact(curve(), replayed_representation),
+    )
+    with pytest.raises(
+        ValueError,
+        match="duplicate source execution identity",
+    ):
+        calibration_by_execution_evidence(rows)
+
+
+def test_icarus_journal_adapter_rejects_legacy_or_invented_provenance():
+    with pytest.raises(ValueError, match="legacy run_id=0"):
+        receipt_from_icarus_journal_fill(
+            journal_fill(run_id=0),
+            source_commit=ICARUS_COMMIT,
+            decision_time_ns=105_000_000_000,
+            observed_time_ns=111_000_000_000,
+        )
+
+    with pytest.raises(ValueError, match="completion_time_ns"):
+        receipt_from_icarus_journal_fill(
+            journal_fill(),
+            source_commit=ICARUS_COMMIT,
+            decision_time_ns=111_000_000_000,
+            observed_time_ns=112_000_000_000,
+        )
+
+    malformed = dict(journal_fill())
+    malformed["bar"] = 42
+    with pytest.raises(ValueError, match="journal fill requires exactly"):
+        receipt_from_icarus_journal_fill(
+            malformed,
+            source_commit=ICARUS_COMMIT,
+            decision_time_ns=105_000_000_000,
+            observed_time_ns=111_000_000_000,
+        )
+
+
+def test_icarus_journal_adapter_does_not_accept_closed_trade_rows_as_fills():
+    trade_row = {
+        "id": 17,
+        "run_id": 1_700_000_000,
+        "live": 1,
+        "symbol": "NQ",
+        "entry_id": "TrendL",
+        "direction": 1,
+        "qty": 5,
+        "entry_price": 101.0,
+        "entry_ts": 105,
+        "exit_price": 101.25,
+        "exit_ts": 110,
+        "exit_comment": "TP",
+        "profit": 12.5,
+        "piece": 0,
+        "lot_id": 9,
+        "entry_qty": 5,
+        "strategy_fingerprint": "a" * 64,
+        "strategy_context_json": "{}",
+    }
+
+    with pytest.raises(ValueError, match="journal fill requires exactly"):
+        receipt_from_icarus_journal_fill(
+            trade_row,
+            source_commit=ICARUS_COMMIT,
+            decision_time_ns=105_000_000_000,
+            observed_time_ns=111_000_000_000,
         )
 
 
