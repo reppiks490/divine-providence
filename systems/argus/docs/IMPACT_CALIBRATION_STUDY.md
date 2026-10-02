@@ -99,10 +99,12 @@ two different impact curves in one study. Duplicate execution receipts also
 fail closed.
 
 The cohort additionally requires upstream source-execution identity to be
-unique within its exact evidence-class/system/repository/commit/run/symbol namespace.
-Two distinct content-addressed receipts that both claim to represent the same
-source execution therefore fail closed instead of being counted as two
-observations.
+unique. Broker-confirmed evidence uses broker name + broker order ID + broker
+fill ID + symbol, while ICARUS paper evidence uses source system + source run ID
++ source execution ID + symbol. Adapter repository/commit remain mandatory
+provenance pinned by the study manifest, but they do not manufacture a second
+execution identity. Two distinct content-addressed receipts that claim the same
+upstream execution therefore fail closed instead of being counted twice.
 
 ## Minimum evidence per stratum
 
