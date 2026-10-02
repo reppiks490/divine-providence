@@ -102,7 +102,7 @@ def paper_receipt(*, live=True):
     return receipt_from_icarus_paper_fill(
         paper_fill(live=live),
         source_commit=ICARUS_COMMIT,
-        source_run_id="icarus-run-123",
+        source_run_id="1700000000",
         symbol="NQ",
         decision_time_ns=105_000_000_000,
         observed_time_ns=111_000_000_000,
@@ -173,6 +173,24 @@ def test_icarus_paper_adapter_requires_decision_time_instead_of_inventing_it():
             symbol="NQ",
             decision_time_ns=111_000_000_000,
             observed_time_ns=112_000_000_000,
+        )
+
+
+@pytest.mark.parametrize(
+    "source_run_id",
+    ("icarus-run-123", "0", "01700000000", "+1700000000"),
+)
+def test_icarus_in_memory_adapter_requires_canonical_runtime_run_id(
+    source_run_id,
+):
+    with pytest.raises(ValueError, match="canonical positive decimal"):
+        receipt_from_icarus_paper_fill(
+            paper_fill(),
+            source_commit=ICARUS_COMMIT,
+            source_run_id=source_run_id,
+            symbol="NQ",
+            decision_time_ns=105_000_000_000,
+            observed_time_ns=111_000_000_000,
         )
 
 
