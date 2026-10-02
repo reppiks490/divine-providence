@@ -33,7 +33,7 @@ evidence into broker evidence.
 - exact metric set;
 - exact tolerance for every metric.
 
-The plan must be created at or before the study cohort starts.
+The plan cannot predate the referenced study manifest and must be created at or before the study cohort starts.
 
 The referenced study manifest must predeclare both:
 
