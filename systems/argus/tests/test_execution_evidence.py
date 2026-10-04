@@ -169,7 +169,7 @@ def test_icarus_paper_adapter_requires_decision_time_instead_of_inventing_it():
         receipt_from_icarus_paper_fill(
             paper_fill(),
             source_commit=ICARUS_COMMIT,
-            source_run_id="icarus-run-123",
+            source_run_id="1700000000",
             symbol="NQ",
             decision_time_ns=111_000_000_000,
             observed_time_ns=112_000_000_000,
@@ -531,6 +531,7 @@ def test_source_execution_identity_survives_adapter_revision_changes():
         source_payload={
             "order_id": "order-1",
             "fill_id": "broker-fill-1",
+            "qty": 5,
             "adapter_revision": 2,
         },
         broker_name="Example Broker",
