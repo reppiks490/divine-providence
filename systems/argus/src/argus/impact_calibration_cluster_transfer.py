@@ -446,6 +446,33 @@ def _metric_function(
     raise ValueError(f"unsupported cluster transfer metric {metric!r}")
 
 
+def _validate_source_run_namespaces(
+    rows: Iterable[LineagedImpactCalibrationObservation],
+) -> None:
+    """Reject one run ID being reused for different execution-source lineage."""
+
+    namespaces: dict[
+        tuple[ExecutionEvidenceKind, str],
+        tuple[str, str, str],
+    ] = {}
+    for row in rows:
+        receipt = row.receipt
+        key = (receipt.evidence_kind, receipt.source_run_id)
+        namespace = (
+            receipt.source_system,
+            receipt.source_repo,
+            receipt.source_commit,
+        )
+        existing = namespaces.get(key)
+        if existing is None:
+            namespaces[key] = namespace
+        elif existing != namespace:
+            raise ValueError(
+                "source_run_id collision across execution-source lineage: "
+                f"{receipt.source_run_id!r}"
+            )
+
+
 def _metric_clusters(
     rows: tuple[LineagedImpactCalibrationObservation, ...],
     metric: str,
@@ -575,6 +602,9 @@ def registered_cluster_transfer_compatibility(
 
     # Revalidate the prospective study, receipts and calibration lineage.
     registered_evidence_stratified_summary(manifest, cohort)
+    _validate_source_run_namespaces(
+        subject.row for subject in cohort.subjects
+    )
 
     rows_by_kind: dict[
         ExecutionEvidenceKind,
