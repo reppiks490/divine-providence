@@ -1,0 +1,23 @@
+{
+  "schema_version": "argus-icarus-federation-v1",
+  "producer_repository": "reppiks490/divine-providence",
+  "producer_default_branch": "main",
+  "subsystem": "argus",
+  "consumer_repository": "reppiks490/Icarus",
+  "consumer_default_branch": "main",
+  "ingress_mode": "immutable-receipt-mirror",
+  "ingress_repository": "reppiks490/Icarus",
+  "ingress_path": "automation_intelligence/mcp_interface/events",
+  "receipt_schema": "icarus-interface-event-v1",
+  "consumer_surface": "MCP Evolution and Adaptive Brain observability",
+  "authority_ceiling": "RESEARCH",
+  "cross_repository_execution_authorized": false,
+  "execution_authorized": false,
+  "production_decision_authorized": false,
+  "broker_substitution_authorized": false,
+  "notes": [
+    "Only immutable research/verification receipts cross this boundary.",
+    "A receipt becoming visible in ICARUS does not authorize execution or production promotion.",
+    "Source commits must retain their own exact-head verification status; blocked or unverified work must not be relabeled verified."
+  ]
+}
