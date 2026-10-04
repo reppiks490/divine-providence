@@ -169,6 +169,8 @@ def test_unknown_aggressor_side_survives_as_unknown_for_flow_downgrade(tmp_path)
         tick_size=1.0,
     )
     assert result.flow.evidence_tier is EvidenceTier.INFERRED_TRADE
+    assert result.aggressive_runs
+    assert result.aggressive_runs[0].evidence_tier is EvidenceTier.INFERRED_TRADE
     assert result.depth.evidence_tier is EvidenceTier.TRUE_DEPTH
     assert result.trade_latest_received_ns == 11
     assert result.depth_latest_received_ns == 10
@@ -408,6 +410,10 @@ def test_microstructure_snapshot_binds_feature_evidence_to_journal_rows(tmp_path
     )
 
     assert result.flow.evidence_tier is EvidenceTier.TRUE_TRADE
+    assert len(result.aggressive_runs) == 1
+    assert result.aggressive_runs[0].side == 1
+    assert result.aggressive_runs[0].trade_count == 2
+    assert result.aggressive_runs[0].evidence_tier is EvidenceTier.TRUE_TRADE
     assert len(result.depth.bid_depth_by_tick) == 2
     assert len(result.depth.ask_depth_by_tick) == 2
     assert result.depth.evidence_tier is EvidenceTier.TRUE_DEPTH

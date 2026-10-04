@@ -46,6 +46,7 @@ CausalMicrostructureSnapshot carries both lineage sets together with:
 - trade-source staleness at decision time;
 - depth-source staleness at decision time;
 - FlowDynamics;
+- AggressiveRun sequence;
 - DepthDynamics;
 - LiquidityField;
 - execution_authorized=false;
@@ -56,9 +57,12 @@ used source receipt time.
 
 ## Feature construction
 
-microstructure_snapshot_asof builds the current flow/depth/liquidity feature
-bundle from these causal journal windows. The liquidity-field near-touch window
-defaults to min(3, depth_levels) and may be set explicitly.
+microstructure_snapshot_asof builds the current flow/aggressive-run/depth/
+liquidity feature bundle from these causal journal windows. Aggressive runs are
+segmented from the exact same receipt-time trade window used by FlowDynamics,
+so an inferred side downgrades the affected run to INFERRED_TRADE. The
+liquidity-field near-touch window defaults to min(3, depth_levels) and may be
+set explicitly.
 
 It does not fetch future rows, reorder late evidence, repair unresolved gaps, or
 upgrade evidence tiers. It also does not grant trading, promotion, broker, or
