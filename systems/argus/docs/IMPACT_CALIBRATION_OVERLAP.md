@@ -233,3 +233,58 @@ It does not run on ICARUS's measured live decision hot path.
 
 Passing every overlap threshold does not authorize model promotion, paper-to-
 broker substitution, or a broker order.
+
+
+## Research export contract
+
+`argus.impact_calibration_overlap_research_export` provides
+`argus-impact-calibration-overlap-research-v1`.
+
+Before export, ARGUS recomputes the registered overlap audit, which itself
+revalidates the referenced load-cluster transfer analysis.
+
+The export preserves:
+
+- study manifest and locked cohort IDs;
+- load-cluster transfer plan ID and schema;
+- overlap plan ID and schema;
+- exact impact-model, calibration and execution-source revisions;
+- registered covariates, their explicit decision-time versus
+  post-decision-realized timing labels, and their exhaustive fixed bins;
+- predeclared total-variation limits;
+- parent load-cluster source-run minimums;
+- overlap observation minimums;
+- broker and paper source-run cluster counts;
+- broker and paper bin counts and probabilities;
+- total-variation distance;
+- overlap coefficient;
+- maximum absolute bin-probability gap;
+- per-cell and aggregate support-adequacy results;
+- baseline transfer compatibility state;
+- explicit non-promotion and authority flags.
+
+The export explicitly states that it is not:
+
+- a formal equivalence test;
+- a propensity score;
+- inverse-probability weighting;
+- proof of exchangeability;
+- a causal-identification claim;
+- a hypothesis test;
+- a multiplicity-adjusted familywise statement;
+- permission to substitute paper evidence for broker-confirmed evidence.
+
+Publication cannot precede the locked cohort time. Local downstream use must
+still wait until ingestion time.
+
+## ATHENA integration status
+
+The overlap export is transport-ready as an ARGUS research contract.
+
+No ATHENA happy-path driver fabricates broker-confirmed execution observations
+when externally valid broker lineage is absent. Synthetic broker-confirmed
+objects remain confined to isolated unit tests of the contract path and are
+not emitted as empirical advisory evidence.
+
+This preserves the execution-evidence firewall while making observable support
+mismatch explicit for future genuine broker-confirmed cohorts.
