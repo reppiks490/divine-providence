@@ -9,6 +9,7 @@ from .execution_evidence import (
     ExecutionEvidenceKind,
     ImpactCalibrationEvidenceStratum,
     LineagedImpactCalibrationObservation,
+    _source_execution_identity,
     calibration_by_execution_evidence,
     validate_execution_evidence_receipt,
 )
@@ -510,6 +511,9 @@ def lock_impact_calibration_study_cohort(
 
     seen_lineage: set[str] = set()
     seen_receipts: set[str] = set()
+    seen_source_executions: set[
+        tuple[str, str, str, str, str, str]
+    ] = set()
     included: list[ImpactCalibrationStudySubject] = []
     exclusions: list[tuple[str, str]] = []
     source_revisions = set(manifest.execution_source_revisions)
@@ -530,6 +534,13 @@ def lock_impact_calibration_study_cohort(
             )
         seen_lineage.add(lineage_id)
         seen_receipts.add(receipt.receipt_id)
+
+        source_execution = _source_execution_identity(receipt)
+        if source_execution in seen_source_executions:
+            raise ValueError(
+                "duplicate source execution identity in calibration-study subjects"
+            )
+        seen_source_executions.add(source_execution)
 
         calibration = row.calibration
         reason: str | None = None
@@ -672,6 +683,9 @@ def _validate_cohort(
 
     source_revisions = set(manifest.execution_source_revisions)
     seen_receipts: set[str] = set()
+    seen_source_executions: set[
+        tuple[str, str, str, str, str, str]
+    ] = set()
     for subject in cohort.subjects:
         _validate_subject(subject)
         row = subject.row
@@ -682,6 +696,13 @@ def _validate_cohort(
                 "cohort contains duplicate execution receipt"
             )
         seen_receipts.add(receipt.receipt_id)
+
+        source_execution = _source_execution_identity(receipt)
+        if source_execution in seen_source_executions:
+            raise ValueError(
+                "cohort contains duplicate source execution identity"
+            )
+        seen_source_executions.add(source_execution)
 
         if (
             subject.impact_model_revision

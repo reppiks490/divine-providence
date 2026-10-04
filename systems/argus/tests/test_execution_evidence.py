@@ -222,6 +222,222 @@ def test_lineaged_calibration_keeps_broker_and_paper_evidence_separate():
     assert strata[1].broker_confirmed is False
 
 
+def test_lineaged_summary_rejects_duplicate_source_execution_identity():
+    first_receipt = broker_receipt("broker-fill-1")
+    second_receipt = create_execution_evidence_receipt(
+        evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+        source_system="example-broker",
+        source_repo="broker/example-adapter",
+        source_commit=BROKER_COMMIT,
+        source_run_id="session-1",
+        source_execution_id="broker-fill-1",
+        symbol="NQ",
+        decision_time_ns=105_000_000_000,
+        completion_time_ns=110_000_000_000,
+        observed_time_ns=111_000_000_000,
+        side=1,
+        requested_size=5.0,
+        filled_size=5.0,
+        average_price=101.75,
+        source_payload={
+            "order_id": "order-1",
+            "fill_id": "broker-fill-1",
+            "qty": 5,
+            "representation_revision": 2,
+        },
+        broker_name="Example Broker",
+        broker_order_id="order-1",
+        broker_fill_id="broker-fill-1",
+    )
+    assert first_receipt.receipt_id != second_receipt.receipt_id
+
+    first = calibrate_lineaged_impact(curve(), first_receipt)
+    second = calibrate_lineaged_impact(curve(), second_receipt)
+
+    with pytest.raises(ValueError, match="duplicate source execution identity"):
+        calibration_by_execution_evidence((first, second))
+
+
+def test_broker_identity_normalizes_broker_name_casing():
+    first = broker_receipt("broker-fill-case")
+    second = create_execution_evidence_receipt(
+        evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+        source_system="other-adapter-label",
+        source_repo="broker/example-adapter",
+        source_commit=BROKER_COMMIT,
+        source_run_id="different-adapter-session",
+        source_execution_id="different-local-id",
+        symbol="NQ",
+        decision_time_ns=105_000_000_000,
+        completion_time_ns=110_000_000_000,
+        observed_time_ns=112_000_000_000,
+        side=1,
+        requested_size=5.0,
+        filled_size=5.0,
+        average_price=101.5,
+        source_payload={"representation": "broker-name-case-alias"},
+        broker_name="EXAMPLE BROKER",
+        broker_order_id="order-1",
+        broker_fill_id="broker-fill-case",
+    )
+
+    assert first.receipt_id != second.receipt_id
+    rows = (
+        calibrate_lineaged_impact(curve(), first),
+        calibrate_lineaged_impact(curve(), second),
+    )
+    with pytest.raises(ValueError, match="duplicate source execution identity"):
+        calibration_by_execution_evidence(rows)
+
+
+def test_paper_identity_normalizes_source_system_casing():
+    common = dict(
+        evidence_kind=ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+        source_repo="reppiks490/Icarus",
+        source_commit=ICARUS_COMMIT,
+        source_run_id="paper-run-case",
+        source_execution_id="paper-fill-case",
+        symbol="NQ",
+        decision_time_ns=105_000_000_000,
+        completion_time_ns=110_000_000_000,
+        side=1,
+        requested_size=5.0,
+        filled_size=5.0,
+        average_price=101.25,
+    )
+    first = create_execution_evidence_receipt(
+        **common,
+        source_system="icarus-paper-emulator",
+        observed_time_ns=111_000_000_000,
+        source_payload={"view": "lowercase"},
+    )
+    second = create_execution_evidence_receipt(
+        **common,
+        source_system="ICARUS-PAPER-EMULATOR",
+        observed_time_ns=112_000_000_000,
+        source_payload={"view": "uppercase"},
+    )
+
+    assert first.receipt_id != second.receipt_id
+    rows = (
+        calibrate_lineaged_impact(curve(), first),
+        calibrate_lineaged_impact(curve(), second),
+    )
+    with pytest.raises(ValueError, match="duplicate source execution identity"):
+        calibration_by_execution_evidence(rows)
+
+
+def test_source_execution_identity_survives_adapter_revision_changes():
+    first_receipt = broker_receipt("broker-fill-1")
+    revised_adapter_receipt = create_execution_evidence_receipt(
+        evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+        source_system="example-broker",
+        source_repo="broker/revised-adapter",
+        source_commit="b" * 40,
+        source_run_id="session-1",
+        source_execution_id="broker-fill-1",
+        symbol="NQ",
+        decision_time_ns=105_000_000_000,
+        completion_time_ns=110_000_000_000,
+        observed_time_ns=112_000_000_000,
+        side=1,
+        requested_size=5.0,
+        filled_size=5.0,
+        average_price=101.5,
+        source_payload={
+            "order_id": "order-1",
+            "fill_id": "broker-fill-1",
+            "adapter_revision": 2,
+        },
+        broker_name="Example Broker",
+        broker_order_id="order-1",
+        broker_fill_id="broker-fill-1",
+    )
+
+    assert first_receipt.receipt_id != revised_adapter_receipt.receipt_id
+
+    rows = (
+        calibrate_lineaged_impact(curve(), first_receipt),
+        calibrate_lineaged_impact(curve(), revised_adapter_receipt),
+    )
+    with pytest.raises(ValueError, match="duplicate source execution identity"):
+        calibration_by_execution_evidence(rows)
+
+
+def test_broker_execution_identity_uses_broker_lineage_not_adapter_local_id():
+    first_receipt = broker_receipt("broker-fill-1")
+    aliased_source_id = create_execution_evidence_receipt(
+        evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+        source_system="example-broker",
+        source_repo="broker/example-adapter",
+        source_commit=BROKER_COMMIT,
+        source_run_id="session-1",
+        source_execution_id="adapter-local-alias",
+        symbol="NQ",
+        decision_time_ns=105_000_000_000,
+        completion_time_ns=110_000_000_000,
+        observed_time_ns=112_000_000_000,
+        side=1,
+        requested_size=5.0,
+        filled_size=5.0,
+        average_price=101.5,
+        source_payload={
+            "order_id": "order-1",
+            "fill_id": "broker-fill-1",
+            "adapter_local_execution_id": "adapter-local-alias",
+        },
+        broker_name="Example Broker",
+        broker_order_id="order-1",
+        broker_fill_id="broker-fill-1",
+    )
+
+    assert first_receipt.receipt_id != aliased_source_id.receipt_id
+    rows = (
+        calibrate_lineaged_impact(curve(), first_receipt),
+        calibrate_lineaged_impact(curve(), aliased_source_id),
+    )
+    with pytest.raises(ValueError, match="duplicate source execution identity"):
+        calibration_by_execution_evidence(rows)
+
+
+def test_source_execution_identity_is_symbol_scoped():
+    nq_receipt = broker_receipt("broker-fill-1")
+    es_receipt = create_execution_evidence_receipt(
+        evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+        source_system="example-broker",
+        source_repo="broker/example-adapter",
+        source_commit=BROKER_COMMIT,
+        source_run_id="session-1",
+        source_execution_id="broker-fill-1",
+        symbol="ES",
+        decision_time_ns=105_000_000_000,
+        completion_time_ns=110_000_000_000,
+        observed_time_ns=111_000_000_000,
+        side=1,
+        requested_size=5.0,
+        filled_size=5.0,
+        average_price=101.5,
+        source_payload={
+            "order_id": "order-es-1",
+            "fill_id": "broker-fill-1",
+            "qty": 5,
+            "symbol": "ES",
+        },
+        broker_name="Example Broker",
+        broker_order_id="order-es-1",
+        broker_fill_id="broker-fill-1",
+    )
+
+    rows = (
+        calibrate_lineaged_impact(curve(), nq_receipt),
+        calibrate_lineaged_impact(curve(), es_receipt),
+    )
+    strata = calibration_by_execution_evidence(rows)
+
+    assert len(strata) == 1
+    assert strata[0].observations == 2
+
+
 def test_lineaged_summary_rejects_duplicate_or_tampered_links():
     row = calibrate_lineaged_impact(curve(), broker_receipt())
 

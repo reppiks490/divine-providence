@@ -297,6 +297,36 @@ def _receipt_identity(receipt: ExecutionEvidenceReceipt) -> dict[str, Any]:
     }
 
 
+def _source_execution_identity(
+    receipt: ExecutionEvidenceReceipt,
+) -> tuple[str, str, str, str, str, str]:
+    """Canonical namespace for one upstream execution event.
+
+    Adapter repository/commit identify representation provenance, not the
+    execution itself. Broker-confirmed evidence therefore keys identity from
+    external broker order/fill lineage, while paper evidence keys from its
+    source-system/run/execution lineage.
+    """
+
+    if receipt.evidence_kind is ExecutionEvidenceKind.BROKER_CONFIRMED:
+        return (
+            receipt.evidence_kind.value,
+            "broker",
+            str(receipt.broker_name).casefold(),
+            str(receipt.broker_order_id),
+            str(receipt.broker_fill_id),
+            receipt.symbol,
+        )
+    return (
+        receipt.evidence_kind.value,
+        "source",
+        receipt.source_system.casefold(),
+        receipt.source_run_id,
+        receipt.source_execution_id,
+        receipt.symbol,
+    )
+
+
 def validate_execution_evidence_receipt(
     receipt: ExecutionEvidenceReceipt,
 ) -> None:
@@ -541,6 +571,9 @@ def calibration_by_execution_evidence(
         raise ValueError("at least one lineaged calibration observation is required")
 
     seen: set[str] = set()
+    seen_source_executions: set[
+        tuple[str, str, str, str, str, str]
+    ] = set()
     grouped: dict[
         ExecutionEvidenceKind,
         list[LineagedImpactCalibrationObservation],
@@ -554,6 +587,13 @@ def calibration_by_execution_evidence(
         if row.receipt.receipt_id in seen:
             raise ValueError("duplicate receipt_id in lineaged calibration")
         seen.add(row.receipt.receipt_id)
+
+        source_execution = _source_execution_identity(row.receipt)
+        if source_execution in seen_source_executions:
+            raise ValueError(
+                "duplicate source execution identity in lineaged calibration"
+            )
+        seen_source_executions.add(source_execution)
 
         if row.execution_authorized or row.production_decision_authorized:
             raise ValueError("lineaged calibration unexpectedly carries authority")

@@ -98,6 +98,14 @@ More importantly, the same execution receipt cannot be counted twice against
 two different impact curves in one study. Duplicate execution receipts also
 fail closed.
 
+The cohort additionally requires upstream source-execution identity to be
+unique. Broker-confirmed evidence uses broker name + broker order ID + broker
+fill ID + symbol, while ICARUS paper evidence uses source system + source run ID
++ source execution ID + symbol. Adapter repository/commit remain mandatory
+provenance pinned by the study manifest, but they do not manufacture a second
+execution identity. Two distinct content-addressed receipts that claim the same
+upstream execution therefore fail closed instead of being counted twice.
+
 ## Minimum evidence per stratum
 
 Every evidence class declared in the manifest must meet the predeclared minimum
@@ -141,7 +149,8 @@ Before registered analysis, ARGUS revalidates:
 - execution-receipt identity;
 - receipt-plus-calibration lineage identity;
 - model/calibration revisions;
-- source repository/commit;
+- source repository/commit provenance;
+- upstream source-execution uniqueness independent of adapter revision;
 - symbol/evidence class;
 - cohort timing;
 - observation cutoff;
