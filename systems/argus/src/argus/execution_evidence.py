@@ -397,6 +397,60 @@ def validate_execution_evidence_receipt(
         raise ValueError("receipt_id does not match receipt content")
 
 
+def _icarus_runtime_run_id(value: str) -> str:
+    """Validate the exact decimal ICARUS runtime run_id representation."""
+
+    run_id = _text("source_run_id", value)
+    if (
+        not run_id.isascii()
+        or not run_id.isdigit()
+        or int(run_id) <= 0
+        or str(int(run_id)) != run_id
+    ):
+        raise ValueError(
+            "source_run_id must be the canonical positive decimal ICARUS "
+            "runtime run_id"
+        )
+    return run_id
+
+
+def _icarus_paper_execution_id(
+    *,
+    source_run_id: str,
+    symbol: str,
+    ts: int,
+    entry_id: str,
+    side: str,
+    qty: int,
+    price: float,
+    kind: str,
+    comment: str,
+    position_after: int,
+) -> str:
+    """Canonical identity shared by ICARUS in-memory and journal fill views.
+
+    The fields intentionally match the durable Journal.fills uniqueness
+    semantics. Representation-only fields such as SQLite row id, bar index,
+    live flag and profit annotation are excluded so the same paper execution
+    observed through two ICARUS surfaces cannot be counted twice.
+    """
+
+    semantic_identity = {
+        "schema": "icarus-paper-execution-identity-v1",
+        "run_id": str(source_run_id),
+        "symbol": symbol,
+        "ts": ts,
+        "entry_id": entry_id,
+        "side": side,
+        "qty": int(qty),
+        "price": float(price),
+        "kind": kind,
+        "comment": comment,
+        "position_after": position_after,
+    }
+    return "icarus-paper-fill:" + _digest(semantic_identity)
+
+
 def receipt_from_icarus_paper_fill(
     fill: Mapping[str, Any],
     *,
@@ -450,10 +504,12 @@ def receipt_from_icarus_paper_fill(
     qty = _positive("fill qty", fill["qty"])
     if not float(qty).is_integer():
         raise ValueError("fill qty must be a whole number")
+    qty_int = int(qty)
     price = _positive("fill price", fill["price"])
-    _text("fill kind", fill["kind"])
+    kind = _text("fill kind", fill["kind"])
     if not isinstance(fill["comment"], str):
         raise TypeError("fill comment must be a string")
+    comment = fill["comment"]
     if fill["profit"] is not None:
         _finite("fill profit", fill["profit"])
     pos = fill["pos"]
@@ -463,8 +519,19 @@ def receipt_from_icarus_paper_fill(
         raise TypeError("fill live must be bool")
 
     completion_ns = ts * 1_000_000_000
-    source_execution_id = (
-        f"{source_run_id}:{entry_id}:{bar}:{fill_side}:{fill['kind']}:{pos}"
+    asset = _text("symbol", symbol, max_len=64).upper()
+    runtime_run_id = _icarus_runtime_run_id(source_run_id)
+    source_execution_id = _icarus_paper_execution_id(
+        source_run_id=runtime_run_id,
+        symbol=asset,
+        ts=ts,
+        entry_id=entry_id,
+        side=fill_side,
+        qty=qty_int,
+        price=price,
+        kind=kind,
+        comment=comment,
+        position_after=pos,
     )
 
     return create_execution_evidence_receipt(
@@ -472,11 +539,136 @@ def receipt_from_icarus_paper_fill(
         source_system="icarus-paper-emulator",
         source_repo="reppiks490/Icarus",
         source_commit=source_commit,
-        source_run_id=source_run_id,
+        source_run_id=runtime_run_id,
+        source_execution_id=source_execution_id,
+        symbol=asset,
+        decision_time_ns=decision_time_ns,
+        completion_time_ns=completion_ns,
+        observed_time_ns=observed_time_ns,
+        side=1 if fill_side == "buy" else -1,
+        requested_size=qty_int,
+        filled_size=qty_int,
+        average_price=price,
+        source_payload=dict(fill),
+    )
+
+
+def receipt_from_icarus_journal_fill(
+    fill: Mapping[str, Any],
+    *,
+    source_commit: str,
+    decision_time_ns: int,
+    observed_time_ns: int,
+) -> ExecutionEvidenceReceipt:
+    """Wrap one durable ICARUS Journal.fills row as paper execution evidence.
+
+    The adapter mirrors the current SQLite fill schema rather than the
+    in-memory chart response. It deliberately requires a separately proven
+    decision timestamp because the durable fill row does not store the
+    originating PendingEntry decision time.
+
+    The upstream execution identity is derived from the exact fields used by
+    ICARUS's durable fills unique index, not from the SQLite row id. Reinserted
+    representations of the same indexed fill therefore resolve to the same
+    source execution identity and are rejected as duplicates by the evidence
+    aggregation firewall.
+    """
+
+    if not isinstance(fill, Mapping):
+        raise TypeError("fill must be a mapping")
+    allowed = {
+        "id",
+        "run_id",
+        "live",
+        "symbol",
+        "ts",
+        "entry_id",
+        "side",
+        "qty",
+        "price",
+        "kind",
+        "comment",
+        "profit",
+        "position_after",
+    }
+    if set(fill) != allowed:
+        raise ValueError(
+            "ICARUS journal fill requires exactly: "
+            + ", ".join(sorted(allowed))
+        )
+
+    row_id = fill["id"]
+    if (
+        isinstance(row_id, bool)
+        or not isinstance(row_id, int)
+        or row_id <= 0
+    ):
+        raise ValueError("journal fill id must be a positive integer")
+
+    run_id = fill["run_id"]
+    if (
+        isinstance(run_id, bool)
+        or not isinstance(run_id, int)
+        or run_id <= 0
+    ):
+        raise ValueError(
+            "journal fill run_id must be a positive integer; "
+            "legacy run_id=0 is not provenance-safe"
+        )
+
+    live = fill["live"]
+    if isinstance(live, bool) or live not in (0, 1):
+        raise ValueError("journal fill live must be integer 0 or 1")
+
+    symbol = _text("journal fill symbol", fill["symbol"], max_len=64).upper()
+    ts = fill["ts"]
+    if isinstance(ts, bool) or not isinstance(ts, int) or ts < 0:
+        raise ValueError("journal fill ts must be a non-negative integer")
+
+    entry_id = _text("journal fill entry_id", fill["entry_id"])
+    fill_side = fill["side"]
+    if fill_side not in ("buy", "sell"):
+        raise ValueError("journal fill side must be buy or sell")
+
+    qty = fill["qty"]
+    if isinstance(qty, bool) or not isinstance(qty, int) or qty <= 0:
+        raise ValueError("journal fill qty must be a positive integer")
+
+    price = _positive("journal fill price", fill["price"])
+    kind = _text("journal fill kind", fill["kind"])
+    comment = fill["comment"]
+    if not isinstance(comment, str):
+        raise TypeError("journal fill comment must be a string")
+    if fill["profit"] is not None:
+        _finite("journal fill profit", fill["profit"])
+
+    position_after = fill["position_after"]
+    if isinstance(position_after, bool) or not isinstance(position_after, int):
+        raise ValueError("journal fill position_after must be an integer")
+
+    source_execution_id = _icarus_paper_execution_id(
+        source_run_id=str(run_id),
+        symbol=symbol,
+        ts=ts,
+        entry_id=entry_id,
+        side=fill_side,
+        qty=qty,
+        price=price,
+        kind=kind,
+        comment=comment,
+        position_after=position_after,
+    )
+
+    return create_execution_evidence_receipt(
+        evidence_kind=ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+        source_system="icarus-paper-emulator",
+        source_repo="reppiks490/Icarus",
+        source_commit=source_commit,
+        source_run_id=str(run_id),
         source_execution_id=source_execution_id,
         symbol=symbol,
         decision_time_ns=decision_time_ns,
-        completion_time_ns=completion_ns,
+        completion_time_ns=ts * 1_000_000_000,
         observed_time_ns=observed_time_ns,
         side=1 if fill_side == "buy" else -1,
         requested_size=qty,

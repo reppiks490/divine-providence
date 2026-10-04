@@ -61,11 +61,66 @@ Important semantics:
 
 - `ts` is the emulator fill bar/event time in whole seconds and is converted to
   nanoseconds for ARGUS;
+- `source_run_id` must be the canonical positive decimal value of ICARUS's
+  runtime `run_id = int(time.time())`; arbitrary labels and leading-zero aliases
+  fail closed so the in-memory view can bind to the same durable journal run;
 - the current fill row does not preserve the original order-decision time, so
   the adapter requires it explicitly rather than inventing it;
 - `live=true` remains paper-emulator evidence;
 - quantity is treated as the filled instruction quantity of the emulator, not
   proof that equivalent real market size was executable.
+
+## Durable ICARUS journal adapter
+
+`receipt_from_icarus_journal_fill` accepts the current durable
+`Journal.fills` row shape from ICARUS:
+
+```text
+id, run_id, live, symbol, ts, entry_id, side, qty, price,
+kind, comment, profit, position_after
+```
+
+This adapter was defined only after inspecting the actual ICARUS runtime
+journal/fill structures. It does not reinterpret closed `trades` rows as
+execution fills.
+
+Important semantics:
+
+- `run_id` must be a positive runtime identity; legacy rows carrying the
+  migration default `run_id=0` fail closed because they cannot prove a unique
+  source run;
+- `ts` remains the emulator completion/event time in whole seconds and is
+  converted to nanoseconds;
+- the journal does not persist the original order-decision timestamp, so
+  `decision_time_ns` remains a mandatory separately proven input rather than
+  being inferred from fill time;
+- `observed_time_ns` is also supplied by the ingestion boundary and must not
+  precede completion;
+- SQLite row `id` is preserved in the source payload but is not treated as the
+  execution's semantic identity.
+
+The source execution ID is instead a SHA-256 over the exact fields used by
+ICARUS's durable fill uniqueness rule:
+
+```text
+run_id, symbol, ts, entry_id, side, qty, price, kind, comment, position_after
+```
+
+The in-memory chart/runtime adapter now uses this same canonical identity. Its
+extra `bar` field, boolean `live` flag, and profit annotation are treated as
+representation metadata rather than independent execution identity. Therefore
+the same ICARUS paper fill observed once through `recent_fills` and again
+through the durable SQLite journal resolves to one upstream source execution.
+
+If that fill is re-represented with a different SQLite row ID, chart bar index,
+live flag, profit annotation, or observation timestamp, its receipt can change
+while its upstream source-execution identity remains the same. The
+execution-identity firewall therefore rejects double-counting it across either
+one representation or both ICARUS surfaces.
+
+As with the in-memory adapter, `live=1` means the paper engine processed the
+fill during a live engine epoch. It is still
+`ICARUS_PAPER_EMULATOR`, never `BROKER_CONFIRMED`.
 
 ## Lineaged calibration
 
@@ -116,12 +171,21 @@ calibration quality.
 
 ## Remaining limitation
 
-The current ICARUS paper fill record is sufficient to preserve a simulated fill
-outcome but not the original pending-order decision timestamp. Until ICARUS
-persists that timing directly, the caller must supply decision time from a
-separately proven order-decision record.
+Both current ICARUS paper representations preserve simulated fill outcomes but
+not the original pending-order decision timestamp. The in-memory fill includes
+its bar index; the durable journal row does not. Neither field is equivalent to
+the order-decision timestamp.
 
-ARGUS does not infer it from fill time.
+Until ICARUS persists that timing directly, the caller must supply
+`decision_time_ns` from a separately proven order-decision record. ARGUS does
+not infer it from fill time, bar index, trade close time, or journal row order.
+
+The current ICARUS journal also assigns `run_id = int(time.time())`, so runtime
+identity has one-second resolution. ARGUS preserves that durable identity but
+cannot reconstruct two process starts that ICARUS itself aliased into the same
+second-level run ID. A future ICARUS runtime-provenance change should use a
+collision-resistant per-process run identifier; this ARGUS PR deliberately does
+not modify the separately owned engine/runtime scope.
 
 ## Authority
 
