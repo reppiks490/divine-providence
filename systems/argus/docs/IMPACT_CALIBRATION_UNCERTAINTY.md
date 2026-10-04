@@ -13,7 +13,7 @@ content-addressed research contract.
 Rather than silently change that schema, uncertainty policy is registered in a
 separate content-addressed plan that references the exact study manifest.
 
-The bootstrap plan must be created at or before the study cohort starts.
+The bootstrap plan cannot predate the referenced study manifest and must be created at or before the study cohort starts.
 
 ## Plan identity
 

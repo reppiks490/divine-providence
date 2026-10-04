@@ -228,6 +228,10 @@ def create_prospective_cluster_transfer_plan(
         )
 
     created = _nonnegative_ns("created_time_ns", created_time_ns)
+    if created < manifest.created_time_ns:
+        raise ValueError(
+            "cluster transfer plan cannot predate manifest created_time_ns"
+        )
     if created > manifest.cohort_start_ns:
         raise ValueError(
             "cluster transfer plan must be created at or before cohort_start_ns"
@@ -328,6 +332,10 @@ def _validate_plan(
         )
 
     created = _nonnegative_ns("created_time_ns", plan.created_time_ns)
+    if created < manifest.created_time_ns:
+        raise ValueError(
+            "cluster transfer plan predates manifest creation"
+        )
     if created > manifest.cohort_start_ns:
         raise ValueError(
             "cluster transfer plan creation is not prospective"

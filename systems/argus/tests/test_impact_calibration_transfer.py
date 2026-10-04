@@ -227,6 +227,15 @@ def test_transfer_plan_requires_both_evidence_classes_and_pre_registration():
         )
 
     m = manifest()
+    with pytest.raises(ValueError, match="cannot predate manifest"):
+        create_prospective_transfer_plan(
+            m,
+            created_time_ns=89,
+            bootstrap_replicates=200,
+            metrics=("mean_slippage_error_ticks",),
+            tolerances={"mean_slippage_error_ticks": 0.5},
+        )
+
     with pytest.raises(ValueError, match="at or before cohort_start"):
         create_prospective_transfer_plan(
             m,
@@ -360,6 +369,13 @@ def test_transfer_plan_and_cohort_tampering_fail_closed():
         paper_prices=(101.5, 101.75),
     )
     p = plan(m, tolerance=1.0)
+
+    with pytest.raises(ValueError, match="predates manifest"):
+        registered_transfer_compatibility(
+            replace(p, created_time_ns=89),
+            m,
+            c,
+        )
 
     with pytest.raises(ValueError, match="plan_id"):
         registered_transfer_compatibility(

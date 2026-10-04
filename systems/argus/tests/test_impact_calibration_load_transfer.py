@@ -317,6 +317,20 @@ def test_load_plan_requires_both_evidence_kinds_and_pre_registration():
         plan(broker_only)
 
     m = manifest()
+    with pytest.raises(ValueError, match="cannot predate manifest"):
+        create_prospective_load_transfer_plan(
+            m,
+            created_time_ns=89,
+            load_bands=BANDS,
+            metrics=("mean_slippage_error_ticks",),
+            tolerances={
+                ("low-load", "mean_slippage_error_ticks"): 1.0,
+                ("high-load", "mean_slippage_error_ticks"): 1.0,
+            },
+            bootstrap_replicates=200,
+            min_metric_observations_per_kind=2,
+        )
+
     with pytest.raises(ValueError, match="at or before cohort_start"):
         create_prospective_load_transfer_plan(
             m,
@@ -544,6 +558,13 @@ def test_fill_fraction_metrics_can_include_zero_fill_rows_by_load_band():
 def test_load_plan_and_cohort_tampering_fail_closed():
     m, c = study()
     p = plan(m)
+
+    with pytest.raises(ValueError, match="predates manifest"):
+        registered_load_transfer_compatibility(
+            replace(p, created_time_ns=89),
+            m,
+            c,
+        )
 
     with pytest.raises(ValueError, match="plan_id"):
         registered_load_transfer_compatibility(

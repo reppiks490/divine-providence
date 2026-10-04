@@ -33,7 +33,7 @@ paper-vs-broker compatibility separately across predeclared load bands.
 - minimum eligible observations required in each evidence class, in each band,
   for each requested metric.
 
-The plan must be created at or before the study cohort starts.
+The plan cannot predate the referenced study manifest and must be created at or before the study cohort starts.
 
 The referenced study manifest must include both:
 

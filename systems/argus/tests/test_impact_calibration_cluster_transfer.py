@@ -254,6 +254,15 @@ def test_cluster_plan_requires_both_evidence_kinds_and_pre_registration():
         plan(broker_only)
 
     m = manifest()
+    with pytest.raises(ValueError, match="cannot predate manifest"):
+        create_prospective_cluster_transfer_plan(
+            m,
+            created_time_ns=89,
+            metrics=("mean_slippage_error_ticks",),
+            tolerances={"mean_slippage_error_ticks": 0.5},
+            bootstrap_replicates=200,
+        )
+
     with pytest.raises(ValueError, match="at or before cohort_start"):
         create_prospective_cluster_transfer_plan(
             m,
@@ -528,6 +537,13 @@ def test_fill_fraction_cluster_transfer_can_use_zero_fill_rows():
 def test_cluster_plan_and_cohort_tampering_fail_closed():
     m, c = study()
     p = plan(m)
+
+    with pytest.raises(ValueError, match="predates manifest"):
+        registered_cluster_transfer_compatibility(
+            replace(p, created_time_ns=89),
+            m,
+            c,
+        )
 
     with pytest.raises(ValueError, match="plan_id"):
         registered_cluster_transfer_compatibility(
