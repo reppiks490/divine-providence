@@ -320,6 +320,117 @@ def test_cluster_transfer_is_deterministic_for_same_plan_and_cohort():
     assert first.results[0].bootstrap_replicates == 400
 
 
+def test_cluster_transfer_rejects_source_run_namespace_collision():
+    other_broker_commit = "3" * 40
+    m = create_impact_calibration_study_manifest(
+        study_name="cluster-transfer-run-namespace",
+        created_time_ns=90,
+        cohort_start_ns=110,
+        cohort_end_ns=200,
+        observation_cutoff_ns=250,
+        impact_model_revision="impact-v1",
+        calibration_revision="calibration-v1",
+        symbols=("NQ",),
+        evidence_kinds=(
+            ExecutionEvidenceKind.BROKER_CONFIRMED,
+            ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+        ),
+        execution_source_revisions=(
+            ("broker/example-adapter", BROKER_COMMIT),
+            ("broker/other-adapter", other_broker_commit),
+            ("reppiks490/Icarus", ICARUS_COMMIT),
+        ),
+        min_observations_per_stratum=4,
+        max_snapshot_age_ns=50,
+        max_completion_latency_ns=50,
+    )
+
+    alternate_broker = ImpactCalibrationStudySubject(
+        row=calibrate_lineaged_impact(
+            curve(),
+            create_execution_evidence_receipt(
+                evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
+                source_system="example-broker",
+                source_repo="broker/other-adapter",
+                source_commit=other_broker_commit,
+                source_run_id="shared-broker-run",
+                source_execution_id="b-other-0",
+                symbol="NQ",
+                decision_time_ns=120,
+                completion_time_ns=130,
+                observed_time_ns=140,
+                side=1,
+                requested_size=5.0,
+                filled_size=5.0,
+                average_price=102.0,
+                source_payload={"fill_id": "b-other-0"},
+                broker_name="Example Broker",
+                broker_order_id="order-b-other-0",
+                broker_fill_id="b-other-0",
+            ),
+        ),
+        impact_model_revision="impact-v1",
+        calibration_revision="calibration-v1",
+    )
+
+    c = lock_impact_calibration_study_cohort(
+        m,
+        (
+            subject(
+                ExecutionEvidenceKind.BROKER_CONFIRMED,
+                "b-main-0",
+                price=101.5,
+                run_id="shared-broker-run",
+            ),
+            alternate_broker,
+            subject(
+                ExecutionEvidenceKind.BROKER_CONFIRMED,
+                "b-main-1",
+                price=102.5,
+                run_id="broker-run-b",
+            ),
+            subject(
+                ExecutionEvidenceKind.BROKER_CONFIRMED,
+                "b-main-2",
+                price=103.0,
+                run_id="broker-run-c",
+            ),
+            subject(
+                ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+                "p0",
+                price=101.1,
+                run_id="paper-run-a",
+            ),
+            subject(
+                ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+                "p1",
+                price=101.2,
+                run_id="paper-run-a",
+            ),
+            subject(
+                ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+                "p2",
+                price=101.3,
+                run_id="paper-run-b",
+            ),
+            subject(
+                ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
+                "p3",
+                price=101.4,
+                run_id="paper-run-b",
+            ),
+        ),
+        lock_time_ns=260,
+    )
+    p = plan(m)
+
+    with pytest.raises(
+        ValueError,
+        match="source_run_id collision across execution-source lineage",
+    ):
+        registered_cluster_transfer_compatibility(p, m, c)
+
+
 def test_cluster_minimum_prevents_pseudoreplication_from_one_run():
     m = manifest()
     c = lock_impact_calibration_study_cohort(
@@ -534,110 +645,16 @@ def test_fill_fraction_cluster_transfer_can_use_zero_fill_rows():
     assert result.all_within_tolerance is True
 
 
-def test_source_run_id_collision_across_source_lineage_fails_closed():
-    other_commit = "3" * 40
-    m = create_impact_calibration_study_manifest(
-        study_name="cluster-source-lineage-collision",
-        created_time_ns=90,
-        cohort_start_ns=110,
-        cohort_end_ns=200,
-        observation_cutoff_ns=250,
-        impact_model_revision="impact-v1",
-        calibration_revision="calibration-v1",
-        symbols=("NQ",),
-        evidence_kinds=(
-            ExecutionEvidenceKind.BROKER_CONFIRMED,
-            ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
-        ),
-        execution_source_revisions=(
-            ("broker/example-adapter", BROKER_COMMIT),
-            ("broker/other-adapter", other_commit),
-            ("reppiks490/Icarus", ICARUS_COMMIT),
-        ),
-        min_observations_per_stratum=2,
-        max_snapshot_age_ns=50,
-        max_completion_latency_ns=50,
-    )
-
-    def broker_subject(execution_id, repo, commit, run_id):
-        receipt_value = create_execution_evidence_receipt(
-            evidence_kind=ExecutionEvidenceKind.BROKER_CONFIRMED,
-            source_system="example-broker",
-            source_repo=repo,
-            source_commit=commit,
-            source_run_id=run_id,
-            source_execution_id=execution_id,
-            symbol="NQ",
-            decision_time_ns=120,
-            completion_time_ns=130,
-            observed_time_ns=140,
-            side=1,
-            requested_size=5.0,
-            filled_size=5.0,
-            average_price=101.5,
-            source_payload={"fill_id": execution_id, "run_id": run_id},
-            broker_name="Example Broker",
-            broker_order_id=f"order-{execution_id}",
-            broker_fill_id=execution_id,
-        )
-        return ImpactCalibrationStudySubject(
-            row=calibrate_lineaged_impact(curve(), receipt_value),
-            impact_model_revision="impact-v1",
-            calibration_revision="calibration-v1",
-        )
-
-    c = lock_impact_calibration_study_cohort(
-        m,
-        (
-            broker_subject(
-                "b-a",
-                "broker/example-adapter",
-                BROKER_COMMIT,
-                "reused-run",
-            ),
-            broker_subject(
-                "b-b",
-                "broker/other-adapter",
-                other_commit,
-                "reused-run",
-            ),
-            subject(
-                ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
-                "p-a",
-                price=101.2,
-                run_id="paper-a",
-            ),
-            subject(
-                ExecutionEvidenceKind.ICARUS_PAPER_EMULATOR,
-                "p-b",
-                price=101.3,
-                run_id="paper-b",
-            ),
-        ),
-        lock_time_ns=260,
-    )
-    p = create_prospective_cluster_transfer_plan(
-        m,
-        created_time_ns=95,
-        metrics=("mean_slippage_error_ticks",),
-        tolerances={"mean_slippage_error_ticks": 1.0},
-        confidence_alpha=0.05,
-        bootstrap_replicates=200,
-        bootstrap_seed=7,
-        min_clusters_per_kind=2,
-        min_metric_observations_per_kind=2,
-    )
-
-    with pytest.raises(
-        ValueError,
-        match="source_run_id collision across execution-source lineage",
-    ):
-        registered_cluster_transfer_compatibility(p, m, c)
-
-
 def test_cluster_plan_and_cohort_tampering_fail_closed():
     m, c = study()
     p = plan(m)
+
+    with pytest.raises(ValueError, match="predates manifest"):
+        registered_cluster_transfer_compatibility(
+            replace(p, created_time_ns=89),
+            m,
+            c,
+        )
 
     with pytest.raises(ValueError, match="plan_id"):
         registered_cluster_transfer_compatibility(

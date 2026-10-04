@@ -33,7 +33,8 @@ ARGUS therefore supports a separate transfer audit that resamples complete
 - minimum eligible clusters required in each execution-evidence class;
 - minimum eligible observations required in each execution-evidence class.
 
-The plan cannot predate the referenced study manifest and must be registered at or before the study cohort starts.
+The plan cannot predate the referenced study manifest and must be registered
+at or before the study cohort starts.
 
 The study manifest must include both:
 
@@ -46,13 +47,13 @@ Version 1 fixes clustering to the execution receipt's `source_run_id`.
 
 The cluster field is not selected after results are visible.
 
-Within each evidence class, a reused `source_run_id` must also resolve to the
-same `source_system`, `source_repo`, and `source_commit`. A collision across
-execution-source lineage fails closed instead of silently merging unrelated
-runs into one bootstrap cluster.
+Within each evidence class, eligible observations are grouped by source run.
+Before grouping, a reused `source_run_id` must resolve to one exact
+`source_system`, `source_repo`, and `source_commit`. Reusing the same run
+identifier for different execution-source lineage fails closed rather than
+silently combining unrelated runs into one bootstrap cluster.
 
-Eligible observations are then grouped by source run. Cluster identifiers are
-sorted canonically before deterministic resampling.
+Cluster identifiers are sorted canonically before deterministic resampling.
 
 ## Supported metrics
 
