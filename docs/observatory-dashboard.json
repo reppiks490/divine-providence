@@ -1,0 +1,14 @@
+{
+  "schema": "icarus.observatory.dashboard.v1",
+  "url": "https://icarus-observatory-live-490.cloudyrook1.chatgpt.site",
+  "hosting_provider": "Sites",
+  "audience": "owner_private",
+  "project_id": "appgprj_6acf2508b2e0819186b2a06d0cf0c7bf",
+  "deployment_id": "appgdep_6acf269a81248191b3f12c125abe40ba",
+  "source_commit": "2af9c2eb93034459eb0b8b1a47de376f61f7b12a",
+  "data_repository": "reppiks490/divine-providence",
+  "data_branch": "observatory-history",
+  "data_writer": ".github/workflows/icarus-observatory.yml",
+  "viewer_refresh_seconds": 60,
+  "collection_cron_utc": "17 4 * * *"
+}

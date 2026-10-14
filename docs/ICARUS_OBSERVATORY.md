@@ -9,6 +9,11 @@ health, trading edge, promotion readiness, or execution authority.
 
 ## Open a run and its evidence
 
+- [Live dashboard](https://icarus-observatory-live-490.cloudyrook1.chatgpt.site)
+  loads the latest verified report and checks for updates every minute. It is
+  hosted as an owner-private Site. Normal viewing needs no download, setup,
+  manual refresh, or extra API key. GitHub Actions continues collecting and
+  publishing evidence while the page is closed.
 - [ICARUS Observatory Actions](https://github.com/reppiks490/divine-providence/actions/workflows/icarus-observatory.yml)
   lists scheduled, push, and manual runs. Open a run to inspect its collection and
   publication jobs, logs, commit, and artifacts.
@@ -19,16 +24,22 @@ health, trading edge, promotion readiness, or execution authority.
   `last_complete.json` for the comparison baseline, and `index.json` for retained
   receipt navigation.
 - [Latest dashboard file](https://github.com/reppiks490/divine-providence/blob/observatory-history/index.html)
-  can be downloaded using GitHub's raw-file download control and opened locally.
-  GitHub's file viewer shows HTML source; this is not a public Pages site.
+  remains available as source and optional offline evidence. Use the live
+  dashboard above for automatic viewing; GitHub's file viewer shows HTML source.
 - [Incident search](https://github.com/reppiks490/divine-providence/issues?q=is%3Aissue+%22ICARUS+Observatory%3A+current+incident%22)
   finds the persistent bot-owned incident. Its body links to the relevant run and
   evidence. A matching title alone does not establish that the issue is managed.
 
-At the bottom of an Actions run, download and extract an artifact, then open its
-`index.html` in a browser. No web server, external script, or external service
-account is required. Artifact access follows the repository's normal GitHub
-access rules.
+Artifacts are optional for offline inspection or verifying hashes. Normal use
+requires no artifact download. Artifact access follows the repository's normal
+GitHub access rules.
+
+The hosted viewer reads public `observatory-history/latest.json` and its matching
+HTML without sending credentials. The report is sandboxed from the private
+Site's origin. Temporary source failures retain the previous displayed report,
+show a retry status, and recover automatically. The existing Actions publisher
+remains the unattended data writer; observations need no Site republish. Hosting
+identity is recorded in [observatory-dashboard.json](observatory-dashboard.json).
 
 | Artifact | Purpose |
 |---|---|

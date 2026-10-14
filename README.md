@@ -37,13 +37,17 @@ Set `ICARUS_ENGINE_TOKEN` (see `.env.example`) before registering to enable the 
 
 ## ICARUS Observatory
 
-[ICARUS Observatory](https://github.com/reppiks490/divine-providence/actions/workflows/icarus-observatory.yml)
+[Live dashboard](https://icarus-observatory-live-490.cloudyrook1.chatgpt.site)
+loads the latest published evidence and checks for updates automatically. No
+download, setup, or manual refresh is required for normal use.
+
+The [repository workflow](https://github.com/reppiks490/divine-providence/actions/workflows/icarus-observatory.yml)
 runs daily at 04:17 UTC, on relevant pushes to `main`, and on manual dispatch. It
 checks all 12 subsystem suites and compile gates, ASCENSION adversarial scripts,
 the 10 local contract fixtures, and hub tests. A separate trusted publisher keeps
 90 receipts plus the last complete baseline on `observatory-history` and maintains
 one current incident issue. Evidence bundles are retained for 30 days and include
-a downloadable, self-contained dashboard.
+an optional self-contained dashboard for offline evidence inspection.
 
 Read the [operator guide](docs/ICARUS_OBSERVATORY.md) for evidence navigation,
 failure handling, and Actions UI pause/resume controls. Observatory health describes
@@ -94,7 +98,7 @@ dp mcp                     # serve icarus-engine over stdio
 
 ## Further reading
 
-- [docs/ICARUS_OBSERVATORY.md](docs/ICARUS_OBSERVATORY.md) — scheduled verification, downloadable dashboards, incident ownership, and operator controls
+- [docs/ICARUS_OBSERVATORY.md](docs/ICARUS_OBSERVATORY.md) — live dashboard, scheduled verification, incident ownership, and operator controls
 - [docs/research/PROOF_TO_OUTCOME_NETWORK.md](docs/research/PROOF_TO_OUTCOME_NETWORK.md) — research-only economic-event evidence product and CCTP proof-clock lane
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — dependency map, contracts, authority boundaries
 - [docs/REPAIRS.md](docs/REPAIRS.md) — every defect found and fixed during consolidation
