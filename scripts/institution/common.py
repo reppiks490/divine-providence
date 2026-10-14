@@ -110,7 +110,8 @@ def empty_memory():
 def context(root: Path):
     files = sorted((root / "systems/daedalus/src/daedalus").glob("*.py"))
     files += sorted((root / "systems/oracle/src/oracle").glob("*.py"))
-    files += sorted((root / "scripts/institution").glob("*.py"))
+    # Presentation/publication edits must not restart scientific experiments.
+    files += [root / "scripts/institution" / name for name in ("common.py", "driver.py", "sources.py")]
     source = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     versions = {name: importlib.metadata.version(name) for name in
                 ("numpy", "pandas", "scipy", "scikit-learn", "joblib")}

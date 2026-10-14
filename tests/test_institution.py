@@ -58,6 +58,18 @@ def test_memory_skips_exact_failure_and_retries_interruptions(tmp_path, monkeypa
     assert not collect.eligible(source(), memory, run["context"]["context_hash"])
 
 
+def test_presentation_changes_do_not_restart_scientific_memory(tmp_path):
+    scripts = tmp_path / "scripts/institution"
+    scripts.mkdir(parents=True)
+    for name in ("common.py", "driver.py", "sources.py"):
+        (scripts / name).write_text("scientific protocol")
+    before = common.context(tmp_path)["context_hash"]
+    (scripts / "report.py").write_text("new presentation")
+    assert common.context(tmp_path)["context_hash"] == before
+    (scripts / "driver.py").write_text("changed scientific implementation")
+    assert common.context(tmp_path)["context_hash"] != before
+
+
 def test_collection_timeout_is_incomplete_and_remembers_retry(tmp_path, monkeypatch, action_env):
     run = cycle(tmp_path, monkeypatch, outcome="interrupted")
     memory = common.read_json((tmp_path / "memory.json").read_bytes())
