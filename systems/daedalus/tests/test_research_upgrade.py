@@ -2,6 +2,7 @@ from dataclasses import replace
 from pathlib import Path
 import json
 import sqlite3
+from dataclasses import asdict
 
 import pandas as pd
 import pytest
@@ -10,6 +11,7 @@ from daedalus.batch import run_batch
 from daedalus.config import DaedalusConfig, ValidationConfig
 from daedalus.splits import PurgedWalkForwardSplit
 from daedalus.utils import sqlite_connection
+from daedalus.identity import load_identity_manifest, resolve_identity
 
 
 def test_spread_folds_reach_recent_development_without_overlap():
@@ -76,3 +78,27 @@ def test_sqlite_transaction_rolls_back_and_closes(tmp_path):
         assert check.execute("SELECT count(*) FROM value").fetchone()[0] == 0
     with pytest.raises(sqlite3.ProgrammingError):
         failed.execute("SELECT 1")
+
+
+def test_identical_bytes_under_new_path_refresh_identity_metadata(monkeypatch, tmp_path):
+    data = tmp_path / "data"; data.mkdir()
+    raw = "time,open,high,low,close\n1,1,2,1,2\n"
+    (data / "A.csv").write_text(raw)
+    manifest = tmp_path / "config/source_identity.csv"
+    manifest.parent.mkdir()
+    manifest.write_text("relative_path,canonical_symbol,chart_type,representation_role,execution_safe,notes\n"
+                        "A.csv,X,candle,execution,true,fixture\nB.csv,X,alternate,representation,false,fixture\n")
+    cfg = DaedalusConfig(); cfg = replace(cfg, data=replace(cfg.data, min_rows=1))
+    def research(path, project_root, cfg, *, data_root, allow_holdout):
+        assert allow_holdout is False
+        identity = resolve_identity(path, data_root, load_identity_manifest(manifest), "X")
+        return {"status": "skipped", "protected_holdout_touched": False, "identity": asdict(identity)}
+    monkeypatch.setattr("daedalus.batch.research_file", research)
+    assert run_batch(data, tmp_path, cfg)["processed"] == 1
+    (data / "A.csv").unlink(); (data / "B.csv").write_text(raw)
+    result = run_batch(data, tmp_path, cfg)
+    assert result["processed"] == 1 and result["skipped_existing"] == 0
+    from daedalus.utils import sha256_file
+    report = json.loads((tmp_path / cfg.runtime.output_dir / (sha256_file(data / "B.csv")[:16]+".json")).read_text())
+    assert report["identity"]["relative_path"] == "B.csv"
+    assert report["identity"]["execution_safe"] is False

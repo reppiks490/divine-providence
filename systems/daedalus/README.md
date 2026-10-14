@@ -28,7 +28,7 @@ sampled rows from the source-row span; broader span is not more independent
 observations. Protected-tail boundaries and acceptance thresholds are unchanged.
 
 Batch resume now validates source/configuration/code/dependency/identity-manifest
-context and result integrity. Old or corrupt cache files are refreshed; exact
+context, source/data-root path identity, and result integrity. Old or corrupt cache files are refreshed; exact
 valid failures remain reusable. SQLite owner connections now explicitly close on
 success and rollback paths, without schema changes. The real-source comparison
 and its limited interpretation are recorded in the root

@@ -24,7 +24,7 @@ No claim of exponential predictive accuracy or financial return is justified.
    Report sampled rows and source-row span separately: a broader span is not
    more independent test observations or confirmed alpha.
 2. Bind batch reuse to source/configuration/scientific code/dependencies and
-   result integrity. Refresh stale or corrupt cache data without spending tails.
+   path-based identity and result integrity. Refresh stale or corrupt cache data without spending tails.
 3. Enforce as-of assessment and one vote per immutable evidence item. Reject
    source spoofing and past-time dispatch using a future financial state.
 4. Extend the existing ORACLE scheduler with deterministic marginal diversity

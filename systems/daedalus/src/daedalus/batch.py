@@ -60,9 +60,12 @@ def run_batch(data_root: Path, project_root: Path, cfg: DaedalusConfig | None = 
     errors: list[dict] = []
     for row in reps.itertuples(index=False):
         was_stale = False
+        source_context = stable_hash({"scientific_context": context_hash,
+            "source_path": str(Path(row.path).resolve()), "data_root": str(data_root.resolve()),
+            "source_path_input": str(Path(row.path).absolute()), "data_root_input": str(data_root.absolute())})
         report_path = run_dir / f"{row.sha256[:16]}.json"
         if resume and report_path.exists():
-            if _cache_valid(report_path, row.sha256, context_hash):
+            if _cache_valid(report_path, row.sha256, source_context):
                 skipped += 1
                 continue
             was_stale = True
@@ -78,7 +81,7 @@ def run_batch(data_root: Path, project_root: Path, cfg: DaedalusConfig | None = 
             # exactly the same types as the sealed result.
             report = json.loads(json.dumps(report, default=str, allow_nan=False))
             report["batch_cache"] = {"schema": "daedalus.batch.cache.v1", "source_sha256": row.sha256,
-                                     "context_hash": context_hash, "result_hash": stable_hash(report)}
+                                     "context_hash": source_context, "result_hash": stable_hash(report)}
             report_path.parent.mkdir(parents=True, exist_ok=True)
             report_path.write_text(json.dumps(report, indent=2, sort_keys=True, default=str), encoding="utf-8")
             processed += 1
