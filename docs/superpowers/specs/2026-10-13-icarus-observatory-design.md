@@ -1,7 +1,7 @@
 # ICARUS Observatory design
 
 Date: 2026-10-13  
-Status: proposed; requires written design review before implementation  
+Status: approved by the owner's "Continue" on 2026-10-14; implementation in this change
 Repository: `reppiks490/divine-providence`  
 Inspected source: `a4110b43ed61860fe1c46ba91bdfd99ed530d776`
 

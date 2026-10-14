@@ -26,11 +26,29 @@ scripts/bootstrap.sh --validate --register-mcp   # Linux/macOS
 Then in Claude Code: `/mcp` shows **icarus-engine**; ask e.g. "list the ICARUS systems",
 "check all connections", "show connection coverage", "run the DAEDALUS tests", "what is the engine status?".
 
-The server exposes 18 read/verify-only tools (including `run_tour`). There are 6 verified cross-system connections, and
-coverage accounts for all 12 systems: 9 connected, and 3 standalone by design (AEGIS, JANUS,
-Infrastructure have no sibling contract in their code). The live-engine tools read the paper
+The server exposes 18 read/verify-only tools (including `run_tour`). The source
+[connection registry](src/divine_providence/connections.py) declares 10 cross-system
+contract checks; it and `connections.coverage()` are the inventory authority.
+The checks use local deterministic fixtures. Coverage accounts for all 12 systems:
+9 connected, and 3 standalone by design (AEGIS, JANUS, Infrastructure have no sibling
+contract in their code). The live-engine tools read the paper
 runtime on :8791 and cannot change it.
 Set `ICARUS_ENGINE_TOKEN` (see `.env.example`) before registering to enable the engine's research views.
+
+## ICARUS Observatory
+
+[ICARUS Observatory](https://github.com/reppiks490/divine-providence/actions/workflows/icarus-observatory.yml)
+runs daily at 04:17 UTC, on relevant pushes to `main`, and on manual dispatch. It
+checks all 12 subsystem suites and compile gates, ASCENSION adversarial scripts,
+the 10 local contract fixtures, and hub tests. A separate trusted publisher keeps
+90 receipts plus the last complete baseline on `observatory-history` and maintains
+one current incident issue. Evidence bundles are retained for 30 days and include
+a downloadable, self-contained dashboard.
+
+Read the [operator guide](docs/ICARUS_OBSERVATORY.md) for evidence navigation,
+failure handling, and Actions UI pause/resume controls. Observatory health describes
+engineering checks at a recorded commit; live-engine state remains `not_observed`,
+and passing fixtures confer no trading or production authority.
 
 ## Layout
 
@@ -41,7 +59,7 @@ Set `ICARUS_ENGINE_TOKEN` (see `.env.example`) before registering to enable the 
 | `tests/` | Hub tests, including a real stdio MCP handshake. |
 | `docs/` | Architecture, repairs, handoffs, research reports, state capsules, program docs, evidence. |
 | `provenance/` | Source archive → file mapping with SHA-256 for every file in `systems/` and `docs/`. |
-| `scripts/` | Bootstrap for Windows and POSIX. |
+| `scripts/` | Bootstrap for Windows and POSIX; Observatory collection, reporting, and publication. |
 
 ## Subsystems
 
@@ -76,6 +94,7 @@ dp mcp                     # serve icarus-engine over stdio
 
 ## Further reading
 
+- [docs/ICARUS_OBSERVATORY.md](docs/ICARUS_OBSERVATORY.md) — scheduled verification, downloadable dashboards, incident ownership, and operator controls
 - [docs/research/PROOF_TO_OUTCOME_NETWORK.md](docs/research/PROOF_TO_OUTCOME_NETWORK.md) — research-only economic-event evidence product and CCTP proof-clock lane
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — dependency map, contracts, authority boundaries
 - [docs/REPAIRS.md](docs/REPAIRS.md) — every defect found and fixed during consolidation

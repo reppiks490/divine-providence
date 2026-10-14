@@ -92,3 +92,5 @@ provenance/tour_report.json
 .vscode/
 .DS_Store
 Thumbs.db
+# Generated Observatory evidence belongs to Actions artifacts and its data branch.
+_observatory*/
