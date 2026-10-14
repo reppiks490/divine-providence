@@ -2,7 +2,7 @@ checkpoint 2026-09-23T05:09:23Z
 
 2026-10-14 research upgrade:
 64 DAEDALUS tests passed with ResourceWarnings escalated.
-Audit: 34 source files / 6120 lines, exit 0.
+Audit: 34 source files / 6119 lines, exit 0.
 Commands: PYTHONPATH=src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python -m pytest -q -W error::ResourceWarning; python scripts/audit.py.
 Protected acceptance thresholds unchanged; spread/rolling development folds are opt-in.
 Whole-corpus release coverage was not remeasured and 800+ authoritative corpus completion is not claimed.
