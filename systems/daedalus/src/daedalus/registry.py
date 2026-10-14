@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .utils import sqlite_connection
 
 import json
 import sqlite3
@@ -27,7 +28,7 @@ class ExperimentRegistry:
     def __init__(self, path: Path):
         self.path = path
         path.parent.mkdir(parents=True, exist_ok=True)
-        with sqlite3.connect(path) as con:
+        with sqlite_connection(path) as con:
             con.executescript(SCHEMA)
 
     def record(
@@ -50,16 +51,16 @@ class ExperimentRegistry:
             json.dumps(result, sort_keys=True, default=str),
             int(promoted),
         )
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             con.execute("INSERT OR REPLACE INTO experiments VALUES (?, ?, ?, ?, ?, ?, ?, ?)", payload)
 
     def set_promoted(self, experiment_id: str, promoted: bool) -> None:
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             con.execute("UPDATE experiments SET promoted=? WHERE experiment_id=?", (int(promoted), experiment_id))
 
     def update_result(self, experiment_id: str, result: dict[str, Any]) -> None:
         """Persist post-corpus evidence (for example q-values) without rewriting identity/config."""
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             cur = con.execute(
                 "UPDATE experiments SET result_json=? WHERE experiment_id=?",
                 (json.dumps(result, sort_keys=True, default=str), experiment_id),
@@ -68,7 +69,7 @@ class ExperimentRegistry:
                 raise KeyError(f"Unknown experiment_id: {experiment_id}")
 
     def promoted(self) -> list[dict[str, Any]]:
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             rows = con.execute(
                 "SELECT experiment_id, created_at, source_sha256, source_path, model_name, result_json "
                 "FROM experiments WHERE promoted=1 ORDER BY created_at DESC"

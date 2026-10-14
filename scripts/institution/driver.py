@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import Path
 import sys
 import time
@@ -30,6 +30,8 @@ def research(path, root):
     from threadpoolctl import threadpool_limits
 
     cfg = DaedalusConfig()
+    cfg = replace(cfg, validation=replace(cfg.validation,
+                  fold_placement=PROTOCOL["fold_placement"], max_train_size=PROTOCOL["max_train_size"]))
     try:
         bars, quality = load_bars_with_quality(Path(path), max_rows=None, require_nondecreasing_time=True)
     except ValueError as exc:

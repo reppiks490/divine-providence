@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .utils import sqlite_connection
 
 import sqlite3
 from dataclasses import asdict, dataclass
@@ -46,7 +47,7 @@ class HoldoutLedger:
     def __init__(self, path: Path):
         self.path = path
         path.parent.mkdir(parents=True, exist_ok=True)
-        with sqlite3.connect(path) as con:
+        with sqlite_connection(path) as con:
             con.executescript(SCHEMA)
 
     def assess(
@@ -56,7 +57,7 @@ class HoldoutLedger:
         holdout_start: int,
         holdout_end: int,
     ) -> HoldoutAssessment:
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             rows = con.execute(
                 "SELECT protocol_hash, holdout_start, holdout_end, exposure_count "
                 "FROM holdout_exposures WHERE source_sha256=?",
@@ -81,7 +82,7 @@ class HoldoutLedger:
 
     def record(self, assessment: HoldoutAssessment) -> None:
         now = datetime.now(timezone.utc).isoformat()
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             row = con.execute(
                 "SELECT exposure_count, first_exposed_at FROM holdout_exposures "
                 "WHERE source_sha256=? AND protocol_hash=? AND holdout_start=? AND holdout_end=?",

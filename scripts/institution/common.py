@@ -17,11 +17,15 @@ MAX_EVENTS = 250
 AUTHORITY = {"execution_authorized": False, "production_authorized": False,
              "protected_holdout_touched": False}
 PROTOCOL = {
-    "version": "icarus.institution.development.v1",
+    "version": "icarus.institution.development.v2",
     "stage": "historical_development_paper_proxy",
     "source_rows": [1200, 60000], "whole_files_only": True,
     "model_families": ["logistic", "random_forest", "extra_trees", "hist_gradient_boosting"],
-    "validation": "DAEDALUS default five purged walk-forward folds; protected tail reserved",
+    "validation": "five spread purged development folds; rolling training capped at 2000; protected tail reserved",
+    "fold_placement": "spread", "max_train_size": 2000,
+    "agenda": "ORACLE marginal provenance diversity with explicit metadata cost priors",
+    "agenda_information_priors": {"five_estimated_folds": 1.0, "two_to_four": .75, "insufficient": .05},
+    "agenda_fold_estimation": "rows minus conservative 55-row warmup; default DAEDALUS split geometry; advisory only",
     "target_horizon_bars": 5, "feature_lag_bars": 1,
     "permutation_iterations": 199, "bootstrap_iterations": 199,
     "cost_multipliers": [1, 2, 5], "temporal_segments": 3,
@@ -111,7 +115,7 @@ def context(root: Path):
     files = sorted((root / "systems/daedalus/src/daedalus").glob("*.py"))
     files += sorted((root / "systems/oracle/src/oracle").glob("*.py"))
     # Presentation/publication edits must not restart scientific experiments.
-    files += [root / "scripts/institution" / name for name in ("common.py", "driver.py", "sources.py")]
+    files += [root / "scripts/institution" / name for name in ("common.py", "driver.py", "sources.py", "agenda.py")]
     source = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     versions = {name: importlib.metadata.version(name) for name in
                 ("numpy", "pandas", "scipy", "scikit-learn", "joblib")}

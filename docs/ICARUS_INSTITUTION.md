@@ -12,15 +12,27 @@ members, and tests two unseen byte/protocol contexts per cycle. Sources outside
 the registered 1,200–60,000-row/12MB member budget are deferred. Whole files stay
 intact; no tail sampling, reordering, or chart-to-execution conversion occurs.
 
-DAEDALUS builds lagged predictors and reserves its existing protected tail. Its
-four model families compete on five purged walk-forward development folds.
+DAEDALUS builds lagged predictors and reserves its existing protected tail. Under
+development protocol v2, its four model families compete on up to five spread,
+purged walk-forward development folds with rolling training capped at 2,000 rows.
+The sample count and source-row span are reported separately. ORACLE's existing
+scheduler selects source contexts using explicit metadata-cost and marginal
+repository/archive-diversity priors. Conservative estimated fold feasibility
+reduces priority for sources too short for the registered tests; it is an
+advisory allocation estimate, not scientific evidence. Every selected job and its
+question are recorded before execution. The priors are not calibrated confidence
+or empirical information-gain measurements.
 The registered challenges include circular-shift controls (199), moving-block
 bootstrap (199), costs at 1×/2×/5× the 1.5bps proxy assumption, three time slices,
 and a fixed logistic return-family ablation. The winner is selected on the same
 development evidence used by these diagnostics. Selection, serial dependence,
 and cross-source multiplicity prevent interpreting a pass as confirmed alpha.
-The five folds cover the existing validator's early expanding development
-windows, not the entire historical stream. All exact fold positions are recorded.
+The original v1 protocol covered early expanding development windows; its
+historical evidence remains under that context. V2 spreads test windows over the
+development period, while the final protected tail remains reserved. All exact
+fold positions are recorded. Spread windows do not turn development diagnostics
+into independent protected evidence. Bootstrap/permutation diagnostics remain
+exploratory, including dependence across and within these windows.
 
 ORACLE generates typed hypotheses with explicit falsification criteria and
 builds the evidence graph. Cross-source diagnostics use development prefixes,
@@ -84,3 +96,10 @@ a new scientific context. The first two official corpus revisions inspected for
 this build were `a482e7d1801fa7fa5aec093960097c0051c0403c` and
 `ce82124352762c14eb33836a5c894bc3a2a71dfe`; 408 unique byte sources met the row and
 member budgets. This is a budgeted subset, not a claim that the rest is invalid.
+
+The v2 engine upgrade is described in the [design](superpowers/specs/2026-10-14-oracle-daedalus-upgrade.md)
+and [implementation plan](superpowers/plans/2026-10-14-oracle-daedalus-upgrade.md).
+The [real-data benchmark receipt](evidence/oracle-daedalus-upgrade.json) records
+configuration, scientific code/dependencies, raw timing samples, fold positions,
+sampled rows, source-row span, predictive metrics, and reserved-tail status.
+Its one-source, one-model measurements do not establish general predictive gains.

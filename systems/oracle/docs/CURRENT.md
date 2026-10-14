@@ -1,5 +1,20 @@
 # ORACLE Current State — 75%
 
+## Research upgrade — 2026-10-14
+
+The existing foundation is extended with causal assessment cutoff, source-bound
+contributions, duplicate/relabelled-observation voting protection, future-state
+dispatch/priority rejection, and deterministic marginal-diversity ranking inside
+`ResearchScheduler`. The institution calls this actual scheduler, records its
+policy priors and preregistered job/question specifications, and sends selected
+source contexts to DAEDALUS. SQLite connections in store/outbox now close
+explicitly; operating priority/action views avoid redundant assessment scans.
+
+Verification: 39 owner tests passed with ResourceWarnings escalated, including
+the new causal, identity, ranking and connection-close regressions. The deployment
+tasks below remain open. No execution/promotion/evidence-memory authority is
+transferred, and no real service result adapter is claimed by this upgrade.
+
 Owner/signature: SOL  
 Next owner: Sol Extra High  
 Status: stable Financial/Research operating-layer milestone

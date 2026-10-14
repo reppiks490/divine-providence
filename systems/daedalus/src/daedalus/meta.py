@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .utils import sqlite_connection
 
 import json
 import sqlite3
@@ -43,7 +44,7 @@ def _extract(result: dict) -> tuple[float | None, float | None, float | None]:
 def summarize_model_memory(registry_path: Path, prior_strength: float = 10.0) -> list[ModelFamilyMemory]:
     if not registry_path.exists():
         return []
-    with sqlite3.connect(registry_path) as con:
+    with sqlite_connection(registry_path) as con:
         rows = con.execute("SELECT model_name, result_json, promoted FROM experiments").fetchall()
     grouped: dict[str, list[tuple[dict, int]]] = {}
     for name, payload, promoted in rows:

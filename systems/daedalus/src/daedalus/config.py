@@ -81,8 +81,14 @@ class ValidationConfig:
     slippage_bps: float = 0.5
     execution_stride_bars: int | None = None
     random_state: int = 42
+    fold_placement: str = "sequential"
+    max_train_size: int | None = None
 
     def __post_init__(self) -> None:
+        if self.fold_placement not in {"sequential", "spread"}:
+            raise ValueError("validation.fold_placement must be sequential or spread")
+        if self.max_train_size is not None and (type(self.max_train_size) is not int or self.max_train_size < self.min_train_size):
+            raise ValueError("validation.max_train_size must be >= min_train_size")
         for name in ("n_splits", "min_train_size", "test_size", "min_holdout_rows", "min_development_folds"):
             _positive(f"validation.{name}", int(getattr(self, name)))
         if self.purge_bars < 0 or self.embargo_bars < 0:

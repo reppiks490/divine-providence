@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .utils import sqlite_connection
 
 import hashlib
 import json
@@ -193,7 +194,7 @@ class ShadowBook:
     def __init__(self, path: Path):
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             con.execute("PRAGMA foreign_keys=ON")
             con.executescript(SCHEMA)
             self._migrate_candidate_columns(con)
@@ -226,7 +227,7 @@ class ShadowBook:
             raise ValueError("candidate_id cannot be empty")
         manifest_json = _canonical_json(manifest)
         digest = _sha256_json(manifest)
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             con.execute("PRAGMA foreign_keys=ON")
             row = con.execute(
                 "SELECT manifest_sha256, manifest_json FROM shadow_candidates WHERE candidate_id=?",
@@ -249,7 +250,7 @@ class ShadowBook:
             )
 
     def candidate(self, candidate_id: str) -> dict[str, Any]:
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             row = con.execute(
                 "SELECT candidate_id, created_at, manifest_json, status, manifest_sha256 "
                 "FROM shadow_candidates WHERE candidate_id=?",
@@ -274,7 +275,7 @@ class ShadowBook:
     ) -> None:
         if to_status not in _ALLOWED_STATUSES:
             raise ValueError(f"Unsupported shadow status: {to_status}")
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             con.execute("PRAGMA foreign_keys=ON")
             row = con.execute(
                 "SELECT status FROM shadow_candidates WHERE candidate_id=?",
@@ -296,7 +297,7 @@ class ShadowBook:
             )
 
     def status_history(self, candidate_id: str) -> list[dict[str, Any]]:
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             rows = con.execute(
                 "SELECT event_id, occurred_at, from_status, to_status, reason, evidence_json "
                 "FROM shadow_status_events WHERE candidate_id=? ORDER BY event_id",
@@ -349,7 +350,7 @@ class ShadowBook:
         prediction_id = uuid.uuid4().hex
         now = _utcnow()
 
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             con.execute("PRAGMA foreign_keys=ON")
             exists = con.execute(
                 "SELECT 1 FROM shadow_candidates WHERE candidate_id=?",
@@ -395,7 +396,7 @@ class ShadowBook:
         meta_json = _canonical_json(metadata)
         meta_sha = _sha256_json(metadata)
 
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             con.execute("PRAGMA foreign_keys=ON")
             pred = con.execute(
                 "SELECT source_time FROM shadow_predictions_v2 WHERE prediction_id=?",
@@ -439,7 +440,7 @@ class ShadowBook:
         argument is a v2 prediction ID it is settled immutably. Otherwise a legacy row
         is updated for compatibility with pre-v2 databases/tests.
         """
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             row = con.execute(
                 "SELECT candidate_id FROM shadow_predictions_v2 WHERE prediction_id=?",
                 (observed_at_or_prediction_id,),
@@ -449,7 +450,7 @@ class ShadowBook:
                 raise ValueError("prediction_id does not belong to candidate_id")
             self.settle_prediction(observed_at_or_prediction_id, realized_return)
             return
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             cur = con.execute(
                 "UPDATE shadow_observations SET realized_return=?, mature=1 "
                 "WHERE candidate_id=? AND observed_at=? AND source_time IS ? AND mature=0",
@@ -459,7 +460,7 @@ class ShadowBook:
                 raise KeyError("Unknown or already-mature legacy shadow observation")
 
     def _mature_rows(self, candidate_id: str) -> list[dict[str, Any]]:
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             v2 = con.execute(
                 "SELECT p.prediction_id, p.recorded_at, p.source_time, p.probability, p.threshold, p.horizon_bars, "
                 "p.metadata_json, o.matured_at, o.realized_return, o.target_source_time "
@@ -725,7 +726,7 @@ class ShadowBook:
         return health
 
     def pending_count(self, candidate_id: str) -> int:
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             row = con.execute(
                 "SELECT COUNT(*) FROM shadow_predictions_v2 p "
                 "LEFT JOIN shadow_outcomes_v2 o ON o.prediction_id=p.prediction_id "
@@ -735,7 +736,7 @@ class ShadowBook:
         return int(row[0]) if row else 0
 
     def list_candidates(self) -> list[dict[str, Any]]:
-        with sqlite3.connect(self.path) as con:
+        with sqlite_connection(self.path) as con:
             rows = con.execute(
                 "SELECT candidate_id, created_at, status, manifest_sha256 FROM shadow_candidates ORDER BY created_at DESC"
             ).fetchall()

@@ -178,6 +178,8 @@ class AutonomousResearchLoop:
     def dispatch(self, decision_ns: int, *, max_requests: int | None = None, priority_multipliers: dict[str,float] | None = None, _record: bool = True) -> DispatchBatch:
         if decision_ns < 0:
             raise ValueError("decision_ns must be non-negative")
+        if self.latest_state is not None and decision_ns < self.latest_state.decision_ns:
+            raise ValueError("dispatch cannot use future financial state")
         out: list[OutboundResearchRequest] = []
         blocked: list[tuple[str, str]] = []
         for job in self.engine.scheduler.rank(decision_ns,multipliers=priority_multipliers):

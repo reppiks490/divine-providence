@@ -11,7 +11,7 @@ import sys
 import tempfile
 from urllib.error import HTTPError
 
-from . import common, sources
+from . import common, sources, agenda
 
 
 def identity():
@@ -95,11 +95,13 @@ def remember(memory, experiment, context_hash, run):
     if len(memory["experiments"]) >= common.MAX_EXPERIMENTS and old is None:
         raise ValueError("Memory capacity reached; refusing to forget scientific failures")
     models = [{"model": m["model_name"], "metrics": m["aggregate"],
-               "folds": len(m["folds"]), "fold_pass_rate": m["fold_pass_rate"]} for m in experiment["models"]]
+               "folds": len(m["folds"]), "fold_pass_rate": m["fold_pass_rate"],
+               **({"coverage": m["coverage"]} if "coverage" in m else {})} for m in experiment["models"]]
     hypotheses = experiment["hypotheses"][:1]
     memory["experiments"][key] = {"id": key, "source": experiment["source"], "context_hash": context_hash,
         "outcome": experiment["outcome"], "reasons": experiment["reasons"], "attempts": attempts,
         "champion": experiment["champion"], "models": models, "hypotheses": hypotheses,
+        **({"agenda_choice": experiment["agenda_choice"]} if "agenda_choice" in experiment else {}),
         "observed_at": common.now(), "run_id": run["run_id"], "run_attempt": run["run_attempt"],
         "commit": run["commit"], **common.AUTHORITY}
 
@@ -116,7 +118,7 @@ def initial(output):
            "started_at": common.now(), "finished_at": None, "state": "incomplete",
            "reasons": ["collection_not_completed"], "memory_parent": None,
            "memory_parent_hash": None, "memory_hash": None, "context": None,
-           "source_receipts": [], "feed_receipts": [], "catalogue": [], "experiments": [], "cross_market": [], "queue": None}
+           "source_receipts": [], "feed_receipts": [], "catalogue": [], "experiments": [], "cross_market": [], "queue": None, "agenda": None}
     common.write_json(output / "run.json", common.seal(run))
     return run
 
@@ -136,18 +138,21 @@ def collect(roots, output, root, *, memory_loader=load_memory, researcher=worker
         events, run["feed_receipts"] = feeds()
         merge_events(memory, events)
         queue = [s for s in inventory if eligible(s, memory, ctx["context_hash"])]
+        selected, run["agenda"] = agenda.select_sources(queue, memory, ctx["context_hash"], root,
+                                                       common.PROTOCOL["budget_per_run"])
         run["queue"] = {"sources": len(inventory), "pending_before": len(queue), "tested": 0,
                         "already_remembered": len(inventory) - len(queue), "budget": common.PROTOCOL["budget_per_run"]}
-        for source in queue[:common.PROTOCOL["budget_per_run"]]:
+        for source in selected:
             result = researcher(source, root, output, common.PROTOCOL["timeout_seconds_per_source"])
             experiment = {**result, "id": common.experiment_id(source["sha256"], ctx["context_hash"]),
-                          "source": {k: v for k, v in source.items() if not k.startswith("_")}}
+                          "source": {k: v for k, v in source.items() if not k.startswith("_")},
+                          "agenda_choice": next(c for c in run["agenda"]["choices"] if c["source_sha256"]==source["sha256"])}
             run["experiments"].append(experiment)
             remember(memory, experiment, ctx["context_hash"], run)
             run["queue"]["tested"] += 1
             print(f"Research {run['queue']['tested']}: {source['label']} -> {result['outcome']}", flush=True)
-        if len(queue[:common.PROTOCOL["budget_per_run"]]) == 2:
-            left, right = queue[:2]
+        if len(selected) == 2:
+            left, right = selected
             paired = researcher(left, root, output, 60, peer=right)
             pair = {**paired, "left": left["sha256"], "right": right["sha256"],
                     "context_hash": ctx["context_hash"]}

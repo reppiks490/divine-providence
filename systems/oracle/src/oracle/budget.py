@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass,field
+import math
 from .contracts import ResearchJob
 
 @dataclass(frozen=True,slots=True)
@@ -9,7 +10,7 @@ class ResearchBudget:
     max_jobs_per_hypothesis:int=12
     max_jobs_per_system:int=8
     def __post_init__(self):
-        if self.compute_units<=0: raise ValueError("compute_units must be positive")
+        if not math.isfinite(self.compute_units) or self.compute_units<=0: raise ValueError("compute_units must be finite and positive")
         if min(self.max_active_jobs,self.max_jobs_per_hypothesis,self.max_jobs_per_system)<=0: raise ValueError("job caps must be positive")
 
 @dataclass(frozen=True,slots=True)

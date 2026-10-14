@@ -151,7 +151,7 @@ class ResearchJob:
     production_authorized: bool=False
     def __post_init__(self):
         if not all((self.job_id,self.hypothesis_id,self.task_type)): raise ValueError("job identity required")
-        if self.created_ns<0 or self.estimated_compute_cost<=0: raise ValueError("invalid job timing/cost")
+        if self.created_ns<0 or not math.isfinite(self.estimated_compute_cost) or self.estimated_compute_cost<=0: raise ValueError("invalid job timing/cost")
         for n in ("expected_information_gain","strategic_relevance","evidence_deficit","dependency_impact","novelty"):
             finite01(n,getattr(self,n))
         if self.status not in {s.value for s in JobStatus}: raise ValueError("invalid job status")

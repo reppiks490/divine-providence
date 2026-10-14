@@ -61,7 +61,7 @@ def test_memory_skips_exact_failure_and_retries_interruptions(tmp_path, monkeypa
 def test_presentation_changes_do_not_restart_scientific_memory(tmp_path):
     scripts = tmp_path / "scripts/institution"
     scripts.mkdir(parents=True)
-    for name in ("common.py", "driver.py", "sources.py"):
+    for name in ("common.py", "driver.py", "sources.py", "agenda.py"):
         (scripts / name).write_text("scientific protocol")
     before = common.context(tmp_path)["context_hash"]
     (scripts / "report.py").write_text("new presentation")
@@ -92,6 +92,20 @@ def test_event_observation_is_not_moved_forward():
     collect.merge_events(memory, [earlier])
     collect.merge_events(memory, [{**earlier, "first_observed_at": "2026-10-14T00:00:00Z"}])
     assert memory["events"]["x"] == earlier
+
+
+def test_oracle_agenda_diversifies_source_groups_before_results():
+    from scripts.institution.agenda import select_sources
+    queue = [{**source(), "sha256": str(i)*64, "archive": archive,
+              "rows_budget_estimate": rows} for i, archive, rows in
+             [(1, "same.zip", 2000), (2, "same.zip", 2100), (3, "other.zip", 2500)]]
+    chosen, agenda = select_sources(queue, common.empty_memory(), "context", ROOT, 2)
+    assert {s["archive"] for s in chosen} == {"same.zip", "other.zip"}
+    assert agenda["owner"] == "ORACLE.ResearchScheduler"
+    assert all(c["hypothesis"]["created_ns"] == agenda["decision_ns"] for c in agenda["choices"])
+    assert all(c["job_specification"]["production_authorized"] is False for c in agenda["choices"])
+    expected = {"1"*64: 4, "3"*64: 5}
+    assert {c["source_sha256"]: c["estimated_development_folds"] for c in agenda["choices"]} == expected
 
 
 def test_feeds_record_true_provenance_and_unavailability():
@@ -273,5 +287,5 @@ def test_report_escapes_source_html_and_exposes_real_graph(tmp_path, monkeypatch
     html = (tmp_path / "index.html").read_text()
     assert '</script><script>alert(1)</script>' not in html
     graph = common.read_json((tmp_path / "graph.json").read_bytes())
-    assert len(graph["nodes"]) == 2
+    assert len(graph["nodes"]) == 3
     assert graph["edges"][0]["relation"] == "tested_on_development_only"
