@@ -19,6 +19,21 @@ Its purpose is to discover candidate relationships, model them without look-ahea
 
 See `docs/HANDOFF_TO_WORK.md` for placement and operating instructions.
 
+## Research upgrade — 2026-10-14
+
+`ValidationConfig(fold_placement="spread", max_train_size=2000)` places disjoint,
+purged test windows across the development period and caps the rolling training
+window. Existing sequential defaults remain unchanged. Reports distinguish
+sampled rows from the source-row span; broader span is not more independent
+observations. Protected-tail boundaries and acceptance thresholds are unchanged.
+
+Batch resume now validates source/configuration/code/dependency/identity-manifest
+context and result integrity. Old or corrupt cache files are refreshed; exact
+valid failures remain reusable. SQLite owner connections now explicitly close on
+success and rollback paths, without schema changes. The real-source comparison
+and its limited interpretation are recorded in the root
+`docs/evidence/oracle-daedalus-upgrade.json`.
+
 ## Safe operating sequence
 
 ```bash

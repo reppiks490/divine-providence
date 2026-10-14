@@ -111,9 +111,10 @@ class OracleOperatingLayer:
 
     def priority_decisions(self,decision_ns:int)->tuple[PriorityDecision,...]:
         """Explain every causal dispatch multiplier without rewriting job specs."""
-        self.sync_assessments()
         state=self.loop.latest_state
-        health_by_hypothesis={x.hypothesis_id:x for x in self.thesis_health(decision_ns)} if self.theses.history else {}
+        if state is not None and decision_ns<state.decision_ns:
+            raise ValueError("priority cannot use future financial state")
+        health_by_hypothesis={x.hypothesis_id:x for x in self.thesis_health(decision_ns)}
         out=[]
         for job in self.loop.engine.scheduler._jobs.values():
             if job.created_ns>decision_ns or job.job_id in self.loop.runtime.completed or job.job_id in self.loop.runtime.dead_letter:
@@ -145,8 +146,7 @@ class OracleOperatingLayer:
         return {x.job_id:x.multiplier for x in self.priority_decisions(decision_ns)}
 
     def action_board(self,decision_ns:int)->tuple[ResearchRecommendation,...]:
-        self.sync_assessments()
-        health={x.hypothesis_id:x for x in self.thesis_health(decision_ns)} if self.theses.history else {}
+        health={x.hypothesis_id:x for x in self.thesis_health(decision_ns)}
         rows=[]
         for hid in sorted(self.loop.engine.hypotheses):
             rows.append(recommend(hid,self.loop.engine.status[hid],self.loop.engine.assessments.get(hid),health.get(hid),policy=self.decision_policy))

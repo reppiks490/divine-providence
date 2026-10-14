@@ -2,6 +2,19 @@
 
 ## Read this first
 
+### New verified work — 2026-10-14
+
+The research upgrade adds opt-in spread/rolling development validation,
+context/integrity-bound batch reuse, and explicit SQLite close lifecycles in
+holdout, registry, shadow and meta owners. The tests include real-fit reserved-tail
+perturbation through the institution and rollback/closed-connection invariants.
+Sequential defaults and protected acceptance gates remain unchanged. Read the
+root `docs/evidence/oracle-daedalus-upgrade.json` for the real 40,193-row,
+logistic-only, three-timing-sample comparison. This is not authoritative 800+
+corpus completion, confirmed alpha, or completion of all release coverage tasks.
+The historical resource-leak task below is addressed by this upgrade; retain
+the remaining release tasks until separately verified.
+
 You are inheriting a partially completed but working project named `daedalus-research-os`.
 
 Do **not** restart from scratch. Do **not** collapse alternate chart representations. Do **not** weaken validation gates to make more candidates pass. Do **not** connect this package to live trading.

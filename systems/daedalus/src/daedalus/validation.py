@@ -40,6 +40,7 @@ class ValidationResult:
     oof_y: np.ndarray
     oof_probabilities: np.ndarray
     oof_future_returns: np.ndarray
+    fold_placement: str = "sequential"
 
     def to_dict(self) -> dict:
         return {
@@ -49,6 +50,10 @@ class ValidationResult:
             "fold_pass_rate": self.fold_pass_rate,
             "dev_end": self.dev_end,
             "oof_observations": int(len(self.oof_probabilities)),
+            "fold_placement": self.fold_placement,
+            "coverage": {"sampled_rows": int(len(self.oof_positions)),
+                "source_row_span": int(self.oof_positions[-1] - self.oof_positions[0] + 1) if len(self.oof_positions) else 0,
+                "development_feature_rows": self.dev_end},
         }
 
 
@@ -129,6 +134,8 @@ def walk_forward_validate(
         cfg.test_size,
         max(cfg.purge_bars, target_horizon),
         cfg.embargo_bars,
+        placement=cfg.fold_placement,
+        max_train_size=cfg.max_train_size,
     )
     out: list[FoldResult] = []
     all_y: list[np.ndarray] = []
@@ -204,7 +211,7 @@ def walk_forward_validate(
     pass_rate = float(np.mean([
         f.metrics["auc"] >= 0.5 and f.metrics["brier_improvement"] >= 0.0 for f in out
     ])) if out else 0.0
-    return ValidationResult(model_name, tuple(out), aggregate, pass_rate, dev_end, positions, yy, pp, rr)
+    return ValidationResult(model_name, tuple(out), aggregate, pass_rate, dev_end, positions, yy, pp, rr, cfg.fold_placement)
 
 
 def development_selection_key(result: ValidationResult) -> tuple[float, float, float, float, int]:

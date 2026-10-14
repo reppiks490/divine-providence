@@ -4,8 +4,18 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Any
+from contextlib import closing, contextmanager
+import sqlite3
 
 import numpy as np
+
+
+@contextmanager
+def sqlite_connection(path):
+    """Preserve SQLite commit/rollback semantics and close on every exit path."""
+    with closing(sqlite3.connect(path)) as connection:
+        with connection:
+            yield connection
 
 
 def sha256_file(path: Path, chunk_size: int = 1 << 20) -> str:

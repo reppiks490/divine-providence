@@ -18,11 +18,24 @@ class ResearchExchange:
         self.questions[qid]=q; return q
     def contribute(self,question_id:str,*,system:str,evidence:EvidenceRecord,claim:str,submitted_ns:int)->Contribution:
         q=self.questions[question_id]
-        if evidence.hypothesis_id!=q.hypothesis_id or submitted_ns<evidence.observed_ns: raise ValueError("invalid contribution")
+        if evidence.hypothesis_id!=q.hypothesis_id or submitted_ns<evidence.observed_ns or submitted_ns<q.created_ns: raise ValueError("invalid contribution")
+        if system.upper()!=evidence.source_system.upper(): raise ValueError("contribution source mismatch")
         cid="RC-"+digest({"q":question_id,"system":system,"evidence":evidence.evidence_id,"claim":claim})[:20]
         c=Contribution(cid,question_id,system,evidence,claim,submitted_ns); self.contributions.setdefault(cid,c); return self.contributions[cid]
     def assess(self,question_id:str,*,assessed_ns:int,robustness_score:float=0,regime_fit:float=0,data_confidence:float=0,ood_risk:float=0)->ThesisAssessment:
-        q=self.questions[question_id]; cs=tuple(sorted((c for c in self.contributions.values() if c.question_id==question_id),key=lambda c:(c.submitted_ns,c.contribution_id)))
+        q=self.questions[question_id]
+        if assessed_ns<q.created_ns: raise ValueError("assessment before question")
+        received=sorted((c for c in self.contributions.values() if c.question_id==question_id and c.submitted_ns<=assessed_ns),key=lambda c:(c.submitted_ns,c.contribution_id))
+        # Keep every claim in the audit exchange, but one immutable observation
+        # gets one vote. Rewording a claim cannot increase evidence strength.
+        unique={}
+        for c in received:
+            e=c.evidence
+            observation=digest({"hypothesis":e.hypothesis_id,"source":e.source_system.upper(),
+                "kind":e.kind,"observed_ns":e.observed_ns,"payload":dict(e.payload),
+                "lineage":e.lineage_hash,"strength":e.strength,"supports":e.supports,"plane":e.plane})
+            unique.setdefault(observation,c)
+        cs=tuple(unique.values())
         covered={c.evidence.kind for c in cs}; coverage=len(covered.intersection(q.requested_kinds))/max(1,len(q.requested_kinds))
         # source cap: repeated evidence from one subsystem cannot create unlimited voting power
         by={}

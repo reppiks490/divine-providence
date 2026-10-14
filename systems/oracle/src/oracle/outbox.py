@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .persistence import sqlite_connection
 from dataclasses import asdict, dataclass
 import json, sqlite3
 from pathlib import Path
@@ -83,7 +84,7 @@ class ResearchOutbox:
         self.failure_codes: dict[str, str] = {}
         if self.db_path:
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
-            with sqlite3.connect(self.db_path) as c:
+            with sqlite_connection(self.db_path) as c:
                 c.executescript(_SCHEMA)
                 cols={row[1] for row in c.execute("PRAGMA table_info(oracle_outbox_failure)")}
                 if "error_code" not in cols:
@@ -92,7 +93,7 @@ class ResearchOutbox:
 
     def _load(self) -> None:
         assert self.db_path
-        with sqlite3.connect(self.db_path) as c:
+        with sqlite_connection(self.db_path) as c:
             for packet_json, acked_ns in c.execute("SELECT packet_json,acked_ns FROM oracle_outbox ORDER BY created_ns,packet_id"):
                 p = ResearchPacket(**json.loads(packet_json))
                 self.packets[p.packet_id] = p
@@ -108,7 +109,7 @@ class ResearchOutbox:
             raise ValueError("packet identity collision")
         if old is None and self.db_path:
             raw = _dump(asdict(p))
-            with sqlite3.connect(self.db_path) as c:
+            with sqlite_connection(self.db_path) as c:
                 row = c.execute("SELECT packet_json FROM oracle_outbox WHERE packet_id=?", (p.packet_id,)).fetchone()
                 if row and row[0] != raw:
                     raise ValueError("durable packet identity collision")
@@ -135,7 +136,7 @@ class ResearchOutbox:
         attempt = len(self.dispatches.get(packet_id, ())) + 1
         rec = DispatchRecord(packet_id, now_ns, attempt)
         if self.db_path:
-            with sqlite3.connect(self.db_path) as c:
+            with sqlite_connection(self.db_path) as c:
                 c.execute("INSERT INTO oracle_outbox_dispatch VALUES(?,?,?,NULL)", (packet_id, attempt, now_ns))
         self.dispatches.setdefault(packet_id, []).append(rec)
         return rec
@@ -149,7 +150,7 @@ class ResearchOutbox:
             return cur
         done = DispatchRecord(cur.packet_id, cur.dispatched_ns, cur.attempt, acked_ns)
         if self.db_path:
-            with sqlite3.connect(self.db_path) as c:
+            with sqlite_connection(self.db_path) as c:
                 c.execute("UPDATE oracle_outbox_dispatch SET acked_ns=? WHERE packet_id=? AND attempt=?", (acked_ns, packet_id, cur.attempt))
                 c.execute("UPDATE oracle_outbox SET acked_ns=? WHERE packet_id=?", (acked_ns, packet_id))
         self.dispatches[packet_id][-1] = done
@@ -170,7 +171,7 @@ class ResearchOutbox:
                 raise ValueError("packet failure identity collision")
             return
         if self.db_path:
-            with sqlite3.connect(self.db_path) as c:
+            with sqlite_connection(self.db_path) as c:
                 c.execute("INSERT INTO oracle_outbox_failure(packet_id,failed_ns,error_code) VALUES(?,?,?)", (packet_id, failed_ns, code))
         self.failed[packet_id] = failed_ns
         self.failure_codes[packet_id] = code
