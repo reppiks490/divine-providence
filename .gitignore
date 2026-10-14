@@ -94,3 +94,5 @@ provenance/tour_report.json
 Thumbs.db
 # Generated Observatory evidence belongs to Actions artifacts and its data branch.
 _observatory*/
+# Research data is retained by Actions and the data-only research-history branch.
+_institution*/
