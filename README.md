@@ -35,6 +35,20 @@ contract in their code). The live-engine tools read the paper
 runtime on :8791 and cannot change it.
 Set `ICARUS_ENGINE_TOKEN` (see `.env.example`) before registering to enable the engine's research views.
 
+## ICARUS research institution
+
+The [live dashboard](https://icarus-observatory-live-490.cloudyrook1.chatgpt.site)
+publishes daily research alongside engineering health. At **06:17 UTC**, the
+[research workflow](https://github.com/reppiks490/divine-providence/actions/workflows/icarus-institution.yml)
+discovers owned corpus revisions and official Fed/ECB/SEC announcements, tests
+two unseen source/protocol contexts, challenges four DAEDALUS model families,
+and preserves both failures and development watch entries. ORACLE supplies typed
+falsifiable hypotheses and the evidence graph. No daily chat or manual setup.
+
+Read the [institution guide](docs/ICARUS_INSTITUTION.md) for the protocol, memory,
+research briefs and JSON APIs. Results stay historical development paper proxies;
+protected holdouts, promotion and live execution retain their existing owners.
+
 ## ICARUS Observatory
 
 [Live dashboard](https://icarus-observatory-live-490.cloudyrook1.chatgpt.site)
@@ -63,7 +77,7 @@ and passing fixtures confer no trading or production authority.
 | `tests/` | Hub tests, including a real stdio MCP handshake. |
 | `docs/` | Architecture, repairs, handoffs, research reports, state capsules, program docs, evidence. |
 | `provenance/` | Source archive → file mapping with SHA-256 for every file in `systems/` and `docs/`. |
-| `scripts/` | Bootstrap for Windows and POSIX; Observatory collection, reporting, and publication. |
+| `scripts/` | Bootstrap; Observatory verification; unattended institution research, memory, graph and publishing. |
 
 ## Subsystems
 
