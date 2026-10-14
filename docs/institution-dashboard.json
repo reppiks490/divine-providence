@@ -1,0 +1,19 @@
+{
+  "schema": "icarus.institution.dashboard.v1",
+  "url": "https://icarus-observatory-live-490.cloudyrook1.chatgpt.site",
+  "hosting_provider": "Sites",
+  "audience": "owner_private",
+  "project_id": "appgprj_6acf2508b2e0819186b2a06d0cf0c7bf",
+  "deployment_id": "appgdep_6acf703ec3008191b878007ba7a00c3c",
+  "source_commit": "c1ce0c5d65f3356b5e134005b3ae1a917f507b33",
+  "saved_version_id": "appgprj_6acf2508b2e0819186b2a06d0cf0c7bf~appgver_41281e1e90088191a5ba49d3a60b1ec9",
+  "data_repository": "reppiks490/divine-providence",
+  "data_branch": "research-history",
+  "api_base": "https://raw.githubusercontent.com/reppiks490/divine-providence/research-history/",
+  "data_writer": ".github/workflows/icarus-institution.yml",
+  "viewer_refresh_seconds": 60,
+  "collection_cron_utc": "17 6 * * *",
+  "protected_holdout_touched": false,
+  "execution_authorized": false,
+  "production_authorized": false
+}
