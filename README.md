@@ -18,6 +18,8 @@ paper engine.
 .\scripts\bootstrap.ps1                  # .venv + install + hub tests
 .\scripts\bootstrap.ps1 -Validate        # + every subsystem suite, compile checks, adversarial scripts, connections
 .\scripts\bootstrap.ps1 -RegisterMcp     # + register icarus-engine with Claude Code (user scope)
+.\scripts\bootstrap-full.ps1            # hub + separate trading engine, tests, doctor, start delayed Yahoo NQ plant
+.\scripts\bootstrap-full.ps1 -NoStartPlant # install and validate both repositories without starting the data service
 ```
 ```sh
 scripts/bootstrap.sh --validate --register-mcp   # Linux/macOS
@@ -34,6 +36,14 @@ The checks use local deterministic fixtures. Coverage accounts for all 12 system
 contract in their code). The live-engine tools read the paper
 runtime on :8791 and cannot change it.
 Set `ICARUS_ENGINE_TOKEN` (see `.env.example`) before registering to enable the engine's research views.
+
+`bootstrap-full.ps1` is the integrated Windows setup: it validates this repository,
+clones or fast-forwards the separate `reppiks490/Icarus` engine into a sibling
+`icarus-engine` folder, installs its bridge/ML/Databento extras, runs the engine
+suite and doctor, initializes local data, and starts the loopback Yahoo plant.
+Yahoo is delayed market data. Broker alert execution, TradingView exports, and
+paid feed credentials remain separately configured; the installer never starts
+the broker bridge.
 
 ## ICARUS research institution
 
