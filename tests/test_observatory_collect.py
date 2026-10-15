@@ -179,7 +179,7 @@ class CollectorTests(unittest.TestCase):
         self.assertEqual(result["returncode"], 0)
         self.assertLessEqual(out.stat().st_size, mod.LOG_LIMIT)
         self.assertLessEqual(err.stat().st_size, mod.LOG_LIMIT)
-        self.assertTrue(out.read_text().endswith("🌞"),
+        self.assertTrue(out.read_text(encoding="utf-8").endswith("🌞"),
                         f"unexpected stdout tail: {out.read_bytes()[-16:]!r}")
         self.assertTrue(err.read_text())
 
