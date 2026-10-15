@@ -66,13 +66,21 @@ function Protect-OwnerTokenInLogs([string[]]$Paths, [string]$Token) {
     if ([string]::IsNullOrWhiteSpace($Token)) { return }
     foreach ($path in $Paths) {
         if ([string]::IsNullOrWhiteSpace($path) -or -not (Test-Path $path)) { continue }
-        $contents = [System.IO.File]::ReadAllText($path)
-        if ($contents.Contains($Token)) {
-            [System.IO.File]::WriteAllText(
-                $path,
-                $contents.Replace($Token, "[REDACTED]"),
-                [System.Text.Encoding]::UTF8
-            )
+        try {
+            $contents = [System.IO.File]::ReadAllText($path)
+            if ($contents.Contains($Token)) {
+                [System.IO.File]::WriteAllText(
+                    $path,
+                    $contents.Replace($Token, "[REDACTED]"),
+                    [System.Text.Encoding]::UTF8
+                )
+            }
+        } catch [System.IO.IOException] {
+            # A running plant still owns its redirected stderr handle; retry
+            # from the caller's finally block after the process is stopped.
+            continue
+        } catch [System.UnauthorizedAccessException] {
+            continue
         }
     }
 }
@@ -176,13 +184,19 @@ try {
                     Start-Sleep -Milliseconds 500
                 }
                 if (Test-PlantHealth) { throw "ICARUS plant stayed healthy after the verification stop request" }
+                if ($plantProcess -and -not $plantProcess.HasExited) {
+                    $null = $plantProcess.WaitForExit(10000)
+                }
             }
         }
     } finally {
-        Protect-OwnerTokenInLogs @($stderrPath) $ownerToken
         if ($startedByBootstrap -and ($StopPlantAfterVerification -or -not $plantHealthy)) {
             try { Invoke-Checked $EnginePython @("-m", "icarus_plant", "--root", $DataPath, "stop") } catch { }
+            if ($plantProcess -and -not $plantProcess.HasExited) {
+                $null = $plantProcess.WaitForExit(10000)
+            }
         }
+        Protect-OwnerTokenInLogs @($stderrPath) $ownerToken
         Pop-Location
     }
 
