@@ -84,9 +84,9 @@ def run_process(args: list[str], *, root: Path, timeout: float,
                                    start_new_session=(os.name == "posix"))
     except OSError as exc:
         detail = str(exc)
-        filename = getattr(exc, "filename", None)
-        if filename and str(filename) not in detail:
-            detail = f"{detail} (executable: {filename})"
+        executable = Path(args[0]).name if args else "<empty command>"
+        if executable not in detail:
+            detail = f"{detail} (executable: {executable})"
         buffers[1].extend(detail.encode("utf-8", "replace")[-LOG_LIMIT:])
     else:
         def drain(pipe, target):

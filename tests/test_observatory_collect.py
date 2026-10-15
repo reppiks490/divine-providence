@@ -179,7 +179,8 @@ class CollectorTests(unittest.TestCase):
         self.assertEqual(result["returncode"], 0)
         self.assertLessEqual(out.stat().st_size, mod.LOG_LIMIT)
         self.assertLessEqual(err.stat().st_size, mod.LOG_LIMIT)
-        self.assertTrue(out.read_text().endswith("🌞"))
+        self.assertTrue(out.read_text().endswith("🌞"),
+                        f"unexpected stdout tail: {out.read_bytes()[-16:]!r}")
         self.assertTrue(err.read_text())
 
     def test_finalize_after_setup_failure_marks_incomplete_and_discards_stale_report(self):
