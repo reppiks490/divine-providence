@@ -130,7 +130,7 @@ try {
         Invoke-Checked $EnginePython @("-m", "pip", "install", "--upgrade", "pip")
         Invoke-Checked $EnginePython @("-m", "pip", "install", "-e", ".[bridge,dev,ml,databento]")
         Invoke-Checked $EnginePython @("-m", "pytest", "tests_engine", "-q")
-        Invoke-Checked $EnginePython @("-m", "icarus_engine", "doctor")
+        Invoke-Checked $EnginePython @("-m", "icarus_engine.cli", "doctor", "--json")
 
         $env:ICARUS_HOME = $DataPath
         Invoke-Checked $EnginePython @("-m", "icarus_plant", "--root", $DataPath, "init")
