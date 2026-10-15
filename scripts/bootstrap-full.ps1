@@ -138,6 +138,9 @@ try {
         Invoke-Checked $EnginePython @("-m", "pip", "install", "--upgrade", "pip")
         Invoke-Checked $EnginePython @("-m", "pip", "install", "-e", ".[bridge,dev,ml,databento]")
         Invoke-Checked $EnginePython @("-m", "pytest", "tests_engine", "-q")
+
+        # Keep a pre-existing user plant root from affecting the clean engine doctor check.
+        $env:ICARUS_HOME = $EnginePath
         Invoke-Checked $EnginePython @("-m", "icarus_engine.cli", "doctor", "--json")
 
         $env:ICARUS_HOME = $DataPath
