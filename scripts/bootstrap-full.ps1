@@ -62,6 +62,21 @@ function Get-OwnerToken([string]$TokenPath) {
     return $token
 }
 
+function Protect-OwnerTokenInLogs([string[]]$Paths, [string]$Token) {
+    if ([string]::IsNullOrWhiteSpace($Token)) { return }
+    foreach ($path in $Paths) {
+        if ([string]::IsNullOrWhiteSpace($path) -or -not (Test-Path $path)) { continue }
+        $contents = [System.IO.File]::ReadAllText($path)
+        if ($contents.Contains($Token)) {
+            [System.IO.File]::WriteAllText(
+                $path,
+                $contents.Replace($Token, "[REDACTED]"),
+                [System.Text.Encoding]::UTF8
+            )
+        }
+    }
+}
+
 if (-not $EnginePath) {
     $EnginePath = Join-Path (Split-Path -Parent $Root) "icarus-engine"
 }
@@ -149,6 +164,7 @@ try {
                 if ($startedByBootstrap -and $plantProcess.HasExited) { break }
                 Start-Sleep -Seconds 2
             }
+            Protect-OwnerTokenInLogs @($stdoutPath, $stderrPath) $ownerToken
             if (-not $plantHealthy) {
                 $tail = if (Test-Path $stderrPath) { (Get-Content -Tail 30 $stderrPath) -join "`n" } else { "" }
                 throw "ICARUS plant did not become healthy with its owner token at http://127.0.0.1:8791/api/access. $tail"
@@ -164,6 +180,7 @@ try {
             }
         }
     } finally {
+        Protect-OwnerTokenInLogs @($stdoutPath, $stderrPath) $ownerToken
         if ($startedByBootstrap -and ($StopPlantAfterVerification -or -not $plantHealthy)) {
             try { Invoke-Checked $EnginePython @("-m", "icarus_plant", "--root", $DataPath, "stop") } catch { }
         }
