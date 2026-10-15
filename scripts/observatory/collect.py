@@ -68,8 +68,9 @@ def run_process(args: list[str], *, root: Path, timeout: float,
                 environ: dict | None = None) -> dict:
     """Drain both pipes concurrently, retaining only bounded tails in memory.
 
-    A new process group contains the validator's nested workers. Group cleanup
-    also prevents orphaned workers from holding pipes open after their parent.
+    A new process group contains the validator's nested workers on POSIX.
+    Windows needs taskkill's tree mode for the same guarantee. ``read1`` avoids
+    buffering a short flushed line until a full 8 KiB read or EOF.
     """
     if timeout <= 0:
         raise ValueError("process timeout must be positive")
@@ -82,11 +83,16 @@ def run_process(args: list[str], *, root: Path, timeout: float,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                    start_new_session=(os.name == "posix"))
     except OSError as exc:
-        buffers[1].extend(str(exc).encode("utf-8", "replace")[-LOG_LIMIT:])
+        detail = str(exc)
+        executable = Path(args[0]).name if args else "<empty command>"
+        if executable not in detail:
+            detail = f"{detail} (executable: {executable})"
+        buffers[1].extend(detail.encode("utf-8", "replace")[-LOG_LIMIT:])
     else:
         def drain(pipe, target):
             try:
-                while block := pipe.read(8192):
+                read = getattr(pipe, "read1", pipe.read)
+                while block := read(8192):
                     target.extend(block)
                     if len(target) > LOG_LIMIT:
                         del target[:-LOG_LIMIT]
@@ -102,11 +108,20 @@ def run_process(args: list[str], *, root: Path, timeout: float,
         except subprocess.TimeoutExpired:
             timed_out = True
         finally:
-            if os.name == "posix":
+            if timed_out and os.name == "posix":
                 try:
                     os.killpg(process.pid, signal.SIGKILL)
                 except ProcessLookupError:
                     pass
+            elif timed_out and os.name == "nt":
+                try:
+                    subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                   check=False, timeout=5)
+                except (OSError, subprocess.TimeoutExpired):
+                    pass
+                if process.poll() is None:
+                    process.kill()
             elif process.poll() is None:
                 process.kill()
             returncode = process.wait()

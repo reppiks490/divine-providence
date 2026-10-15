@@ -165,13 +165,22 @@ class CollectorTests(unittest.TestCase):
         mod = collector()
         out = Path(self.temp.name) / "large.log"
         err = Path(self.temp.name) / "large-error.log"
-        script = "import os;os.write(1,b'x'*1000000+b'\\xf0\\x9f\\x8c\\x9e');os.write(2,b'\\xff'*1000000)"
+        script = (
+            "import os\n"
+            "def write_all(fd,data):\n"
+            "    v=memoryview(data)\n"
+            "    while v:\n"
+            "        v=v[os.write(fd,v):]\n"
+            "write_all(1,b'x'*1000000+b'\\xf0\\x9f\\x8c\\x9e')\n"
+            "write_all(2,b'\\xff'*1000000)\n"
+        )
         result = mod.run_process([sys.executable, "-c", script], root=self.root, timeout=10,
                                  stdout_path=out, stderr_path=err, environ=ENV)
         self.assertEqual(result["returncode"], 0)
         self.assertLessEqual(out.stat().st_size, mod.LOG_LIMIT)
         self.assertLessEqual(err.stat().st_size, mod.LOG_LIMIT)
-        self.assertTrue(out.read_text().endswith("🌞"))
+        self.assertTrue(out.read_text(encoding="utf-8").endswith("🌞"),
+                        f"unexpected stdout tail: {out.read_bytes()[-16:]!r}")
         self.assertTrue(err.read_text())
 
     def test_finalize_after_setup_failure_marks_incomplete_and_discards_stale_report(self):
