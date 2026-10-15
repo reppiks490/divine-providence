@@ -55,7 +55,8 @@ jobs:
           pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/bootstrap-full.ps1
           -EnginePath "$env:RUNNER_TEMP\icarus-engine"
           -DataPath "$env:RUNNER_TEMP\icarus-data"
-          -NoStartPlant
+          -Feed file
+          -StopPlantAfterVerification
 
   collect:
     runs-on: ubuntu-latest
