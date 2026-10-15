@@ -41,6 +41,7 @@ Set `ICARUS_ENGINE_TOKEN` (see `.env.example`) before registering to enable the 
 clones or fast-forwards the separate `reppiks490/Icarus` engine into a sibling
 `icarus-engine` folder, installs its bridge/ML/Databento extras, runs the engine
 suite and doctor, initializes local data, and starts the loopback Yahoo plant.
+Completion output includes the exact engine commit that was validated.
 Yahoo is delayed market data. Broker alert execution, TradingView exports, and
 paid feed credentials remain separately configured; the installer never starts
 the broker bridge.

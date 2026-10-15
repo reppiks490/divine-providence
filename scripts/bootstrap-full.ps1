@@ -105,9 +105,12 @@ try {
         Pop-Location
     }
 
+    $EngineCommit = (& git -C $EnginePath rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or -not $EngineCommit) { throw "Cannot identify the validated engine revision: $EnginePath" }
     Write-Host "Full ICARUS install and validation completed."
     Write-Host "Divine Providence: $Root"
     Write-Host "Trading engine:    $EnginePath"
+    Write-Host "Engine revision:  $EngineCommit"
     Write-Host "Engine data:       $DataPath"
     Write-Host "Phone UI:          https://icarus-command-center-mobile.cloudyrook1.chatgpt.site"
     if ($NoStartPlant) {
