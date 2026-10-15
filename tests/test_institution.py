@@ -128,6 +128,16 @@ def test_archive_paths_cannot_escape(name):
     assert not sources.safe_member(info)
 
 
+def test_archive_backslash_is_rejected_after_windows_filename_normalization():
+    info = zipfile.ZipInfo(r"foo\escape.csv")
+    # Windows' ZipInfo constructor changes filename separators to '/' while
+    # preserving the archive's original name in orig_filename.
+    info.filename = "foo/escape.csv"
+    info.orig_filename = r"foo\escape.csv"
+    info.file_size = 100
+    assert not sources.safe_member(info)
+
+
 def test_selected_member_hash_is_checked(tmp_path):
     archive = tmp_path / "bars.zip"
     with zipfile.ZipFile(archive, "w") as z:

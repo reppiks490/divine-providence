@@ -67,9 +67,12 @@ def announcements(fetcher=fetch):
 
 
 def safe_member(info):
-    path = PurePosixPath(info.filename)
+    # On Windows ZipInfo normalizes backslashes in ``filename`` before callers
+    # see it. Retain the raw archive name when checking for unsafe separators.
+    raw_name = getattr(info, "orig_filename", info.filename)
+    path = PurePosixPath(raw_name)
     return (not info.is_dir() and not path.is_absolute() and ".." not in path.parts
-            and "\\" not in info.filename and "__MACOSX" not in path.parts
+            and "\\" not in raw_name and "__MACOSX" not in path.parts
             and not path.name.startswith("._") and path.suffix.lower() == ".csv"
             and 0 < info.file_size <= MAX_MEMBER_BYTES and not info.flag_bits & 1
             and (info.external_attr >> 16) & 0o170000 != 0o120000)
