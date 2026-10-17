@@ -33,7 +33,9 @@ _COMPILE_ALL = (
 def compile_check(name: str) -> dict:
     s = registry.get(name)
     r = runner.run(["-c", _COMPILE_ALL], cwd=s.path, pythonpath=s.pythonpath(), timeout_s=300)
-    return {"ok": r.returncode == 0, "errors": r.stdout_tail[-800:], "stderr_tail": r.stderr_tail[-800:]}
+    return {"ok": r.returncode == 0 and not r.timed_out and not r.cleanup_error,
+            "errors": r.stdout_tail[-800:], "stderr_tail": r.stderr_tail[-800:],
+            "timed_out": r.timed_out, "cleanup_error": r.cleanup_error}
 
 
 def ascension_scripts() -> dict:
@@ -41,7 +43,9 @@ def ascension_scripts() -> dict:
     out = {}
     for script in ASCENSION_SCRIPTS:
         r = runner.run([script], cwd=s.path, pythonpath=s.pythonpath(), timeout_s=900)
-        out[script] = {"ok": r.returncode == 0, "output": r.stdout_tail.strip()[-600:]}
+        out[script] = {"ok": r.returncode == 0 and not r.timed_out and not r.cleanup_error,
+                       "output": r.stdout_tail.strip()[-600:], "stderr_tail": r.stderr_tail[-600:],
+                       "timed_out": r.timed_out, "cleanup_error": r.cleanup_error}
     return out
 
 
@@ -58,7 +62,10 @@ def main(argv: list[str] | None = None) -> int:
             n = futs[f]
             r = f.result()
             report["systems"][n] = {"passed": r["passed"], "counts": r["counts"], "seconds": r["seconds"],
-                                    "timed_out": r["timed_out"], "tail": r["stdout_tail"][-1500:] if not r["passed"] else ""}
+                                    "timed_out": r["timed_out"], "returncode": r["returncode"],
+                                    "cleanup_error": r["cleanup_error"],
+                                    "tail": r["stdout_tail"][-1500:] if not r["passed"] else "",
+                                    "stderr_tail": r["stderr_tail"][-1500:] if not r["passed"] else ""}
             print(f"{n:15s} {'PASS' if r['passed'] else 'FAIL'} {r['counts']} {r['seconds']}s", flush=True)
     report["compile"] = {n: compile_check(n) for n in a.systems}
     report["ascension_adversarial"] = ascension_scripts() if "ascension" in a.systems else {}
