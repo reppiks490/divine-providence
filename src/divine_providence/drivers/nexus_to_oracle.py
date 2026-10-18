@@ -18,5 +18,6 @@ features = dict(state.features)
 emit({"connection": "nexus->oracle",
       "ok": (packet["contract"] == "nexus.market-state.v2" and packet["production_authorized"] is False
              and features == expected),
+      "bundle_hash": bundle.bundle_hash, "decision_ns": bundle.decision_ns,
       "packet_contract": packet["contract"], "observations": len(rows),
       "financial_state_features": features, "expected_features": expected})

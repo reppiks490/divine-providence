@@ -37,16 +37,27 @@ Recovered integration direction (descriptive, not an execution pipeline):
 `NEXUS → JANUS → AEGIS → VECTOR → ASCENSION → SuperMesh-X`, with Infrastructure
 supplying persistence/recovery and the Master Loop Governor coordinating work.
 
-## Verified connections (`dp connect`)
+## Verified fixture connections (`dp connect`)
+
+The hub registers 12 runnable subsystems and 10 deterministic connection checks. Four
+checks independently build the same NEXUS fixture and report its bundle hash:
+`intelligence-fabric`, `nexus-oracle`, `nexus-prometheus`, and `supermesh-witness`.
+`dp tour` requires all four hashes to be valid and equal. Its other checks use
+separate contract or research fixtures; their passing results do not prove that
+one runtime artifact traversed every listed system.
 
 | Connection | Contract | What is exercised |
 |---|---|---|
 | `nexus-siblings` | NEXUS `SiblingInstantRouter` → AION `EventStore`, ARGUS `MicrostructureFeature`, ATHENA `Provenance`, DAEDALUS `bridge` | One causally atomic instant validated against the exact sibling contract modules (NEXUS's own `validate_sibling_contracts`). |
-| `nexus-contract-drift` | `nexus.contract-drift-snapshot.v1` vs the pinned path-independent v1.15 baseline `b394df6c…` (the v0.3 release `1119ef3d…` is also reported) | Per-boundary raw/AST drift of the sibling contracts PROMETHEUS pins (ADR 0004). |
+| `nexus-contract-drift` | `nexus.contract-drift-snapshot.v1` vs the pinned path-independent v1.16 baseline `65cba148…` (v1.15 and v0.3 also reported) | Per-boundary raw/AST drift of the sibling contracts PROMETHEUS pins. This is a gate, not a bundle consumer. |
 | `nexus-oracle` | `nexus.market-state.v2` → `oracle.nexus_ingest` → `FinancialState` | A NEXUS packet becomes ORACLE features with no invented fields. |
 | `nexus-prometheus` | `SiblingInstantBundle` → `prometheus_loop.adapters.nexus` → `normalize_nexus_bundle` | PROMETHEUS binds only under a pinned contract identity, supplied only when there is no drift, and normalizes the bundle into sibling observations. Any drift ⇒ `CONTRACT_DRIFT` quarantine. |
-| `prometheus-ascension` | `prometheus_loop.attestation` ↔ ASCENSION conformance profile | Field-level alignment with exact `_REQUIRED_CHECKS`; `authenticated=false`, Transfer BLOCKED. |
+| `prometheus-ascension` | PROMETHEUS runtime handoff → ASCENSION conformance profile | Independent deterministic runtime fixture reaches structural conformance; `authenticated=false`, Transfer BLOCKED. |
 | `supermesh-witness` | NEXUS bundle + pinned contract baseline → SuperMesh-X `RFC9162WitnessedCheckpointLedger` → `GossipReceiptStore` | The artifacts are witnessed in a 2-of-2 quorum-signed append-only log and re-verified independently; a history rewrite and a rollback must both be rejected. The log is generic by design (opaque leaves); evidence only, no authority. |
+| `intelligence-fabric` | NEXUS bundle → AION/PARALLAX → ARGUS → ATHENA | Persists evidence, preserves candle-proxy tier, and gates ATHENA by local receipt time. |
+| `argus-athena-research` | Registered ARGUS order-block survival study → ATHENA | Separate prospective research fixture; only visible after follow-up and local receipt. |
+| `argus-impact-athena-research` | Registered ARGUS impact calibration study → ATHENA | Separate research fixture preserves paper versus broker evidence and cohort lock. |
+| `argus-bootstrap-athena-research` | Registered ARGUS bootstrap plan → ATHENA | Separate descriptive uncertainty fixture preserves evidence classes and receipt timing. |
 
 ### Coverage (`connection_coverage` MCP tool)
 

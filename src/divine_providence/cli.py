@@ -16,7 +16,7 @@ def main(argv: list[str] | None = None) -> int:
     c = sub.add_parser("connect", help="check cross-system connections")
     c.add_argument("name", nargs="?")
     sub.add_parser("validate", help="full-build validation (writes provenance/validation_report.json)")
-    sub.add_parser("tour", help="end-to-end run: one NEXUS instant through every connected system + live engine")
+    sub.add_parser("tour", help="check shared NEXUS bundle paths, independent contracts, and live engine")
     sub.add_parser("mcp", help="serve the icarus-engine MCP server over stdio")
     a = ap.parse_args(argv)
     if a.cmd == "systems":
