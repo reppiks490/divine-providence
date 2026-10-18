@@ -62,16 +62,22 @@ def test_successful_suite_does_not_leave_background_worker(tmp_path: Path):
 @pytest.mark.skipif(os.name != "nt", reason="Windows Job Object containment")
 def test_successful_suite_does_not_leave_windows_descendant(tmp_path: Path):
     marker = tmp_path / "windows-background-survived"
-    child = ("import os,time,pathlib;os.close(1);os.close(2);time.sleep(.8);"
-             f"pathlib.Path({str(marker)!r}).write_text('bad')")
+    child = ("import os,time,pathlib,json;os.close(1);os.close(2);time.sleep(.8);"
+             f"pathlib.Path({str(marker)!r}).write_text(json.dumps("
+             "{'written_ns':time.monotonic_ns(),'pid':os.getpid()}))")
     script = ("import subprocess,sys,os;"
               f"child=subprocess.Popen([sys.executable,'-c',{child!r}]);"
               "os.close(1);os.close(2)")
     result = runner.run(["-c", script], cwd=tmp_path, pythonpath=[], timeout_s=2)
+    returned_ns = time.monotonic_ns()
+    marker_at_return = marker.read_text() if marker.exists() else None
     assert result.returncode == 0 and result.timed_out is False
     assert result.cleanup_error == ""
     time.sleep(.9)
-    assert not marker.exists(), "successful suite left a Windows descendant running"
+    assert not marker.exists(), (
+        f"Windows descendant marker: at_return={marker_at_return!r}; "
+        f"returned_ns={returned_ns}; run_seconds={result.seconds}; "
+        f"after_wait={marker.read_text() if marker.exists() else None!r}")
 
 
 def test_runner_retains_only_bounded_output_tail(tmp_path: Path):
