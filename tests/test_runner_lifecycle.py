@@ -61,23 +61,55 @@ def test_successful_suite_does_not_leave_background_worker(tmp_path: Path):
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows Job Object containment")
 def test_successful_suite_does_not_leave_windows_descendant(tmp_path: Path):
-    marker = tmp_path / "windows-background-survived"
-    child = ("import os,time,pathlib,json;os.close(1);os.close(2);time.sleep(.8);"
-             f"pathlib.Path({str(marker)!r}).write_text(json.dumps("
-             "{'written_ns':time.monotonic_ns(),'pid':os.getpid()}))")
-    script = ("import subprocess,sys,os;"
-              f"child=subprocess.Popen([sys.executable,'-c',{child!r}]);"
-              "os.close(1);os.close(2)")
-    result = runner.run(["-c", script], cwd=tmp_path, pythonpath=[], timeout_s=2)
-    returned_ns = time.monotonic_ns()
-    marker_at_return = marker.read_text() if marker.exists() else None
+    import ctypes
+    from ctypes import wintypes
+
+    ready = tmp_path / "windows-child-ready"
+    child = ("import os,time,pathlib;"
+             f"ready=pathlib.Path({str(ready)!r});pending=ready.with_suffix('.tmp');"
+             "pending.write_text(str(os.getpid()));pending.replace(ready);time.sleep(30)")
+    # DEVNULL makes this a successful-parent cleanup test. A child retaining
+    # inherited output pipes is covered separately by the deadline regression.
+    script = f"""import subprocess,sys,time
+from pathlib import Path
+child = subprocess.Popen([sys.executable, '-c', {child!r}],
+    stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+ready = Path({str(ready)!r})
+deadline = time.monotonic() + 10
+while not ready.exists():
+    if child.poll() is not None:
+        raise RuntimeError('descendant exited before startup handshake')
+    if time.monotonic() >= deadline:
+        raise TimeoutError('descendant did not complete startup handshake')
+    time.sleep(.01)
+print('descendant ready', flush=True)
+"""
+    result = runner.run(["-c", script], cwd=tmp_path, pythonpath=[], timeout_s=15)
     assert result.returncode == 0 and result.timed_out is False
     assert result.cleanup_error == ""
-    time.sleep(.9)
-    assert not marker.exists(), (
-        f"Windows descendant marker: at_return={marker_at_return!r}; "
-        f"returned_ns={returned_ns}; run_seconds={result.seconds}; "
-        f"after_wait={marker.read_text() if marker.exists() else None!r}")
+    assert "descendant ready" in result.stdout_tail
+    pid = int(ready.read_text())
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    kernel32.OpenProcess.restype = wintypes.HANDLE
+    kernel32.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+    kernel32.WaitForSingleObject.restype = wintypes.DWORD
+    kernel32.TerminateProcess.argtypes = [wintypes.HANDLE, wintypes.UINT]
+    kernel32.TerminateProcess.restype = wintypes.BOOL
+    kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+    kernel32.CloseHandle.restype = wintypes.BOOL
+    handle = kernel32.OpenProcess(0x00100001, False, pid)  # SYNCHRONIZE | PROCESS_TERMINATE
+    if not handle:
+        assert ctypes.get_last_error() == 87, "could not verify descendant exit"  # PID no longer exists
+        return
+    exited = False
+    try:
+        exited = kernel32.WaitForSingleObject(handle, 2000) == 0
+        assert exited, "successful suite left a Windows descendant running"
+    finally:
+        if not exited:
+            kernel32.TerminateProcess(handle, 1)  # A failed regression must also clean up its child.
+        kernel32.CloseHandle(handle)
 
 
 def test_runner_retains_only_bounded_output_tail(tmp_path: Path):
