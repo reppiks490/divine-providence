@@ -36,8 +36,8 @@ concurrency:
 jobs:
   windows-collector:
     runs-on: windows-latest
-    # Full offline install plus the engine suite exceeded the old 25-minute budget.
-    timeout-minutes: 40
+    # The full hub plus Windows engine suite exceeded 40 minutes at 90%; allow 60.
+    timeout-minutes: 60
     steps:
       - name: Checkout observed revision
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
