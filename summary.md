@@ -1,34 +1,34 @@
 # ICARUS Observatory
 
-**HEALTHY** · [Actions run](https://github.com/reppiks490/divine-providence/actions/runs/40179410693)
+**HEALTHY** · [Actions run](https://github.com/reppiks490/divine-providence/actions/runs/40216674855)
 
-Source: `27ae69c593ede3019957100cd401625bd2424f43` · Finished: 2026-10-25T09:10:03&#43;00:00
+Source: `6fe20c9baa1b2fd6ec5d8652f2019ad46ecd8877` · Finished: 2026-10-25T17:31:01&#43;00:00
 
 Engineering fixtures only. Live engine: not observed. Execution and production authority: false.
 
-Receipt: `0540171d508037835c235d391f484bd2827bbfa80044fc54ca2d247db463100c`
+Receipt: `ba1c868b4b140119e15063f0b6b9a9e6470243d0bc6a3d81c7e61761b9db5372`
 
 ## Changes since last complete run
 
-- Installed environment changed; comparisons are descriptive.
 
 ### Measurement changes
 
 Count and duration changes are descriptive, not proof of regression.
 
-- hub/tests seconds: 22.676 → 21.774
-- suite/aegis seconds: 1.27 → 1.17
-- suite/aion seconds: 1.64 → 1.74
-- suite/argus seconds: 3.67 → 2.55
-- suite/ascension seconds: 0.75 → 0.69
-- suite/athena seconds: 0.31 → 0.29
-- suite/daedalus seconds: 22.42 → 20.35
-- suite/infrastructure seconds: 3.03 → 2.41
-- suite/janus seconds: 20.67 → 20.8
-- suite/nexus seconds: 11.04 → 9.33
-- suite/oracle seconds: 1.46 → 1.64
-- suite/prometheus seconds: 0.96 → 0.83
-- suite/supermesh_x seconds: 2.71 → 2.87
+- hub/tests counts: &#123;&#34;passed&#34;: 165&#125; → &#123;&#34;passed&#34;: 173&#44; &#34;skipped&#34;: 3&#125;
+- hub/tests seconds: 21.774 → 33.61
+- suite/aegis seconds: 1.17 → 1.32
+- suite/aion seconds: 1.74 → 1.57
+- suite/argus seconds: 2.55 → 2.68
+- suite/ascension seconds: 0.69 → 0.77
+- suite/athena seconds: 0.29 → 0.37
+- suite/daedalus seconds: 20.35 → 22.38
+- suite/infrastructure seconds: 2.41 → 2.88
+- suite/janus seconds: 20.8 → 20.27
+- suite/nexus seconds: 9.33 → 11.15
+- suite/oracle seconds: 1.64 → 1.47
+- suite/prometheus seconds: 0.83 → 0.97
+- suite/supermesh_x seconds: 2.87 → 4.73
 
 ## Evidence
 
@@ -61,90 +61,90 @@ Count and duration changes are descriptive, not proof of regression.
 | connection/nexus-siblings | pass | not recorded | not recorded |
 | connection/prometheus-ascension | pass | not recorded | not recorded |
 | connection/supermesh-witness | pass | not recorded | not recorded |
-| hub/tests | pass | 165 | 21.774 |
-| suite/aegis | pass | 36 | 1.17 |
-| suite/aion | pass | 37 | 1.74 |
-| suite/argus | pass | 447 | 2.55 |
-| suite/ascension | pass | 160 | 0.69 |
-| suite/athena | pass | 18 | 0.29 |
-| suite/daedalus | pass | 64 | 20.35 |
-| suite/infrastructure | pass | 345 | 2.41 |
-| suite/janus | pass | 144 | 20.8 |
-| suite/nexus | pass | 366 | 9.33 |
-| suite/oracle | pass | 39 | 1.64 |
-| suite/prometheus | pass | 171 | 0.83 |
-| suite/supermesh_x | pass | 352 | 2.87 |
+| hub/tests | pass | 173 | 33.61 |
+| suite/aegis | pass | 36 | 1.32 |
+| suite/aion | pass | 37 | 1.57 |
+| suite/argus | pass | 447 | 2.68 |
+| suite/ascension | pass | 160 | 0.77 |
+| suite/athena | pass | 18 | 0.37 |
+| suite/daedalus | pass | 64 | 22.38 |
+| suite/infrastructure | pass | 345 | 2.88 |
+| suite/janus | pass | 144 | 20.27 |
+| suite/nexus | pass | 366 | 11.15 |
+| suite/oracle | pass | 39 | 1.47 |
+| suite/prometheus | pass | 171 | 0.97 |
+| suite/supermesh_x | pass | 352 | 4.73 |
 
 ## Findings
 
 
 **adversarial/failure_injection_v0_1.py**
 
-&#123;&#34;ok&#34;: true&#44; &#34;output&#34;: &#34;&#123;&#39;structural_deletions_rejected&#39;: 1000&#44; &#39;adapter_deletions_not_ready&#39;: 1000&#44; &#39;digest_corruptions_rejected&#39;: 750&#44; &#39;identity_substitutions_rejected&#39;: 750&#44; &#39;backend_substitutions_not_ready&#39;: 500&#44; &#39;receipt_attacks_rejected&#39;: 500&#44; &#39;secret_injections_rejected&#39;: 300&#44; &#39;malformed_fail_closed&#39;: 500&#44; &#39;backend_digest_substitutions_not_ready&#39;: 500&#44; &#39;policy_digest_substitutions_not_ready&#39;: 500&#44; &#39;attestation_shape_corruptions_not_ready&#39;: 500&#125;&#92;nTOTAL_ATTACK_CASES 6800&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;ok&#34;: true&#44; &#34;output&#34;: &#34;&#123;&#39;structural_deletions_rejected&#39;: 1000&#44; &#39;adapter_deletions_not_ready&#39;: 1000&#44; &#39;digest_corruptions_rejected&#39;: 750&#44; &#39;identity_substitutions_rejected&#39;: 750&#44; &#39;backend_substitutions_not_ready&#39;: 500&#44; &#39;receipt_attacks_rejected&#39;: 500&#44; &#39;secret_injections_rejected&#39;: 300&#44; &#39;malformed_fail_closed&#39;: 500&#44; &#39;backend_digest_substitutions_not_ready&#39;: 500&#44; &#39;policy_digest_substitutions_not_ready&#39;: 500&#44; &#39;attestation_shape_corruptions_not_ready&#39;: 500&#125;&#92;nTOTAL_ATTACK_CASES 6800&#34;&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **adversarial/failure_injection_v0_4.py**
 
-&#123;&#34;ok&#34;: true&#44; &#34;output&#34;: &#34;BACKEND_SUBSTITUTIONS_REJECTED&#61;500/500&#92;nPINNED_POLICY_SUBSTITUTIONS_REJECTED&#61;500/500&#92;nSTRICT_INCLUSION_NODE_MUTATIONS_REJECTED&#61;500/500&#92;nFALSE_INDEX_RELABELS_REJECTED&#61;500/500&#92;nWITNESS_MUTATIONS_REJECTED&#61;400/400&#92;nMALFORMED_INPUTS_FAIL_CLOSED_SAFE_FOR_SIBLINGS&#61;300/300&#92;nDEPENDENCY_DIGEST_CONTRACT_SUBSTITUTIONS_REJECTED&#61;500/500&#92;nPROVENANCE_DELETIONS_DETECTED&#61;26/26&#92;nTOTAL_ATTACKS&#61;3226&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;ok&#34;: true&#44; &#34;output&#34;: &#34;BACKEND_SUBSTITUTIONS_REJECTED&#61;500/500&#92;nPINNED_POLICY_SUBSTITUTIONS_REJECTED&#61;500/500&#92;nSTRICT_INCLUSION_NODE_MUTATIONS_REJECTED&#61;500/500&#92;nFALSE_INDEX_RELABELS_REJECTED&#61;500/500&#92;nWITNESS_MUTATIONS_REJECTED&#61;400/400&#92;nMALFORMED_INPUTS_FAIL_CLOSED_SAFE_FOR_SIBLINGS&#61;300/300&#92;nDEPENDENCY_DIGEST_CONTRACT_SUBSTITUTIONS_REJECTED&#61;500/500&#92;nPROVENANCE_DELETIONS_DETECTED&#61;26/26&#92;nTOTAL_ATTACKS&#61;3226&#34;&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **adversarial/hostile_test_v0_8.py**
 
-&#123;&#34;ok&#34;: true&#44; &#34;output&#34;: &#34;ORDER_ATTACKS_REJECTED&#61;500&#92;nBAD_NODE_LENGTHS_REJECTED&#61;500&#92;nMALFORMED_TOP_LEVEL_FAIL_CLOSED&#61;500&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;ok&#34;: true&#44; &#34;output&#34;: &#34;ORDER_ATTACKS_REJECTED&#61;500&#92;nBAD_NODE_LENGTHS_REJECTED&#61;500&#92;nMALFORMED_TOP_LEVEL_FAIL_CLOSED&#61;500&#34;&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **adversarial/property_test_v0_7.py**
 
-&#123;&#34;ok&#34;: true&#44; &#34;output&#34;: &#34;&#123;&#39;valid_transitions&#39;: 2016&#44; &#39;max_proof_nodes&#39;: 7&#44; &#39;mutated_proofs_rejected&#39;: 1000&#125;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;ok&#34;: true&#44; &#34;output&#34;: &#34;&#123;&#39;valid_transitions&#39;: 2016&#44; &#39;max_proof_nodes&#39;: 7&#44; &#39;mutated_proofs_rejected&#39;: 1000&#125;&#34;&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **adversarial/property_test_v0_8.py**
 
-&#123;&#34;ok&#34;: true&#44; &#34;output&#34;: &#34;VALID_INCLUSIONS&#61;8256&#92;nMAX_PROOF_NODES&#61;7&#92;nMUTATED_NODES_REJECTED&#61;1500&#92;nGEOMETRY_ATTACKS_REJECTED&#61;1000&#92;nBINDING_ATTACKS_REJECTED&#61;1000&#92;nV06_FALSE_INDEX_RELABELS_ACCEPTED&#61;42&#92;nV08_FALSE_INDEX_RELABELS_REJECTED&#61;42&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;ok&#34;: true&#44; &#34;output&#34;: &#34;VALID_INCLUSIONS&#61;8256&#92;nMAX_PROOF_NODES&#61;7&#92;nMUTATED_NODES_REJECTED&#61;1500&#92;nGEOMETRY_ATTACKS_REJECTED&#61;1000&#92;nBINDING_ATTACKS_REJECTED&#61;1000&#92;nV06_FALSE_INDEX_RELABELS_ACCEPTED&#61;42&#92;nV08_FALSE_INDEX_RELABELS_REJECTED&#61;42&#34;&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/aegis**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/aion**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/argus**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/ascension**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/athena**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/daedalus**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/infrastructure**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/janus**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/nexus**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/oracle**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/prometheus**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **compile/supermesh_x**
 
-&#123;&#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;errors&#34;: &#34;&#92;n&#34;&#44; &#34;ok&#34;: true&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **connection/argus-athena-research**
 
@@ -168,7 +168,7 @@ Count and duration changes are descriptive, not proof of regression.
 
 **connection/nexus-oracle**
 
-&#123;&#34;connection&#34;: &#34;nexus-&#62;oracle&#34;&#44; &#34;contract&#34;: &#34;nexus.market-state.v2 -&#62; oracle.nexus_ingest MetricObservation -&#62; FinancialState&#34;&#44; &#34;expected_features&#34;: &#123;&#34;factors.market_state&#34;: 0.25&#44; &#34;ood.novelty&#34;: 0.1&#44; &#34;quality.coverage&#34;: 1.0&#44; &#34;topology.entropy&#34;: 0.5&#125;&#44; &#34;financial_state_features&#34;: &#123;&#34;factors.market_state&#34;: 0.25&#44; &#34;ood.novelty&#34;: 0.1&#44; &#34;quality.coverage&#34;: 1.0&#44; &#34;topology.entropy&#34;: 0.5&#125;&#44; &#34;name&#34;: &#34;nexus-oracle&#34;&#44; &#34;observations&#34;: 4&#44; &#34;ok&#34;: true&#44; &#34;packet_contract&#34;: &#34;nexus.market-state.v2&#34;&#125;
+&#123;&#34;bundle_hash&#34;: &#34;738ca0867d14aa1e48c6d8753a9c4e6f9b5d7876a263c35fc1a310db33c76344&#34;&#44; &#34;connection&#34;: &#34;nexus-&#62;oracle&#34;&#44; &#34;contract&#34;: &#34;nexus.market-state.v2 -&#62; oracle.nexus_ingest MetricObservation -&#62; FinancialState&#34;&#44; &#34;decision_ns&#34;: 160&#44; &#34;expected_features&#34;: &#123;&#34;factors.market_state&#34;: 0.25&#44; &#34;ood.novelty&#34;: 0.1&#44; &#34;quality.coverage&#34;: 1.0&#44; &#34;topology.entropy&#34;: 0.5&#125;&#44; &#34;financial_state_features&#34;: &#123;&#34;factors.market_state&#34;: 0.25&#44; &#34;ood.novelty&#34;: 0.1&#44; &#34;quality.coverage&#34;: 1.0&#44; &#34;topology.entropy&#34;: 0.5&#125;&#44; &#34;name&#34;: &#34;nexus-oracle&#34;&#44; &#34;observations&#34;: 4&#44; &#34;ok&#34;: true&#44; &#34;packet_contract&#34;: &#34;nexus.market-state.v2&#34;&#125;
 
 **connection/nexus-prometheus**
 
@@ -188,52 +188,52 @@ Count and duration changes are descriptive, not proof of regression.
 
 **hub/tests**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 165&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 21.774&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;stdout_tail&#34;: &#34;........................................................................ &#91; 43&#37;&#93;&#92;n........................................................................ &#91; 87&#37;&#93;&#92;n.....................                                                    &#91;100&#37;&#93;&#92;n165 passed in 20.94s&#92;n&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 173&#44; &#34;skipped&#34;: 3&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 33.61&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;stdout_tail&#34;: &#34;........................................................................ &#91; 40&#37;&#93;&#92;n........................................................................ &#91; 81&#37;&#93;&#92;n...........................s..ss                                         &#91;100&#37;&#93;&#92;n173 passed&#44; 3 skipped in 32.64s&#92;n&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/aegis**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 36&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 1.17&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 36&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 1.32&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/aion**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 37&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 1.74&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 37&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 1.57&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/argus**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 447&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 2.55&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 447&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 2.68&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/ascension**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 160&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 0.69&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 160&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 0.77&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/athena**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 18&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 0.29&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 18&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 0.37&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/daedalus**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 64&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 20.35&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 64&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 22.38&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/infrastructure**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 345&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 2.41&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 345&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 2.88&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/janus**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 144&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 20.8&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 144&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 20.27&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/nexus**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 366&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 9.33&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 366&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 11.15&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/oracle**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 39&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 1.64&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 39&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 1.47&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/prometheus**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 171&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 0.83&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 171&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 0.97&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/supermesh_x**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 352&#125;&#44; &#34;passed&#34;: true&#44; &#34;seconds&#34;: 2.87&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 352&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 4.73&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
