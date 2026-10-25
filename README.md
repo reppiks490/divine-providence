@@ -130,7 +130,7 @@ Each subsystem runs in its own interpreter process with only its own import root
 dp systems                 # list subsystems
 dp test <name>             # run one suite
 dp connect [<name>]        # run cross-system connection checks
-dp tour                    # end-to-end: one NEXUS instant through every connected system + live engine
+dp tour                    # shared NEXUS bundle checks, independent contract fixtures, live engine
 dp validate                # full build validation -> provenance/validation_report.json
 dp mcp                     # serve icarus-engine over stdio
 ```

@@ -1,14 +1,16 @@
-"""End-to-end tour: one NEXUS market instant followed through every connected system.
+"""Tour of bundle-carrying connections and independent contract checks.
 
-Runs every connection driver (each in its own isolated interpreter), checks that they all
-carried the same deterministic NEXUS instant (identical bundle hash), and narrates the flow:
-NEXUS -> AION/ARGUS/ATHENA/DAEDALUS -> ORACLE -> PROMETHEUS -> ASCENSION -> SuperMesh-X.
-It then reports the standalone systems and the live engine. Output is ASCII (Windows consoles
-are cp1252). Research/verification only: nothing here trades, promotes or grants authority.
+Each driver runs in its own isolated interpreter. The four bundle-carrying drivers
+must return the same valid hash for the deterministic NEXUS fixture. Sibling
+validation, contract drift, PROMETHEUS -> ASCENSION, and ARGUS research checks
+use independent gates or fixtures; they do not prove continuity of that bundle.
+Output is ASCII (Windows consoles are cp1252). Research/verification only:
+nothing here trades, promotes or grants authority.
 """
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timezone
 
 from . import connections, engine, registry
@@ -20,6 +22,18 @@ AUXILIARY = [
     "argus-impact-athena-research",
     "argus-bootstrap-athena-research",
 ]
+# These drivers actually build and consume the shared deterministic NEXUS bundle.
+# A missing hash from any one of them must fail the continuity assertion.
+BUNDLE_HASH_FIELDS = {
+    "intelligence-fabric": "bundle_hash",
+    "nexus-oracle": "bundle_hash",
+    "nexus-prometheus": "bundle_hash",
+    "supermesh-witness": "nexus_bundle_hash",
+}
+
+
+def _valid_hash(value: object) -> bool:
+    return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
 
 
 def _short(h: str | None) -> str:
@@ -30,19 +44,24 @@ def run(include_engine: bool = True) -> dict:
     instant_results = {name: connections.check(name) for name in FLOW}
     auxiliary_results = {name: connections.check(name) for name in AUXILIARY}
     results = {**instant_results, **auxiliary_results}
-    # Only the FLOW connections are required to carry the same NEXUS instant.
-    # Auxiliary research bridges have their own prospective study identities.
-    hashes = {n: r.get("bundle_hash") or r.get("nexus_bundle_hash") for n, r in instant_results.items()}
-    carried = {h for h in hashes.values() if h}
+    hashes = {name: results[name].get(field) for name, field in BUNDLE_HASH_FIELDS.items()}
+    verified = {name: value for name, value in hashes.items()
+                if results[name].get("ok") is True and _valid_hash(value)}
+    same_instant = len(verified) == len(BUNDLE_HASH_FIELDS) and len(set(verified.values())) == 1
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "connections": results,
-        "same_instant_everywhere": len(carried) == 1,
-        "instant_bundle_hash": next(iter(carried)) if len(carried) == 1 else sorted(carried),
+        # Keep the legacy key for CLI/MCP callers; "everywhere" is scoped to the
+        # declared bundle-carrying checks, listed alongside the observed hashes.
+        "same_instant_everywhere": same_instant,
+        "instant_bundle_hash": next(iter(verified.values())) if same_instant else None,
+        "bundle_checks": list(BUNDLE_HASH_FIELDS),
+        "bundle_hashes": hashes,
+        "independent_checks": [name for name in results if name not in BUNDLE_HASH_FIELDS],
         "coverage": connections.coverage(),
         "engine": ({"health": engine.health(), "assets": engine.assets()} if include_engine else None),
     }
-    report["ok"] = all(r.get("ok") for r in results.values()) and report["same_instant_everywhere"]
+    report["ok"] = all(r.get("ok") is True for r in results.values()) and same_instant
     return report
 
 
@@ -52,13 +71,13 @@ def narrate(t: dict) -> str:
     research = c["argus-athena-research"]
     impact_research = c["argus-impact-athena-research"]
     bootstrap_research = c["argus-bootstrap-athena-research"]
-    mark = lambda r: "OK " if r.get("ok") else "FAIL"  # noqa: E731
-    lines = ["ICARUS / Divine Providence - end-to-end tour  (" + t["generated_at"] + ")", ""]
-    lines.append(f"[{mark(sib)}] 1. NEXUS packages one causally atomic market instant "
-                 f"(bundle {_short(t['instant_bundle_hash'] if t['same_instant_everywhere'] else None)})")
+    mark = lambda r: "OK " if r.get("ok") is True else "FAIL"  # noqa: E731
+    lines = ["ICARUS / Divine Providence - contract tour  (" + t["generated_at"] + ")", ""]
+    lines.append(f"[{mark(sib)}] 1. NEXUS validates sibling contracts using its own fixture")
     for s in ("aion", "argus", "athena", "daedalus"):
         lines.append(f"        -> {s.upper():8s} {sib.get('result', {}).get('details', {}).get(s, sib.get('error', ''))}")
-    lines.append(f"[{mark(fabric)}] 2. Causal intelligence fabric persists AION evidence, builds PARALLAX fingerprint "
+    lines.append(f"[{mark(fabric)}] 2. NEXUS bundle {_short(fabric.get('bundle_hash'))}: causal intelligence fabric "
+                 f"persists AION evidence, builds PARALLAX fingerprint "
                  f"({fabric.get('parallax', {}).get('axes', '?')} axes), preserves ARGUS proxy tier, and gates ATHENA by receipt time")
     lines.append(f"[{mark(research)}] 3. ARGUS publishes a prospectively locked order-block survival study "
                  f"(schema={research.get('study_schema_version', '?')}, alpha={research.get('confidence_alpha', '?')}) "
@@ -79,18 +98,22 @@ def narrate(t: dict) -> str:
     lines.append(f"[{mark(drift)}] 7. Sibling contracts vs the baseline PROMETHEUS pins ({_short(drift.get('baseline_snapshot_hash'))}): "
                  + ("no semantic drift" if not drift.get("semantic_drift") else "DRIFT: " + json.dumps(drift.get("items"))))
     obs = ", ".join(f"{o['sibling']}:{o['evidence_tier']}" for o in pro.get("observations", []))
-    lines.append(f"[{mark(pro)}] 8. PROMETHEUS binds the same instant ({pro.get('link_state', '?')}) -> {obs or pro.get('refusal')}")
-    lines.append(f"[{mark(asc)}] 9. PROMETHEUS emits exact runtime provenance bytes into ASCENSION: "
+    lines.append(f"[{mark(pro)}] 8. PROMETHEUS binds a NEXUS bundle ({pro.get('link_state', '?')}) -> {obs or pro.get('refusal')}")
+    lines.append(f"[{mark(asc)}] 9. Independent PROMETHEUS runtime fixture emits provenance bytes into ASCENSION: "
                  f"status={asc.get('ascension_status', '?')}, "
                  f"ready_for_adapter={asc.get('ready_for_adapter_v0_4')}, "
                  f"authenticated={asc.get('authenticated')}, "
                  f"transfer={str(asc.get('transfer', '?')).split(':')[0]}")
     neg = sm.get("negative_controls", {})
-    lines.append(f"[{mark(sm)}] 10. SuperMesh-X witnesses the instant: log {sm.get('log_id', '?')}, size {sm.get('tree_size', '?')}, "
+    lines.append(f"[{mark(sm)}] 10. SuperMesh-X witnesses a NEXUS bundle: log {sm.get('log_id', '?')}, size {sm.get('tree_size', '?')}, "
                  f"root {_short(sm.get('root'))}, quorum {sm.get('witness_quorum', '?')}/2; rewrite rejected="
                  f"{bool(neg.get('history_rewrite_rejected'))}, rollback rejected={bool(neg.get('rollback_rejected'))}")
     lines.append("")
-    lines.append("Same instant at every hop: " + ("YES" if t["same_instant_everywhere"] else "NO " + str(t["instant_bundle_hash"])))
+    lines.append("Same NEXUS bundle across bundle-carrying checks: " + ("YES" if t["same_instant_everywhere"] else "NO"))
+    if not t["same_instant_everywhere"]:
+        lines.append("    " + ", ".join(
+            f"{name}={_short(value) if _valid_hash(value) else 'MISSING/INVALID'}"
+            for name, value in t["bundle_hashes"].items()))
     standalone = {n: v for n, v in t["coverage"].items() if v["status"] == "standalone"}
     lines.append("Standalone by design (no sibling contract in their code): " + ", ".join(sorted(standalone)))
     eng = t.get("engine")
@@ -101,7 +124,7 @@ def narrate(t: dict) -> str:
         else:
             lines.append(f"Live ICARUS engine: ok={h.get('ok')} warm={h.get('warm')} assets={','.join(h.get('assets', []))}")
     lines.append("")
-    lines.append("RESULT: " + ("ALL CONNECTED SYSTEMS RAN TOGETHER" if t["ok"] else "SOMETHING FAILED - see details above"))
+    lines.append("RESULT: " + ("ALL DECLARED CHECKS PASSED" if t["ok"] else "CHECKS FAILED - see details above"))
     lines.append("(research/verification only - no trading, promotion or execution authority anywhere)")
     return "\n".join(lines)
 
