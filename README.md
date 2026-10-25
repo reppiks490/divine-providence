@@ -130,3 +130,8 @@ dp mcp                     # serve icarus-engine over stdio
 - [docs/REPO_HYGIENE.md](docs/REPO_HYGIENE.md) — what was excluded from Git and why, LFS guidance, secrets
 - [docs/VALIDATION.md](docs/VALIDATION.md) — validation results and open issues
 - [PROVENANCE.md](PROVENANCE.md) — canonical source selection per subsystem
+
+## License and ownership
+
+Copyright (c) 2026 reppiks490. **Proprietary — all rights reserved.**
+Public visibility does not grant permission to reuse, redistribute, sell, or claim this work as your own. Written permission is required except where applicable law, existing grants, third-party terms, or GitHub's terms provide otherwise. See [LICENSE.md](LICENSE.md) for the full notice and permission requests.
