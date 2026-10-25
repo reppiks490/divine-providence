@@ -40,6 +40,7 @@ def test_nexus_packet_reaches_oracle_financial_state():
     r = connections.check("nexus-oracle")
     assert r["ok"] is True, r
     assert r["packet_contract"] == "nexus.market-state.v2"
+    assert len(r["bundle_hash"]) == 64
 
 
 def test_prometheus_binds_fresh_nexus_bundle_only_without_drift():
@@ -157,14 +158,37 @@ def test_every_system_is_connected_or_explicitly_standalone():
     assert {n for n, v in cov.items() if v["status"] == "standalone"} == {"aegis", "janus", "infrastructure"}
 
 
-def test_tour_follows_one_instant_through_every_connected_system():
+def test_tour_verifies_shared_bundle_and_independent_checks():
     from divine_providence import tour
     t = tour.run(include_engine=False)
     assert t["ok"] is True and t["same_instant_everywhere"] is True, {k: v.get("ok") for k, v in t["connections"].items()}
     assert set(t["connections"]) == set(connections.CONNECTIONS)
+    assert set(t["bundle_checks"]) == set(tour.BUNDLE_HASH_FIELDS)
+    assert set(t["bundle_hashes"].values()) == {t["instant_bundle_hash"]}
+    assert "prometheus-ascension" in t["independent_checks"]
     text = tour.narrate(t)
-    assert "RESULT: ALL CONNECTED SYSTEMS RAN TOGETHER" in text
-    assert "Same instant at every hop: YES" in text
+    assert "RESULT: ALL DECLARED CHECKS PASSED" in text
+    assert "Same NEXUS bundle across bundle-carrying checks: YES" in text
+    assert "Independent PROMETHEUS runtime fixture" in text
+
+
+@pytest.mark.parametrize("missing_or_wrong", [None, "not-a-hash", "f" * 64])
+def test_tour_rejects_missing_invalid_or_mismatched_bundle_hash(monkeypatch, missing_or_wrong):
+    from divine_providence import tour
+
+    records = {name: {"ok": True} for name in connections.CONNECTIONS}
+    for name, field in tour.BUNDLE_HASH_FIELDS.items():
+        records[name][field] = "a" * 64
+    if missing_or_wrong is None:
+        del records["nexus-oracle"]["bundle_hash"]
+    else:
+        records["nexus-oracle"]["bundle_hash"] = missing_or_wrong
+    monkeypatch.setattr(connections, "check", lambda name: records[name])
+
+    report = tour.run(include_engine=False)
+    assert report["ok"] is False and report["same_instant_everywhere"] is False
+    assert report["instant_bundle_hash"] is None
+    assert "Same NEXUS bundle across bundle-carrying checks: NO" in tour.narrate(report)
 
 
 def test_engine_client_reports_unreachable_engine(monkeypatch):

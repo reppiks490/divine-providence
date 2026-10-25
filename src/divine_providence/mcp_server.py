@@ -131,13 +131,14 @@ def list_connections() -> list[dict]:
 
 @mcp.tool()
 def run_tour() -> dict:
-    """End-to-end run: one deterministic NEXUS market instant followed through every connected system
-    (NEXUS -> AION/ARGUS/ATHENA/DAEDALUS -> ORACLE -> PROMETHEUS -> ASCENSION -> SuperMesh-X), plus
-    standalone systems and live-engine health. Returns a readable narration and the structured results."""
+    """Check continuity across NEXUS bundle consumers, independent contract fixtures, and live-engine health.
+    PROMETHEUS -> ASCENSION and NEXUS sibling validation use separate fixtures; the report labels them separately."""
     from . import tour
     t = tour.run()
     return {"ok": t["ok"], "narration": tour.narrate(t), "same_instant_everywhere": t["same_instant_everywhere"],
-            "instant_bundle_hash": t["instant_bundle_hash"], "connections": t["connections"], "engine": t["engine"]}
+            "instant_bundle_hash": t["instant_bundle_hash"], "bundle_checks": t["bundle_checks"],
+            "bundle_hashes": t["bundle_hashes"], "independent_checks": t["independent_checks"],
+            "connections": t["connections"], "engine": t["engine"]}
 
 
 @mcp.tool()
