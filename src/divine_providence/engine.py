@@ -17,6 +17,28 @@ import urllib.request
 BASE = os.environ.get("ICARUS_ENGINE_URL", "http://127.0.0.1:8791").rstrip("/")
 
 
+def _loopback_origin(value: str) -> str:
+    message = "ICARUS_ENGINE_URL must be an HTTP(S) loopback origin without credentials or URL suffixes"
+    try:
+        if not isinstance(value, str) or any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in value):
+            raise ValueError(message)
+        parsed = urllib.parse.urlsplit(value)
+        if (parsed.scheme not in ("http", "https")
+                or parsed.hostname not in ("localhost", "127.0.0.1", "::1")
+                or parsed.username is not None or parsed.password is not None
+                or parsed.path not in ("", "/") or "?" in value or "#" in value
+                or parsed.port == 0):
+            raise ValueError(message)
+    except (TypeError, ValueError):
+        raise ValueError(message) from None
+    return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, "", "", ""))
+
+
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
 def _token() -> str:
     return os.environ.get("ICARUS_ENGINE_TOKEN", "")
 
@@ -32,13 +54,14 @@ def _symbol(symbol: str) -> str:
 
 def get(path: str, timeout: float = 10.0, **params) -> dict | list:
     q = {k: v for k, v in params.items() if v is not None}
-    url = BASE + path + ("?" + urllib.parse.urlencode(q) if q else "")
+    url = _loopback_origin(BASE) + path + ("?" + urllib.parse.urlencode(q) if q else "")
     req = urllib.request.Request(url, headers={"Accept": "application/json"})
     if _token() and path.startswith("/api/research"):
         # Only the research routes need the token; unredirected so a 30x never forwards it.
         req.add_unredirected_header("Authorization", f"Bearer {_token()}")
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), _NoRedirect())
+        with opener.open(req, timeout=timeout) as r:
             return json.loads(r.read().decode("utf-8"))
     except urllib.error.HTTPError as ex:
         return {"error": ex.code, "detail": ex.read().decode("utf-8", "replace")[:500]}

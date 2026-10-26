@@ -266,6 +266,7 @@ def test_engine_symbols_cannot_escape_their_route():
 
 def test_engine_token_only_sent_to_research_routes_and_never_redirected(monkeypatch):
     import urllib.request
+    from types import SimpleNamespace
 
     seen = []
 
@@ -279,7 +280,7 @@ def test_engine_token_only_sent_to_research_routes_and_never_redirected(monkeypa
         return Resp()
 
     monkeypatch.setenv("ICARUS_ENGINE_TOKEN", "t0k")
-    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    monkeypatch.setattr(urllib.request, "build_opener", lambda *handlers: SimpleNamespace(open=fake_urlopen))
     engine.health()
     engine.research("status")
     (u1, h1, _), (u2, h2, unred) = seen
