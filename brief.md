@@ -1,6 +1,6 @@
 # ICARUS research brief
 
-Latest cycle: **incomplete** at 2026-11-22T14:31:57.825585Z
+Latest cycle: **incomplete** at 2026-11-23T18:01:25.611643Z
 
 Memory holds 84 source/protocol experiments: 77 rejected, 5 development watch, 2 unsuitable sources, 0 interrupted computations.
 
@@ -21,4 +21,4 @@ Incomplete evidence: collection_failed:HTTPError.
 
 Historical development paper proxy only. Filename symbol identity is unverified; chart prices are not execution fills. The protected tail is reserved, with no validation, promotion or broker orders. No event-price causality or live engine state is observed. A watch entry is a research lead, not a confirmed edge.
 
-[Cycle evidence](https://github.com/reppiks490/divine-providence/actions/runs/45033128502)
+[Cycle evidence](https://github.com/reppiks490/divine-providence/actions/runs/45233543884)
