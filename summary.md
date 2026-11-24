@@ -1,12 +1,12 @@
 # ICARUS Observatory
 
-**HEALTHY** · [Actions run](https://github.com/reppiks490/divine-providence/actions/runs/45195953600)
+**HEALTHY** · [Actions run](https://github.com/reppiks490/divine-providence/actions/runs/45418837356)
 
-Source: `c7d57c3c9b7089ec834beaa180d4087481b05d60` · Finished: 2026-11-23T14:38:02&#43;00:00
+Source: `c7d57c3c9b7089ec834beaa180d4087481b05d60` · Finished: 2026-11-24T14:53:41&#43;00:00
 
 Engineering fixtures only. Live engine: not observed. Execution and production authority: false.
 
-Receipt: `6b4d01fdfdc4689755e64aba8f0108f6e860b231411880fe160aba9bfae8cd38`
+Receipt: `318c356ee11cae0a274658107f06808e5dfdafb3aeea8b99df8f61770907cee4`
 
 ## Changes since last complete run
 
@@ -16,19 +16,17 @@ Receipt: `6b4d01fdfdc4689755e64aba8f0108f6e860b231411880fe160aba9bfae8cd38`
 
 Count and duration changes are descriptive, not proof of regression.
 
-- hub/tests seconds: 29.191 → 33.657
-- suite/aegis seconds: 0.97 → 1.42
-- suite/aion seconds: 3.37 → 1.62
-- suite/argus seconds: 2.32 → 2.62
-- suite/ascension seconds: 0.57 → 0.77
-- suite/athena seconds: 0.26 → 0.37
-- suite/daedalus seconds: 14.75 → 21.33
-- suite/infrastructure seconds: 2.53 → 2.92
-- suite/janus seconds: 21.61 → 19.51
-- suite/nexus seconds: 6.88 → 11.24
-- suite/oracle seconds: 1.62 → 1.52
-- suite/prometheus seconds: 0.77 → 1.47
-- suite/supermesh_x seconds: 2.32 → 2.82
+- hub/tests seconds: 33.657 → 33.004
+- suite/aegis seconds: 1.42 → 1.32
+- suite/aion seconds: 1.62 → 1.57
+- suite/argus seconds: 2.62 → 2.57
+- suite/daedalus seconds: 21.33 → 21.88
+- suite/infrastructure seconds: 2.92 → 2.72
+- suite/janus seconds: 19.51 → 19.73
+- suite/nexus seconds: 11.24 → 10.9
+- suite/oracle seconds: 1.52 → 1.47
+- suite/prometheus seconds: 1.47 → 0.97
+- suite/supermesh_x seconds: 2.82 → 2.72
 
 ## Evidence
 
@@ -61,19 +59,19 @@ Count and duration changes are descriptive, not proof of regression.
 | connection/nexus-siblings | pass | not recorded | not recorded |
 | connection/prometheus-ascension | pass | not recorded | not recorded |
 | connection/supermesh-witness | pass | not recorded | not recorded |
-| hub/tests | pass | 173 | 33.657 |
-| suite/aegis | pass | 36 | 1.42 |
-| suite/aion | pass | 37 | 1.62 |
-| suite/argus | pass | 447 | 2.62 |
+| hub/tests | pass | 173 | 33.004 |
+| suite/aegis | pass | 36 | 1.32 |
+| suite/aion | pass | 37 | 1.57 |
+| suite/argus | pass | 447 | 2.57 |
 | suite/ascension | pass | 160 | 0.77 |
 | suite/athena | pass | 18 | 0.37 |
-| suite/daedalus | pass | 64 | 21.33 |
-| suite/infrastructure | pass | 345 | 2.92 |
-| suite/janus | pass | 144 | 19.51 |
-| suite/nexus | pass | 366 | 11.24 |
-| suite/oracle | pass | 39 | 1.52 |
-| suite/prometheus | pass | 171 | 1.47 |
-| suite/supermesh_x | pass | 352 | 2.82 |
+| suite/daedalus | pass | 64 | 21.88 |
+| suite/infrastructure | pass | 345 | 2.72 |
+| suite/janus | pass | 144 | 19.73 |
+| suite/nexus | pass | 366 | 10.9 |
+| suite/oracle | pass | 39 | 1.47 |
+| suite/prometheus | pass | 171 | 0.97 |
+| suite/supermesh_x | pass | 352 | 2.72 |
 
 ## Findings
 
@@ -188,19 +186,19 @@ Count and duration changes are descriptive, not proof of regression.
 
 **hub/tests**
 
-&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 173&#44; &#34;skipped&#34;: 3&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 33.657&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;stdout_tail&#34;: &#34;........................................................................ &#91; 40&#37;&#93;&#92;n........................................................................ &#91; 81&#37;&#93;&#92;n...........................s..ss                                         &#91;100&#37;&#93;&#92;n173 passed&#44; 3 skipped in 32.77s&#92;n&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;counts&#34;: &#123;&#34;passed&#34;: 173&#44; &#34;skipped&#34;: 3&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 33.004&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;stdout_tail&#34;: &#34;........................................................................ &#91; 40&#37;&#93;&#92;n........................................................................ &#91; 81&#37;&#93;&#92;n...........................s..ss                                         &#91;100&#37;&#93;&#92;n173 passed&#44; 3 skipped in 32.18s&#92;n&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/aegis**
 
-&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 36&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 1.42&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 36&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 1.32&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/aion**
 
-&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 37&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 1.62&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 37&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 1.57&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/argus**
 
-&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 447&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 2.62&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 447&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 2.57&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/ascension**
 
@@ -212,28 +210,28 @@ Count and duration changes are descriptive, not proof of regression.
 
 **suite/daedalus**
 
-&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 64&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 21.33&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 64&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 21.88&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/infrastructure**
 
-&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 345&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 2.92&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 345&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 2.72&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/janus**
 
-&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 144&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 19.51&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 144&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 19.73&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/nexus**
 
-&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 366&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 11.24&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 366&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 10.9&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/oracle**
 
-&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 39&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 1.52&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 39&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 1.47&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/prometheus**
 
-&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 171&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 1.47&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 171&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 0.97&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
 
 **suite/supermesh_x**
 
-&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 352&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 2.82&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
+&#123;&#34;cleanup_error&#34;: &#34;&#34;&#44; &#34;counts&#34;: &#123;&#34;passed&#34;: 352&#125;&#44; &#34;passed&#34;: true&#44; &#34;returncode&#34;: 0&#44; &#34;seconds&#34;: 2.72&#44; &#34;stderr_tail&#34;: &#34;&#34;&#44; &#34;tail&#34;: &#34;&#34;&#44; &#34;timed_out&#34;: false&#125;
